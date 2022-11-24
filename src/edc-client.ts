@@ -1,14 +1,15 @@
 import { EdcClientContext } from "./context";
+import { DataController } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
 export class EdcClient {
-  #inner: Inner;
-  constructor() {
-    this.#inner = new Inner();
+  readonly data: DataController;
 
-    // TODO(@fdionisi): remove as soon as controllers are implemented
-    this.#inner;
+  constructor() {
+    const inner = new Inner();
+
+    this.data = new DataController(inner);
   }
 
   createContext(token: string, addresses: Addresses): EdcClientContext {
