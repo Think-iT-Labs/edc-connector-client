@@ -1,14 +1,15 @@
 import { EdcClientContext } from "./context";
+import { ObservabilityController } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
 export class EdcClient {
-  #inner: Inner;
-  constructor() {
-    this.#inner = new Inner();
+  readonly observability: ObservabilityController;
 
-    // TODO(@fdionisi): remove as soon as controllers are implemented
-    this.#inner;
+  constructor() {
+    const inner = new Inner();
+
+    this.observability = new ObservabilityController(inner);
   }
 
   createContext(token: string, addresses: Addresses): EdcClientContext {
