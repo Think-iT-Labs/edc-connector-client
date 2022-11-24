@@ -29,6 +29,10 @@ export class EdcClientContext implements Addresses {
     return this.#addresses.control;
   }
 
+  get dataplane(): string {
+    return this.#addresses.dataplane;
+  }
+
   get public(): string {
     return this.#addresses.public;
   }

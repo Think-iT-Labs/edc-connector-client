@@ -8,6 +8,7 @@ describe("EdcClient", () => {
 
     // then
     expect(edcClient).toBeInstanceOf(EdcClient);
+    expect(edcClient).toHaveProperty("dataplane");
   });
 
   describe("edcClient.createContext", () => {
@@ -20,6 +21,7 @@ describe("EdcClient", () => {
         validation: "http://localhost:19192",
         data: "http://localhost:19193",
         ids: "http://localhost:19194",
+        dataplane: "http://localhost:19195",
         public: "http://localhost:19291",
         control: "http://localhost:19292",
       };
