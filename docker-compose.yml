@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  consumer-connector:
+    image: ghcr.io/think-it-labs/edc-client/connector:latest
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    ports:
+      - "19191:9191" # control-plane default
+      - "19192:9192" # control-plane validation
+      - "19193:9193" # control-plane data
+      - "19194:9194" # control-plane ids
+      - "19195:9195" # control-plane dataplane-selector
+      - "19291:9291" # data-plane public
+      - "19292:9292" # data-plane control
+    environment:
+      EDC_VAULT: /config/vault.properties
+      EDC_KEYSTORE: /config/vault-keys.p12
+      EDC_KEYSTORE_PASSWORD: 123456
+      EDC_FS_CONFIG: /config/configuration.properties
+    volumes:
+      - ./conf/consumer-connector.config:/config
+
+  provider-connector:
+    image: ghcr.io/think-it-labs/edc-client/connector:latest
+    platform: ${DOCKER_PLATFORM:-linux/amd64}
+    ports:
+      - "29191:9191" # control-plane default
+      - "29192:9192" # control-plane validation
+      - "29193:9193" # control-plane data
+      - "29194:9194" # control-plane ids
+      - "29195:9195" # control-plane dataplane-selector
+      - "29291:9291" # data-plane public
+      - "29292:9292" # data-plane control
+    environment:
+      EDC_VAULT: /config/vault.properties
+      EDC_KEYSTORE: /config/vault-keys.p12
+      EDC_KEYSTORE_PASSWORD: 123456
+      EDC_FS_CONFIG: /config/configuration.properties
+    volumes:
+      - ./conf/provider-connector.config:/config

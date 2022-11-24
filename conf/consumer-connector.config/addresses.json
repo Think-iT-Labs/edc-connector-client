@@ -1,0 +1,12 @@
+{
+  "uid": "1",
+  "name": "consumer.edc.think-it.io",
+  "addresses": {
+    "default": "http://localhost:19191",
+    "validation": "http://localhost:19292",
+    "data": "http://localhost:19193",
+    "ids": "http://consumer-connector:9194",
+    "public": "http://localhost:19291",
+    "control": "http://localhost:19292"
+  }
+}
