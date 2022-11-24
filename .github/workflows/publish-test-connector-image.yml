@@ -3,9 +3,10 @@ name: Create and publish a Docker image
 on:
   push:
     branches: 
-    - main
+      - main
     paths:
-    - connector/**
+      - connector/**
+      - '.github/workflows/publish-test-connector-image.yml'
 
 env:
   REGISTRY: ghcr.io
