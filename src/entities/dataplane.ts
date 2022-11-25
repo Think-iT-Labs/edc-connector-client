@@ -1,5 +1,3 @@
-import { DataAddress } from "./data-address";
-
 export interface Dataplane {
   edctype: string;
   id: string;
@@ -12,9 +10,3 @@ export interface Dataplane {
 }
 
 export type DataplaneInput = Dataplane;
-
-export interface SelectorRequest {
-  destination?: DataAddress;
-  source?: DataAddress;
-  strategy?: string;
-}

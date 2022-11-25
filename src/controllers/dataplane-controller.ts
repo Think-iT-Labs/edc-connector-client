@@ -1,4 +1,4 @@
-import { Dataplane, DataplaneInput, SelectorRequest } from "../entities";
+import { Dataplane, DataplaneInput } from "../entities";
 import { EdcClientContext } from "../context";
 import { Inner } from "../inner";
 
@@ -28,18 +28,6 @@ export class DataplaneController {
       path: "/dataplane/instances",
       method: "GET",
       apiToken: context.apiToken,
-    });
-  }
-
-  async select(
-    context: EdcClientContext,
-    input: SelectorRequest,
-  ): Promise<Dataplane> {
-    return this.#inner.request(context.dataplane, {
-      path: "/dataplane/instances/select",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: input,
     });
   }
 }
