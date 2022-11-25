@@ -5,6 +5,7 @@ export * from "./asset";
 export * from "./criterion";
 export * from "./data-address";
 export * from "./duty";
+export * from "./health";
 export * from "./permission";
 export * from "./policy";
 export * from "./prohibition";
