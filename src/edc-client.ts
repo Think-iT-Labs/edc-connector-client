@@ -1,14 +1,16 @@
 import { EdcClientContext } from "./context";
-import { DataplaneController } from "./controllers";
+import { DataController, DataplaneController } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
 export class EdcClient {
+  readonly data: DataController;
   readonly dataplane: DataplaneController;
 
   constructor() {
     const inner = new Inner();
 
+    this.data = new DataController(inner);
     this.dataplane = new DataplaneController(inner);
   }
 

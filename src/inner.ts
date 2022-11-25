@@ -40,11 +40,25 @@ export class Inner {
       }
 
       switch (response.status) {
+        case 404: {
+          const error = new EdcClientError(
+            EdcClientErrorType.NotFound,
+            "resource not found",
+          );
+
+          error.body = await response.json();
+
+          throw error;
+        }
         case 409: {
-          throw new EdcClientError(
+          const error = new EdcClientError(
             EdcClientErrorType.Duplicate,
             "duplicated resource",
           );
+
+          error.body = await response.json();
+
+          throw error;
         }
         default: {
           throw new EdcClientError(
