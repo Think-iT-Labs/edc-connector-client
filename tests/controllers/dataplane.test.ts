@@ -84,10 +84,4 @@ describe("DataController", () => {
       });
     });
   });
-
-  describe("edcClient.dataplane.select", () => {
-    // XXX(@fdionisi): I'm not sure what's the purpose of this.
-    // Must ask clarification to @ndr_brt.
-    it.todo("select a dataplane");
-  });
 });
