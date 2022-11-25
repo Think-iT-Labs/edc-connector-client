@@ -1,14 +1,16 @@
 import { EdcClientContext } from "./context";
-import { ObservabilityController } from "./controllers";
+import { DataController, ObservabilityController } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
 export class EdcClient {
+  readonly data: DataController;
   readonly observability: ObservabilityController;
 
   constructor() {
     const inner = new Inner();
 
+    this.data = new DataController(inner);
     this.observability = new ObservabilityController(inner);
   }
 
