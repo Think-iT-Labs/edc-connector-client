@@ -1,6 +1,13 @@
+import { Criterion } from "./criterion";
+
 export * from "./addresses";
 export * from "./asset";
+export * from "./criterion";
 export * from "./data-address";
+export * from "./duty";
+export * from "./permission";
+export * from "./policy";
+export * from "./prohibition";
 
 export interface CreateResult {
   createdAt: number;
@@ -12,4 +19,13 @@ export interface ApiErrorDetail {
   message?: string;
   path?: string;
   type?: string;
+}
+
+export interface QuerySpec {
+  filter?: string;
+  filterExpression?: Criterion[];
+  limit?: number;
+  offset?: number;
+  sortField?: string;
+  sortOrder?: "ASC" | "DESC";
 }
