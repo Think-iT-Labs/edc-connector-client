@@ -4,6 +4,7 @@ export * from "./addresses";
 export * from "./asset";
 export * from "./criterion";
 export * from "./data-address";
+export * from "./dataplane";
 export * from "./duty";
 export * from "./health";
 export * from "./permission";

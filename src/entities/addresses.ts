@@ -3,6 +3,7 @@ export interface Addresses {
   validation: string;
   data: string;
   ids: string;
+  dataplane: string;
   public: string;
   control: string;
 }
