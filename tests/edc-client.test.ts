@@ -10,6 +10,7 @@ describe("EdcClient", () => {
     expect(edcClient).toBeInstanceOf(EdcClient);
     expect(edcClient).toHaveProperty("data");
     expect(edcClient).toHaveProperty("dataplane");
+    expect(edcClient).toHaveProperty("observability");
   });
 
   describe("edcClient.createContext", () => {
