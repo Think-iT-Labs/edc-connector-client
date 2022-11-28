@@ -1,3 +1,4 @@
+import * as crypto from "node:crypto";
 import {
   AssetInput,
   ContractDefinitionInput,
