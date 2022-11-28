@@ -971,99 +971,11 @@ describe("DataController", () => {
       const edcClient = new EdcClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const assetId = crypto.randomUUID();
-
-      edcClient.dataplane.registerDataplane(consumerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
-        "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9292/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://consumer-connector:9291/public/",
-        },
-      });
-      edcClient.dataplane.registerDataplane(providerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
-        "id": "provider-dataplane",
-        "url": "http://provider-connector:9292/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://provider-connector:9291/public/",
-        },
-      });
-
-      const assetInput: AssetInput = {
-        asset: {
-          properties: {
-            "asset:prop:id": assetId,
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
-          },
-        },
-        dataAddress: {
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
-          },
-        },
-      };
-      await edcClient.data.createAsset(providerContext, assetInput);
-
-      const policyId = crypto.randomUUID();
-      const policyInput: PolicyDefinitionInput = {
-        id: policyId,
-        policy: {
-          "uid": "231802-bb34-11ec-8422-0242ac120002",
-          "permissions": [
-            {
-              "target": assetId,
-              "action": {
-                "type": "USE",
-              },
-              "edctype": "dataspaceconnector:permission",
-            },
-          ],
-          "@type": {
-            "@policytype": "set",
-          },
-        },
-      };
-      await edcClient.data.createPolicy(providerContext, policyInput);
-
-      const contractDefinitionId = crypto.randomUUID();
-      const contractDefinitionInput: ContractDefinitionInput = {
-        id: contractDefinitionId,
-        accessPolicyId: policyId,
-        contractPolicyId: policyId,
-        criteria: [],
-      };
-      await edcClient.data.createContractDefinition(
+      await createContractNegotiation(
+        edcClient,
         providerContext,
-        contractDefinitionInput,
+        consumerContext,
       );
-
-      const catalog = await edcClient.data.requestCatalog(consumerContext, {
-        providerUrl: `${provider.ids}/api/v1/ids/data`,
-      });
-
-      const contractOffer = catalog.contractOffers.find((offer) =>
-        offer.asset?.id === assetId
-      ) as ContractOffer;
-
-      await edcClient.data
-        .initiateContractNegotiation(consumerContext, {
-          connectorAddress: `${provider.ids}/api/v1/ids/data`,
-          connectorId: "provider",
-          offer: {
-            offerId: contractOffer.id as string,
-            assetId,
-            policy: contractOffer.policy as Policy,
-          },
-          protocol: "ids-multipart",
-        });
 
       const providerNegotiations = await edcClient.data.queryNegotiations(
         providerContext,
@@ -1098,99 +1010,11 @@ describe("DataController", () => {
       const edcClient = new EdcClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-
-      edcClient.dataplane.registerDataplane(consumerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
-        "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9292/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://consumer-connector:9291/public/",
-        },
-      });
-      edcClient.dataplane.registerDataplane(providerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
-        "id": "provider-dataplane",
-        "url": "http://provider-connector:9292/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://provider-connector:9291/public/",
-        },
-      });
-
-      const assetId = crypto.randomUUID();
-      const assetInput: AssetInput = {
-        asset: {
-          properties: {
-            "asset:prop:id": assetId,
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
-          },
-        },
-        dataAddress: {
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
-          },
-        },
-      };
-      await edcClient.data.createAsset(providerContext, assetInput);
-
-      const policyId = crypto.randomUUID();
-      const policyInput: PolicyDefinitionInput = {
-        id: policyId,
-        policy: {
-          "uid": "231802-bb34-11ec-8422-0242ac120002",
-          "permissions": [
-            {
-              "target": assetId,
-              "action": {
-                "type": "USE",
-              },
-              "edctype": "dataspaceconnector:permission",
-            },
-          ],
-          "@type": {
-            "@policytype": "set",
-          },
-        },
-      };
-      await edcClient.data.createPolicy(providerContext, policyInput);
-
-      const contractDefinitionId = crypto.randomUUID();
-      const contractDefinitionInput: ContractDefinitionInput = {
-        id: contractDefinitionId,
-        accessPolicyId: policyId,
-        contractPolicyId: policyId,
-        criteria: [],
-      };
-      await edcClient.data.createContractDefinition(
+      const { createResult } = await createContractNegotiation(
+        edcClient,
         providerContext,
-        contractDefinitionInput,
+        consumerContext,
       );
-
-      const catalog = await edcClient.data.requestCatalog(consumerContext, {
-        providerUrl: `${provider.ids}/api/v1/ids/data`,
-      });
-
-      const contractOffer = catalog.contractOffers.find((offer) =>
-        offer.asset?.id === assetId
-      ) as ContractOffer;
-
-      const createResult = await edcClient.data
-        .initiateContractNegotiation(consumerContext, {
-          connectorAddress: `${provider.ids}/api/v1/ids/data`,
-          connectorId: "provider",
-          offer: {
-            offerId: contractOffer.id as string,
-            assetId,
-            policy: contractOffer.policy as Policy,
-          },
-          protocol: "ids-multipart",
-        });
 
       // when
       await new Promise((resolve) => setTimeout(resolve, 10000));
