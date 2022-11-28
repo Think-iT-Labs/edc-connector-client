@@ -776,6 +776,7 @@ describe("DataController", () => {
     - if consumer changes the policy (e.g. remove permission)
       - provider will decline
     */
+
     it("kickstart a contract negotiation", async () => {
       // given
       const edcClient = new EdcClient();
@@ -972,6 +973,7 @@ describe("DataController", () => {
         createResult.id,
         "ERROR",
       );
+
       const contractNegotiation = await edcClient.data.getNegotiationState(
         consumerContext,
         createResult.id,
