@@ -4,6 +4,7 @@ import {
   AssetInput,
   Catalog,
   CatalogRequest,
+  ContractAgreement,
   ContractDefinition,
   ContractDefinitionInput,
   ContractNegotiation,
@@ -240,6 +241,29 @@ export class DataController {
   ): Promise<ContractNegotiation> {
     return this.#inner.request(context.data, {
       path: `/api/v1/data/contractnegotiations/${negotiationId}/agreement`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async queryAllAgreements(
+    context: EdcClientContext,
+    query: QuerySpec = {},
+  ): Promise<ContractAgreement[]> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/contractagreements/request",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: query,
+    });
+  }
+
+  async getAgreement(
+    context: EdcClientContext,
+    agreementId: string,
+  ): Promise<ContractAgreement> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractagreements/${agreementId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
