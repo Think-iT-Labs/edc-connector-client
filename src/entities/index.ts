@@ -6,6 +6,7 @@ export * from "./asset";
 export * from "./catalog";
 export * from "./constraint";
 export * from "./contract-definition";
+export * from "./contract-negotiation";
 export * from "./contract-offer";
 export * from "./criterion";
 export * from "./data-address";

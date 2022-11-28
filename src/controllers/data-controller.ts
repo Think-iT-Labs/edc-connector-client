@@ -6,6 +6,9 @@ import {
   CatalogRequest,
   ContractDefinition,
   ContractDefinitionInput,
+  ContractNegotiation,
+  ContractNegotiationRequest,
+  ContractNegotiationState,
   CreateResult,
   PolicyDefinition,
   PolicyDefinitionInput,
@@ -160,6 +163,85 @@ export class DataController {
       method: "POST",
       apiToken: context.apiToken,
       body: input,
+    });
+  }
+
+  async initiateContractNegotiation(
+    context: EdcClientContext,
+    input: ContractNegotiationRequest,
+  ): Promise<CreateResult> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/contractnegotiations",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: input,
+    });
+  }
+
+  async queryNegotiations(
+    context: EdcClientContext,
+    query: QuerySpec = {},
+  ): Promise<ContractNegotiation[]> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/contractnegotiations/request",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: query,
+    });
+  }
+
+  async getNegotiation(
+    context: EdcClientContext,
+    negotiationId: string,
+  ): Promise<ContractNegotiation> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractnegotiations/${negotiationId}`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async getNegotiationState(
+    context: EdcClientContext,
+    negotiationId: string,
+  ): Promise<ContractNegotiationState> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractnegotiations/${negotiationId}/state`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async cancelNegotiation(
+    context: EdcClientContext,
+    negotiationId: string,
+  ): Promise<void> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractnegotiations/${negotiationId}/cancel`,
+      method: "POST",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async declineNegotiation(
+    context: EdcClientContext,
+    negotiationId: string,
+  ): Promise<void> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractnegotiations/${negotiationId}/decline`,
+      method: "POST",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async getAgreementForNegotiation(
+    context: EdcClientContext,
+    negotiationId: string,
+  ): Promise<ContractNegotiation> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractnegotiations/${negotiationId}/agreement`,
+      method: "GET",
+      apiToken: context.apiToken,
     });
   }
 }
