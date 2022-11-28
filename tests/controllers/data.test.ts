@@ -3,9 +3,7 @@ import {
   Addresses,
   AssetInput,
   ContractDefinitionInput,
-  ContractOffer,
   EdcClient,
-  Policy,
   PolicyDefinitionInput,
 } from "../../src";
 import { EdcClientError, EdcClientErrorType } from "../../src/error";
