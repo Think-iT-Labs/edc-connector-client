@@ -1142,27 +1142,14 @@ describe("DataController", () => {
       const edcClient = new EdcClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
-        edcClient,
-        providerContext,
-        consumerContext,
-      );
-      await waitForNegotiationState(
-        edcClient,
-        consumerContext,
-        createResult.id,
-        "CONFIRMED",
-      );
-      const contractNegotiation = await edcClient.data.getNegotiation(
-        consumerContext,
-        createResult.id,
-      );
 
       // when
-      const contractAgreement = await edcClient.data.getAgreement(
-        consumerContext,
-        contractNegotiation.contractAgreementId as string,
-      );
+      const { contractNegotiation, contractAgreement } =
+        await createContractAgreement(
+          edcClient,
+          providerContext,
+          consumerContext,
+        );
 
       // then
       expect(contractAgreement).toHaveProperty(
