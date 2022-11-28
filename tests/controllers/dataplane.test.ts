@@ -6,7 +6,7 @@ describe("DataController", () => {
     default: "http://localhost:19191",
     validation: "http://localhost:19192",
     data: "http://localhost:19193",
-    ids: "http://localhost:19194",
+    ids: "http://consumer-connector:9194",
     dataplane: "http://localhost:19195",
     public: "http://localhost:19291",
     control: "http://localhost:19292",

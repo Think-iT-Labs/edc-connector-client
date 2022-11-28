@@ -8,23 +8,34 @@ import {
 } from "../../src";
 import { EdcClientError, EdcClientErrorType } from "../../src/error";
 
+jest.setTimeout(10000);
+
 describe("DataController", () => {
   const apiToken = "123456";
-  const addresses: Addresses = {
+  const consumer: Addresses = {
     default: "http://localhost:19191",
     validation: "http://localhost:19192",
     data: "http://localhost:19193",
-    ids: "http://localhost:19194",
+    ids: "http://consumer-connector:9194",
     dataplane: "http://localhost:19195",
     public: "http://localhost:19291",
     control: "http://localhost:19292",
+  };
+  const provider: Addresses = {
+    default: "http://localhost:29191",
+    validation: "http://localhost:29192",
+    data: "http://localhost:29193",
+    ids: "http://provider-connector:9194",
+    dataplane: "http://localhost:29195",
+    public: "http://localhost:29291",
+    control: "http://localhost:29292",
   };
 
   describe("edcClient.data.createAsset", () => {
     it("succesfully creates an asset", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
           properties: {
@@ -56,7 +67,7 @@ describe("DataController", () => {
     it("fails creating two assets with the same id", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
           properties: {
@@ -104,7 +115,7 @@ describe("DataController", () => {
     it("deletes a target asset", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
           properties: {
@@ -139,7 +150,7 @@ describe("DataController", () => {
     it("fails to delete an not existant asset", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybeAsset = edcClient.data.deleteAsset(
@@ -169,7 +180,7 @@ describe("DataController", () => {
     it("returns a target asset", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
           properties: {
@@ -208,7 +219,7 @@ describe("DataController", () => {
     it("fails to fetch an not existant asset", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybeAsset = edcClient.data.getAsset(
@@ -236,7 +247,7 @@ describe("DataController", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
           properties: {
@@ -278,7 +289,7 @@ describe("DataController", () => {
     it("succesfully creates a new policy", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         id: crypto.randomUUID(),
         policy: {},
@@ -298,7 +309,7 @@ describe("DataController", () => {
     it("fails creating two policies with the same id", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         id: crypto.randomUUID(),
         policy: {},
@@ -334,7 +345,7 @@ describe("DataController", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         id: crypto.randomUUID(),
         policy: {},
@@ -361,7 +372,7 @@ describe("DataController", () => {
     it("succesfully retuns a target policy", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         id: crypto.randomUUID(),
         policy: {},
@@ -384,7 +395,7 @@ describe("DataController", () => {
     it("fails to fetch an not existant policy", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybePolicy = edcClient.data.getPolicy(
@@ -412,7 +423,7 @@ describe("DataController", () => {
     it("deletes a target policy", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         id: crypto.randomUUID(),
         policy: {},
@@ -435,7 +446,7 @@ describe("DataController", () => {
     it("fails to delete an not existant policy", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybeAsset = edcClient.data.deletePolicy(
@@ -465,7 +476,7 @@ describe("DataController", () => {
     it("succesfully creates a new contract definition", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -487,7 +498,7 @@ describe("DataController", () => {
     it("fails creating two contract definitions with the same id", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -525,7 +536,7 @@ describe("DataController", () => {
     it("succesfully retuns a list of contract definitions", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -554,7 +565,7 @@ describe("DataController", () => {
     it("succesfully retuns a target contract definition", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -579,7 +590,7 @@ describe("DataController", () => {
     it("fails to fetch an not existant contract definition", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybePolicy = edcClient.data.getContractDefinition(
@@ -607,7 +618,7 @@ describe("DataController", () => {
     it("deletes a target contract definition", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -632,7 +643,7 @@ describe("DataController", () => {
     it("fails to delete an not existant contract definition", async () => {
       // given
       const edcClient = new EdcClient();
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybeContractDefinition = edcClient.data.deleteContractDefinition(
@@ -658,5 +669,96 @@ describe("DataController", () => {
     it.todo(
       "fails to delete a contract definition that is part of an agreed contract",
     );
+  });
+
+  describe("edcClient.data.requestCatalog", () => {
+    it("returns the catalog for a target provider", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const assetId = crypto.randomUUID();
+
+      edcClient.dataplane.registerDataplane(consumerContext, {
+        "edctype": "dataspaceconnector:dataplaneinstance",
+        "id": "consumer-dataplane",
+        "url": "http://consumer-connector:9292/control/transfer",
+        "allowedSourceTypes": ["HttpData"],
+        "allowedDestTypes": ["HttpProxy", "HttpData"],
+        "properties": {
+          "publicApiUrl": "http://consumer-connector:9291/public/",
+        },
+      });
+      edcClient.dataplane.registerDataplane(providerContext, {
+        "edctype": "dataspaceconnector:dataplaneinstance",
+        "id": "provider-dataplane",
+        "url": "http://provider-connector:9292/control/transfer",
+        "allowedSourceTypes": ["HttpData"],
+        "allowedDestTypes": ["HttpProxy", "HttpData"],
+        "properties": {
+          "publicApiUrl": "http://provider-connector:9291/public/",
+        },
+      });
+
+      const assetInput: AssetInput = {
+        asset: {
+          properties: {
+            "asset:prop:id": assetId,
+            "asset:prop:name": "product description",
+            "asset:prop:contenttype": "application/json",
+          },
+        },
+        dataAddress: {
+          properties: {
+            name: "Test asset",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+            type: "HttpData",
+          },
+        },
+      };
+      await edcClient.data.createAsset(providerContext, assetInput);
+
+      const policyId = crypto.randomUUID();
+      const policyInput: PolicyDefinitionInput = {
+        id: policyId,
+        policy: {
+          "uid": "231802-bb34-11ec-8422-0242ac120002",
+          "permissions": [
+            {
+              "target": assetId,
+              "action": {
+                "type": "USE",
+              },
+              "edctype": "dataspaceconnector:permission",
+            },
+          ],
+          "@type": {
+            "@policytype": "set",
+          },
+        },
+      };
+      await edcClient.data.createPolicy(providerContext, policyInput);
+
+      const contractDefinitionId = crypto.randomUUID();
+      const contractDefinitionInput: ContractDefinitionInput = {
+        id: contractDefinitionId,
+        accessPolicyId: policyId,
+        contractPolicyId: policyId,
+        criteria: [],
+      };
+      await edcClient.data.createContractDefinition(
+        providerContext,
+        contractDefinitionInput,
+      );
+
+      // when
+      const catalog = await edcClient.data.requestCatalog(consumerContext, {
+        providerUrl: `${provider.ids}/api/v1/ids/data`,
+      });
+
+      // then
+      expect(catalog).toHaveProperty("id", "default");
+      expect(catalog).toHaveProperty("contractOffers");
+    });
   });
 });

@@ -10,4 +10,5 @@ export interface Permission {
   uid?: string;
   constraints?: Constraint[];
   action?: Action;
+  edctype?: string;
 }
