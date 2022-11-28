@@ -1,7 +1,10 @@
 import { Criterion } from "./criterion";
 
+export * from "./action";
 export * from "./addresses";
 export * from "./asset";
+export * from "./constraint";
+export * from "./contract-definition";
 export * from "./criterion";
 export * from "./data-address";
 export * from "./dataplane";

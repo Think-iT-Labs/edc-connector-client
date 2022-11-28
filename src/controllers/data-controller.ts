@@ -2,6 +2,8 @@ import { EdcClientContext } from "../context";
 import {
   Asset,
   AssetInput,
+  ContractDefinition,
+  ContractDefinitionInput,
   CreateResult,
   PolicyDefinition,
   PolicyDefinitionInput,
@@ -95,6 +97,52 @@ export class DataController {
   ): Promise<PolicyDefinition[]> {
     return this.#inner.request(context.data, {
       path: "/api/v1/data/policydefinitions/request",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: query,
+    });
+  }
+
+  async createContractDefinition(
+    context: EdcClientContext,
+    input: ContractDefinitionInput,
+  ): Promise<CreateResult> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/contractdefinitions",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: input,
+    });
+  }
+
+  async deleteContractDefinition(
+    context: EdcClientContext,
+    contractDefinitionId: string,
+  ): Promise<void> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractdefinitions/${contractDefinitionId}`,
+      method: "DELETE",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async getContractDefinition(
+    context: EdcClientContext,
+    contractDefinitionId: string,
+  ): Promise<ContractDefinition> {
+    return this.#inner.request(context.data, {
+      path: `/api/v1/data/contractdefinitions/${contractDefinitionId}`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async queryAllContractDefinitions(
+    context: EdcClientContext,
+    query: QuerySpec = {},
+  ): Promise<ContractDefinition[]> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/contractdefinitions/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,
