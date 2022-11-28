@@ -576,13 +576,13 @@ describe("DataController", () => {
       expect(contractDefinition.id).toBe(createResult.id);
     });
 
-    it("fails to fetch an not existant policy", async () => {
+    it("fails to fetch an not existant contract definition", async () => {
       // given
       const edcClient = new EdcClient();
       const context = edcClient.createContext(apiToken, addresses);
 
       // when
-      const maybePolicy = edcClient.data.getPolicy(
+      const maybePolicy = edcClient.data.getContractDefinition(
         context,
         crypto.randomUUID(),
       );
@@ -629,7 +629,7 @@ describe("DataController", () => {
       expect(contractDefinition).toBeUndefined();
     });
 
-    it("fails to delete an not existant contractDefinition", async () => {
+    it("fails to delete an not existant contract definition", async () => {
       // given
       const edcClient = new EdcClient();
       const context = edcClient.createContext(apiToken, addresses);
