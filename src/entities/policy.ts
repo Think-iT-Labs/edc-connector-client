@@ -2,14 +2,16 @@ import { Duty } from "./duty";
 import { Permission } from "./permission";
 import { Prohibition } from "./prohibition";
 
-export enum PolicyType {
-  SET = "SET",
-  OFFER = "OFFER",
-  CONTRACT = "CONTRACT",
-}
+export type PolicyType =
+  | "set"
+  | "offer"
+  | "contract";
 
 export interface Policy {
-  "@type"?: PolicyType;
+  uid?: string;
+  "@type"?: {
+    "@policytype": PolicyType;
+  };
   assignee?: string;
   assigner?: string;
   extensibleProperties?: object;

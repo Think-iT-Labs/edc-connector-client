@@ -2,6 +2,8 @@ import { EdcClientContext } from "../context";
 import {
   Asset,
   AssetInput,
+  Catalog,
+  CatalogRequest,
   ContractDefinition,
   ContractDefinitionInput,
   CreateResult,
@@ -146,6 +148,18 @@ export class DataController {
       method: "POST",
       apiToken: context.apiToken,
       body: query,
+    });
+  }
+
+  async requestCatalog(
+    context: EdcClientContext,
+    input: CatalogRequest,
+  ): Promise<Catalog> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/catalog/request",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: input,
     });
   }
 }
