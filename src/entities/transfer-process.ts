@@ -34,3 +34,12 @@ export interface TransferType {
   contentType?: string;
   isFinite?: boolean;
 }
+
+export interface TransferProcessResponse {
+  id: string;
+  endpoint: string;
+  contractId: string;
+  authKey: string;
+  authCode: string;
+  properties?: Record<string, string>;
+}
