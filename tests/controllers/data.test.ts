@@ -1090,7 +1090,10 @@ describe("DataController", () => {
         );
 
       // then
-      expect(contractAgreement).toHaveProperty("assetId", assetId);
+      expect(contractAgreement).toHaveProperty(
+        "assetId",
+        `urn:artifact:${assetId}`,
+      );
     });
   });
 
