@@ -768,6 +768,14 @@ describe("DataController", () => {
   });
 
   describe("edcClient.data.initiateContractNegotiation", () => {
+    /**
+    TODO
+    Automated "decline" test case
+    - provider creates asset, ...
+    - when consumer starts needs to specify the whole policy
+    - if consumer changes the policy (e.g. remove permission)
+      - provider will decline
+    */
     it("kickstart a contract negotiation", async () => {
       // given
       const edcClient = new EdcClient();
@@ -1007,45 +1015,57 @@ describe("DataController", () => {
       const edcClient = new EdcClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      await createContractNegotiation(
+      const { assetId, createResult } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
       );
 
-      const providerNegotiations = await edcClient.data.queryNegotiations(
-        providerContext,
-      );
-
-      const providerNegotiation = providerNegotiations.find((negotiation) =>
-        !["CONFIRMED", "DECLINED"].includes(negotiation.state)
-      );
-
-      expect(providerNegotiation).toBeTruthy();
-
-      // when
-      const declinedNegotiation = await edcClient.data.declineNegotiation(
-        providerContext,
-        providerNegotiation!.id,
-      );
       await waitForNegotiationState(
         edcClient,
+        consumerContext,
+        createResult.id,
+        "CONFIRMED",
+      );
+
+      const [providerNegotiation] = await edcClient.data.queryNegotiations(
         providerContext,
-        providerNegotiation!.id,
+        {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        },
+      );
+
+      // when
+      await edcClient.data.declineNegotiation(
+        providerContext,
+        providerNegotiation.id,
+      );
+
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
         "DECLINED",
       );
-      const contractNegotiation = await edcClient.data.getNegotiationState(
-        providerContext,
-        providerNegotiation!.id,
+
+      const declinedProviderNegotiation = await edcClient.data.getNegotiation(
+        consumerContext,
+        createResult.id,
       );
 
       // then
-      expect(declinedNegotiation).toBeUndefined();
-      expect(contractNegotiation).toHaveProperty("state", "DECLINED");
+      expect(declinedProviderNegotiation).toHaveProperty("state", "DECLINED");
     });
   });
 
-  describe.skip("edcClient.data.getAgreementForNegotiation", () => {
+  // WORKS
+  describe("edcClient.data.getAgreementForNegotiation", () => {
     it("returns the a agreement for a target negotiation", async () => {
       // given
       const edcClient = new EdcClient();
@@ -1066,7 +1086,7 @@ describe("DataController", () => {
       // when
       const contractNegotiation = await edcClient.data
         .getAgreementForNegotiation(
-          providerContext,
+          consumerContext,
           createResult.id,
         );
 
