@@ -1,0 +1,31 @@
+import { EdcClientContext } from "../context";
+import { Asset, AssetInput, Catalog, CatalogRequest, ContractAgreement, ContractDefinition, ContractDefinitionInput, ContractNegotiation, ContractNegotiationRequest, ContractNegotiationState, CreateResult, PolicyDefinition, PolicyDefinitionInput, QuerySpec, TransferProcess, TransferProcessInput } from "../entities";
+import { Inner } from "../inner";
+export declare class DataController {
+    #private;
+    constructor(inner: Inner);
+    createAsset(context: EdcClientContext, input: AssetInput): Promise<CreateResult>;
+    deleteAsset(context: EdcClientContext, assetId: string): Promise<void>;
+    getAsset(context: EdcClientContext, assetId: string): Promise<Asset>;
+    listAssets(context: EdcClientContext): Promise<Asset[]>;
+    createPolicy(context: EdcClientContext, input: PolicyDefinitionInput): Promise<CreateResult>;
+    deletePolicy(context: EdcClientContext, policyId: string): Promise<void>;
+    getPolicy(context: EdcClientContext, policyId: string): Promise<PolicyDefinition>;
+    queryAllPolicies(context: EdcClientContext, query?: QuerySpec): Promise<PolicyDefinition[]>;
+    createContractDefinition(context: EdcClientContext, input: ContractDefinitionInput): Promise<CreateResult>;
+    deleteContractDefinition(context: EdcClientContext, contractDefinitionId: string): Promise<void>;
+    getContractDefinition(context: EdcClientContext, contractDefinitionId: string): Promise<ContractDefinition>;
+    queryAllContractDefinitions(context: EdcClientContext, query?: QuerySpec): Promise<ContractDefinition[]>;
+    requestCatalog(context: EdcClientContext, input: CatalogRequest): Promise<Catalog>;
+    initiateContractNegotiation(context: EdcClientContext, input: ContractNegotiationRequest): Promise<CreateResult>;
+    queryNegotiations(context: EdcClientContext, query?: QuerySpec): Promise<ContractNegotiation[]>;
+    getNegotiation(context: EdcClientContext, negotiationId: string): Promise<ContractNegotiation>;
+    getNegotiationState(context: EdcClientContext, negotiationId: string): Promise<ContractNegotiationState>;
+    cancelNegotiation(context: EdcClientContext, negotiationId: string): Promise<void>;
+    declineNegotiation(context: EdcClientContext, negotiationId: string): Promise<void>;
+    getAgreementForNegotiation(context: EdcClientContext, negotiationId: string): Promise<ContractAgreement>;
+    queryAllAgreements(context: EdcClientContext, query?: QuerySpec): Promise<ContractAgreement[]>;
+    getAgreement(context: EdcClientContext, agreementId: string): Promise<ContractAgreement>;
+    initiateTransfer(context: EdcClientContext, input: TransferProcessInput): Promise<CreateResult>;
+    queryAllTransferProcesses(context: EdcClientContext, query?: QuerySpec): Promise<TransferProcess[]>;
+}
