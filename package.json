@@ -3,8 +3,8 @@
   "version": "0.0.1-milestone-7.beta-1",
   "description": "Eclipse Dataspace Connector HTTP client",
   "private": false,
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "src/index.js",
+  "typings": "src/index.d.ts",
   "scripts": {
     "transpile": "tsc",
     "test": "jest"
