@@ -7,6 +7,8 @@ import {
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
+import { version } from "../package.json";
+
 export class EdcClient {
   readonly data: DataController;
   readonly dataplane: DataplaneController;
@@ -22,5 +24,9 @@ export class EdcClient {
 
   createContext(token: string, addresses: Addresses): EdcClientContext {
     return new EdcClientContext(token, addresses);
+  }
+
+  static version(): string {
+    return version;
   }
 }
