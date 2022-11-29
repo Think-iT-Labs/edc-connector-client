@@ -12,6 +12,7 @@ import {
   EdcClientContext,
   Policy,
   PolicyDefinitionInput,
+  TransferProcessResponse,
 } from "../src";
 
 interface ContractNegotiationMetadata {
@@ -199,7 +200,7 @@ export function createReceiverServer() {
   const emitter = new events.EventEmitter();
 
   const server = http.createServer(async (req, res) => {
-    const body = await new Promise<any>(
+    const body = await new Promise<TransferProcessResponse>(
       (resolve, reject) => {
         let chunks: any[] = [];
 
@@ -221,7 +222,7 @@ export function createReceiverServer() {
   });
 
   return {
-    waitForEvent(id: string): Promise<any> {
+    waitForEvent(id: string): Promise<TransferProcessResponse> {
       return new Promise((resolve) => {
         emitter.on(id, resolve);
       });

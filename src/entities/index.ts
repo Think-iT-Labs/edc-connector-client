@@ -17,6 +17,7 @@ export * from "./health";
 export * from "./permission";
 export * from "./policy";
 export * from "./prohibition";
+export * from "./transfer-process";
 
 export interface CreateResult {
   createdAt: number;

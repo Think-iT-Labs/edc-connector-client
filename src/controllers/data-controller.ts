@@ -14,6 +14,8 @@ import {
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
+  TransferProcess,
+  TransferProcessInput,
 } from "../entities";
 import { Inner } from "../inner";
 
@@ -266,6 +268,30 @@ export class DataController {
       path: `/api/v1/data/contractagreements/${agreementId}`,
       method: "GET",
       apiToken: context.apiToken,
+    });
+  }
+
+  async initiateTransfer(
+    context: EdcClientContext,
+    input: TransferProcessInput,
+  ): Promise<CreateResult> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/transferprocess",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: input,
+    });
+  }
+
+  async queryAllTransferProcesses(
+    context: EdcClientContext,
+    query: QuerySpec = {},
+  ): Promise<TransferProcess[]> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/transferprocess/request",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: query,
     });
   }
 }

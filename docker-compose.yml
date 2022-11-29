@@ -19,6 +19,8 @@ services:
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:
       - ./conf/consumer-connector.config:/config
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   provider-connector:
     image: ghcr.io/think-it-labs/edc-client/test-connector:latest
@@ -38,3 +40,5 @@ services:
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:
       - ./conf/provider-connector.config:/config
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
