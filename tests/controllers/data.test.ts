@@ -1064,14 +1064,13 @@ describe("DataController", () => {
     });
   });
 
-  // WORKS
   describe("edcClient.data.getAgreementForNegotiation", () => {
     it("returns the a agreement for a target negotiation", async () => {
       // given
       const edcClient = new EdcClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { assetId, createResult } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
@@ -1084,14 +1083,14 @@ describe("DataController", () => {
       );
 
       // when
-      const contractNegotiation = await edcClient.data
+      const contractAgreement = await edcClient.data
         .getAgreementForNegotiation(
           consumerContext,
           createResult.id,
         );
 
       // then
-      expect(contractNegotiation).toHaveProperty("state", "CONFIRMED");
+      expect(contractAgreement).toHaveProperty("assetId", assetId);
     });
   });
 

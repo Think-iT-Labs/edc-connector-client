@@ -238,7 +238,7 @@ export class DataController {
   async getAgreementForNegotiation(
     context: EdcClientContext,
     negotiationId: string,
-  ): Promise<ContractNegotiation> {
+  ): Promise<ContractAgreement> {
     return this.#inner.request(context.data, {
       path: `/api/v1/data/contractnegotiations/${negotiationId}/agreement`,
       method: "GET",
