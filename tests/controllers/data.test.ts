@@ -7,8 +7,13 @@ import {
   PolicyDefinitionInput,
 } from "../../src";
 import { EdcClientError, EdcClientErrorType } from "../../src/error";
+import {
+  createContractAgreement,
+  createContractNegotiation,
+  waitForNegotiationState,
+} from "../test-utils";
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 describe("DataController", () => {
   const apiToken = "123456";
@@ -759,6 +764,435 @@ describe("DataController", () => {
       // then
       expect(catalog).toHaveProperty("id", "default");
       expect(catalog).toHaveProperty("contractOffers");
+    });
+  });
+
+  describe("edcClient.data.initiateContractNegotiation", () => {
+    /**
+    TODO
+    Automated "decline" test case
+    - provider creates asset, ...
+    - when consumer starts needs to specify the whole policy
+    - if consumer changes the policy (e.g. remove permission)
+      - provider will decline
+    */
+    it("kickstart a contract negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+
+      // when
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // then
+      expect(createResult).toHaveProperty("id");
+      expect(createResult).toHaveProperty("createdAt");
+    });
+  });
+
+  describe("edcClient.data.queryNegotiations", () => {
+    it("retrieves all contract negotiations", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const contractNegotiations = await edcClient.data.queryNegotiations(
+        consumerContext,
+      );
+
+      // then
+      expect(contractNegotiations.length).toBeGreaterThan(0);
+      expect(
+        contractNegotiations.find((contractNegotiation) =>
+          contractNegotiation.id === createResult.id
+        ),
+      ).toBeTruthy();
+    });
+
+    it("filters negotiations on the provider side based on agreements' assed ID", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { assetId } = await createContractAgreement(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const [providerNegotiation] = await edcClient.data.queryNegotiations(
+        providerContext,
+        {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        },
+      );
+
+      // then
+      expect(providerNegotiation).toBeTruthy();
+    });
+  });
+
+  describe("edcClient.data.getNegotiation", () => {
+    it("retrieves target contract negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const contractNegotiation = await edcClient.data.getNegotiation(
+        consumerContext,
+        createResult.id,
+      );
+
+      // then
+      expect(contractNegotiation).toHaveProperty("id", createResult.id);
+    });
+
+    it("fails to fetch an not existant contract negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const context = edcClient.createContext(apiToken, consumer);
+
+      // when
+      const maybeAsset = edcClient.data.getNegotiation(
+        context,
+        crypto.randomUUID(),
+      );
+
+      // then
+      await expect(maybeAsset).rejects
+        .toThrowError(
+          "resource not found",
+        );
+
+      maybeAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcClientError);
+        expect(error as EdcClientError).toHaveProperty(
+          "type",
+          EdcClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
+  describe("edcClient.data.getNegotiationState", () => {
+    it("returns the state of a target negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const contractNegotiationState = await edcClient.data.getNegotiationState(
+        consumerContext,
+        createResult.id,
+      );
+
+      // then
+      expect(contractNegotiationState).toHaveProperty("state");
+    });
+
+    it("fails to fetch an not existant contract negotiation's state", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const context = edcClient.createContext(apiToken, consumer);
+
+      // when
+      const maybeAsset = edcClient.data.getNegotiationState(
+        context,
+        crypto.randomUUID(),
+      );
+
+      // then
+      await expect(maybeAsset).rejects
+        .toThrowError(
+          "resource not found",
+        );
+
+      maybeAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcClientError);
+        expect(error as EdcClientError).toHaveProperty(
+          "type",
+          EdcClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
+  describe("edcClient.data.cancelNegotiation", () => {
+    it("cancel the a requested target negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const cancelledNegotiation = await edcClient.data.cancelNegotiation(
+        consumerContext,
+        createResult.id,
+      );
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "ERROR",
+      );
+      const contractNegotiation = await edcClient.data.getNegotiationState(
+        consumerContext,
+        createResult.id,
+      );
+
+      // then
+      expect(cancelledNegotiation).toBeUndefined();
+      expect(contractNegotiation).toHaveProperty("state", "ERROR");
+    });
+
+    it("fails to cancel an not existant contract negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const context = edcClient.createContext(apiToken, consumer);
+
+      // when
+      const maybeAsset = edcClient.data.cancelNegotiation(
+        context,
+        crypto.randomUUID(),
+      );
+
+      // then
+      await expect(maybeAsset).rejects
+        .toThrowError(
+          "resource not found",
+        );
+
+      maybeAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcClientError);
+        expect(error as EdcClientError).toHaveProperty(
+          "type",
+          EdcClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
+  describe.skip("edcClient.data.declineNegotiation", () => {
+    it("declines the a requested target negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { assetId, createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "CONFIRMED",
+      );
+
+      const [providerNegotiation] = await edcClient.data.queryNegotiations(
+        providerContext,
+        {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        },
+      );
+
+      // when
+      await edcClient.data.declineNegotiation(
+        providerContext,
+        providerNegotiation.id,
+      );
+
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "DECLINED",
+      );
+
+      const declinedProviderNegotiation = await edcClient.data.getNegotiation(
+        consumerContext,
+        createResult.id,
+      );
+
+      // then
+      expect(declinedProviderNegotiation).toHaveProperty("state", "DECLINED");
+    });
+  });
+
+  describe("edcClient.data.getAgreementForNegotiation", () => {
+    it("returns the a agreement for a target negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { assetId, createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "CONFIRMED",
+      );
+
+      // when
+      const contractAgreement = await edcClient.data
+        .getAgreementForNegotiation(
+          consumerContext,
+          createResult.id,
+        );
+
+      // then
+      expect(contractAgreement).toHaveProperty(
+        "assetId",
+        `urn:artifact:${assetId}`,
+      );
+    });
+  });
+
+  describe("edcClient.data.queryAllAgreements", () => {
+    it("retrieves all contract agreements", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "CONFIRMED",
+      );
+      const contractNegotiation = await edcClient.data.getNegotiation(
+        consumerContext,
+        createResult.id,
+      );
+
+      // when
+      const contractAgreements = await edcClient.data.queryAllAgreements(
+        consumerContext,
+      );
+
+      // then
+      expect(contractAgreements.length).toBeGreaterThan(0);
+      expect(
+        contractAgreements.find((contractAgreement) =>
+          contractAgreement.id === contractNegotiation.contractAgreementId
+        ),
+      ).toBeTruthy();
+    });
+  });
+
+  describe("edcClient.data.getAgreement", () => {
+    it("retrieves target contract agreement", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { createResult } = await createContractNegotiation(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+      await waitForNegotiationState(
+        edcClient,
+        consumerContext,
+        createResult.id,
+        "CONFIRMED",
+      );
+      const contractNegotiation = await edcClient.data.getNegotiation(
+        consumerContext,
+        createResult.id,
+      );
+
+      // when
+      const contractAgreement = await edcClient.data.getAgreement(
+        consumerContext,
+        contractNegotiation.contractAgreementId as string,
+      );
+
+      // then
+      expect(contractAgreement).toHaveProperty(
+        "id",
+        contractNegotiation.contractAgreementId,
+      );
+    });
+
+    it("fails to fetch an not existant contract negotiation", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const context = edcClient.createContext(apiToken, consumer);
+
+      // when
+      const maybeAsset = edcClient.data.getAgreement(
+        context,
+        crypto.randomUUID(),
+      );
+
+      // then
+      await expect(maybeAsset).rejects
+        .toThrowError(
+          "resource not found",
+        );
+
+      maybeAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcClientError);
+        expect(error as EdcClientError).toHaveProperty(
+          "type",
+          EdcClientErrorType.NotFound,
+        );
+      });
     });
   });
 });

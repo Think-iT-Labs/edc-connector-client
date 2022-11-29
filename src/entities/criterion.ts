@@ -1,5 +1,5 @@
 export interface Criterion {
-  operandLeft: object;
-  operandRight?: object;
+  operandLeft: string;
+  operandRight?: string;
   operator: string;
 }
