@@ -1,13 +1,18 @@
 import * as crypto from "node:crypto";
+import * as events from "node:events";
+import * as http from "node:http";
 import {
   AssetInput,
+  ContractAgreement,
   ContractDefinitionInput,
+  ContractNegotiation,
   ContractOffer,
   CreateResult,
   EdcClient,
   EdcClientContext,
   Policy,
   PolicyDefinitionInput,
+  TransferProcessResponse,
 } from "../src";
 
 interface ContractNegotiationMetadata {
@@ -15,6 +20,47 @@ interface ContractNegotiationMetadata {
   policyId: string;
   contractDefinitionId: string;
   createResult: CreateResult;
+}
+
+interface ContractAgreementMetadata {
+  assetId: string;
+  policyId: string;
+  contractDefinitionId: string;
+  contractNegotiation: ContractNegotiation;
+  contractAgreement: ContractAgreement;
+}
+
+export async function createContractAgreement(
+  client: EdcClient,
+  providerContext: EdcClientContext,
+  consumerContext: EdcClientContext,
+): Promise<ContractAgreementMetadata> {
+  const { createResult, ...rest } = await createContractNegotiation(
+    client,
+    providerContext,
+    consumerContext,
+  );
+
+  await waitForNegotiationState(
+    client,
+    consumerContext,
+    createResult.id,
+    "CONFIRMED",
+  );
+
+  const contractNegotiation = await client.data.getNegotiation(
+    consumerContext,
+    createResult.id,
+  );
+
+  return {
+    ...rest,
+    contractNegotiation,
+    contractAgreement: await client.data.getAgreement(
+      consumerContext,
+      contractNegotiation.contractAgreementId as string,
+    ),
+  };
 }
 
 export async function createContractNegotiation(
@@ -126,5 +172,78 @@ export async function createContractNegotiation(
     policyId,
     contractDefinitionId,
     createResult,
+  };
+}
+
+export async function waitForNegotiationState(
+  client: EdcClient,
+  context: EdcClientContext,
+  negotiationId: string,
+  targetState: string,
+  interval = 500,
+): Promise<void> {
+  let waiting = true;
+
+  do {
+    await new Promise((resolve) => setTimeout(resolve, interval));
+
+    const { state } = await client.data.getNegotiationState(
+      context,
+      negotiationId,
+    );
+
+    waiting = state !== targetState;
+  } while (waiting);
+}
+
+export function createReceiverServer() {
+  const emitter = new events.EventEmitter();
+
+  const server = http.createServer(async (req, res) => {
+    const body = await new Promise<TransferProcessResponse>(
+      (resolve, reject) => {
+        let chunks: any[] = [];
+
+        req
+          .on("data", (chunk) => chunks.push(chunk))
+          .on("error", (error) => reject(error))
+          .on("end", () => {
+            resolve(JSON.parse(Buffer.concat(chunks).toString()));
+          });
+      },
+    );
+
+    if (body.properties?.cid) {
+      emitter.emit(body.properties.cid, body);
+    }
+
+    res.statusCode = 204;
+    res.end();
+  });
+
+  return {
+    waitForEvent(id: string): Promise<TransferProcessResponse> {
+      return new Promise((resolve) => {
+        emitter.on(id, resolve);
+      });
+    },
+    listen(): Promise<void> {
+      return new Promise((resolve) => {
+        server.listen(19999, resolve);
+      });
+    },
+    shutdown(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        if (server.listening) {
+          server.close((error) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve();
+            }
+          });
+        }
+      });
+    },
   };
 }

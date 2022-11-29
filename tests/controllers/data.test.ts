@@ -7,8 +7,11 @@ import {
   PolicyDefinitionInput,
 } from "../../src";
 import { EdcClientError, EdcClientErrorType } from "../../src/error";
-import { createContractNegotiation } from "../crate-contract-negotiation";
-import { waitForNegotiationState } from "../wait-for-negotiation-state";
+import {
+  createContractAgreement,
+  createContractNegotiation,
+  waitForNegotiationState,
+} from "../test-utils";
 
 jest.setTimeout(20000);
 
@@ -808,6 +811,35 @@ describe("DataController", () => {
           contractNegotiation.id === createResult.id
         ),
       ).toBeTruthy();
+    });
+
+    it("filters negotiations on the provider side based on agreements' assed ID", async () => {
+      // given
+      const edcClient = new EdcClient();
+      const consumerContext = edcClient.createContext(apiToken, consumer);
+      const providerContext = edcClient.createContext(apiToken, provider);
+      const { assetId } = await createContractAgreement(
+        edcClient,
+        providerContext,
+        consumerContext,
+      );
+
+      // when
+      const [providerNegotiation] = await edcClient.data.queryNegotiations(
+        providerContext,
+        {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        },
+      );
+
+      // then
+      expect(providerNegotiation).toBeTruthy();
     });
   });
 
