@@ -4,7 +4,7 @@ import { Prohibition } from "./prohibition";
 export declare type PolicyType = "set" | "offer" | "contract";
 export interface Policy {
     uid?: string;
-    "@type"?: {
+    "@type": {
         "@policytype": PolicyType;
     };
     assignee?: string;
