@@ -9,7 +9,7 @@ export type PolicyType =
 
 export interface Policy {
   uid?: string;
-  "@type"?: {
+  "@type": {
     "@policytype": PolicyType;
   };
   assignee?: string;
