@@ -6,6 +6,7 @@ interface InnerRequest {
   query?: Record<string, string>;
   body?: unknown;
   apiToken?: string;
+  headers?: Record<string, string>;
 }
 
 export class Inner {
@@ -22,6 +23,7 @@ export class Inner {
     const request = new Request(url, {
       method,
       headers: {
+        ...innerRequest.headers,
         "X-Api-Key": innerRequest.apiToken ?? "",
         "Content-Type": "application/json",
       },
