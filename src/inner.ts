@@ -62,6 +62,17 @@ export class Inner {
 
           throw error;
         }
+        case 403: {
+          const error = new EdcClientError(
+            EdcClientErrorType.Unauthorized,
+            "you're not authorized to access this resource",
+          );
+
+          error.body = await response.json();
+
+          throw error;
+        }
+
         default: {
           throw new EdcClientError(
             EdcClientErrorType.Unknown,
