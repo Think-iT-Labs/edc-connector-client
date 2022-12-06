@@ -1,4 +1,4 @@
-import { EdcClientError, EdcClientErrorType } from "./error";
+import { EdcConnectorClientError, EdcConnectorClientErrorType } from "./error";
 
 interface InnerRequest {
   path: string;
@@ -41,8 +41,8 @@ export class Inner {
 
       switch (response.status) {
         case 404: {
-          const error = new EdcClientError(
-            EdcClientErrorType.NotFound,
+          const error = new EdcConnectorClientError(
+            EdcConnectorClientErrorType.NotFound,
             "resource not found",
           );
 
@@ -51,8 +51,8 @@ export class Inner {
           throw error;
         }
         case 409: {
-          const error = new EdcClientError(
-            EdcClientErrorType.Duplicate,
+          const error = new EdcConnectorClientError(
+            EdcConnectorClientErrorType.Duplicate,
             "duplicated resource",
           );
 
@@ -61,16 +61,16 @@ export class Inner {
           throw error;
         }
         default: {
-          throw new EdcClientError(
-            EdcClientErrorType.Unknown,
+          throw new EdcConnectorClientError(
+            EdcConnectorClientErrorType.Unknown,
             await response.text(),
           );
         }
       }
     } catch (error) {
-      if (!(error instanceof EdcClientError)) {
-        error = new EdcClientError(
-          EdcClientErrorType.Unknown,
+      if (!(error instanceof EdcConnectorClientError)) {
+        error = new EdcConnectorClientError(
+          EdcConnectorClientErrorType.Unknown,
           "something went wrong",
           { cause: error as Error },
         );

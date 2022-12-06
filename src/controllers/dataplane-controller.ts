@@ -1,5 +1,5 @@
 import { Dataplane, DataplaneInput } from "../entities";
-import { EdcClientContext } from "../context";
+import { EdcConnectorClientContext } from "../context";
 import { Inner } from "../inner";
 
 export class DataplaneController {
@@ -10,7 +10,7 @@ export class DataplaneController {
   }
 
   async registerDataplane(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: DataplaneInput,
   ): Promise<void> {
     return this.#inner.request(context.dataplane, {
@@ -22,7 +22,7 @@ export class DataplaneController {
   }
 
   async listDataplanes(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
   ): Promise<Dataplane[]> {
     return this.#inner.request(context.dataplane, {
       path: "/dataplane/instances",

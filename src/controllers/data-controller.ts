@@ -1,4 +1,4 @@
-import { EdcClientContext } from "../context";
+import { EdcConnectorClientContext } from "../context";
 import {
   Asset,
   AssetInput,
@@ -27,7 +27,7 @@ export class DataController {
   }
 
   async createAsset(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: AssetInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
@@ -39,7 +39,7 @@ export class DataController {
   }
 
   async deleteAsset(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     assetId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
@@ -49,7 +49,10 @@ export class DataController {
     });
   }
 
-  async getAsset(context: EdcClientContext, assetId: string): Promise<Asset> {
+  async getAsset(
+    context: EdcConnectorClientContext,
+    assetId: string,
+  ): Promise<Asset> {
     return this.#inner.request(context.data, {
       path: `/api/v1/data/assets/${assetId}`,
       method: "GET",
@@ -57,7 +60,7 @@ export class DataController {
     });
   }
 
-  async listAssets(context: EdcClientContext): Promise<Asset[]> {
+  async listAssets(context: EdcConnectorClientContext): Promise<Asset[]> {
     return this.#inner.request(context.data, {
       path: "/api/v1/data/assets",
       method: "GET",
@@ -66,7 +69,7 @@ export class DataController {
   }
 
   async createPolicy(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: PolicyDefinitionInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
@@ -78,7 +81,7 @@ export class DataController {
   }
 
   async deletePolicy(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     policyId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
@@ -89,7 +92,7 @@ export class DataController {
   }
 
   async getPolicy(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     policyId: string,
   ): Promise<PolicyDefinition> {
     return this.#inner.request(context.data, {
@@ -100,7 +103,7 @@ export class DataController {
   }
 
   async queryAllPolicies(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<PolicyDefinition[]> {
     return this.#inner.request(context.data, {
@@ -112,7 +115,7 @@ export class DataController {
   }
 
   async createContractDefinition(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: ContractDefinitionInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
@@ -124,7 +127,7 @@ export class DataController {
   }
 
   async deleteContractDefinition(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     contractDefinitionId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
@@ -135,7 +138,7 @@ export class DataController {
   }
 
   async getContractDefinition(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     contractDefinitionId: string,
   ): Promise<ContractDefinition> {
     return this.#inner.request(context.data, {
@@ -146,7 +149,7 @@ export class DataController {
   }
 
   async queryAllContractDefinitions(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractDefinition[]> {
     return this.#inner.request(context.data, {
@@ -158,7 +161,7 @@ export class DataController {
   }
 
   async requestCatalog(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: CatalogRequest,
   ): Promise<Catalog> {
     return this.#inner.request(context.data, {
@@ -170,7 +173,7 @@ export class DataController {
   }
 
   async initiateContractNegotiation(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: ContractNegotiationRequest,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
@@ -182,7 +185,7 @@ export class DataController {
   }
 
   async queryNegotiations(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractNegotiation[]> {
     return this.#inner.request(context.data, {
@@ -194,7 +197,7 @@ export class DataController {
   }
 
   async getNegotiation(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractNegotiation> {
     return this.#inner.request(context.data, {
@@ -205,7 +208,7 @@ export class DataController {
   }
 
   async getNegotiationState(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractNegotiationState> {
     return this.#inner.request(context.data, {
@@ -216,7 +219,7 @@ export class DataController {
   }
 
   async cancelNegotiation(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
@@ -227,7 +230,7 @@ export class DataController {
   }
 
   async declineNegotiation(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
@@ -238,7 +241,7 @@ export class DataController {
   }
 
   async getAgreementForNegotiation(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractAgreement> {
     return this.#inner.request(context.data, {
@@ -249,7 +252,7 @@ export class DataController {
   }
 
   async queryAllAgreements(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractAgreement[]> {
     return this.#inner.request(context.data, {
@@ -261,7 +264,7 @@ export class DataController {
   }
 
   async getAgreement(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     agreementId: string,
   ): Promise<ContractAgreement> {
     return this.#inner.request(context.data, {
@@ -272,7 +275,7 @@ export class DataController {
   }
 
   async initiateTransfer(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     input: TransferProcessInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
@@ -284,7 +287,7 @@ export class DataController {
   }
 
   async queryAllTransferProcesses(
-    context: EdcClientContext,
+    context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<TransferProcess[]> {
     return this.#inner.request(context.data, {

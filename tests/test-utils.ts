@@ -8,8 +8,8 @@ import {
   ContractNegotiation,
   ContractOffer,
   CreateResult,
-  EdcClient,
-  EdcClientContext,
+  EdcConnectorClient,
+  EdcConnectorClientContext,
   Policy,
   PolicyDefinitionInput,
   TransferProcessResponse,
@@ -31,9 +31,9 @@ interface ContractAgreementMetadata {
 }
 
 export async function createContractAgreement(
-  client: EdcClient,
-  providerContext: EdcClientContext,
-  consumerContext: EdcClientContext,
+  client: EdcConnectorClient,
+  providerContext: EdcConnectorClientContext,
+  consumerContext: EdcConnectorClientContext,
 ): Promise<ContractAgreementMetadata> {
   const { createResult, ...rest } = await createContractNegotiation(
     client,
@@ -64,9 +64,9 @@ export async function createContractAgreement(
 }
 
 export async function createContractNegotiation(
-  client: EdcClient,
-  providerContext: EdcClientContext,
-  consumerContext: EdcClientContext,
+  client: EdcConnectorClient,
+  providerContext: EdcConnectorClientContext,
+  consumerContext: EdcConnectorClientContext,
 ): Promise<ContractNegotiationMetadata> {
   // Register dataplanes
   client.dataplane.registerDataplane(providerContext, {
@@ -176,8 +176,8 @@ export async function createContractNegotiation(
 }
 
 export async function waitForNegotiationState(
-  client: EdcClient,
-  context: EdcClientContext,
+  client: EdcConnectorClient,
+  context: EdcConnectorClientContext,
   negotiationId: string,
   targetState: string,
   interval = 500,
