@@ -1,4 +1,4 @@
-import { Addresses, EdcClient } from "../../src";
+import { Addresses, EdcConnectorClient } from "../../src";
 
 describe("DataController", () => {
   const apiToken = "123456";
@@ -15,7 +15,7 @@ describe("DataController", () => {
   describe("edcClient.dataplane.registerDataplane", () => {
     it("succesfully register a dataplane", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
       const dataplaneInput = {
         "edctype": "dataspaceconnector:dataplaneinstance",
@@ -42,7 +42,7 @@ describe("DataController", () => {
   describe("edcClient.dataplane.listDataplanes", () => {
     it("succesfully list available dataplanes", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
       const dataplaneInput = {
         "edctype": "dataspaceconnector:dataplaneinstance",

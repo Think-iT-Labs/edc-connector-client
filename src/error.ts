@@ -1,12 +1,13 @@
 import { TypedError } from "@think-it-labs/typed-error";
 import { ApiErrorDetail } from "./entities";
 
-export enum EdcClientErrorType {
+export enum EdcConnectorClientErrorType {
   Unknown = "Unknown",
   Duplicate = "Duplicate",
   NotFound = "NotFound",
 }
 
-export class EdcClientError extends TypedError<EdcClientErrorType> {
+export class EdcConnectorClientError
+  extends TypedError<EdcConnectorClientErrorType> {
   body?: ApiErrorDetail[];
 }

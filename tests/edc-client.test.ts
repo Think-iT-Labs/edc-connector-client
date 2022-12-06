@@ -1,22 +1,22 @@
-import { EdcClient, EdcClientContext } from "../src";
+import { EdcConnectorClient, EdcConnectorClientContext } from "../src";
 import { Addresses } from "../src";
 
-describe("EdcClient", () => {
+describe("EdcConnectorClient", () => {
   it("instantiate a new class", async () => {
     // given
-    const edcClient = new EdcClient();
+    const edcClient = new EdcConnectorClient();
 
     // then
-    expect(edcClient).toBeInstanceOf(EdcClient);
+    expect(edcClient).toBeInstanceOf(EdcConnectorClient);
     expect(edcClient).toHaveProperty("data");
     expect(edcClient).toHaveProperty("dataplane");
     expect(edcClient).toHaveProperty("observability");
   });
 
   describe("edcClient.createContext", () => {
-    it("creates a new EdcClientContext", async () => {
+    it("creates a new EdcConnectorClientContext", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const apiToken = "123456";
       const addresses: Addresses = {
         default: "http://localhost:19191",
@@ -32,7 +32,7 @@ describe("EdcClient", () => {
       const context = edcClient.createContext(apiToken, addresses);
 
       // then
-      expect(context).toBeInstanceOf(EdcClientContext);
+      expect(context).toBeInstanceOf(EdcConnectorClientContext);
       expect(context.apiToken).toBe(apiToken);
       expect(context.default).toBe(addresses.default);
       expect(context.validation).toBe(addresses.validation);
