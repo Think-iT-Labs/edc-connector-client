@@ -6,6 +6,7 @@ export enum EdcClientErrorType {
   Duplicate = "Duplicate",
   NotFound = "NotFound",
   Unauthorized = "Unauthorized",
+  Unreachable = "Unreachable",
 }
 
 export class EdcClientError extends TypedError<EdcClientErrorType> {

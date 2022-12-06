@@ -37,16 +37,6 @@ describe("DataController", () => {
     control: "http://localhost:29292",
   };
 
-  const receiverServer = createReceiverServer();
-
-  beforeAll(async () => {
-    await receiverServer.listen();
-  });
-
-  afterAll(async () => {
-    await receiverServer.shutdown();
-  });
-
   describe("edcClient.data.createAsset", () => {
     it("succesfully creates an asset", async () => {
       // given
@@ -1196,85 +1186,98 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.initiateTransfer", () => {
-    it("initiate the transfer process", async () => {
-      // given
-      const edcClient = new EdcClient();
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
-      const { assetId, contractAgreement } = await createContractAgreement(
-        edcClient,
-        providerContext,
-        consumerContext,
-      );
+  describe("with receiver server", () => {
+    const receiverServer = createReceiverServer();
 
-      const receiverCallback = receiverServer.waitForEvent(
-        contractAgreement.id,
-      );
-
-      // when
-      const createResult = await edcClient.data.initiateTransfer(
-        consumerContext,
-        {
-          assetId,
-          "connectorId": "provider",
-          "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
-          "contractId": contractAgreement.id,
-          "managedResources": false,
-          "dataDestination": { "type": "HttpProxy" },
-        },
-      );
-
-      await receiverCallback;
-
-      // then
-      expect(createResult).toHaveProperty("createdAt");
-      expect(createResult).toHaveProperty("id");
+    beforeAll(async () => {
+      await receiverServer.listen();
     });
-  });
 
-  describe("edcClient.data.queryAllTransferProcesses", () => {
-    it("retrieves all tranfer processes", async () => {
-      // given
-      const edcClient = new EdcClient();
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
-      const { assetId, contractAgreement } = await createContractAgreement(
-        edcClient,
-        providerContext,
-        consumerContext,
-      );
+    afterAll(async () => {
+      await receiverServer.shutdown();
+    });
 
-      const receiverCallback = receiverServer.waitForEvent(
-        contractAgreement.id,
-      );
+    describe("edcClient.data.initiateTransfer", () => {
+      it("initiate the transfer process", async () => {
+        // given
+        const edcClient = new EdcClient();
+        const consumerContext = edcClient.createContext(apiToken, consumer);
+        const providerContext = edcClient.createContext(apiToken, provider);
+        const { assetId, contractAgreement } = await createContractAgreement(
+          edcClient,
+          providerContext,
+          consumerContext,
+        );
 
-      const createResult = await edcClient.data.initiateTransfer(
-        consumerContext,
-        {
-          assetId,
-          "connectorId": "provider",
-          "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
-          "contractId": contractAgreement.id,
-          "managedResources": false,
-          "dataDestination": { "type": "HttpProxy" },
-        },
-      );
+        const receiverCallback = receiverServer.waitForEvent(
+          contractAgreement.id,
+        );
 
-      await receiverCallback;
+        // when
+        const createResult = await edcClient.data.initiateTransfer(
+          consumerContext,
+          {
+            assetId,
+            "connectorId": "provider",
+            "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
+            "contractId": contractAgreement.id,
+            "managedResources": false,
+            "dataDestination": { "type": "HttpProxy" },
+          },
+        );
 
-      // when
-      const transferProcesses = await edcClient.data.queryAllTransferProcesses(
-        consumerContext,
-      );
+        await receiverCallback;
 
-      // then
-      expect(transferProcesses.length).toBeGreaterThan(0);
-      expect(
-        transferProcesses.find((transferProcess) =>
-          createResult.id === transferProcess.id
-        ),
-      ).toBeTruthy();
+        // then
+        expect(createResult).toHaveProperty("createdAt");
+        expect(createResult).toHaveProperty("id");
+      });
+    });
+
+    describe("edcClient.data.queryAllTransferProcesses", () => {
+      it("retrieves all tranfer processes", async () => {
+        // given
+        const edcClient = new EdcClient();
+        const consumerContext = edcClient.createContext(apiToken, consumer);
+        const providerContext = edcClient.createContext(apiToken, provider);
+        const { assetId, contractAgreement } = await createContractAgreement(
+          edcClient,
+          providerContext,
+          consumerContext,
+        );
+
+        const receiverCallback = receiverServer.waitForEvent(
+          contractAgreement.id,
+        );
+
+        const createResult = await edcClient.data.initiateTransfer(
+          consumerContext,
+          {
+            assetId,
+            "connectorId": "provider",
+            "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
+            "contractId": contractAgreement.id,
+            "managedResources": false,
+            "dataDestination": { "type": "HttpProxy" },
+          },
+        );
+
+        await receiverCallback;
+
+        // when
+        const transferProcesses = await edcClient.data
+          .queryAllTransferProcesses(
+            consumerContext,
+          );
+
+        // then
+        expect(transferProcesses.length).toBeGreaterThan(0);
+        expect(
+          transferProcesses.find((transferProcess) =>
+            createResult.id === transferProcess.id
+          ),
+        ).toBeTruthy();
+      });
     });
   });
 });

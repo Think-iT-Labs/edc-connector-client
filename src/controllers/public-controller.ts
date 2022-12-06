@@ -10,13 +10,12 @@ export class PublicController {
 
   async getTranferedData(
     context: EdcClientContext,
-    headers: Record<string, string>,
-  ): Promise<any> {
-    return this.#inner.request(context.public, {
+    headers: Record<string, string | undefined>,
+  ): Promise<ReadableStream<Uint8Array>> {
+    return this.#inner.stream(context.public, {
       path: "/public",
       method: "GET",
-      apiToken: context.apiToken,
-      headers: headers,
+      headers,
     });
   }
 }

@@ -6,11 +6,45 @@ interface InnerRequest {
   query?: Record<string, string>;
   body?: unknown;
   apiToken?: string;
-  headers?: Record<string, string>;
+  headers?: Record<string, string | undefined>;
+}
+
+interface InnerStream extends InnerRequest {
+  body?: undefined;
+  apiToken?: undefined;
 }
 
 export class Inner {
   async request<T>(baseUrl: string, innerRequest: InnerRequest): Promise<T> {
+    innerRequest.headers = innerRequest.headers || {};
+    innerRequest.headers["Content-type"] = "application/json";
+
+    const response = await this.#fetch(baseUrl, innerRequest);
+
+    if (response.status === 204) {
+      return undefined as any as T;
+    }
+
+    return response.json();
+  }
+
+  async stream(
+    baseUrl: string,
+    innerRequest: InnerStream,
+  ): Promise<ReadableStream<Uint8Array>> {
+    const response = await this.#fetch(baseUrl, innerRequest);
+
+    if (response.status === 204 || !response.body) {
+      throw new EdcClientError(
+        EdcClientErrorType.Unreachable,
+        "response is never empty",
+      );
+    }
+
+    return response.body;
+  }
+
+  async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {
     const url = new URL(innerRequest.path, baseUrl);
 
     if (innerRequest.query) {
@@ -25,7 +59,6 @@ export class Inner {
       headers: {
         ...innerRequest.headers,
         "X-Api-Key": innerRequest.apiToken ?? "",
-        "Content-Type": "application/json",
       },
       body: innerRequest.body ? JSON.stringify(innerRequest.body) : undefined,
     });
@@ -34,11 +67,7 @@ export class Inner {
       const response = await fetch(request);
 
       if (response.ok) {
-        if (response.status === 204) {
-          return undefined as any as T;
-        }
-
-        return response.json();
+        return response;
       }
 
       switch (response.status) {
