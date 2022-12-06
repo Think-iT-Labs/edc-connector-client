@@ -10,41 +10,41 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _EdcClientContext_apiToken, _EdcClientContext_addresses;
+var _EdcConnectorClientContext_apiToken, _EdcConnectorClientContext_addresses;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EdcClientContext = void 0;
-class EdcClientContext {
+exports.EdcConnectorClientContext = void 0;
+class EdcConnectorClientContext {
     constructor(apiToken, addresses) {
-        _EdcClientContext_apiToken.set(this, void 0);
-        _EdcClientContext_addresses.set(this, void 0);
-        __classPrivateFieldSet(this, _EdcClientContext_apiToken, apiToken, "f");
-        __classPrivateFieldSet(this, _EdcClientContext_addresses, addresses, "f");
+        _EdcConnectorClientContext_apiToken.set(this, void 0);
+        _EdcConnectorClientContext_addresses.set(this, void 0);
+        __classPrivateFieldSet(this, _EdcConnectorClientContext_apiToken, apiToken, "f");
+        __classPrivateFieldSet(this, _EdcConnectorClientContext_addresses, addresses, "f");
     }
     get default() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").default;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").default;
     }
     get validation() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").validation;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").validation;
     }
     get ids() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").ids;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").ids;
     }
     get data() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").data;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").data;
     }
     get control() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").control;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").control;
     }
     get dataplane() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").dataplane;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").dataplane;
     }
     get public() {
-        return __classPrivateFieldGet(this, _EdcClientContext_addresses, "f").public;
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_addresses, "f").public;
     }
     get apiToken() {
-        return __classPrivateFieldGet(this, _EdcClientContext_apiToken, "f");
+        return __classPrivateFieldGet(this, _EdcConnectorClientContext_apiToken, "f");
     }
 }
-exports.EdcClientContext = EdcClientContext;
-_EdcClientContext_apiToken = new WeakMap(), _EdcClientContext_addresses = new WeakMap();
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udGV4dC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb250ZXh0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7OztBQUVBLE1BQWEsZ0JBQWdCO0lBSTNCLFlBQVksUUFBZ0IsRUFBRSxTQUFvQjtRQUhsRCw2Q0FBa0I7UUFDbEIsOENBQXNCO1FBR3BCLHVCQUFBLElBQUksOEJBQWEsUUFBUSxNQUFBLENBQUM7UUFDMUIsdUJBQUEsSUFBSSwrQkFBYyxTQUFTLE1BQUEsQ0FBQztJQUM5QixDQUFDO0lBRUQsSUFBSSxPQUFPO1FBQ1QsT0FBTyx1QkFBQSxJQUFJLG1DQUFXLENBQUMsT0FBTyxDQUFDO0lBQ2pDLENBQUM7SUFFRCxJQUFJLFVBQVU7UUFDWixPQUFPLHVCQUFBLElBQUksbUNBQVcsQ0FBQyxVQUFVLENBQUM7SUFDcEMsQ0FBQztJQUVELElBQUksR0FBRztRQUNMLE9BQU8sdUJBQUEsSUFBSSxtQ0FBVyxDQUFDLEdBQUcsQ0FBQztJQUM3QixDQUFDO0lBRUQsSUFBSSxJQUFJO1FBQ04sT0FBTyx1QkFBQSxJQUFJLG1DQUFXLENBQUMsSUFBSSxDQUFDO0lBQzlCLENBQUM7SUFFRCxJQUFJLE9BQU87UUFDVCxPQUFPLHVCQUFBLElBQUksbUNBQVcsQ0FBQyxPQUFPLENBQUM7SUFDakMsQ0FBQztJQUVELElBQUksU0FBUztRQUNYLE9BQU8sdUJBQUEsSUFBSSxtQ0FBVyxDQUFDLFNBQVMsQ0FBQztJQUNuQyxDQUFDO0lBRUQsSUFBSSxNQUFNO1FBQ1IsT0FBTyx1QkFBQSxJQUFJLG1DQUFXLENBQUMsTUFBTSxDQUFDO0lBQ2hDLENBQUM7SUFFRCxJQUFJLFFBQVE7UUFDVixPQUFPLHVCQUFBLElBQUksa0NBQVUsQ0FBQztJQUN4QixDQUFDO0NBQ0Y7QUF4Q0QsNENBd0NDIn0=
+exports.EdcConnectorClientContext = EdcConnectorClientContext;
+_EdcConnectorClientContext_apiToken = new WeakMap(), _EdcConnectorClientContext_addresses = new WeakMap();
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY29udGV4dC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jb250ZXh0LnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7OztBQUVBLE1BQWEseUJBQXlCO0lBSXBDLFlBQVksUUFBZ0IsRUFBRSxTQUFvQjtRQUhsRCxzREFBa0I7UUFDbEIsdURBQXNCO1FBR3BCLHVCQUFBLElBQUksdUNBQWEsUUFBUSxNQUFBLENBQUM7UUFDMUIsdUJBQUEsSUFBSSx3Q0FBYyxTQUFTLE1BQUEsQ0FBQztJQUM5QixDQUFDO0lBRUQsSUFBSSxPQUFPO1FBQ1QsT0FBTyx1QkFBQSxJQUFJLDRDQUFXLENBQUMsT0FBTyxDQUFDO0lBQ2pDLENBQUM7SUFFRCxJQUFJLFVBQVU7UUFDWixPQUFPLHVCQUFBLElBQUksNENBQVcsQ0FBQyxVQUFVLENBQUM7SUFDcEMsQ0FBQztJQUVELElBQUksR0FBRztRQUNMLE9BQU8sdUJBQUEsSUFBSSw0Q0FBVyxDQUFDLEdBQUcsQ0FBQztJQUM3QixDQUFDO0lBRUQsSUFBSSxJQUFJO1FBQ04sT0FBTyx1QkFBQSxJQUFJLDRDQUFXLENBQUMsSUFBSSxDQUFDO0lBQzlCLENBQUM7SUFFRCxJQUFJLE9BQU87UUFDVCxPQUFPLHVCQUFBLElBQUksNENBQVcsQ0FBQyxPQUFPLENBQUM7SUFDakMsQ0FBQztJQUVELElBQUksU0FBUztRQUNYLE9BQU8sdUJBQUEsSUFBSSw0Q0FBVyxDQUFDLFNBQVMsQ0FBQztJQUNuQyxDQUFDO0lBRUQsSUFBSSxNQUFNO1FBQ1IsT0FBTyx1QkFBQSxJQUFJLDRDQUFXLENBQUMsTUFBTSxDQUFDO0lBQ2hDLENBQUM7SUFFRCxJQUFJLFFBQVE7UUFDVixPQUFPLHVCQUFBLElBQUksMkNBQVUsQ0FBQztJQUN4QixDQUFDO0NBQ0Y7QUF4Q0QsOERBd0NDIn0=
