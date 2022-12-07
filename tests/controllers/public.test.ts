@@ -96,7 +96,10 @@ describe("PublicController", () => {
         [transferProcessResponse.authKey]: transferProcessResponse.authCode,
       });
 
-      const reader = data.getReader();
+      // then
+      expect(data.body).toBeTruthy();
+
+      const reader = data.body!.getReader();
       const transferredData = await new Promise<any>(async (resolve) => {
         const d: number[] = [];
         while (true) {
@@ -112,7 +115,6 @@ describe("PublicController", () => {
         resolve(JSON.parse(Buffer.from(d).toString()));
       });
 
-      // then
       expect(transferredData.length).toBeGreaterThan(0);
     });
   });

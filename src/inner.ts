@@ -31,7 +31,7 @@ export class Inner {
   async stream(
     baseUrl: string,
     innerRequest: InnerStream,
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<Response> {
     const response = await this.#fetch(baseUrl, innerRequest);
 
     if (response.status === 204 || !response.body) {
@@ -41,7 +41,7 @@ export class Inner {
       );
     }
 
-    return response.body;
+    return response;
   }
 
   async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {

@@ -11,7 +11,7 @@ export class PublicController {
   async getTranferedData(
     context: EdcConnectorClientContext,
     headers: Record<string, string | undefined>,
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<Response> {
     return this.#inner.stream(context.public, {
       path: "/public",
       method: "GET",
