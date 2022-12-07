@@ -5,7 +5,8 @@ export enum EdcConnectorClientErrorType {
   Unknown = "Unknown",
   Duplicate = "Duplicate",
   NotFound = "NotFound",
-  Unauthorized = "Unauthorized",
+  BadRequest = "BadRequest",
+  Unreachable = "Unreachable",
 }
 
 export class EdcConnectorClientError

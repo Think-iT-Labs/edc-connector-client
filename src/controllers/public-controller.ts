@@ -1,4 +1,4 @@
-import { EdcClientContext } from "../context";
+import { EdcConnectorClientContext } from "../context";
 import { Inner } from "../inner";
 
 export class PublicController {
@@ -9,14 +9,13 @@ export class PublicController {
   }
 
   async getTranferedData(
-    context: EdcClientContext,
-    headers: Record<string, string>,
-  ): Promise<any> {
-    return this.#inner.request(context.public, {
+    context: EdcConnectorClientContext,
+    headers: Record<string, string | undefined>,
+  ): Promise<ReadableStream<Uint8Array>> {
+    return this.#inner.stream(context.public, {
       path: "/public",
       method: "GET",
-      apiToken: context.apiToken,
-      headers: headers,
+      headers,
     });
   }
 }
