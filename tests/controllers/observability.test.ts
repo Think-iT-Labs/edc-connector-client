@@ -1,4 +1,4 @@
-import { Addresses, EdcClient } from "../../src";
+import { Addresses, EdcConnectorClient } from "../../src";
 
 describe("ObservabilityController", () => {
   const apiToken = "123456";
@@ -15,7 +15,7 @@ describe("ObservabilityController", () => {
   describe("edcClient.observability.checkHealth", () => {
     it("succesfully return a HealthStatus response", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
 
       // when
@@ -29,7 +29,7 @@ describe("ObservabilityController", () => {
   describe("edcClient.observability.checkLiveness", () => {
     it("succesfully return a HealthStatus response", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
 
       // when
@@ -43,7 +43,7 @@ describe("ObservabilityController", () => {
   describe("edcClient.observability.checkReadiness", () => {
     it("succesfully return a HealthStatus response", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
 
       // when
@@ -59,7 +59,7 @@ describe("ObservabilityController", () => {
   describe("edcClient.observability.checkStartup", () => {
     it("succesfully return a HealthStatus response", async () => {
       // given
-      const edcClient = new EdcClient();
+      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, addresses);
 
       // when

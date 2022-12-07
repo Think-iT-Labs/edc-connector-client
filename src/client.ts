@@ -1,4 +1,4 @@
-import { EdcClientContext } from "./context";
+import { EdcConnectorClientContext } from "./context";
 import {
   DataController,
   DataplaneController,
@@ -10,7 +10,7 @@ import { Inner } from "./inner";
 
 import { version } from "../package.json";
 
-export class EdcClient {
+export class EdcConnectorClient {
   readonly data: DataController;
   readonly dataplane: DataplaneController;
   readonly observability: ObservabilityController;
@@ -25,8 +25,11 @@ export class EdcClient {
     this.public = new PublicController(inner);
   }
 
-  createContext(token: string, addresses: Addresses): EdcClientContext {
-    return new EdcClientContext(token, addresses);
+  createContext(
+    token: string,
+    addresses: Addresses,
+  ): EdcConnectorClientContext {
+    return new EdcConnectorClientContext(token, addresses);
   }
 
   static version(): string {

@@ -1,6 +1,6 @@
 import { Addresses } from "./entities";
 
-export class EdcClientContext implements Addresses {
+export class EdcConnectorClientContext implements Addresses {
   #apiToken: string;
   #addresses: Addresses;
 
