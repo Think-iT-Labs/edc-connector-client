@@ -6,10 +6,45 @@ interface InnerRequest {
   query?: Record<string, string>;
   body?: unknown;
   apiToken?: string;
+  headers?: Record<string, string | undefined>;
+}
+
+interface InnerStream extends InnerRequest {
+  body?: undefined;
+  apiToken?: undefined;
 }
 
 export class Inner {
   async request<T>(baseUrl: string, innerRequest: InnerRequest): Promise<T> {
+    innerRequest.headers = innerRequest.headers || {};
+    innerRequest.headers["Content-type"] = "application/json";
+
+    const response = await this.#fetch(baseUrl, innerRequest);
+
+    if (response.status === 204) {
+      return undefined as any as T;
+    }
+
+    return response.json();
+  }
+
+  async stream(
+    baseUrl: string,
+    innerRequest: InnerStream,
+  ): Promise<Response> {
+    const response = await this.#fetch(baseUrl, innerRequest);
+
+    if (response.status === 204 || !response.body) {
+      throw new EdcConnectorClientError(
+        EdcConnectorClientErrorType.Unreachable,
+        "response is never empty",
+      );
+    }
+
+    return response;
+  }
+
+  async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {
     const url = new URL(innerRequest.path, baseUrl);
 
     if (innerRequest.query) {
@@ -22,8 +57,8 @@ export class Inner {
     const request = new Request(url, {
       method,
       headers: {
+        ...innerRequest.headers,
         "X-Api-Key": innerRequest.apiToken ?? "",
-        "Content-Type": "application/json",
       },
       body: innerRequest.body ? JSON.stringify(innerRequest.body) : undefined,
     });
@@ -32,14 +67,20 @@ export class Inner {
       const response = await fetch(request);
 
       if (response.ok) {
-        if (response.status === 204) {
-          return undefined as any as T;
-        }
-
-        return response.json();
+        return response;
       }
 
       switch (response.status) {
+        case 400: {
+          const error = new EdcConnectorClientError(
+            EdcConnectorClientErrorType.BadRequest,
+            "request was malformed",
+          );
+
+          error.body = await response.json();
+
+          throw error;
+        }
         case 404: {
           const error = new EdcConnectorClientError(
             EdcConnectorClientErrorType.NotFound,

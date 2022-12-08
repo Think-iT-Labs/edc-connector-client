@@ -3,6 +3,7 @@ import {
   DataController,
   DataplaneController,
   ObservabilityController,
+  PublicController,
 } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
@@ -13,6 +14,7 @@ export class EdcConnectorClient {
   readonly data: DataController;
   readonly dataplane: DataplaneController;
   readonly observability: ObservabilityController;
+  readonly public: PublicController;
 
   constructor() {
     const inner = new Inner();
@@ -20,6 +22,7 @@ export class EdcConnectorClient {
     this.data = new DataController(inner);
     this.dataplane = new DataplaneController(inner);
     this.observability = new ObservabilityController(inner);
+    this.public = new PublicController(inner);
   }
 
   createContext(
