@@ -12,19 +12,15 @@ describe("PublicController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191",
-    validation: "http://localhost:19192",
     data: "http://localhost:19193",
     ids: "http://consumer-connector:9194",
-    dataplane: "http://localhost:19195",
     public: "http://localhost:19291",
     control: "http://localhost:19292",
   };
   const provider: Addresses = {
     default: "http://localhost:29191",
-    validation: "http://localhost:29192",
     data: "http://localhost:29193",
     ids: "http://provider-connector:9194",
-    dataplane: "http://localhost:29195",
     public: "http://localhost:29291",
     control: "http://localhost:29292",
   };

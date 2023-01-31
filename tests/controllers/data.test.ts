@@ -23,19 +23,15 @@ describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191",
-    validation: "http://localhost:19192",
     data: "http://localhost:19193",
     ids: "http://consumer-connector:9194",
-    dataplane: "http://localhost:19195",
     public: "http://localhost:19291",
     control: "http://localhost:19292",
   };
   const provider: Addresses = {
     default: "http://localhost:29191",
-    validation: "http://localhost:29192",
     data: "http://localhost:29193",
     ids: "http://provider-connector:9194",
-    dataplane: "http://localhost:29195",
     public: "http://localhost:29291",
     control: "http://localhost:29292",
   };
@@ -688,20 +684,18 @@ describe("DataController", () => {
       const providerContext = edcClient.createContext(apiToken, provider);
       const assetId = crypto.randomUUID();
 
-      edcClient.dataplane.registerDataplane(consumerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
+      edcClient.data.registerDataplane(consumerContext, {
         "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9292/control/transfer",
+        "url": "http://consumer-connector:9192/control/transfer",
         "allowedSourceTypes": ["HttpData"],
         "allowedDestTypes": ["HttpProxy", "HttpData"],
         "properties": {
           "publicApiUrl": "http://consumer-connector:9291/public/",
         },
       });
-      edcClient.dataplane.registerDataplane(providerContext, {
-        "edctype": "dataspaceconnector:dataplaneinstance",
+      edcClient.data.registerDataplane(providerContext, {
         "id": "provider-dataplane",
-        "url": "http://provider-connector:9292/control/transfer",
+        "url": "http://provider-connector:9192/control/transfer",
         "allowedSourceTypes": ["HttpData"],
         "allowedDestTypes": ["HttpProxy", "HttpData"],
         "properties": {
@@ -1098,7 +1092,7 @@ describe("DataController", () => {
       // then
       expect(contractAgreement).toHaveProperty(
         "assetId",
-        `urn:artifact:${assetId}`,
+        assetId,
       );
     });
   });
@@ -1280,6 +1274,75 @@ describe("DataController", () => {
             createResult.id === transferProcess.id
           ),
         ).toBeTruthy();
+      });
+    });
+  });
+
+  describe("edcClient.data.registerDataplane", () => {
+    it("succesfully register a dataplane", async () => {
+      // given
+      const edcClient = new EdcConnectorClient();
+      const context = edcClient.createContext(apiToken, consumer);
+      const dataplaneInput = {
+        "id": "consumer-dataplane",
+        "url": "http://consumer-connector:9192/control/transfer",
+        "allowedSourceTypes": ["HttpData"],
+        "allowedDestTypes": ["HttpProxy", "HttpData"],
+        "properties": {
+          "publicApiUrl": "http://consumer-connector:9291/public/",
+        },
+      };
+
+      // when
+      const registration = await edcClient.data.registerDataplane(
+        context,
+        dataplaneInput,
+      );
+
+      // then
+      expect(registration).toBeUndefined();
+    });
+  });
+
+  describe("edcClient.data.listDataplanes", () => {
+    it("succesfully list available dataplanes", async () => {
+      // given
+      const edcClient = new EdcConnectorClient();
+      const context = edcClient.createContext(apiToken, consumer);
+      const dataplaneInput = {
+        "id": "consumer-dataplane",
+        "url": "http://consumer-connector:9192/control/transfer",
+        "allowedSourceTypes": ["HttpData"],
+        "allowedDestTypes": ["HttpProxy", "HttpData"],
+        "properties": {
+          "publicApiUrl": "http://consumer-connector:9291/public/",
+        },
+      };
+      await edcClient.data.registerDataplane(
+        context,
+        dataplaneInput,
+      );
+
+      // when
+      const dataplanes = await edcClient.data.listDataplanes(context);
+
+      // then
+      expect(dataplanes.length).toBeGreaterThan(0);
+      dataplanes.forEach((dataplane) => {
+        expect(dataplane).toHaveProperty("id", dataplaneInput.id);
+        expect(dataplane).toHaveProperty("url", dataplaneInput.url);
+        expect(dataplane).toHaveProperty(
+          "allowedDestTypes",
+          dataplaneInput.allowedDestTypes,
+        );
+        expect(dataplane).toHaveProperty(
+          "allowedSourceTypes",
+          dataplaneInput.allowedSourceTypes,
+        );
+        expect(dataplane).toHaveProperty(
+          "properties",
+          dataplaneInput.properties,
+        );
       });
     });
   });

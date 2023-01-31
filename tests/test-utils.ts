@@ -69,10 +69,9 @@ export async function createContractNegotiation(
   consumerContext: EdcConnectorClientContext,
 ): Promise<ContractNegotiationMetadata> {
   // Register dataplanes
-  client.dataplane.registerDataplane(providerContext, {
-    "edctype": "dataspaceconnector:dataplaneinstance",
+  client.data.registerDataplane(providerContext, {
     "id": "provider-dataplane",
-    "url": "http://provider-connector:9292/control/transfer",
+    "url": "http://provider-connector:9192/control/transfer",
     "allowedSourceTypes": ["HttpData"],
     "allowedDestTypes": ["HttpProxy", "HttpData"],
     "properties": {
@@ -80,10 +79,9 @@ export async function createContractNegotiation(
     },
   });
 
-  client.dataplane.registerDataplane(consumerContext, {
-    "edctype": "dataspaceconnector:dataplaneinstance",
+  client.data.registerDataplane(consumerContext, {
     "id": "consumer-dataplane",
-    "url": "http://consumer-connector:9292/control/transfer",
+    "url": "http://consumer-connector:9192/control/transfer",
     "allowedSourceTypes": ["HttpData"],
     "allowedDestTypes": ["HttpProxy", "HttpData"],
     "properties": {

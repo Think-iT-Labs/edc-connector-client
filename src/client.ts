@@ -1,7 +1,6 @@
 import { EdcConnectorClientContext } from "./context";
 import {
   DataController,
-  DataplaneController,
   ObservabilityController,
   PublicController,
 } from "./controllers";
@@ -12,7 +11,6 @@ import { version } from "../package.json";
 
 export class EdcConnectorClient {
   readonly data: DataController;
-  readonly dataplane: DataplaneController;
   readonly observability: ObservabilityController;
   readonly public: PublicController;
 
@@ -20,7 +18,6 @@ export class EdcConnectorClient {
     const inner = new Inner();
 
     this.data = new DataController(inner);
-    this.dataplane = new DataplaneController(inner);
     this.observability = new ObservabilityController(inner);
     this.public = new PublicController(inner);
   }
