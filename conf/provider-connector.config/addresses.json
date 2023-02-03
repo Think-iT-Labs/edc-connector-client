@@ -3,7 +3,6 @@
   "name": "provider.edc.think-it.io",
   "addresses": {
     "default": "http://localhost:29191",
-    "validation": "http://localhost:29292",
     "data": "http://localhost:29193",
     "ids": "http://provider-connector:9194",
     "public": "http://localhost:29291",
