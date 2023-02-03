@@ -1,9 +1,11 @@
 import { EdcConnectorClientContext } from "../context";
-import { Asset, AssetInput, Catalog, CatalogRequest, ContractAgreement, ContractDefinition, ContractDefinitionInput, ContractNegotiation, ContractNegotiationRequest, ContractNegotiationState, CreateResult, PolicyDefinition, PolicyDefinitionInput, QuerySpec, TransferProcess, TransferProcessInput } from "../entities";
+import { Asset, AssetInput, Catalog, CatalogRequest, ContractAgreement, ContractDefinition, ContractDefinitionInput, ContractNegotiation, ContractNegotiationRequest, ContractNegotiationState, CreateResult, Dataplane, DataplaneInput, PolicyDefinition, PolicyDefinitionInput, QuerySpec, TransferProcess, TransferProcessInput } from "../entities";
 import { Inner } from "../inner";
-export declare class DataController {
+export declare class ManagementController {
     #private;
     constructor(inner: Inner);
+    registerDataplane(context: EdcConnectorClientContext, input: DataplaneInput): Promise<void>;
+    listDataplanes(context: EdcConnectorClientContext): Promise<Dataplane[]>;
     createAsset(context: EdcConnectorClientContext, input: AssetInput): Promise<CreateResult>;
     deleteAsset(context: EdcConnectorClientContext, assetId: string): Promise<void>;
     getAsset(context: EdcConnectorClientContext, assetId: string): Promise<Asset>;

@@ -1,9 +1,8 @@
 import { EdcConnectorClientContext } from "./context";
-import { DataController, DataplaneController, ObservabilityController, PublicController } from "./controllers";
+import { ManagementController, ObservabilityController, PublicController } from "./controllers";
 import { Addresses } from "./entities";
 export declare class EdcConnectorClient {
-    readonly data: DataController;
-    readonly dataplane: DataplaneController;
+    readonly management: ManagementController;
     readonly observability: ObservabilityController;
     readonly public: PublicController;
     constructor();

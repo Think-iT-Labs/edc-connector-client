@@ -1,11 +1,12 @@
 export interface Dataplane {
-    edctype: string;
     id: string;
     url: string;
+    lastActive: number;
+    turnCount: number;
     allowedSourceTypes: string[];
     allowedDestTypes: string[];
     properties: {
         publicApiUrl: string;
     };
 }
-export declare type DataplaneInput = Dataplane;
+export declare type DataplaneInput = Omit<Dataplane, "lastActive" | "turnCount">;
