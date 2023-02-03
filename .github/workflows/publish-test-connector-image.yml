@@ -2,8 +2,8 @@ name: Create and publish a Docker image
 
 on:
   push:
-    # branches: 
-    #   - main
+    branches: 
+      - main
     paths:
       - connector/**
       - '.github/workflows/publish-test-connector-image.yml'

@@ -8,7 +8,7 @@ describe("EdcConnectorClient", () => {
 
     // then
     expect(edcClient).toBeInstanceOf(EdcConnectorClient);
-    expect(edcClient).toHaveProperty("data");
+    expect(edcClient).toHaveProperty("management");
     expect(edcClient).toHaveProperty("observability");
     expect(edcClient).toHaveProperty("public");
   });
