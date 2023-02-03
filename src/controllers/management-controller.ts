@@ -21,7 +21,7 @@ import {
 } from "../entities";
 import { Inner } from "../inner";
 
-export class DataController {
+export class ManagementController {
   #inner: Inner;
 
   constructor(inner: Inner) {

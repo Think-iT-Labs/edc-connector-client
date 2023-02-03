@@ -73,7 +73,7 @@ describe("PublicController", () => {
         contractAgreement.id,
       );
 
-      await edcClient.data.initiateTransfer(
+      await edcClient.management.initiateTransfer(
         consumerContext,
         {
           assetId,
