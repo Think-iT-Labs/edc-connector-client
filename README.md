@@ -62,7 +62,7 @@ const context = edcConnectorClient.createContext("123456", {
   control: "https://control.edc.think-it.io/",
 });
 
-const result = await edcConnectorClient.data.createAsset(context, {
+const result = await edcConnectorClient.management.createAsset(context, {
   asset: {
     properties: {
       "asset:prop:id": "a-http-asset-id",

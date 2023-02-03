@@ -36,7 +36,7 @@ describe("DataController", () => {
     control: "http://localhost:29292",
   };
 
-  describe("edcClient.data.createAsset", () => {
+  describe("edcClient.management.createAsset", () => {
     it("succesfully creates an asset", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -116,7 +116,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.deleteAsset", () => {
+  describe("edcClient.management.deleteAsset", () => {
     it("deletes a target asset", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -181,7 +181,7 @@ describe("DataController", () => {
     it.todo("fails to delete an asset that is part of an agreed contract");
   });
 
-  describe("edcClient.data.getAsset", () => {
+  describe("edcClient.management.getAsset", () => {
     it("returns a target asset", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -248,7 +248,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.listAssets", () => {
+  describe("edcClient.management.listAssets", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -290,7 +290,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.createPolicy", () => {
+  describe("edcClient.management.createPolicy", () => {
     it("succesfully creates a new policy", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -346,7 +346,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.queryAllPolicies", () => {
+  describe("edcClient.management.queryAllPolicies", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -373,7 +373,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getPolicy", () => {
+  describe("edcClient.management.getPolicy", () => {
     it("succesfully retuns a target policy", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -424,7 +424,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.deletePolicy", () => {
+  describe("edcClient.management.deletePolicy", () => {
     it("deletes a target policy", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -477,7 +477,7 @@ describe("DataController", () => {
     it.todo("fails to delete a policy that is part of an agreed contract");
   });
 
-  describe("edcClient.data.createContractDefinition", () => {
+  describe("edcClient.management.createContractDefinition", () => {
     it("succesfully creates a new contract definition", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -537,7 +537,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.queryAllContractDefinitions", () => {
+  describe("edcClient.management.queryAllContractDefinitions", () => {
     it("succesfully retuns a list of contract definitions", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -566,7 +566,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getContractDefinition", () => {
+  describe("edcClient.management.getContractDefinition", () => {
     it("succesfully retuns a target contract definition", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -620,7 +620,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.deleteContractDefinition", () => {
+  describe("edcClient.management.deleteContractDefinition", () => {
     it("deletes a target contract definition", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -679,7 +679,7 @@ describe("DataController", () => {
     );
   });
 
-  describe("edcClient.data.requestCatalog", () => {
+  describe("edcClient.management.requestCatalog", () => {
     it("returns the catalog for a target provider", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -771,7 +771,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.initiateContractNegotiation", () => {
+  describe("edcClient.management.initiateContractNegotiation", () => {
     /**
     TODO
     Automated "decline" test case
@@ -800,7 +800,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.queryNegotiations", () => {
+  describe("edcClient.management.queryNegotiations", () => {
     it("retrieves all contract negotiations", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -857,7 +857,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getNegotiation", () => {
+  describe("edcClient.management.getNegotiation", () => {
     it("retrieves target contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -906,7 +906,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getNegotiationState", () => {
+  describe("edcClient.management.getNegotiationState", () => {
     it("returns the state of a target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -956,7 +956,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.cancelNegotiation", () => {
+  describe("edcClient.management.cancelNegotiation", () => {
     it("cancel the a requested target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1018,7 +1018,7 @@ describe("DataController", () => {
     });
   });
 
-  describe.skip("edcClient.data.declineNegotiation", () => {
+  describe.skip("edcClient.management.declineNegotiation", () => {
     it("declines the a requested target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1075,7 +1075,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getAgreementForNegotiation", () => {
+  describe("edcClient.management.getAgreementForNegotiation", () => {
     it("returns the a agreement for a target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1108,7 +1108,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.queryAllAgreements", () => {
+  describe("edcClient.management.queryAllAgreements", () => {
     it("retrieves all contract agreements", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1145,7 +1145,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.getAgreement", () => {
+  describe("edcClient.management.getAgreement", () => {
     it("retrieves target contract agreement", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1205,7 +1205,7 @@ describe("DataController", () => {
       await receiverServer.shutdown();
     });
 
-    describe("edcClient.data.initiateTransfer", () => {
+    describe("edcClient.management.initiateTransfer", () => {
       it("initiate the transfer process", async () => {
         // given
         const edcClient = new EdcConnectorClient();
@@ -1242,7 +1242,7 @@ describe("DataController", () => {
       });
     });
 
-    describe("edcClient.data.queryAllTransferProcesses", () => {
+    describe("edcClient.management.queryAllTransferProcesses", () => {
       it("retrieves all tranfer processes", async () => {
         // given
         const edcClient = new EdcConnectorClient();
@@ -1289,7 +1289,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.registerDataplane", () => {
+  describe("edcClient.management.registerDataplane", () => {
     it("succesfully register a dataplane", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -1315,7 +1315,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.data.listDataplanes", () => {
+  describe("edcClient.management.listDataplanes", () => {
     it("succesfully list available dataplanes", async () => {
       // given
       const edcClient = new EdcConnectorClient();
