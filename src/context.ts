@@ -13,10 +13,6 @@ export class EdcConnectorClientContext implements Addresses {
     return this.#addresses.default;
   }
 
-  get validation(): string {
-    return this.#addresses.validation;
-  }
-
   get ids(): string {
     return this.#addresses.ids;
   }
@@ -27,10 +23,6 @@ export class EdcConnectorClientContext implements Addresses {
 
   get control(): string {
     return this.#addresses.control;
-  }
-
-  get dataplane(): string {
-    return this.#addresses.dataplane;
   }
 
   get public(): string {

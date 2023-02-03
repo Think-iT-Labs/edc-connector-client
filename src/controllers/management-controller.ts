@@ -11,6 +11,8 @@ import {
   ContractNegotiationRequest,
   ContractNegotiationState,
   CreateResult,
+  Dataplane,
+  DataplaneInput,
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
@@ -19,11 +21,33 @@ import {
 } from "../entities";
 import { Inner } from "../inner";
 
-export class DataController {
+export class ManagementController {
   #inner: Inner;
 
   constructor(inner: Inner) {
     this.#inner = inner;
+  }
+
+  async registerDataplane(
+    context: EdcConnectorClientContext,
+    input: DataplaneInput,
+  ): Promise<void> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/instances",
+      method: "POST",
+      apiToken: context.apiToken,
+      body: input,
+    });
+  }
+
+  async listDataplanes(
+    context: EdcConnectorClientContext,
+  ): Promise<Dataplane[]> {
+    return this.#inner.request(context.data, {
+      path: "/api/v1/data/instances",
+      method: "GET",
+      apiToken: context.apiToken,
+    });
   }
 
   async createAsset(

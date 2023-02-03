@@ -1,4 +1,3 @@
-export * from "./data-controller";
-export * from "./dataplane-controller";
+export * from "./management-controller";
 export * from "./observability-controller";
 export * from "./public-controller";

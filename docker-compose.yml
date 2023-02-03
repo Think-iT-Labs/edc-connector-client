@@ -2,16 +2,14 @@ version: "3.9"
 
 services:
   consumer-connector:
-    image: ghcr.io/think-it-labs/edc-client/test-connector:latest
+    image: ghcr.io/think-it-labs/edc-connector-client/test-connector:0.0.1-milestone-8
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
-      - "19191:9191" # control-plane default
-      - "19192:9192" # control-plane validation
-      - "19193:9193" # control-plane data
-      - "19194:9194" # control-plane ids
-      - "19195:9195" # control-plane dataplane-selector
+      - "19191:9191" # connector default
+      - "19192:9192" # connector control
+      - "19193:9193" # connector management
+      - "19194:9194" # connector protocol
       - "19291:9291" # data-plane public
-      - "19292:9292" # data-plane control
     environment:
       EDC_VAULT: /config/vault.properties
       EDC_KEYSTORE: /config/vault-keys.p12
@@ -23,16 +21,14 @@ services:
       - "host.docker.internal:host-gateway"
 
   provider-connector:
-    image: ghcr.io/think-it-labs/edc-client/test-connector:latest
+    image: ghcr.io/think-it-labs/edc-connector-client/test-connector:0.0.1-milestone-8
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
-      - "29191:9191" # control-plane default
-      - "29192:9192" # control-plane validation
-      - "29193:9193" # control-plane data
-      - "29194:9194" # control-plane ids
-      - "29195:9195" # control-plane dataplane-selector
+      - "29191:9191" # connector default
+      - "29192:9192" # connector control
+      - "29193:9193" # connector management
+      - "29194:9194" # connector protocol
       - "29291:9291" # data-plane public
-      - "29292:9292" # data-plane control
     environment:
       EDC_VAULT: /config/vault.properties
       EDC_KEYSTORE: /config/vault-keys.p12
