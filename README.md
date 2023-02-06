@@ -15,15 +15,14 @@
 The [**EDC Connector**](https://github.com/eclipse-edc/Connector) is a framework for a sovereign, inter-organizational
 data exchange. It provides _low-level_ primitives to allow network participants to expose and consume offers.
 The _Connector_ does so by providing an extensive HTTP API documented via
-[OpenAPI specification](https://github.com/eclipse-edc/Connector/blob/0366295879b133756f534b4138257722c341cde5/resources/openapi/openapi.yaml).
+[OpenAPI specification](https://github.com/eclipse-edc/Connector/blob/a6fdb2a0b4360629ec562e11ae19d077162200b7/resources/openapi/openapi.yaml).
 
 This project aims to increase the level of abstraction, bringing the _low-level_ HTTP API to _mid-level_
 developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
 
 > Similarly to the **EDC Connector**, this library is at its early stage.
-> It aims to maintain compatibility with the latest version of the _Connector_, currently `v0.0.1-milestone-7`.
-> The compatibility is reflected in the library's versioning. The _EDC Connector Client_ follows semver where possible,
-> keeping _major_ and _minor_ related to the **EDC Connector** while _patch_ reserved for library's related fixes.
+> It aims to maintain compatibility with the latest version of the _Connector_, currently `v0.0.1-milestone-8`.
+> The compatibility is reflected in the library's versioning.
 
 ## Usage
 
@@ -54,10 +53,8 @@ object, representing a unique connector.
 
 const context = edcConnectorClient.createContext("123456", {
   default: "https://default.edc.think-it.io/",
-  validation: "https://validation.edc.think-it.io/",
   data: "https://data.edc.think-it.io/",
   ids: "https://ids.edc.think-it.io/",
-  dataplane: "https://dataplane.edc.think-it.io/",
   public: "https://public.edc.think-it.io/",
   control: "https://control.edc.think-it.io/",
 });
@@ -120,14 +117,19 @@ try {
 
 ## Development
 
-// TODO: docker-compose
+The development of this library by following a TDD approach. At the moment it
+don't cover all EDC Connector capabilities, but aims to do so.
 
-// How to write tests
+`docker-compose` is used to run the development environment. It runs two
+connectors with capabilities described in the
+[gradle configuration](connector/build.gradle.kts) file.
 
-// Controllers division of concerns
+Please, adhere to the [CONTRIBUTING](CONTRIBUTING.md) guidelines when suggesting
+changes in this repository.
 
 ## License
 
-_EdcConnectorClient_ is distributed under the terms of the MIT license.
+Copyright 2022-2023 Think.iT GmbH.
 
-See [LICENSE](LICENSE) for details.
+Licensed under the [Apache License, Version 2.0](LICENSE). Files in the project
+may not be copied, modified, or distributed except according to those terms.
