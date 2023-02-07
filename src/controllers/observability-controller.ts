@@ -11,7 +11,7 @@ export class ObservabilityController {
 
   async checkHealth(context: EdcConnectorClientContext): Promise<HealthStatus> {
     return this.#inner.request(context.default, {
-      path: "/api/check/health",
+      path: "/check/health",
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -21,7 +21,7 @@ export class ObservabilityController {
     context: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
     return this.#inner.request(context.default, {
-      path: "/api/check/liveness",
+      path: "/check/liveness",
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -31,7 +31,7 @@ export class ObservabilityController {
     context: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
     return this.#inner.request(context.default, {
-      path: "/api/check/readiness",
+      path: "/check/readiness",
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -41,7 +41,7 @@ export class ObservabilityController {
     context: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
     return this.#inner.request(context.default, {
-      path: "/api/check/startup",
+      path: "/check/startup",
       method: "GET",
       apiToken: context.apiToken,
     });
