@@ -23,15 +23,15 @@ describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191/api",
-    data: "http://localhost:19193/api/v1/data",
-    ids: "http://consumer-connector:9194/api/v1/ids",
+    management: "http://localhost:19193/api/v1/data",
+    protocol: "http://consumer-connector:9194/api/v1/ids",
     public: "http://localhost:19291/public",
     control: "http://localhost:19292/control",
   };
   const provider: Addresses = {
     default: "http://localhost:29191/api",
-    data: "http://localhost:29193/api/v1/data",
-    ids: "http://provider-connector:9194/api/v1/ids",
+    management: "http://localhost:29193/api/v1/data",
+    protocol: "http://provider-connector:9194/api/v1/ids",
     public: "http://localhost:29291/public",
     control: "http://localhost:29292/control",
   };
@@ -761,7 +761,7 @@ describe("DataController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: `${provider.ids}/data`,
+          providerUrl: `${provider.protocol}/data`,
         },
       );
 
@@ -1227,7 +1227,7 @@ describe("DataController", () => {
           {
             assetId,
             "connectorId": "provider",
-            "connectorAddress": `${providerContext.ids}/data`,
+            "connectorAddress": `${providerContext.protocol}/data`,
             "contractId": contractAgreement.id,
             "managedResources": false,
             "dataDestination": { "type": "HttpProxy" },
@@ -1263,7 +1263,7 @@ describe("DataController", () => {
           {
             assetId,
             "connectorId": "provider",
-            "connectorAddress": `${providerContext.ids}/data`,
+            "connectorAddress": `${providerContext.protocol}/data`,
             "contractId": contractAgreement.id,
             "managedResources": false,
             "dataDestination": { "type": "HttpProxy" },

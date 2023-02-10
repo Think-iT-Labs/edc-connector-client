@@ -4,8 +4,8 @@ describe("ObservabilityController", () => {
   const apiToken = "123456";
   const addresses: Addresses = {
     default: "http://localhost:19191/api",
-    data: "http://localhost:19193/api/v1/data",
-    ids: "http://consumer-connector:9194/api/v1/ids",
+    management: "http://localhost:19193/api/v1/data",
+    protocol: "http://consumer-connector:9194/api/v1/ids",
     public: "http://localhost:19291/public",
     control: "http://localhost:19292/control",
   };

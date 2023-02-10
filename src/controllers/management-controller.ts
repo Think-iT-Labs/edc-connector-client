@@ -32,7 +32,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: DataplaneInput,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/instances",
       method: "POST",
       apiToken: context.apiToken,
@@ -43,7 +43,7 @@ export class ManagementController {
   async listDataplanes(
     context: EdcConnectorClientContext,
   ): Promise<Dataplane[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/instances",
       method: "GET",
       apiToken: context.apiToken,
@@ -54,7 +54,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: AssetInput,
   ): Promise<CreateResult> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/assets",
       method: "POST",
       apiToken: context.apiToken,
@@ -66,7 +66,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     assetId: string,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/assets/${assetId}`,
       method: "DELETE",
       apiToken: context.apiToken,
@@ -77,7 +77,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     assetId: string,
   ): Promise<Asset> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/assets/${assetId}`,
       method: "GET",
       apiToken: context.apiToken,
@@ -85,7 +85,7 @@ export class ManagementController {
   }
 
   async listAssets(context: EdcConnectorClientContext): Promise<Asset[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/assets",
       method: "GET",
       apiToken: context.apiToken,
@@ -96,7 +96,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: PolicyDefinitionInput,
   ): Promise<CreateResult> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/policydefinitions",
       method: "POST",
       apiToken: context.apiToken,
@@ -108,7 +108,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     policyId: string,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/policydefinitions/${policyId}`,
       method: "DELETE",
       apiToken: context.apiToken,
@@ -119,7 +119,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     policyId: string,
   ): Promise<PolicyDefinition> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/policydefinitions/${policyId}`,
       method: "GET",
       apiToken: context.apiToken,
@@ -130,7 +130,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<PolicyDefinition[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/policydefinitions/request",
       method: "POST",
       apiToken: context.apiToken,
@@ -142,7 +142,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: ContractDefinitionInput,
   ): Promise<CreateResult> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/contractdefinitions",
       method: "POST",
       apiToken: context.apiToken,
@@ -154,7 +154,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     contractDefinitionId: string,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractdefinitions/${contractDefinitionId}`,
       method: "DELETE",
       apiToken: context.apiToken,
@@ -165,7 +165,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     contractDefinitionId: string,
   ): Promise<ContractDefinition> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractdefinitions/${contractDefinitionId}`,
       method: "GET",
       apiToken: context.apiToken,
@@ -176,7 +176,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractDefinition[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/contractdefinitions/request",
       method: "POST",
       apiToken: context.apiToken,
@@ -188,7 +188,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: CatalogRequest,
   ): Promise<Catalog> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/catalog/request",
       method: "POST",
       apiToken: context.apiToken,
@@ -200,7 +200,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: ContractNegotiationRequest,
   ): Promise<CreateResult> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/contractnegotiations",
       method: "POST",
       apiToken: context.apiToken,
@@ -212,7 +212,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractNegotiation[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/contractnegotiations/request",
       method: "POST",
       apiToken: context.apiToken,
@@ -224,7 +224,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractNegotiation> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractnegotiations/${negotiationId}`,
       method: "GET",
       apiToken: context.apiToken,
@@ -235,7 +235,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractNegotiationState> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractnegotiations/${negotiationId}/state`,
       method: "GET",
       apiToken: context.apiToken,
@@ -246,7 +246,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractnegotiations/${negotiationId}/cancel`,
       method: "POST",
       apiToken: context.apiToken,
@@ -257,7 +257,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<void> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractnegotiations/${negotiationId}/decline`,
       method: "POST",
       apiToken: context.apiToken,
@@ -268,7 +268,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractAgreement> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractnegotiations/${negotiationId}/agreement`,
       method: "GET",
       apiToken: context.apiToken,
@@ -279,7 +279,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractAgreement[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/contractagreements/request",
       method: "POST",
       apiToken: context.apiToken,
@@ -291,7 +291,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     agreementId: string,
   ): Promise<ContractAgreement> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: `/contractagreements/${agreementId}`,
       method: "GET",
       apiToken: context.apiToken,
@@ -302,7 +302,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: TransferProcessInput,
   ): Promise<CreateResult> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/transferprocess",
       method: "POST",
       apiToken: context.apiToken,
@@ -314,7 +314,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<TransferProcess[]> {
-    return this.#inner.request(context.data, {
+    return this.#inner.request(context.management, {
       path: "/transferprocess/request",
       method: "POST",
       apiToken: context.apiToken,

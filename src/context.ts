@@ -13,12 +13,12 @@ export class EdcConnectorClientContext implements Addresses {
     return this.#addresses.default;
   }
 
-  get ids(): string {
-    return this.#addresses.ids;
+  get protocol(): string {
+    return this.#addresses.protocol;
   }
 
-  get data(): string {
-    return this.#addresses.data;
+  get management(): string {
+    return this.#addresses.management;
   }
 
   get control(): string {
