@@ -45,7 +45,7 @@ export class Inner {
   }
 
   async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {
-    const url = new URL(innerRequest.path, baseUrl);
+    const url = new URL(`${baseUrl}${innerRequest.path}`);
 
     if (innerRequest.query) {
       Object.entries(innerRequest.query).forEach(([key, value]) => {

@@ -146,7 +146,7 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await client.management.requestCatalog(consumerContext, {
-    providerUrl: `${providerContext.ids}/api/v1/ids/data`,
+    providerUrl: `${providerContext.ids}/data`,
   });
   const contractOffer = catalog.contractOffers.find((offer) =>
     offer.asset?.id === assetId
@@ -155,7 +155,7 @@ export async function createContractNegotiation(
   // Initiate contract negotiation on the consumer's side
   const createResult = await client.management
     .initiateContractNegotiation(consumerContext, {
-      connectorAddress: `${providerContext.ids}/api/v1/ids/data`,
+      connectorAddress: `${providerContext.ids}/data`,
       connectorId: "provider",
       offer: {
         offerId: contractOffer.id as string,

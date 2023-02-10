@@ -22,18 +22,18 @@ jest.setTimeout(20000);
 describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
-    default: "http://localhost:19191",
-    data: "http://localhost:19193",
-    ids: "http://consumer-connector:9194",
-    public: "http://localhost:19291",
-    control: "http://localhost:19292",
+    default: "http://localhost:19191/api",
+    data: "http://localhost:19193/api/v1/data",
+    ids: "http://consumer-connector:9194/api/v1/ids",
+    public: "http://localhost:19291/public",
+    control: "http://localhost:19292/control",
   };
   const provider: Addresses = {
-    default: "http://localhost:29191",
-    data: "http://localhost:29193",
-    ids: "http://provider-connector:9194",
-    public: "http://localhost:29291",
-    control: "http://localhost:29292",
+    default: "http://localhost:29191/api",
+    data: "http://localhost:29193/api/v1/data",
+    ids: "http://provider-connector:9194/api/v1/ids",
+    public: "http://localhost:29291/public",
+    control: "http://localhost:29292/control",
   };
 
   describe("edcClient.management.createAsset", () => {
@@ -761,7 +761,7 @@ describe("DataController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: `${provider.ids}/api/v1/ids/data`,
+          providerUrl: `${provider.ids}/data`,
         },
       );
 
@@ -1227,7 +1227,7 @@ describe("DataController", () => {
           {
             assetId,
             "connectorId": "provider",
-            "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
+            "connectorAddress": `${providerContext.ids}/data`,
             "contractId": contractAgreement.id,
             "managedResources": false,
             "dataDestination": { "type": "HttpProxy" },
@@ -1263,7 +1263,7 @@ describe("DataController", () => {
           {
             assetId,
             "connectorId": "provider",
-            "connectorAddress": `${providerContext.ids}/api/v1/ids/data`,
+            "connectorAddress": `${providerContext.ids}/data`,
             "contractId": contractAgreement.id,
             "managedResources": false,
             "dataDestination": { "type": "HttpProxy" },

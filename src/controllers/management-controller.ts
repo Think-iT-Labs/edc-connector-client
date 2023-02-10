@@ -33,7 +33,7 @@ export class ManagementController {
     input: DataplaneInput,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/instances",
+      path: "/instances",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -44,7 +44,7 @@ export class ManagementController {
     context: EdcConnectorClientContext,
   ): Promise<Dataplane[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/instances",
+      path: "/instances",
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -55,7 +55,7 @@ export class ManagementController {
     input: AssetInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/assets",
+      path: "/assets",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -67,7 +67,7 @@ export class ManagementController {
     assetId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/assets/${assetId}`,
+      path: `/assets/${assetId}`,
       method: "DELETE",
       apiToken: context.apiToken,
     });
@@ -78,7 +78,7 @@ export class ManagementController {
     assetId: string,
   ): Promise<Asset> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/assets/${assetId}`,
+      path: `/assets/${assetId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -86,7 +86,7 @@ export class ManagementController {
 
   async listAssets(context: EdcConnectorClientContext): Promise<Asset[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/assets",
+      path: "/assets",
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -97,7 +97,7 @@ export class ManagementController {
     input: PolicyDefinitionInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/policydefinitions",
+      path: "/policydefinitions",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -109,7 +109,7 @@ export class ManagementController {
     policyId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/policydefinitions/${policyId}`,
+      path: `/policydefinitions/${policyId}`,
       method: "DELETE",
       apiToken: context.apiToken,
     });
@@ -120,7 +120,7 @@ export class ManagementController {
     policyId: string,
   ): Promise<PolicyDefinition> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/policydefinitions/${policyId}`,
+      path: `/policydefinitions/${policyId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -131,7 +131,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<PolicyDefinition[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/policydefinitions/request",
+      path: "/policydefinitions/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,
@@ -143,7 +143,7 @@ export class ManagementController {
     input: ContractDefinitionInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/contractdefinitions",
+      path: "/contractdefinitions",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -155,7 +155,7 @@ export class ManagementController {
     contractDefinitionId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractdefinitions/${contractDefinitionId}`,
+      path: `/contractdefinitions/${contractDefinitionId}`,
       method: "DELETE",
       apiToken: context.apiToken,
     });
@@ -166,7 +166,7 @@ export class ManagementController {
     contractDefinitionId: string,
   ): Promise<ContractDefinition> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractdefinitions/${contractDefinitionId}`,
+      path: `/contractdefinitions/${contractDefinitionId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -177,7 +177,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<ContractDefinition[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/contractdefinitions/request",
+      path: "/contractdefinitions/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,
@@ -189,7 +189,7 @@ export class ManagementController {
     input: CatalogRequest,
   ): Promise<Catalog> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/catalog/request",
+      path: "/catalog/request",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -201,7 +201,7 @@ export class ManagementController {
     input: ContractNegotiationRequest,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/contractnegotiations",
+      path: "/contractnegotiations",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -213,7 +213,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<ContractNegotiation[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/contractnegotiations/request",
+      path: "/contractnegotiations/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,
@@ -225,7 +225,7 @@ export class ManagementController {
     negotiationId: string,
   ): Promise<ContractNegotiation> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractnegotiations/${negotiationId}`,
+      path: `/contractnegotiations/${negotiationId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -236,7 +236,7 @@ export class ManagementController {
     negotiationId: string,
   ): Promise<ContractNegotiationState> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractnegotiations/${negotiationId}/state`,
+      path: `/contractnegotiations/${negotiationId}/state`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -247,7 +247,7 @@ export class ManagementController {
     negotiationId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractnegotiations/${negotiationId}/cancel`,
+      path: `/contractnegotiations/${negotiationId}/cancel`,
       method: "POST",
       apiToken: context.apiToken,
     });
@@ -258,7 +258,7 @@ export class ManagementController {
     negotiationId: string,
   ): Promise<void> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractnegotiations/${negotiationId}/decline`,
+      path: `/contractnegotiations/${negotiationId}/decline`,
       method: "POST",
       apiToken: context.apiToken,
     });
@@ -269,7 +269,7 @@ export class ManagementController {
     negotiationId: string,
   ): Promise<ContractAgreement> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractnegotiations/${negotiationId}/agreement`,
+      path: `/contractnegotiations/${negotiationId}/agreement`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -280,7 +280,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<ContractAgreement[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/contractagreements/request",
+      path: "/contractagreements/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,
@@ -292,7 +292,7 @@ export class ManagementController {
     agreementId: string,
   ): Promise<ContractAgreement> {
     return this.#inner.request(context.data, {
-      path: `/api/v1/data/contractagreements/${agreementId}`,
+      path: `/contractagreements/${agreementId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -303,7 +303,7 @@ export class ManagementController {
     input: TransferProcessInput,
   ): Promise<CreateResult> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/transferprocess",
+      path: "/transferprocess",
       method: "POST",
       apiToken: context.apiToken,
       body: input,
@@ -315,7 +315,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<TransferProcess[]> {
     return this.#inner.request(context.data, {
-      path: "/api/v1/data/transferprocess/request",
+      path: "/transferprocess/request",
       method: "POST",
       apiToken: context.apiToken,
       body: query,

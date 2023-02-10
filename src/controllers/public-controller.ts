@@ -13,7 +13,7 @@ export class PublicController {
     headers: Record<string, string | undefined>,
   ): Promise<Response> {
     return this.#inner.stream(context.public, {
-      path: "/public",
+      path: "/",
       method: "GET",
       headers,
     });
