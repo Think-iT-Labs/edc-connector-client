@@ -1,7 +1,7 @@
 export interface Addresses {
     default: string;
-    data: string;
-    ids: string;
+    management: string;
+    protocol: string;
     public: string;
     control: string;
 }
