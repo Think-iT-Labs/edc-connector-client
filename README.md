@@ -117,8 +117,8 @@ try {
 
 ## Development
 
-The development of this library by following a TDD approach. At the moment it
-don't cover all EDC Connector capabilities, but aims to do so.
+The development of this library is following a TDD approach. At the moment it
+doesn't cover all EDC Connector capabilities, but aims to do so.
 
 `docker-compose` is used to run the development environment. It runs two
 connectors with capabilities described in the

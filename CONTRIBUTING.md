@@ -29,7 +29,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) st
   
   Take the opporutnity to reflect on your learnings and share them with everyone else.
 
-3. For any task, try to provide a way to test its results; it would greatly help the Q&A process.
+3. For any task, try to provide a way to test its results; it would greatly help the QA process.
 
 4. Assign the pull request to yourself.
 

@@ -9,11 +9,11 @@
 
 <!--
 
-Pull requests area chance to teach and learn: share the knowledge. With PRs, we
+Pull requests are a chance to teach and learn: share the knowledge. With PRs, we
 keep track of the features' history of a code-base and – indirectly – we write
 documentation.
 
-It is fundamental to ensure new joiners of futures endeavors can easily read
+It is fundamental to ensure new joiners of future endeavors can easily read
 through our code choices.
 
 So let's share our learnings.
