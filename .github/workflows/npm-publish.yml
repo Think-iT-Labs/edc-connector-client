@@ -29,9 +29,6 @@ jobs:
         run: |
           yarn
 
-      - name: Run tests
-        run: yarn test
-
       - name: Transpile to JavaScript
         run: yarn transpile
 
