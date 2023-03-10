@@ -1,6 +1,6 @@
 {
   "name": "@think-it-labs/edc-connector-client",
-  "version": "0.0.1-milestone-8.beta-4",
+  "version": "0.0.1-milestone-8.beta-5",
   "description": "EDC Connector HTTP client",
   "private": false,
   "main": "dist/src/index.js",
