@@ -52,11 +52,11 @@ object, representing a unique connector.
 ```ts
 
 const context = edcConnectorClient.createContext("123456", {
-  default: "https://default.edc.think-it.io/",
-  data: "https://data.edc.think-it.io/",
-  ids: "https://ids.edc.think-it.io/",
-  public: "https://public.edc.think-it.io/",
-  control: "https://control.edc.think-it.io/",
+  default: "https://edc.think-it.io/api",
+  management: "https://edc.think-it.io/api/v1/data",
+  protocol: "https://edc.think-it.io/api/v1/ids",
+  public: "https://edc.think-it.io/public",
+  control: "https://edc.think-it.io/control",
 });
 
 const result = await edcConnectorClient.management.createAsset(context, {
