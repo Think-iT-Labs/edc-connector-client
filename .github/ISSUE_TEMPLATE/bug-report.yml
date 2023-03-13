@@ -1,0 +1,29 @@
+name: Bug Report
+description: "An unexpected or wrong behaviour deriving from the wrong implementation of the EDC Connector HTTP client library"
+labels: ["bug", "triage"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Check for existing issues
+      description: Check the backlog of issues to reduce the chances of creating duplicates; if an issue already exists, place more information or a `+1` (👍) on it.
+      options:
+        - label: Completed
+          required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label:  Provide steps to reproduce it
+      description: A list of action to perform in order to reproduce the reported issue.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: If applicable, explain your vision on how this issue should be fixed
+      description: Drag issues into the text input below
+    validations:
+      required: false

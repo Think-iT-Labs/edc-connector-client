@@ -1,0 +1,24 @@
+name: Feature Request
+description: "A new functionality that could be covered by the EDC Connector HTTP client"
+labels: ["enhancement", "triage"]
+body:
+  - type: checkboxes
+    attributes:
+      label: Check for existing issues
+      description: Check the backlog of issues to reduce the chances of creating duplicates; if an issue already exists, place a `+1` (👍) on it.
+      options:
+        - label: Completed
+          required: true
+  - type: textarea
+    attributes:
+      label: Describe the feature
+      description: A clear and concise description of what you want to happen.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: |
+        If applicable, add text / mockups / screenshots to help present your vision of the feature
+      description: Drag pictures or write text into the input below
+    validations:
+      required: false
