@@ -1,10 +1,7 @@
 package health
 
-type CheckHealthOutput struct {
-	StatusCode int
-	Message    string
+func (c *Client) performCheckStartup() (healthStatus *HealthStatus, err error) {
+	healthStatus, err = c.performOperation(*c.Addresses.Default, "/check/startup")
+	return
 }
 
-func (c *Client) performCheckStartup() (err error) {
-	return nil
-}
