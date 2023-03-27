@@ -2,13 +2,14 @@ package edc
 
 import (
 	"log"
-	"net/http"
+
+	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
 )
 
 type Config struct {
 	AuthToken  string
 	Logger     *log.Logger
-	HTTPClient *http.Client
+	HTTPClient *edchttp.HTTPClient
 	Addresses
 }
 

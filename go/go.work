@@ -4,5 +4,5 @@ use (
 	.
 	./config
 	./edc
-	./service/health
+	./service/observability
 )
