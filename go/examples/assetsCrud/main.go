@@ -11,11 +11,11 @@ import (
 func main() {
 
 	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
-	defaultAddress := "https://edc.think-it.io/api"
-	managementAddress := "https://edc.think-it.io/api/v1/data"
-	protcolAddress := "https://edc.think-it.io/api/v1/ids"
-	publicAddress := "https://edc.think-it.io/public"
-	controlAddress := "https://edc.think-it.io/control"
+	defaultAddress := "http://localhost:29193/api"
+	managementAddress := "http://localhost:29193/api/v1/data"
+	protcolAddress := "http://localhost:29193/api/v1/ids"
+	publicAddress := "http://localhost:29193/public"
+	controlAddress := "http://localhost:29193/control"
 
 	edcAddresses := edc.Addresses{
 		Default:    &defaultAddress,
@@ -45,6 +45,7 @@ func main() {
 	assetName := "product description"
 
 	httpName := "name"
+	httpBaseUrl := "http://think-it.edc.io/"
 
 	createAssetsOutput, err := client.CreateAsset(
 		assets.CreateAssetInput{
@@ -60,12 +61,17 @@ func main() {
 					BaseAddress: &assets.BaseAddress{
 						Type: "HttpData",
 					},
-					Name: &httpName,
+					Name:    &httpName,
+					BaseUrl: &httpBaseUrl,
 				},
 			},
 		},
 	)
-	fmt.Println(createAssetsOutput)
+	if err != nil {
+		fmt.Printf("error while creating an asset: %v\n", err)
+		return
+	}
+	fmt.Println(*createAssetsOutput)
 
 	allAssets, err := client.ListAssets()
 	if err != nil {
@@ -79,7 +85,7 @@ func main() {
 		fmt.Printf("error while getting an asset by id %v\n", createAssetsOutput.Id)
 		return
 	}
-	fmt.Println(asset)
+	fmt.Println(*asset)
 
 	err = client.DeleteAsset(asset.Id)
 	if err != nil {
