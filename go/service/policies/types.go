@@ -34,7 +34,7 @@ type Permission struct {
 type Duty struct {
 	Assignee         *string       `json:"assignee,omitempty"`
 	Assigner         *string       `json:"assigner,omitempty"`
-	consequence      *Duty         `json:"assigner,omitempty"`
+	Consequence      *Duty         `json:"consequence,omitempty"`
 	Target           *string       `json:"traget,omitempty"`
 	UID              *string       `json:"uid,omitempty"`
 	Constraints      *[]Constraint `json:"constraints,omitempty"`
@@ -66,6 +66,6 @@ type Policy struct {
 
 type PolicyDefinition struct {
 	Id        string `json:"id,omitempty"`
-	CreatedAt int64  `json:"id,omitempty"`
+	CreatedAt int64  `json:"createdAt,omitempty"`
 	Policy    Policy `json:"policy,omitempty"`
 }
