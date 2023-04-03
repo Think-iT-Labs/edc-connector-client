@@ -106,7 +106,7 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 	if err != nil {
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}
-	fmt.Println(string(response))
+
 	err = json.Unmarshal(response, &createAssetOutput)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshaling json: %v", err)

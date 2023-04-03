@@ -6,6 +6,5 @@ use (
 	./edc
 	./service/observability
 	./service/assets
-	./service/policies
-	./examples/assetsCrud
+	./examples/crudAssets
 )
