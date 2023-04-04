@@ -13,14 +13,14 @@ func main() {
 	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 	defaultAddress := "http://localhost:29193/api"
 	managementAddress := "http://localhost:29193/api/v1/data"
-	protcolAddress := "http://localhost:29193/api/v1/ids"
+	protocolAddress := "http://localhost:29193/api/v1/ids"
 	publicAddress := "http://localhost:29193/public"
 	controlAddress := "http://localhost:29193/control"
 
 	edcAddresses := edc.Addresses{
 		Default:    &defaultAddress,
 		Management: &managementAddress,
-		Protocol:   &protcolAddress,
+		Protocol:   &protocolAddress,
 		Public:     &publicAddress,
 		Control:    &controlAddress,
 	}
