@@ -37,8 +37,8 @@ func LoadConfig(token string, addresses edc.Addresses) (cfg *edc.Config, err err
 	return
 }
 
-func validateConnectorAddresses(address edc.Addresses) error {
-	v := reflect.ValueOf(address)
+func validateConnectorAddresses(addresses edc.Addresses) error {
+	v := reflect.ValueOf(addresses)
 	typeOfAddresses := v.Type()
 	for i := 0; i < v.NumField(); i++ {
 		if v.Field(i).IsNil() {
