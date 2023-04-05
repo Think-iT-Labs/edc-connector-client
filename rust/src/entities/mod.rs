@@ -21,7 +21,13 @@ use serde::{Deserialize, Serialize};
 
 use self::criterion::Criterion;
 
-#[derive(Deserialize)]
+pub use self::{
+    action::*, addresses::*, asset::*, catalog::*, contract_agreement::*, contract_definition::*,
+    contract_negotiation::*, contract_offer::*, criterion::*, data_address::*, dataplane::*,
+    health::*, permission::*, policy::*,
+};
+
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateResult {
     pub created_at: u64,

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::QuerySpec;
+use crate::entities::QuerySpec;
 
 use super::contract_offer::ContractOffer;
 

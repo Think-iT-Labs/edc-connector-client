@@ -83,7 +83,7 @@ impl ObservabilityController for Client {
 
 #[cfg(test)]
 mod tests {
-    use crate::Addresses;
+    use crate::entities::Addresses;
 
     use super::*;
 

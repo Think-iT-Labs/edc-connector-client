@@ -7,10 +7,18 @@ pub struct DataAddressProps {
     pub properties: DataAddress,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Clone, Deserialize, Serialize)]
 pub struct DataAddress {
-    #[serde(rename = "type")]
-    pub kind: String,
     #[serde(flatten)]
     pub others: HashMap<String, String>,
+    #[serde(flatten)]
+    pub kind: Option<DataAddressType>,
+}
+
+#[derive(Clone, Deserialize, Serialize)]
+#[serde(tag = "type")]
+pub enum DataAddressType {
+    HttpData,
+    AzureStorage,
+    AmazonS3,
 }

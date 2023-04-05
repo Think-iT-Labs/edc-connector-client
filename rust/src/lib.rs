@@ -1,7 +1,7 @@
 mod client;
 mod context;
 mod controllers;
-mod entities;
+pub mod entities;
 
 pub use crate::{
     client::{Client, ClientBuilder},
@@ -10,12 +10,6 @@ pub use crate::{
         management_controller::ManagementController,
         observability_controller::ObservabilityController, public_controller::PublicController,
     },
-    entities::{
-        action::*, addresses::*, asset::*, catalog::*, contract_agreement::*,
-        contract_definition::*, contract_negotiation::*, contract_offer::*, criterion::*,
-        data_address::*, dataplane::*, health::*, permission::*, policy::*, transfer_process::*,
-        CreateResult, QuerySpec,
-    },
 };
 
 #[cfg(any(test, feature = "test-utils"))]
@@ -23,6 +17,7 @@ mod test_utils {
     use std::{collections::HashMap, time::Duration};
 
     use super::*;
+    use entities::*;
 
     pub struct ContractNegotiationMetadata {
         pub asset_id: String,
@@ -87,8 +82,11 @@ mod test_utils {
             },
             data_address: DataAddressProps {
                 properties: DataAddress {
-                    kind: "HttpAsset".into(),
-                    others: HashMap::default(),
+                    kind: Some(DataAddressType::HttpData),
+                    others: HashMap::from([(
+                        String::from("baseUrl"),
+                        "https://example.com".into(),
+                    )]),
                 },
             },
         };

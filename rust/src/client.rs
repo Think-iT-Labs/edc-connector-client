@@ -1,4 +1,4 @@
-use std::{collections::HashMap, str::FromStr};
+use std::{collections::HashMap, pin::Pin, str::FromStr};
 
 use anyhow::anyhow;
 use async_trait::async_trait;
@@ -24,7 +24,7 @@ pub trait Requester {
         &self,
         base_url: &String,
         input: InnerRequest<'_>,
-    ) -> anyhow::Result<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>;
+    ) -> anyhow::Result<Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>>;
 }
 
 #[derive(Debug)]
@@ -97,8 +97,8 @@ impl Requester for Client {
         &self,
         base_url: &String,
         input: InnerRequest<'_>,
-    ) -> anyhow::Result<Box<dyn Stream<Item = anyhow::Result<Bytes>>>> {
-        Ok(Box::new(
+    ) -> anyhow::Result<Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>> {
+        Ok(Box::pin(
             self.inner_request(&base_url, input)
                 .await?
                 .bytes_stream()

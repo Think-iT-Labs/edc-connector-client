@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use super::data_address::DataAddressProps;
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Asset {
     pub created_at: u64,
@@ -12,7 +12,7 @@ pub struct Asset {
     pub properties: AssetProps,
 }
 
-#[derive(Clone, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AssetProps {
     #[serde(rename = "asset:prop:id")]
     pub id: String,

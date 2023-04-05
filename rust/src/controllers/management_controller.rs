@@ -620,15 +620,14 @@ mod tests {
             addresses::Addresses,
             asset::{AssetInputProps, AssetProps},
             criterion::Criterion,
-            data_address::{DataAddress, DataAddressProps},
+            data_address::{DataAddress, DataAddressProps, DataAddressType},
             permission::Permission,
-            policy::Policy,
+            policy::{AtPolicyType, AtType, Policy},
         },
         test_utils::{
             create_contract_agreement, create_contract_negotiation, wait_for_negotiation_state,
             ContractAgreementMetadata, ContractNegotiationMetadata,
         },
-        AtPolicyType, AtType,
     };
 
     use super::*;
@@ -661,8 +660,11 @@ mod tests {
                     },
                     data_address: DataAddressProps {
                         properties: DataAddress {
-                            kind: "HttpAsset".into(),
-                            others: HashMap::default(),
+                            kind: Some(DataAddressType::HttpData),
+                            others: HashMap::from([(
+                                String::from("baseUrl"),
+                                "https://example.com".into(),
+                            )]),
                         },
                     },
                 },
@@ -794,8 +796,11 @@ mod tests {
                     },
                     data_address: DataAddressProps {
                         properties: DataAddress {
-                            kind: "HttpAsset".into(),
-                            others: HashMap::default(),
+                            kind: Some(DataAddressType::HttpData),
+                            others: HashMap::from([(
+                                String::from("baseUrl"),
+                                "https://example.com".into(),
+                            )]),
                         },
                     },
                 },
@@ -891,8 +896,11 @@ mod tests {
                     },
                     data_address: DataAddressProps {
                         properties: DataAddress {
-                            kind: "HttpAsset".into(),
-                            others: HashMap::default(),
+                            kind: Some(DataAddressType::HttpData),
+                            others: HashMap::from([(
+                                String::from("baseUrl"),
+                                "https://example.com".into(),
+                            )]),
                         },
                     },
                 },
@@ -1032,8 +1040,11 @@ mod tests {
                     },
                     data_address: DataAddressProps {
                         properties: DataAddress {
-                            kind: "HttpAsset".into(),
-                            others: HashMap::default(),
+                            kind: Some(DataAddressType::HttpData),
+                            others: HashMap::from([(
+                                String::from("baseUrl"),
+                                "https://example.com".into(),
+                            )]),
                         },
                     },
                 },
@@ -1259,8 +1270,11 @@ mod tests {
             },
             data_address: DataAddressProps {
                 properties: DataAddress {
-                    kind: "HttpAsset".into(),
-                    others: HashMap::default(),
+                    kind: Some(DataAddressType::HttpData),
+                    others: HashMap::from([(
+                        String::from("baseUrl"),
+                        "https://example.com".into(),
+                    )]),
                 },
             },
         };

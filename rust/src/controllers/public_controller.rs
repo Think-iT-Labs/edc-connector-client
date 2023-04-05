@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, pin::Pin};
 
 use async_trait::async_trait;
 use bytes::Bytes;
@@ -16,7 +16,7 @@ pub trait PublicController {
         &self,
         context: &Context<'_>,
         headers: HashMap<String, String>,
-    ) -> anyhow::Result<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>;
+    ) -> anyhow::Result<Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>>;
 }
 
 #[async_trait]
@@ -25,7 +25,7 @@ impl PublicController for Client {
         &self,
         context: &Context<'_>,
         headers: HashMap<String, String>,
-    ) -> anyhow::Result<Box<dyn Stream<Item = anyhow::Result<Bytes>>>> {
+    ) -> anyhow::Result<Pin<Box<dyn Stream<Item = anyhow::Result<Bytes>>>>> {
         Ok(self
             .request_stream(
                 &context.addresses.public,
