@@ -1,4 +1,4 @@
-module assets
+module github.com/Think-iT-Labs/edc-connector-client/go/service/assets
 
 go 1.20
 
