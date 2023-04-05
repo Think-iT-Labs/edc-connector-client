@@ -28,7 +28,8 @@ func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, []ApiErrorDetail
 	}
 
 	// when status code >= 400, it means there's an error from the api that we should handle
-	if res.StatusCode >= 400 {
+	statusOk := res.StatusCode == 200 && res.StatusCode < 300
+	if !statusOk {
 		var v []ApiErrorDetail
 		err = json.Unmarshal(response, &v)
 		if err != nil {

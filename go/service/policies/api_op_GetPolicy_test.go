@@ -39,7 +39,7 @@ func Test_GetPolicy(t *testing.T) {
 	policyId := "1234"
 	policy, apiErr, err := apiClient.GetPolicy(policyId)
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to create policy.")
 	assert.NotNil(t, policy)
 	assert.Equal(t, policy.Id, "1234")
 	assert.Equal(t, policy.CreatedAt, int64(1680172087972))
@@ -78,7 +78,7 @@ func Test_GetPolicyBadRequestError(t *testing.T) {
 	policyId := "1234"
 	policy, apiErr, err := apiClient.GetPolicy(policyId)
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to create policy.")
 	assert.Nil(t, policy)
 	assert.NotNil(t, apiErr)
 	assert.Equal(t, len(apiErr), 1)

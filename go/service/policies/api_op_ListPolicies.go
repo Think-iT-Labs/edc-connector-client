@@ -30,10 +30,10 @@ type ListPoliciesInput struct {
 	SortOrder        *SortOrder   `json:"sortOrder,omitempty"`
 }
 
-func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefinition, error) {
+func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefinition, []ApiErrorDetail, error) {
 	err := validateQueryPoliciesInput(listPoliciesInput.SortOrder)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	endpoint := fmt.Sprintf("%v/policydefinitions/request", *c.Addresses.Management)
 	policies := []PolicyDefinition{}
@@ -41,31 +41,42 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 	listPoliciesInputJson, err := json.Marshal(listPoliciesInput)
 
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while marshaling list policies input: %v", err)
+		return nil, nil, fmt.Errorf("unexpected error while marshaling list policies input: %v", err)
 	}
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesInputJson))
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return nil, nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
+		return nil, nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
 	}
 
 	defer res.Body.Close()
 	response, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, nil, fmt.Errorf("error while reading response body: %v", err)
+	}
+
+	// when status code >= 400, it means there's an error from the api that we should handle
+	statusOk := res.StatusCode == 200 && res.StatusCode < 300
+	if !statusOk {
+		var v []ApiErrorDetail
+		err = json.Unmarshal(response, &v)
+		if err != nil {
+			return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		}
+		return nil, v, nil
 	}
 
 	err = json.Unmarshal(response, &policies)
 	if err != nil {
-		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
 	}
 
-	return policies, err
+	return policies, nil, err
 }
 
 func validateQueryPoliciesInput(sortOrder *SortOrder) error {

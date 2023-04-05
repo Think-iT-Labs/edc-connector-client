@@ -38,11 +38,49 @@ func Test_ListPolicies(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, err := apiClient.ListPolicies(ListPoliciesInput{})
+	policies, apiError, err := apiClient.ListPolicies(ListPoliciesInput{})
 
 	assert.NoError(t, err, "failed to create asset.")
 	assert.NotNil(t, policies)
+	assert.Nil(t, apiError)
 	assert.Equal(t, len(policies), 1)
 	assert.Equal(t, policies[0].Id, "1234")
 	assert.Equal(t, policies[0].CreatedAt, int64(1680172087972))
+}
+
+func Test_ListPoliciesInternalServerError(t *testing.T) {
+	authToken := "dummy"
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(500)
+		fmt.Fprintf(w, `
+[
+	{
+		"invalidValue": "internal server error",
+		"message": "internal server error",
+		"path": "/policydefinitions/request",
+		"path": "POST"
+	}
+]
+`)
+	}))
+	defer svr.Close()
+
+	cfg := edc.NewConfig()
+
+	cfg.Addresses = edc.Addresses{
+		Management: &svr.URL,
+	}
+	httpClient, err := edchttp.NewHTTPClient(&authToken)
+	assert.NoError(t, err, "failed to initialize Http Client")
+	cfg.HTTPClient = httpClient
+
+	apiClient, err := New(*cfg)
+	assert.NoError(t, err, "failed to initialize api client")
+
+	policies, apiError, err := apiClient.ListPolicies(ListPoliciesInput{})
+
+	assert.NoError(t, err, "failed to list policies.")
+	assert.Nil(t, policies)
+	assert.NotNil(t, apiError)
+	assert.Equal(t, len(apiError), 1)
 }
