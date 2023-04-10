@@ -91,20 +91,16 @@ describe("DataController", () => {
       };
 
       // when
-      await edcClient.management.createAsset(
-        context,
-        assetInput,
-      );
+      await edcClient.management.createAsset(context, assetInput);
       const maybeCreateResult = edcClient.management.createAsset(
         context,
         assetInput,
       );
 
       // then
-      await expect(maybeCreateResult).rejects
-        .toThrowError(
-          "duplicated resource",
-        );
+      await expect(maybeCreateResult).rejects.toThrowError(
+        "duplicated resource",
+      );
 
       maybeCreateResult.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -137,10 +133,7 @@ describe("DataController", () => {
           },
         },
       };
-      await edcClient.management.createAsset(
-        context,
-        assetInput,
-      );
+      await edcClient.management.createAsset(context, assetInput);
 
       // when
       const asset = await edcClient.management.deleteAsset(
@@ -164,10 +157,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -202,10 +192,7 @@ describe("DataController", () => {
           },
         },
       };
-      await edcClient.management.createAsset(
-        context,
-        assetInput,
-      );
+      await edcClient.management.createAsset(context, assetInput);
 
       // when
       const asset = await edcClient.management.getAsset(
@@ -233,12 +220,68 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcConnectorClientError);
+        expect(error as EdcConnectorClientError).toHaveProperty(
+          "type",
+          EdcConnectorClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
+  describe("edcClient.management.getAsseDataAddress", () => {
+    it("returns a target asset data address", async () => {
+      // given
+      const edcClient = new EdcConnectorClient();
+      const context = edcClient.createContext(apiToken, consumer);
+      const assetInput: AssetInput = {
+        asset: {
+          properties: {
+            "asset:prop:id": crypto.randomUUID(),
+            "asset:prop:name": "product description",
+            "asset:prop:contenttype": "application/json",
+          },
+        },
+        dataAddress: {
+          properties: {
+            name: "Test asset",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+            type: "HttpData",
+          },
+        },
+      };
+      await edcClient.management.createAsset(context, assetInput);
+
+      // when
+      const assetDataAddress = await edcClient.management.getAsseDataAddress(
+        context,
+        assetInput.asset.properties["asset:prop:id"],
+      );
+
+      // then
+      expect(assetDataAddress).toHaveProperty("properties");
+    });
+
+    it("fails to fetch a data address for an inexistant asset", async () => {
+      // given
+      const edcClient = new EdcConnectorClient();
+      const context = edcClient.createContext(apiToken, consumer);
+
+      // when
+      const maybeAssetDataAddress = edcClient.management.getAsseDataAddress(
+        context,
+        crypto.randomUUID(),
+      );
+
+      // then
+      await expect(maybeAssetDataAddress).rejects.toThrowError(
+        "resource not found",
+      );
+
+      maybeAssetDataAddress.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
@@ -269,22 +312,18 @@ describe("DataController", () => {
           },
         },
       };
-      await edcClient.management.createAsset(
-        context,
-        assetInput,
-      );
+      await edcClient.management.createAsset(context, assetInput);
 
       // when
-      const assets = await edcClient.management.listAssets(
-        context,
-      );
+      const assets = await edcClient.management.listAssets(context);
 
       // then
       expect(assets.length).toBeGreaterThan(0);
       expect(
-        assets.find((asset) =>
-          asset.properties["asset:prop:id"] ===
-            assetInput.asset.properties["asset:prop:id"]
+        assets.find(
+          (asset) =>
+            asset.properties["asset:prop:id"] ===
+            assetInput.asset.properties["asset:prop:id"],
         ),
       ).toBeTruthy();
     });
@@ -321,20 +360,16 @@ describe("DataController", () => {
       };
 
       // when
-      await edcClient.management.createPolicy(
-        context,
-        policyInput,
-      );
+      await edcClient.management.createPolicy(context, policyInput);
       const maybeCreateResult = edcClient.management.createPolicy(
         context,
         policyInput,
       );
 
       // then
-      await expect(maybeCreateResult).rejects
-        .toThrowError(
-          "duplicated resource",
-        );
+      await expect(maybeCreateResult).rejects.toThrowError(
+        "duplicated resource",
+      );
 
       maybeCreateResult.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -355,15 +390,10 @@ describe("DataController", () => {
         id: crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.createPolicy(
-        context,
-        policyInput,
-      );
+      await edcClient.management.createPolicy(context, policyInput);
 
       // when
-      const policies = await edcClient.management.queryAllPolicies(
-        context,
-      );
+      const policies = await edcClient.management.queryAllPolicies(context);
 
       // then
       expect(policies.length).toBeGreaterThan(0);
@@ -409,10 +439,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybePolicy).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -433,10 +460,7 @@ describe("DataController", () => {
         id: crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.createPolicy(
-        context,
-        policyInput,
-      );
+      await edcClient.management.createPolicy(context, policyInput);
 
       // when
       const policy = await edcClient.management.deletePolicy(
@@ -460,10 +484,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -522,10 +543,9 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeCreateResult).rejects
-        .toThrowError(
-          "duplicated resource",
-        );
+      await expect(maybeCreateResult).rejects.toThrowError(
+        "duplicated resource",
+      );
 
       maybeCreateResult.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -583,8 +603,8 @@ describe("DataController", () => {
       );
 
       // when
-      const contractDefinition = await edcClient.management
-        .getContractDefinition(
+      const contractDefinition =
+        await edcClient.management.getContractDefinition(
           context,
           createResult.id,
         );
@@ -605,10 +625,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybePolicy).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -637,8 +654,8 @@ describe("DataController", () => {
       );
 
       // when
-      const contractDefinition = await edcClient.management
-        .deleteContractDefinition(
+      const contractDefinition =
+        await edcClient.management.deleteContractDefinition(
           context,
           createResult.id,
         );
@@ -653,17 +670,16 @@ describe("DataController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeContractDefinition = edcClient.management
-        .deleteContractDefinition(
+      const maybeContractDefinition =
+        edcClient.management.deleteContractDefinition(
           context,
           crypto.randomUUID(),
         );
 
       // then
-      await expect(maybeContractDefinition).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeContractDefinition).rejects.toThrowError(
+        "resource not found",
+      );
 
       maybeContractDefinition.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -688,21 +704,21 @@ describe("DataController", () => {
       const assetId = crypto.randomUUID();
 
       edcClient.management.registerDataplane(consumerContext, {
-        "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9192/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://consumer-connector:9291/public/",
+        id: "consumer-dataplane",
+        url: "http://consumer-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://consumer-connector:9291/public/",
         },
       });
       edcClient.management.registerDataplane(providerContext, {
-        "id": "provider-dataplane",
-        "url": "http://provider-connector:9192/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://provider-connector:9291/public/",
+        id: "provider-dataplane",
+        url: "http://provider-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://provider-connector:9291/public/",
         },
       });
 
@@ -728,14 +744,14 @@ describe("DataController", () => {
       const policyInput: PolicyDefinitionInput = {
         id: policyId,
         policy: {
-          "uid": "231802-bb34-11ec-8422-0242ac120002",
-          "permissions": [
+          uid: "231802-bb34-11ec-8422-0242ac120002",
+          permissions: [
             {
-              "target": assetId,
-              "action": {
-                "type": "USE",
+              target: assetId,
+              action: {
+                type: "USE",
               },
-              "edctype": "dataspaceconnector:permission",
+              edctype: "dataspaceconnector:permission",
             },
           ],
           "@type": {
@@ -820,8 +836,8 @@ describe("DataController", () => {
       // then
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
-        contractNegotiations.find((contractNegotiation) =>
-          contractNegotiation.id === createResult.id
+        contractNegotiations.find(
+          (contractNegotiation) => contractNegotiation.id === createResult.id,
         ),
       ).toBeTruthy();
     });
@@ -838,19 +854,16 @@ describe("DataController", () => {
       );
 
       // when
-      const [providerNegotiation] = await edcClient.management
-        .queryNegotiations(
-          providerContext,
-          {
-            filterExpression: [
-              {
-                operandLeft: "contractAgreement.assetId",
-                operandRight: assetId,
-                operator: "=",
-              },
-            ],
-          },
-        );
+      const [providerNegotiation] =
+        await edcClient.management.queryNegotiations(providerContext, {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        });
 
       // then
       expect(providerNegotiation).toBeTruthy();
@@ -891,10 +904,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -919,8 +929,8 @@ describe("DataController", () => {
       );
 
       // when
-      const contractNegotiationState = await edcClient.management
-        .getNegotiationState(
+      const contractNegotiationState =
+        await edcClient.management.getNegotiationState(
           consumerContext,
           createResult.id,
         );
@@ -941,10 +951,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -980,8 +987,8 @@ describe("DataController", () => {
         "ERROR",
       );
 
-      const contractNegotiation = await edcClient.management
-        .getNegotiationState(
+      const contractNegotiation =
+        await edcClient.management.getNegotiationState(
           consumerContext,
           createResult.id,
         );
@@ -1003,10 +1010,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -1037,19 +1041,16 @@ describe("DataController", () => {
         "CONFIRMED",
       );
 
-      const [providerNegotiation] = await edcClient.management
-        .queryNegotiations(
-          providerContext,
-          {
-            filterExpression: [
-              {
-                operandLeft: "contractAgreement.assetId",
-                operandRight: assetId,
-                operator: "=",
-              },
-            ],
-          },
-        );
+      const [providerNegotiation] =
+        await edcClient.management.queryNegotiations(providerContext, {
+          filterExpression: [
+            {
+              operandLeft: "contractAgreement.assetId",
+              operandRight: assetId,
+              operator: "=",
+            },
+          ],
+        });
 
       // when
       await edcClient.management.declineNegotiation(
@@ -1064,8 +1065,8 @@ describe("DataController", () => {
         "DECLINED",
       );
 
-      const declinedProviderNegotiation = await edcClient.management
-        .getNegotiation(
+      const declinedProviderNegotiation =
+        await edcClient.management.getNegotiation(
           consumerContext,
           createResult.id,
         );
@@ -1094,17 +1095,14 @@ describe("DataController", () => {
       );
 
       // when
-      const contractAgreement = await edcClient.management
-        .getAgreementForNegotiation(
+      const contractAgreement =
+        await edcClient.management.getAgreementForNegotiation(
           consumerContext,
           createResult.id,
         );
 
       // then
-      expect(contractAgreement).toHaveProperty(
-        "assetId",
-        assetId,
-      );
+      expect(contractAgreement).toHaveProperty("assetId", assetId);
     });
   });
 
@@ -1138,8 +1136,9 @@ describe("DataController", () => {
       // then
       expect(contractAgreements.length).toBeGreaterThan(0);
       expect(
-        contractAgreements.find((contractAgreement) =>
-          contractAgreement.id === contractNegotiation.contractAgreementId
+        contractAgreements.find(
+          (contractAgreement) =>
+            contractAgreement.id === contractNegotiation.contractAgreementId,
         ),
       ).toBeTruthy();
     });
@@ -1179,10 +1178,7 @@ describe("DataController", () => {
       );
 
       // then
-      await expect(maybeAsset).rejects
-        .toThrowError(
-          "resource not found",
-        );
+      await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -1226,11 +1222,11 @@ describe("DataController", () => {
           consumerContext,
           {
             assetId,
-            "connectorId": "provider",
-            "connectorAddress": `${providerContext.protocol}/data`,
-            "contractId": contractAgreement.id,
-            "managedResources": false,
-            "dataDestination": { "type": "HttpProxy" },
+            connectorId: "provider",
+            connectorAddress: `${providerContext.protocol}/data`,
+            contractId: contractAgreement.id,
+            managedResources: false,
+            dataDestination: { type: "HttpProxy" },
           },
         );
 
@@ -1262,27 +1258,25 @@ describe("DataController", () => {
           consumerContext,
           {
             assetId,
-            "connectorId": "provider",
-            "connectorAddress": `${providerContext.protocol}/data`,
-            "contractId": contractAgreement.id,
-            "managedResources": false,
-            "dataDestination": { "type": "HttpProxy" },
+            connectorId: "provider",
+            connectorAddress: `${providerContext.protocol}/data`,
+            contractId: contractAgreement.id,
+            managedResources: false,
+            dataDestination: { type: "HttpProxy" },
           },
         );
 
         await receiverCallback;
 
         // when
-        const transferProcesses = await edcClient.management
-          .queryAllTransferProcesses(
-            consumerContext,
-          );
+        const transferProcesses =
+          await edcClient.management.queryAllTransferProcesses(consumerContext);
 
         // then
         expect(transferProcesses.length).toBeGreaterThan(0);
         expect(
-          transferProcesses.find((transferProcess) =>
-            createResult.id === transferProcess.id
+          transferProcesses.find(
+            (transferProcess) => createResult.id === transferProcess.id,
           ),
         ).toBeTruthy();
       });
@@ -1295,12 +1289,12 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const dataplaneInput = {
-        "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9192/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://consumer-connector:9291/public/",
+        id: "consumer-dataplane",
+        url: "http://consumer-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://consumer-connector:9291/public/",
         },
       };
 
@@ -1321,18 +1315,15 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const dataplaneInput = {
-        "id": "consumer-dataplane",
-        "url": "http://consumer-connector:9192/control/transfer",
-        "allowedSourceTypes": ["HttpData"],
-        "allowedDestTypes": ["HttpProxy", "HttpData"],
-        "properties": {
-          "publicApiUrl": "http://consumer-connector:9291/public/",
+        id: "consumer-dataplane",
+        url: "http://consumer-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://consumer-connector:9291/public/",
         },
       };
-      await edcClient.management.registerDataplane(
-        context,
-        dataplaneInput,
-      );
+      await edcClient.management.registerDataplane(context, dataplaneInput);
 
       // when
       const dataplanes = await edcClient.management.listDataplanes(context);
