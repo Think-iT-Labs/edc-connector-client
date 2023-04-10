@@ -11,6 +11,7 @@ import {
   ContractNegotiationRequest,
   ContractNegotiationState,
   CreateResult,
+  DataAddressProperties,
   Dataplane,
   DataplaneInput,
   PolicyDefinition,
@@ -79,6 +80,17 @@ export class ManagementController {
   ): Promise<Asset> {
     return this.#inner.request(context.management, {
       path: `/assets/${assetId}`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
+  }
+
+  async getAsseDataAddress(
+    context: EdcConnectorClientContext,
+    assetId: string,
+  ): Promise<DataAddressProperties> {
+    return this.#inner.request(context.management, {
+      path: `/assets/${assetId}/address`,
       method: "GET",
       apiToken: context.apiToken,
     });

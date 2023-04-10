@@ -1,4 +1,4 @@
-import { DataAddress } from "./data-address";
+import { DataAddressProperties } from "./data-address";
 
 export interface Asset {
   properties: {
@@ -12,7 +12,5 @@ export interface Asset {
 
 export interface AssetInput {
   asset: Omit<Asset, "id" | "createdAt">;
-  dataAddress: {
-    properties?: Partial<DataAddress>;
-  };
+  dataAddress: DataAddressProperties;
 }
