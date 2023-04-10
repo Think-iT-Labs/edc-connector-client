@@ -1,8 +1,8 @@
 package main
 
 import (
-	"assets"
 	"fmt"
+	"policies"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
@@ -24,7 +24,6 @@ func main() {
 		Public:     &publicAddress,
 		Control:    &controlAddress,
 	}
-	
 	cfg, err := config.LoadConfig(
 		token,
 		edcAddresses,
@@ -35,69 +34,72 @@ func main() {
 		return
 	}
 
-	client, err := assets.New(*cfg)
+	client, err := policies.New(*cfg)
 
 	if err != nil {
 		fmt.Println("error while loading assets client")
 		return
 	}
 
-	assetId := "1234"
-	assetName := "product description"
+	policyId := "1234"
+	uuid := "f08e21cf-f4b4-49b5-aea1-bcec21336d09"
 
-	httpName := "name"
-	httpBaseUrl := "http://think-it.edc.io/"
-
-	createAssetsOutput, err := client.CreateAsset(
-		assets.CreateAssetInput{
-			Asset: assets.Asset{
-				AssetProperties: assets.AssetProperties{
-					"asset:prop:id":          assetId,
-					"asset:prop:name":        assetName,
-					"asset:prop:contenttype": "application/json",
-				},
-			},
-			DataAddress: assets.DataAddress{
-				HttpDataAddress: &assets.HttpDataAddress{
-					BaseAddress: &assets.BaseAddress{
-						Type: "HttpData",
-					},
-					Name:    &httpName,
-					BaseUrl: &httpBaseUrl,
-				},
-			},
+	createPolicyOutput, apiError, err := client.CreatePolicy(policies.CreatePolicyInput{
+		Id: &policyId,
+		Policy: policies.Policy{
+			UID: &uuid,
 		},
-	)
+	})
 	if err != nil {
-		fmt.Printf("error while creating an asset: %v\n", err)
+		fmt.Println(err)
 		return
 	}
-	fmt.Println(*createAssetsOutput)
+	if apiError != nil {
+		fmt.Println(*apiError[0].Message)
+		return
+	}
+	fmt.Println(createPolicyOutput.Id)
 
-	allAssets, err := client.ListAssets()
+	allPolicies, apiError, err := client.ListPolicies(policies.ListPoliciesInput{})
+	if err != nil {
+		fmt.Printf("error while listing policies: %v", err)
+		return
+	}
+	if apiError != nil {
+		fmt.Println(*apiError[0].Message)
+		return
+	}
+	fmt.Println(allPolicies)
+
+	policy, apiError, err := client.GetPolicy(policyId)
+	if err != nil {
+		fmt.Printf("error while getting an policy by id %v\n", policyId)
+		return
+	}
+	if apiError != nil {
+		fmt.Println(*apiError[0].Message)
+		return
+	}
+	fmt.Println(*policy)
+
+	apiError, err = client.DeletePolicy(policy.Id)
+	if err != nil {
+		fmt.Printf("error while deleting policy by id %v: %v\n", policy.Id, err)
+		return
+	}
+	if apiError != nil {
+		fmt.Println(*apiError[0].Message)
+		return
+	}
+
+	allPolicies, apiError, err = client.ListPolicies(policies.ListPoliciesInput{})
 	if err != nil {
 		fmt.Println("error while listing assets")
 		return
 	}
-	fmt.Println(allAssets)
-
-	asset, err := client.GetAsset(createAssetsOutput.Id)
-	if err != nil {
-		fmt.Printf("error while getting an asset by id %v\n", createAssetsOutput.Id)
+	if apiError != nil {
+		fmt.Println(*apiError[0].Message)
 		return
 	}
-	fmt.Println(*asset)
-
-	err = client.DeleteAsset(asset.Id)
-	if err != nil {
-		fmt.Printf("error while deleting asset by id %v\n", asset.Id)
-		return
-	}
-
-	allAssets, err = client.ListAssets()
-	if err != nil {
-		fmt.Println("error while listing assets")
-		return
-	}
-	fmt.Println(allAssets)
+	fmt.Println(allPolicies)
 }
