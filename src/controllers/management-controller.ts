@@ -85,7 +85,7 @@ export class ManagementController {
     });
   }
 
-  async getAsseDataAddress(
+  async getAssetDataAddress(
     context: EdcConnectorClientContext,
     assetId: string,
   ): Promise<DataAddressProperties> {

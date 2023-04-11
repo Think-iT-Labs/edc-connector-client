@@ -232,7 +232,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.management.getAsseDataAddress", () => {
+  describe("edcClient.management.getAssetDataAddress", () => {
     it("returns a target asset data address", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -256,13 +256,22 @@ describe("DataController", () => {
       await edcClient.management.createAsset(context, assetInput);
 
       // when
-      const assetDataAddress = await edcClient.management.getAsseDataAddress(
+      const assetDataAddress = await edcClient.management.getAssetDataAddress(
         context,
         assetInput.asset.properties["asset:prop:id"],
       );
 
       // then
       expect(assetDataAddress).toHaveProperty("properties");
+      expect(assetDataAddress).toEqual(
+        expect.objectContaining({
+          properties: {
+            name: assetInput.dataAddress.properties.name,
+            baseUrl: assetInput.dataAddress.properties.baseUrl,
+            type: assetInput.dataAddress.properties.type,
+          },
+        }),
+      );
     });
 
     it("fails to fetch a data address for an inexistant asset", async () => {
@@ -271,7 +280,7 @@ describe("DataController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAssetDataAddress = edcClient.management.getAsseDataAddress(
+      const maybeAssetDataAddress = edcClient.management.getAssetDataAddress(
         context,
         crypto.randomUUID(),
       );
