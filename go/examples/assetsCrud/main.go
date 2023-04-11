@@ -24,7 +24,7 @@ func main() {
 		Public:     &publicAddress,
 		Control:    &controlAddress,
 	}
-	
+
 	cfg, err := config.LoadConfig(
 		token,
 		edcAddresses,

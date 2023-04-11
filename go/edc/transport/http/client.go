@@ -22,7 +22,7 @@ func NewHTTPClient(bearerToken *string) (*HTTPClient, error) {
 }
 
 func (h *HTTPClient) Do(req *http.Request) (*http.Response, error) {
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", h.bearerToken))
+	req.Header.Add("X-Api-Key", *h.bearerToken)
 	req.Header.Add("Content-Type", "application/json")
 	return h.client.Do(req)
 }
