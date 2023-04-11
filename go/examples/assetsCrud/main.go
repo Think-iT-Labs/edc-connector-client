@@ -1,11 +1,11 @@
 package main
 
 import (
-	"assets"
 	"fmt"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
+	"github.com/Think-iT-Labs/edc-connector-client/go/service/assets"
 )
 
 func main() {
@@ -58,10 +58,8 @@ func main() {
 				},
 			},
 			DataAddress: assets.DataAddress{
-				HttpDataAddress: &assets.HttpDataAddress{
-					BaseAddress: &assets.BaseAddress{
-						Type: "HttpData",
-					},
+				HttpDataAddress: &assets.HttpData{
+					Type:    "HttpData",
 					Name:    &httpName,
 					BaseUrl: &httpBaseUrl,
 				},
