@@ -4,50 +4,15 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"reflect"
 )
 
-type BaseAddress struct {
-	Type string
-}
-
-type HttpDataAddress struct {
-	*BaseAddress
-	Name             *string
-	Path             *string
-	Method           *string
-	BaseUrl          *string
-	AuthKey          *string
-	AuthCode         *string
-	SecretName       *string
-	ProxyBody        *string
-	ProxyPath        *string
-	ProxyQueryParams *string
-	ProxyMethod      *string
-	ContentType      *string
-}
-
-type S3StorageDataAddress struct {
-	*BaseAddress
-	Name            *string
-	BucketName      *string
-	AccessKeyId     *string
-	SecretAccessKey *string
-}
-
-type AzureStorageDataAddress struct {
-	*BaseAddress
-	Container *string
-	Account   *string
-	BlobName  *string
-}
-
 type DataAddress struct {
-	HttpDataAddress         *HttpDataAddress
-	S3StorageDataAddress    *S3StorageDataAddress
-	AzureStorageDataAddress *AzureStorageDataAddress
+	HttpDataAddress         *HttpData
+	S3StorageDataAddress    *S3Data
+	AzureStorageDataAddress *AzureData
 }
 
 type AssetProperties map[string]string
@@ -102,7 +67,7 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}
@@ -157,13 +122,11 @@ func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, 
 			},
 		}, nil
 	}
-	return nil, fmt.Errorf("Unsupported type of asset address")
+	return nil, fmt.Errorf("unsupported type of asset address")
 }
 
 func createDataAssetFromInput(asset Asset) AssetApiInput {
-	return AssetApiInput{
-		AssetProperties: asset.AssetProperties,
-	}
+	return AssetApiInput(asset)
 }
 
 func validateDataAddressInput(dataAddress DataAddress) error {

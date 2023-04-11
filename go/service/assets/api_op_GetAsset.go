@@ -3,7 +3,7 @@ package assets
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}

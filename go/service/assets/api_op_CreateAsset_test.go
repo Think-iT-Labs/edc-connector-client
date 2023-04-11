@@ -2,7 +2,7 @@ package assets
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -17,7 +17,7 @@ func Test_CreateAsset(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		payload, err := ioutil.ReadAll(r.Body)
+		payload, err := io.ReadAll(r.Body)
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
@@ -71,10 +71,8 @@ func Test_CreateAsset(t *testing.T) {
 				},
 			},
 			DataAddress{
-				HttpDataAddress: &HttpDataAddress{
-					BaseAddress: &BaseAddress{
-						Type: "HttpData",
-					},
+				HttpDataAddress: &HttpData{
+					Type:    "HttpData",
 					Name:    &assetName,
 					BaseUrl: &assetBaseUrl,
 				},
@@ -99,7 +97,7 @@ func Test_validateDataAddressInput(t *testing.T) {
 			name: "valid input",
 			args: args{
 				dataAddress: DataAddress{
-					HttpDataAddress: &HttpDataAddress{Name: &httpName},
+					HttpDataAddress: &HttpData{Name: &httpName},
 				},
 			},
 			wantErr: false,
@@ -108,8 +106,8 @@ func Test_validateDataAddressInput(t *testing.T) {
 			name: "invalid input",
 			args: args{
 				dataAddress: DataAddress{
-					HttpDataAddress:      &HttpDataAddress{Name: &httpName},
-					S3StorageDataAddress: &S3StorageDataAddress{Name: &httpName},
+					HttpDataAddress:      &HttpData{Name: &httpName},
+					S3StorageDataAddress: &S3Data{Name: &httpName},
 				},
 			},
 			wantErr: true,
@@ -178,10 +176,8 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			},
 			args: args{
 				dataAddress: DataAddress{
-					HttpDataAddress: &HttpDataAddress{
-						BaseAddress: &BaseAddress{
-							Type: "HttpData",
-						},
+					HttpDataAddress: &HttpData{
+						Type:             "HttpData",
 						Name:             &httpName,
 						Path:             &httpPath,
 						Method:           &httpMethod,
@@ -212,10 +208,8 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			},
 			args: args{
 				dataAddress: DataAddress{
-					S3StorageDataAddress: &S3StorageDataAddress{
-						BaseAddress: &BaseAddress{
-							Type: "AmazonS3",
-						},
+					S3StorageDataAddress: &S3Data{
+						Type:            "AmazonS3",
 						Name:            &s3Name,
 						BucketName:      &s3BucketName,
 						AccessKeyId:     &s3AccessKeyId,
@@ -237,10 +231,8 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			},
 			args: args{
 				dataAddress: DataAddress{
-					AzureStorageDataAddress: &AzureStorageDataAddress{
-						BaseAddress: &BaseAddress{
-							Type: "AzureStorage",
-						},
+					AzureStorageDataAddress: &AzureData{
+						Type:      "AzureStorage",
 						Account:   &azureAccount,
 						BlobName:  &azureBlobName,
 						Container: &azureContainer,
