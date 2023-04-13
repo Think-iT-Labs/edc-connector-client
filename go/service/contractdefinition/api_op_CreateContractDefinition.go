@@ -11,14 +11,14 @@ import (
 func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Management)
 	fmt.Println(endpoint)
-	contractDefintionApiInput, err := json.Marshal(cd)
+	contractDefinitionApiInput, err := json.Marshal(cd)
 	ContractDefinitionOutput := CreateContractDefinitionOutput{}
 	if err != nil {
 
 		return nil, fmt.Errorf("unexpected error while marshaling create contract input: %v", err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(contractDefintionApiInput))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(contractDefinitionApiInput))
 	if err != nil {
 		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
 	}

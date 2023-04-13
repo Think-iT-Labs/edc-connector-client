@@ -27,8 +27,7 @@ func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}
 
-	statusOk := res.StatusCode == http.StatusNoContent
-	if !statusOk {
+	if res.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 

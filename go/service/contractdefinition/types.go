@@ -16,7 +16,7 @@ type Criterion struct {
 
 type GetContractDefinitionOutput struct {
 	ContractDefinition
-	CreateContractDefinitionOutput
+	CreatedAt int64 `json:"createdAt"`
 }
 
 type CreateContractDefinitionOutput struct {
