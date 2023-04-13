@@ -70,4 +70,18 @@ func main() {
 		return
 	}
 	fmt.Printf("%+v\n", allContractDefinitions)
+
+	err = client.DeleteContractDefinition(contractDefinition.Id)
+	if err != nil {
+		fmt.Printf("error while deleting policy by id %v: %v\n", contractDefinition.Id, err)
+		return
+	}
+
+	allContractDefinitions, err = client.ListContractDefinitions()
+	if err != nil {
+		fmt.Printf("error while listing contract definitions: %v", err)
+		return
+	}
+	fmt.Printf("all contract definitions after delete: %+v\n", allContractDefinitions)
+
 }
