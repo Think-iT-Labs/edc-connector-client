@@ -63,4 +63,11 @@ func main() {
 		return
 	}
 	fmt.Printf("%+v\n", *contractDefinition)
+
+	allContractDefinitions, err := client.ListContractDefinitions()
+	if err != nil {
+		fmt.Printf("error while listing contract definitions: %v", err)
+		return
+	}
+	fmt.Printf("%+v\n", allContractDefinitions)
 }
