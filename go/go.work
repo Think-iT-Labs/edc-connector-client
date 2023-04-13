@@ -6,6 +6,7 @@ use (
 	./edc
 	./service/observability
 	./service/assets
+	./service/contractdefinition
 	./service/policies
 	./examples/assetsCrud
 )
