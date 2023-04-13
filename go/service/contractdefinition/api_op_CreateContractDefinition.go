@@ -10,12 +10,9 @@ import (
 
 func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Management)
-	fmt.Println(endpoint)
-	contractDefinitionApiInput, err := json.Marshal(cd)
-	ContractDefinitionOutput := CreateContractDefinitionOutput{}
+	contractDefintionApiInput, err := json.Marshal(cd)
 	if err != nil {
-
-		return nil, fmt.Errorf("unexpected error while marshaling create contract input: %v", err)
+		return nil, fmt.Errorf("unexpected error while marshaling create contract definition input: %v", err)
 	}
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(contractDefinitionApiInput))
@@ -37,7 +34,8 @@ func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContrac
 	if res.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
-
+	
+	ContractDefinitionOutput := CreateContractDefinitionOutput{}
 	err = json.Unmarshal(response, &ContractDefinitionOutput)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshaling json: %v", err)

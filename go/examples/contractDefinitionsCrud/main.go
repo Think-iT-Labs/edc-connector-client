@@ -71,6 +71,15 @@ func main() {
 	}
 	fmt.Printf("%+v\n", allContractDefinitions)
 
+	contractDefinition.Validity = 201
+	err = client.UpdateContractDefinition(*contractDefinition)
+	if err != nil {
+		fmt.Printf("error while updating contract definitions: %v", err)
+		return
+	}
+	updatedDefinition, _ := client.GetContractDefinition(contractId)
+	fmt.Printf("Updated contract def: %+v \n", *updatedDefinition)
+
 	err = client.DeleteContractDefinition(contractDefinition.Id)
 	if err != nil {
 		fmt.Printf("error while deleting policy by id %v: %v\n", contractDefinition.Id, err)

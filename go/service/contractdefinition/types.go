@@ -1,7 +1,7 @@
 package contractdefinition
 
 type ContractDefinition struct {
-	Id               string      `json:"id"`
+	Id               string      `json:"id,omitempty"`
 	AccessPolicyId   string      `json:"accessPolicyId"`
 	ContractPolicyId string      `json:"contractPolicyId"`
 	Validity         int64       `json:"validity,omitempty"`
