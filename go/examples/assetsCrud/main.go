@@ -86,6 +86,28 @@ func main() {
 	}
 	fmt.Println(*asset)
 
+	updatedAssetProperties := &assets.AssetApiInput{
+		AssetProperties: assets.AssetProperties{"asset:prop:name": "updated name"},
+	}
+
+	err = client.UpdateAssetProperties(*updatedAssetProperties, assetId)
+	if err != nil {
+		fmt.Printf("error while updating an asset by id %v\n", assetId)
+		return
+	}
+
+	asset, err = client.GetAsset(assetId)
+	if err != nil {
+		fmt.Printf("error while getting an asset by id %v\n", assetId)
+		return
+	}
+	fmt.Println(asset)
+
+	if asset.AssetProperties["asset:prop:name"] != "updated name" {
+		fmt.Printf("asset update failed %v\n", asset)
+		return
+	}
+
 	err = client.DeleteAsset(asset.Id)
 	if err != nil {
 		fmt.Printf("error while deleting asset by id %v\n", asset.Id)
