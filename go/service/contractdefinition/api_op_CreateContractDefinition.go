@@ -8,30 +8,11 @@ import (
 	"net/http"
 )
 
-type ContractDefinition struct {
-	Id               string      `json:"id"`
-	AccessPolicyId   string      `json:"accessPolicyId"`
-	ContractPolicyId string      `json:"contractPolicyId"`
-	Validity         int64       `json:"validity,omitempty"`
-	Criteria         []Criterion `json:"criteria"`
-}
-
-type Criterion struct {
-	OperandLeft  string `json:"operandLeft"`
-	OperandRight string `json:"operandRight,omitempty"`
-	Operator     string `json:"operator"`
-}
-
-type ContractDefinitionOutput struct {
-	CreatedAt int64  `json:"createdAt"`
-	Id        string `json:"id"`
-}
-
-func (c *Client) CreateContractDefinition(cd ContractDefinition) (*ContractDefinitionOutput, error) {
+func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Management)
 	fmt.Println(endpoint)
 	contractDefintionApiInput, err := json.Marshal(cd)
-	ContractDefinitionOutput := ContractDefinitionOutput{}
+	ContractDefinitionOutput := CreateContractDefinitionOutput{}
 	if err != nil {
 
 		return nil, fmt.Errorf("unexpected error while marshaling create contract input: %v", err)

@@ -40,9 +40,10 @@ func main() {
 		return
 	}
 
+	contractId := "contract-id"
 	contractDefinitionOutput, err := client.CreateContractDefinition(
 		contractdefinition.ContractDefinition{
-			Id:               "contract-id",
+			Id:               contractId,
 			AccessPolicyId:   "example-access-policy-id",
 			ContractPolicyId: "example-contract-policy-id",
 			Criteria:         make([]contractdefinition.Criterion, 0),
@@ -55,4 +56,11 @@ func main() {
 	}
 	fmt.Printf("%+v\n", *contractDefinitionOutput)
 
+	contractDefinition, err := client.GetContractDefinition(contractId)
+
+	if err != nil {
+		fmt.Printf("error while getting a contract by id %s : %+v\n", contractId, err)
+		return
+	}
+	fmt.Printf("%+v\n", *contractDefinition)
 }
