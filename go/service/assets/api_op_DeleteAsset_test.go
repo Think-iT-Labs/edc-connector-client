@@ -33,5 +33,5 @@ func Test_DeleteAsset(t *testing.T) {
 	assetId := "1234"
 	err = apiClient.DeleteAsset(assetId)
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to delete asset.")
 }
