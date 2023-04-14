@@ -2,7 +2,7 @@ package assets
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 )
 
@@ -20,13 +20,13 @@ func (c *Client) DeleteAsset(assetId string) error {
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
 		return fmt.Errorf("error while reading response body: %v", err)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("ERROR: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+		return fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 
 	return err

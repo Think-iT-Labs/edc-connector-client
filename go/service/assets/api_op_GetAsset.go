@@ -28,7 +28,7 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("ERROR: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 
 	err = json.Unmarshal(response, &asset)
