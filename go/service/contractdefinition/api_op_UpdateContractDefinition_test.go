@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_DeleteContractDefinition(t *testing.T) {
+func Test_UpdateContractDefinition(t *testing.T) {
 	// init mocking server
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
@@ -34,8 +34,11 @@ func Test_DeleteContractDefinition(t *testing.T) {
 	// check client is initialized Correctly
 	assert.NoError(t, err, "failed to initialize api client")
 
-	// Try delete contract definition
-	err = apiClient.DeleteContractDefinition("example-contract-def-id")
+	err = apiClient.UpdateContractDefinition(
+		ContractDefinition{
+			Id: "dummy",
+		},
+	)
 
 	// Check operation success
 	assert.NoError(t, err, "failed to perform Contract Definition DELETE")
