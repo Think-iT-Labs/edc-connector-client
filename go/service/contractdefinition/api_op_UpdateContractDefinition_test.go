@@ -36,10 +36,20 @@ func Test_UpdateContractDefinition(t *testing.T) {
 
 	err = apiClient.UpdateContractDefinition(
 		ContractDefinition{
-			Id: "dummy",
+			Id:               "dummy",
+			AccessPolicyId:   "test-policy-id",
+			ContractPolicyId: "test-contract-id",
+			Validity:         3600,
+			Criteria: []Criterion{
+				{
+					OperandLeft:  "test_value_left",
+					OperandRight: "test_value_right",
+					Operator:     "LT",
+				},
+			},
 		},
 	)
 
 	// Check operation success
-	assert.NoError(t, err, "failed to perform Contract Definition DELETE")
+	assert.NoError(t, err, "failed to perform Contract Definition PUT")
 }
