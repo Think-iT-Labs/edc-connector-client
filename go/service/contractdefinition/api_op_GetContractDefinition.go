@@ -1,4 +1,4 @@
-package assets
+package contractdefinition
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
-	endpoint := fmt.Sprintf("%v/assets/%v", *c.Addresses.Management, assetId)
-	asset := AssetOutput{}
+func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDefinition, error) {
+	endpoint := fmt.Sprintf("%v/contractdefinitions/%v", *c.Addresses.Management, ContractDefinitionId)
+	contractDefinition := ContractDefinition{}
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -20,21 +20,22 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error while performing GET request to the endpoint %v: %v", endpoint, err)
 	}
-
 	defer res.Body.Close()
+
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}
 
-	if res.StatusCode != http.StatusOK {
+	statusOk := res.StatusCode == 200
+	if !statusOk {
 		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 
-	err = json.Unmarshal(response, &asset)
+	err = json.Unmarshal(response, &contractDefinition)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
 	}
 
-	return &asset, err
+	return &contractDefinition, err
 }

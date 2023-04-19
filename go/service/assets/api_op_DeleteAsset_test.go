@@ -14,6 +14,7 @@ import (
 func Test_DeleteAsset(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, ``)
 	}))
 	defer svr.Close()
@@ -33,5 +34,5 @@ func Test_DeleteAsset(t *testing.T) {
 	assetId := "1234"
 	err = apiClient.DeleteAsset(assetId)
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to delete asset.")
 }

@@ -1,4 +1,4 @@
-package assets
+package contractdefinition
 
 import (
 	"encoding/json"
@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
-	endpoint := fmt.Sprintf("%v/assets/%v", *c.Addresses.Management, assetId)
-	asset := AssetOutput{}
+func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error) {
+	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Addresses.Management)
+	contractDefinitions := []GetContractDefinitionOutput{}
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
@@ -31,10 +31,10 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 
-	err = json.Unmarshal(response, &asset)
+	err = json.Unmarshal(response, &contractDefinitions)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
 	}
 
-	return &asset, err
+	return contractDefinitions, err
 }

@@ -1,13 +1,13 @@
-package assets
+package contractdefinition
 
 import (
 	"fmt"
-	"io"
+	"io/ioutil"
 	"net/http"
 )
 
-func (c *Client) DeleteAsset(assetId string) error {
-	endpoint := fmt.Sprintf("%v/assets/%v", *c.Addresses.Management, assetId)
+func (c *Client) DeleteContractDefinition(cDefId string) error {
+	endpoint := fmt.Sprintf("%v/contractdefinitions/%v", *c.Addresses.Management, cDefId)
 
 	req, err := http.NewRequest("DELETE", endpoint, nil)
 	if err != nil {
@@ -20,13 +20,13 @@ func (c *Client) DeleteAsset(assetId string) error {
 	}
 
 	defer res.Body.Close()
-	response, err := io.ReadAll(res.Body)
+	response, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return fmt.Errorf("error while reading response body: %v", err)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+		return fmt.Errorf("ERROR: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
 	}
 
 	return err

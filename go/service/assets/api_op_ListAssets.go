@@ -33,6 +33,10 @@ func (c *Client) ListAssets() ([]AssetOutput, error) {
 		return nil, fmt.Errorf("error while reading response body: %v", err)
 	}
 
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+	}
+
 	err = json.Unmarshal(response, &assets)
 	if err != nil {
 		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
