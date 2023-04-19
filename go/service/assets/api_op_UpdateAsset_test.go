@@ -45,7 +45,7 @@ func Test_UpdateAssetProperties(t *testing.T) {
 
 	assetId := "1234"
 	err = apiClient.UpdateAssetProperties(AssetApiInput{
-		AssetProperties: AssetProperties{
+		AssetProperties: map[string]string{
 			"asset:prop:name":        "product description",
 			"asset:prop:contenttype": "application/json",
 		},

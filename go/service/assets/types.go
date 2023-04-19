@@ -42,7 +42,7 @@ type AzureData struct {
 func (AzureData) IsDataProperties() {}
 
 type AssetApiInput struct {
-	AssetProperties `json:"properties,omitempty"`
+	AssetProperties map[string]string `json:"properties,omitempty"`
 }
 
 type DataAddressApiInput struct {
@@ -52,4 +52,8 @@ type DataAddressApiInput struct {
 type CreateAssetApiInput struct {
 	AssetApiInput       `json:"asset,omitempty"`
 	DataAddressApiInput `json:"dataAddress,omitempty"`
+}
+
+type AssetDataAddressOutput struct {
+	AssetProperties map[string]string `json:"properties"`
 }

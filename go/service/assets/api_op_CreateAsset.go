@@ -15,10 +15,8 @@ type DataAddress struct {
 	AzureStorageDataAddress *AzureData
 }
 
-type AssetProperties map[string]string
-
 type Asset struct {
-	AssetProperties
+	AssetProperties map[string]string
 }
 
 type CreateAssetInput struct {

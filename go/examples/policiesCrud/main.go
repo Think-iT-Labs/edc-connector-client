@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"policies"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
+	"github.com/Think-iT-Labs/edc-connector-client/go/service/policies"
 )
 
 func main() {

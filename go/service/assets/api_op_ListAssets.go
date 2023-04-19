@@ -8,9 +8,9 @@ import (
 )
 
 type AssetOutput struct {
-	CreatedAt       int64  `json:"createdAt"`
-	Id              string `json:"id"`
-	AssetProperties `json:"properties"`
+	CreatedAt       int64             `json:"createdAt"`
+	Id              string            `json:"id"`
+	AssetProperties map[string]string `json:"properties"`
 }
 
 func (c *Client) ListAssets() ([]AssetOutput, error) {

@@ -51,7 +51,7 @@ func main() {
 	createAssetsOutput, err := client.CreateAsset(
 		assets.CreateAssetInput{
 			Asset: assets.Asset{
-				AssetProperties: assets.AssetProperties{
+				AssetProperties: map[string]string{
 					"asset:prop:id":          assetId,
 					"asset:prop:name":        assetName,
 					"asset:prop:contenttype": "application/json",
@@ -87,7 +87,7 @@ func main() {
 	fmt.Println(*asset)
 
 	updatedAssetProperties := &assets.AssetApiInput{
-		AssetProperties: assets.AssetProperties{"asset:prop:name": "updated name"},
+		AssetProperties: map[string]string{"asset:prop:name": "updated name"},
 	}
 
 	err = client.UpdateAssetProperties(*updatedAssetProperties, assetId)
