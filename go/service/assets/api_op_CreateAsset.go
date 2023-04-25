@@ -13,6 +13,7 @@ type DataAddress struct {
 	HttpDataAddress         *HttpData
 	S3StorageDataAddress    *S3Data
 	AzureStorageDataAddress *AzureData
+	CustomDataAddress       map[string]interface{}
 }
 
 type Asset struct {
@@ -122,6 +123,11 @@ func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, 
 				AccessKeyId:     dataAddress.S3StorageDataAddress.AccessKeyId,
 				SecretAccessKey: dataAddress.S3StorageDataAddress.SecretAccessKey,
 			},
+		}, nil
+	}
+	if dataAddress.CustomDataAddress != nil {
+		return &DataAddressApiInput{
+			DataProperties: CustomData(dataAddress.CustomDataAddress),
 		}, nil
 	}
 	return nil, fmt.Errorf("unsupported type of asset address")

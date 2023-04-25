@@ -41,6 +41,10 @@ type AzureData struct {
 
 func (AzureData) IsDataProperties() {}
 
+type CustomData map[string]interface{}
+
+func (CustomData) IsDataProperties() {}
+
 type AssetApiInput struct {
 	AssetProperties map[string]string `json:"properties,omitempty"`
 }
