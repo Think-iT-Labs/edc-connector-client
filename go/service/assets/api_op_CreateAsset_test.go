@@ -262,3 +262,69 @@ func Test_createDataAddressFromInput(t *testing.T) {
 		})
 	}
 }
+
+func Test_CreateAssetWithCustomDataAddress(t *testing.T) {
+	authToken := "dummy"
+	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		payload, err := io.ReadAll(r.Body)
+		assert.NoError(t, err, "error while reading request body")
+		assert.JSONEq(t, `
+{
+	"asset": {
+		"properties": {
+			"asset:prop:id": "1234",
+			"asset:prop:name": "product description",
+			"asset:prop:contenttype": "application/json"
+		}
+	},
+	"dataAddress": {
+		"properties": {
+			"name": "This is custom Address",
+			"customKey": "This is custom key"
+		}
+	}
+}`, string(payload), "invalid payload")
+
+		fmt.Fprintf(w, `
+{
+	"createdAt": 1680004526,
+	"id": "1234"
+}`)
+	}))
+	defer svr.Close()
+
+	cfg := edc.NewConfig()
+
+	cfg.Addresses = edc.Addresses{
+		Management: &svr.URL,
+	}
+	httpClient, err := edchttp.NewHTTPClient(&authToken)
+	assert.NoError(t, err, "failed to initialize Http Client")
+	cfg.HTTPClient = httpClient
+
+	apiClient, err := New(*cfg)
+	assert.NoError(t, err, "failed to initialize api client")
+
+	customDataAddress := map[string]interface{}{
+		"name":      "This is custom Address",
+		"customKey": "This is custom key",
+	}
+	assetId := "1234"
+	createAssetOutput, err := apiClient.CreateAsset(
+		CreateAssetInput{
+			Asset{
+				AssetProperties: map[string]string{
+					"asset:prop:id":          assetId,
+					"asset:prop:name":        "product description",
+					"asset:prop:contenttype": "application/json",
+				},
+			},
+			DataAddress{
+				CustomDataAddress: customDataAddress,
+			},
+		},
+	)
+	assert.NoError(t, err, "failed to create asset.")
+	assert.Equal(t, createAssetOutput.Id, assetId)
+}
