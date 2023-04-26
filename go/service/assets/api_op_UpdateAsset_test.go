@@ -88,9 +88,10 @@ func Test_UpdateAssetDataAddress(t *testing.T) {
 	assetId := "1234"
 	httpName := "dummy asset server"
 	httpBaseUrl := "http://dummy.dum"
+	dataAddressType := "HttpData"
 	err = apiClient.UpdateAssetDataAddress(DataAddress{
 		HttpDataAddress: &HttpData{
-			Type:    "HttpData",
+			Type:    &dataAddressType,
 			Name:    &httpName,
 			BaseUrl: &httpBaseUrl,
 		},

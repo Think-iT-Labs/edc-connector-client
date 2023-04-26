@@ -83,11 +83,14 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 }
 
 func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, error) {
+	httpData := "HttpData"
+	azureStorage := "AzureStorage"
+	amazonS3 := "AmazonS3"
 	if dataAddress.HttpDataAddress != nil {
 		// create http address
 		return &DataAddressApiInput{
 			DataProperties: HttpData{
-				Type:             "HttpData",
+				Type:             &httpData,
 				Name:             dataAddress.HttpDataAddress.Name,
 				Path:             dataAddress.HttpDataAddress.Path,
 				Method:           dataAddress.HttpDataAddress.Method,
@@ -106,7 +109,7 @@ func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, 
 	if dataAddress.AzureStorageDataAddress != nil {
 		return &DataAddressApiInput{
 			DataProperties: AzureData{
-				Type:      "AzureStorage",
+				Type:      &azureStorage,
 				Container: dataAddress.AzureStorageDataAddress.Container,
 				Account:   dataAddress.AzureStorageDataAddress.Account,
 				BlobName:  dataAddress.AzureStorageDataAddress.BlobName,
@@ -116,7 +119,7 @@ func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, 
 	if dataAddress.S3StorageDataAddress != nil {
 		return &DataAddressApiInput{
 			DataProperties: S3Data{
-				Type:            "AmazonS3",
+				Type:            &amazonS3,
 				Name:            dataAddress.S3StorageDataAddress.Name,
 				BucketName:      dataAddress.S3StorageDataAddress.BucketName,
 				AccessKeyId:     dataAddress.S3StorageDataAddress.AccessKeyId,

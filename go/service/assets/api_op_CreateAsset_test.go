@@ -61,6 +61,7 @@ func Test_CreateAsset(t *testing.T) {
 	assetName := "Test asset"
 	assetBaseUrl := "https://jsonplaceholder.typicode.com/users"
 	assetId := "1234"
+	httpData := "HttpData"
 	createAssetOutput, err := apiClient.CreateAsset(
 		CreateAssetInput{
 			Asset{
@@ -72,7 +73,7 @@ func Test_CreateAsset(t *testing.T) {
 			},
 			DataAddress{
 				HttpDataAddress: &HttpData{
-					Type:    "HttpData",
+					Type:    &httpData,
 					Name:    &assetName,
 					BaseUrl: &assetBaseUrl,
 				},
@@ -145,6 +146,10 @@ func Test_createDataAddressFromInput(t *testing.T) {
 	azureBlobName := "blobname"
 	azureAccount := "accountName"
 
+	httpData := "HttpData"
+	amazonS3 := "AmazonS3"
+	azureStorage := "AzureStorage"
+
 	type args struct {
 		dataAddress DataAddress
 	}
@@ -159,7 +164,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			wantErr: false,
 			want: &DataAddressApiInput{
 				DataProperties: HttpData{
-					Type:             "HttpData",
+					Type:             &httpData,
 					Name:             &httpName,
 					Path:             &httpPath,
 					Method:           &httpMethod,
@@ -177,7 +182,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			args: args{
 				dataAddress: DataAddress{
 					HttpDataAddress: &HttpData{
-						Type:             "HttpData",
+						Type:             &httpData,
 						Name:             &httpName,
 						Path:             &httpPath,
 						Method:           &httpMethod,
@@ -199,7 +204,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			wantErr: false,
 			want: &DataAddressApiInput{
 				DataProperties: S3Data{
-					Type:            "AmazonS3",
+					Type:            &amazonS3,
 					Name:            &s3Name,
 					BucketName:      &s3BucketName,
 					AccessKeyId:     &s3AccessKeyId,
@@ -209,7 +214,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			args: args{
 				dataAddress: DataAddress{
 					S3StorageDataAddress: &S3Data{
-						Type:            "AmazonS3",
+						Type:            &amazonS3,
 						Name:            &s3Name,
 						BucketName:      &s3BucketName,
 						AccessKeyId:     &s3AccessKeyId,
@@ -223,7 +228,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			wantErr: false,
 			want: &DataAddressApiInput{
 				DataProperties: AzureData{
-					Type:      "AzureStorage",
+					Type:      &azureStorage,
 					Account:   &azureAccount,
 					BlobName:  &azureBlobName,
 					Container: &azureContainer,
@@ -232,7 +237,7 @@ func Test_createDataAddressFromInput(t *testing.T) {
 			args: args{
 				dataAddress: DataAddress{
 					AzureStorageDataAddress: &AzureData{
-						Type:      "AzureStorage",
+						Type:      &azureStorage,
 						Account:   &azureAccount,
 						BlobName:  &azureBlobName,
 						Container: &azureContainer,
