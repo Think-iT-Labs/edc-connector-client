@@ -5,7 +5,7 @@ type DataProperties interface {
 }
 
 type HttpData struct {
-	Type             string  `json:"type,omitempty"`
+	Type             *string `json:"type,omitempty"`
 	Name             *string `json:"name,omitempty"`
 	Path             *string `json:"path,omitempty"`
 	Method           *string `json:"method,omitempty"`
@@ -23,7 +23,7 @@ type HttpData struct {
 func (HttpData) IsDataProperties() {}
 
 type S3Data struct {
-	Type            string  `json:"type,omitempty"`
+	Type            *string `json:"type,omitempty"`
 	Name            *string `json:"name,omitempty"`
 	BucketName      *string `json:"bucketName,omitempty"`
 	AccessKeyId     *string `json:"accessKeyId,omitempty"`
@@ -33,7 +33,7 @@ type S3Data struct {
 func (S3Data) IsDataProperties() {}
 
 type AzureData struct {
-	Type      string  `json:"type,omitempty"`
+	Type      *string `json:"type,omitempty"`
 	Container *string `json:"container,omitempty"`
 	Account   *string `json:"account,omitempty"`
 	BlobName  *string `json:"blobname,omitempty"`

@@ -59,7 +59,6 @@ func main() {
 			},
 			DataAddress: assets.DataAddress{
 				HttpDataAddress: &assets.HttpData{
-					Type:    "HttpData",
 					Name:    &httpName,
 					BaseUrl: &httpBaseUrl,
 				},
