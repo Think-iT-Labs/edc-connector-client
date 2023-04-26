@@ -100,11 +100,56 @@ func main() {
 		fmt.Printf("error while getting an asset by id %v\n", assetId)
 		return
 	}
-	fmt.Println(asset)
 
 	if asset.AssetProperties["asset:prop:name"] != "updated name" {
 		fmt.Printf("asset update failed %v\n", asset)
 		return
+	}
+
+	// Create custom asset data address
+	customData := map[string]interface{}{
+		"name":    "Custom Test asset",
+		"baseUrl": "https://jsonplaceholder.typicode.com/users",
+		"type":    "HttpData",
+	}
+	secondAssetId := "customAsset"
+	secondAssetName := "customAssetName"
+	createAssetsOutput, err = client.CreateAsset(assets.CreateAssetInput{
+		Asset: assets.Asset{
+			AssetProperties: map[string]string{
+				"asset:prop:id":          secondAssetId,
+				"asset:prop:name":        secondAssetName,
+				"asset:prop:contenttype": "application/json",
+			},
+		},
+		DataAddress: assets.DataAddress{
+			CustomDataAddress: customData,
+		},
+	})
+
+	if err != nil {
+		fmt.Printf("error while trying to create asset with custom data address: %v", err)
+		return
+	}
+
+	asset, err = client.GetAsset(secondAssetId)
+	if err != nil {
+		fmt.Printf("error while getting an asset by id %v\n", secondAssetId)
+		return
+	}
+	if asset.Id != secondAssetId {
+		fmt.Printf("Asset ID is not correct, expected %v", secondAssetId)
+	}
+
+	assetDA, err := client.GetAssetDataAddress(secondAssetId)
+
+	if err != nil {
+		fmt.Printf("error while getting an asset data address by id %v\n", secondAssetId)
+		return
+	}
+
+	if assetDA.AssetProperties["type"] != "HttpData" {
+		fmt.Printf("error unexpected data address for id %s got %s", secondAssetId, assetDA.AssetProperties["type"])
 	}
 
 	err = client.DeleteAsset(asset.Id)
