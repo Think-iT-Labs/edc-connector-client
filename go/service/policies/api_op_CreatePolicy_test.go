@@ -1,16 +1,14 @@
 package policies
 
 import (
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
-	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +16,7 @@ func Test_CreateAsset(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		payload, err := ioutil.ReadAll(r.Body)
+		payload, err := io.ReadAll(r.Body)
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
@@ -65,7 +63,7 @@ func Test_CreateAsset(t *testing.T) {
 			},
 		},
 	)
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to create policy.")
 	assert.NotNil(t, createPolicyOutput)
 	assert.Equal(t, createPolicyOutput.Id, policyId)
 	assert.Equal(t, createPolicyOutput.CreatedAt, int64(1680004526))
@@ -80,8 +78,7 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	{
 		"invalidValue": "internal server error",
 		"message": "internal server error",
-		"path": "/policydefinitions/",
-		"path": "POST"
+		"path": "/policydefinitions/"
 	}
 ]
 `)
@@ -105,8 +102,6 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	assert.Nil(t, createdPolicy)
 	assert.NotNil(t, err)
 
-	var ierr *internal.Error
-	if !errors.As(err, &ierr) {
-		t.Fatalf("expected %T error, got %T", ierr, err)
-	}
+	assert.Contains(t, err.Error(), "connector api error", "error message should contain 'connector api error'")
+
 }

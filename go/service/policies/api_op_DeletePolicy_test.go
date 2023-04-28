@@ -31,10 +31,9 @@ func Test_DeletePolicy(t *testing.T) {
 	assert.NoError(t, err, "failed to initialize api client")
 
 	policyId := "1234"
-	apiError, err := apiClient.DeletePolicy(policyId)
+	err = apiClient.DeletePolicy(policyId)
 
-	assert.NoError(t, err, "failed to create asset.")
-	assert.Nil(t, apiError)
+	assert.NoError(t, err, "failed to delete policy.")
 }
 
 func Test_DeletePolicyInternalServerError(t *testing.T) {
@@ -66,9 +65,9 @@ func Test_DeletePolicyInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	apiError, err := apiClient.DeletePolicy("1234")
+	err = apiClient.DeletePolicy("1234")
 
-	assert.NoError(t, err, "failed to list policies.")
-	assert.NotNil(t, apiError)
-	assert.Equal(t, len(apiError), 1)
+	assert.NotNil(t, err)
+
+	assert.Contains(t, err.Error(), "connector api error", "error message should contain 'connector api error'")
 }
