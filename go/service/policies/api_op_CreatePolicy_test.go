@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,7 +55,7 @@ func Test_CreateAsset(t *testing.T) {
 	assignee := "edc-user-1"
 	assigner := "edc-user-2"
 	policyId := "1234"
-	createPolicyOutput, apiError, err := apiClient.CreatePolicy(
+	createPolicyOutput, err := apiClient.CreatePolicy(
 		CreatePolicyInput{
 			Id: &policyId,
 			Policy: Policy{
@@ -65,7 +67,6 @@ func Test_CreateAsset(t *testing.T) {
 	)
 	assert.NoError(t, err, "failed to create asset.")
 	assert.NotNil(t, createPolicyOutput)
-	assert.Nil(t, apiError)
 	assert.Equal(t, createPolicyOutput.Id, policyId)
 	assert.Equal(t, createPolicyOutput.CreatedAt, int64(1680004526))
 }
@@ -99,10 +100,13 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	createdPolicy, apiError, err := apiClient.CreatePolicy(CreatePolicyInput{})
+	createdPolicy, err := apiClient.CreatePolicy(CreatePolicyInput{})
 
-	assert.NoError(t, err, "failed to list policies.")
-	assert.NotNil(t, apiError)
 	assert.Nil(t, createdPolicy)
-	assert.Equal(t, len(apiError), 1)
+	assert.NotNil(t, err)
+
+	var ierr *internal.Error
+	if !errors.As(err, &ierr) {
+		t.Fatalf("expected %T error, got %T", ierr, err)
+	}
 }

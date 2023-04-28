@@ -44,7 +44,7 @@ func main() {
 	policyId := "1234"
 	uuid := "f08e21cf-f4b4-49b5-aea1-bcec21336d09"
 
-	createPolicyOutput, apiError, err := client.CreatePolicy(policies.CreatePolicyInput{
+	createPolicyOutput, err := client.CreatePolicy(policies.CreatePolicyInput{
 		Id: &policyId,
 		Policy: policies.Policy{
 			UID: &uuid,
@@ -52,10 +52,6 @@ func main() {
 	})
 	if err != nil {
 		fmt.Println(err)
-		return
-	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
 		return
 	}
 	fmt.Println(createPolicyOutput.Id)
