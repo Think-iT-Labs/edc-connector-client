@@ -1,24 +1,38 @@
 package contractdefinition
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
-func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error) {
-	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Addresses.Management)
+func (c *Client) ListContractDefinitions(queryInput apivalidator.QueryInput) ([]GetContractDefinitionOutput, error) {
+	err := apivalidator.ValidateQueryInput(queryInput.SortOrder)
+	if err != nil {
+		return nil, err
+	}
+	endpoint := fmt.Sprintf("%s/contractdefinitions/request", *c.Addresses.Management)
 	contractDefinitions := []GetContractDefinitionOutput{}
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	listContractDefinitionsQueryJson, err := json.Marshal(queryInput)
+
+	if err != nil {
+		return nil, fmt.Errorf("unexpected error while marshaling list contract defintions query: %v", err)
+	}
+
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listContractDefinitionsQueryJson))
 	if err != nil {
 		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing GET request to the endpoint %v: %v", endpoint, err)
+		return nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
 	}
 
 	defer res.Body.Close()

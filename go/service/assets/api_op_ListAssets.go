@@ -1,10 +1,13 @@
 package assets
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 type AssetOutput struct {
@@ -13,18 +16,28 @@ type AssetOutput struct {
 	AssetProperties map[string]string `json:"properties"`
 }
 
-func (c *Client) ListAssets() ([]AssetOutput, error) {
-	endpoint := fmt.Sprintf("%v/assets", *c.Addresses.Management)
+func (c *Client) ListAssets(queryInput apivalidator.QueryInput) ([]AssetOutput, error) {
+	err := apivalidator.ValidateQueryInput(queryInput.SortOrder)
+	if err != nil {
+		return nil, err
+	}
+	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
 	assets := []AssetOutput{}
+	
+	listAssetsQueryJson, err := json.Marshal(queryInput)
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	if err != nil {
+		return nil, fmt.Errorf("unexpected error while marshaling list assets query: %v", err)
+	}
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
 	if err != nil {
 		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing GET request to the endpoint %v: %v", endpoint, err)
+		return nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
 	}
 
 	defer res.Body.Close()

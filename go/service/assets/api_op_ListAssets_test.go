@@ -9,6 +9,7 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
 	"github.com/stretchr/testify/assert"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 func Test_ListAssets(t *testing.T) {
@@ -42,9 +43,9 @@ func Test_ListAssets(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	assets, err := apiClient.ListAssets()
+	assets, err := apiClient.ListAssets(apivalidator.QueryInput{})
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to list asset.")
 	assert.NotNil(t, assets)
 	assert.Equal(t, len(assets), 1)
 	assert.Equal(t, assets[0].AssetProperties["asset:prop:name"], "product description")

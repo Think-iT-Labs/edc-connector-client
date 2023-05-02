@@ -10,6 +10,7 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
 	"github.com/stretchr/testify/assert"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 func TestClient_ListContractDefinitions(t *testing.T) {
@@ -64,7 +65,7 @@ func TestClient_ListContractDefinitions(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := apiClient.ListContractDefinitions()
+			got, err := apiClient.ListContractDefinitions(apivalidator.QueryInput{})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ListContractDefinitions() error = %v, wantErr %v", err, tt.wantErr)
 				return
