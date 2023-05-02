@@ -96,11 +96,15 @@ export class ManagementController {
     });
   }
 
-  async listAssets(context: EdcConnectorClientContext): Promise<Asset[]> {
+  async queryAllAssets(
+    context: EdcConnectorClientContext,
+    query: QuerySpec = {},
+  ): Promise<Asset[]> {
     return this.#inner.request(context.management, {
-      path: "/assets",
-      method: "GET",
+      path: "/assets/request",
+      method: "POST",
       apiToken: context.apiToken,
+      body: query,
     });
   }
 
