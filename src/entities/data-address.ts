@@ -39,3 +39,7 @@ export type DataAddress =
   | HttpDataAddress
   | S3StorageDataAddress
   | AzureStorageDataAddress;
+
+export interface DataAddressProperties {
+  properties: Partial<DataAddress>;
+}
