@@ -24,7 +24,7 @@ type Permission struct {
 	Assignee    *string       `json:"assignee,omitempty"`
 	Assigner    *string       `json:"assigner,omitempty"`
 	Duties      *[]Duty       `json:"duties,omitempty"`
-	Target      *string       `json:"traget,omitempty"`
+	Target      *string       `json:"target,omitempty"`
 	UID         *string       `json:"uid,omitempty"`
 	Constraints *[]Constraint `json:"constraints,omitempty"`
 	Action      *Action       `json:"action,omitempty"`
@@ -35,17 +35,17 @@ type Duty struct {
 	Assignee         *string       `json:"assignee,omitempty"`
 	Assigner         *string       `json:"assigner,omitempty"`
 	Consequence      *Duty         `json:"consequence,omitempty"`
-	Target           *string       `json:"traget,omitempty"`
+	Target           *string       `json:"target,omitempty"`
 	UID              *string       `json:"uid,omitempty"`
 	Constraints      *[]Constraint `json:"constraints,omitempty"`
-	ParentPermission Permission    `json:"parentPermission,omitempty"`
+	ParentPermission *Permission   `json:"parentPermission,omitempty"`
 	Action           *Action       `json:"action,omitempty"`
 }
 
 type Prohibition struct {
 	Assignee    *string       `json:"assignee,omitempty"`
 	Assigner    *string       `json:"assigner,omitempty"`
-	Target      *string       `json:"traget,omitempty"`
+	Target      *string       `json:"target,omitempty"`
 	UID         *string       `json:"uid,omitempty"`
 	Constraints *[]Constraint `json:"constraints,omitempty"`
 	Action      *Action       `json:"action,omitempty"`
@@ -58,10 +58,10 @@ type Policy struct {
 	Assigner             *string               `json:"assigner,omitempty"`
 	ExtensibleProperties *ExtensibleProperties `json:"extensibleProperties,omitempty"`
 	InheritsFrom         *string               `json:"inheritsFrom,omitempty"`
-	Obligations          []Duty                `json:"obligations,omitempty"`
-	Permissions          []Permission          `json:"permissions,omitempty"`
-	Prohibitions         []Prohibition         `json:"prohibitions,omitempty"`
-	Target               *string               `json:"traget,omitempty"`
+	Obligations          *[]Duty               `json:"obligations,omitempty"`
+	Permissions          *[]Permission         `json:"permissions,omitempty"`
+	Prohibitions         *[]Prohibition        `json:"prohibitions,omitempty"`
+	Target               *string               `json:"target,omitempty"`
 }
 
 type PolicyDefinition struct {
