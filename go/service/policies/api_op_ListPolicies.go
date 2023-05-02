@@ -6,45 +6,25 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
-type SortOrder string
-
-const (
-	SortOrderAscendant  SortOrder = "ASC"
-	SortOrderDescendant SortOrder = "DESC"
-)
-
-type Criterion struct {
-	OperandLeft  string
-	OperandRight *string
-	Operator     string
-}
-
-type ListPoliciesInput struct {
-	Filter           *string      `json:"filter,omitempty"`
-	FilterExpression *[]Criterion `json:"filterExpression,omitempty"`
-	Limit            *int64       `json:"limit,omitempty"`
-	Offset           *int64       `json:"offset,omitempty"`
-	SortField        *string      `json:"sortField,omitempty"`
-	SortOrder        *SortOrder   `json:"sortOrder,omitempty"`
-}
-
-func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefinition, []ApiErrorDetail, error) {
-	err := validateQueryPoliciesInput(listPoliciesInput.SortOrder)
+func (c *Client) ListPolicies(queryInput apivalidator.QueryInput) ([]PolicyDefinition, []ApiErrorDetail, error) {
+	err := apivalidator.ValidateQueryInput(queryInput.SortOrder)
 	if err != nil {
 		return nil, nil, err
 	}
 	endpoint := fmt.Sprintf("%v/policydefinitions/request", *c.Addresses.Management)
 	policies := []PolicyDefinition{}
 
-	listPoliciesInputJson, err := json.Marshal(listPoliciesInput)
+	listPoliciesQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("unexpected error while marshaling list policies input: %v", err)
+		return nil, nil, fmt.Errorf("unexpected error while marshaling list policies query: %v", err)
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesInputJson))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesQueryJson))
 	if err != nil {
 		return nil, nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
 	}
@@ -77,15 +57,4 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 	}
 
 	return policies, nil, err
-}
-
-func validateQueryPoliciesInput(sortOrder *SortOrder) error {
-	if sortOrder == nil {
-		return nil
-	}
-	if *sortOrder != SortOrderAscendant && *sortOrder != SortOrderDescendant {
-		return fmt.Errorf("invalid value of sortOrder, possible values are: %v",
-			[]SortOrder{SortOrderAscendant, SortOrderDescendant})
-	}
-	return nil
 }
