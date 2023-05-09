@@ -5,6 +5,7 @@ type SortOrder string
 const (
 	SortOrderAscendant  SortOrder = "ASC"
 	SortOrderDescendant SortOrder = "DESC"
+	ErrInvalidSortOrder = "invalid value of sortOrder, possible values are: %v"
 )
 
 type Criterion struct {
