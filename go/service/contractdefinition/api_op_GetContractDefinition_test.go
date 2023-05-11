@@ -19,7 +19,7 @@ func TestClient_GetContractDefinition(t *testing.T) {
 	tests := []struct {
 		name    string
 		args    args
-		want    *ContractDefinition
+		want    *GetContractDefinitionOutput
 		wantErr bool
 	}{
 		{
@@ -27,12 +27,14 @@ func TestClient_GetContractDefinition(t *testing.T) {
 			args: args{
 				ContractDefinitionId: "1234",
 			},
-			want: &ContractDefinition{
-				Id:               "1234",
-				AccessPolicyId:   "1234",
-				ContractPolicyId: "1234",
-				Criteria:         make([]Criterion, 0),
-				Validity:         31536000,
+			want: &GetContractDefinitionOutput{
+				ContractDefinition: ContractDefinition{Id: "1234",
+					AccessPolicyId:   "1234",
+					ContractPolicyId: "1234",
+					Criteria:         make([]Criterion, 0),
+					Validity:         31536000,
+				},
+				CreatedAt: 1683810256318,
 			},
 			wantErr: false,
 		},
@@ -45,7 +47,8 @@ func TestClient_GetContractDefinition(t *testing.T) {
 	"accessPolicyId": "1234",
 	"contractPolicyId": "1234",
 	"criteria": [],
-	"validity": 31536000
+	"validity": 31536000,
+	"createdAt": 1683810256318
 }		
 `)
 	}))

@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDefinition, error) {
+func (c *Client) GetContractDefinition(ContractDefinitionId string) (*GetContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%v/contractdefinitions/%v", *c.Addresses.Management, ContractDefinitionId)
-	contractDefinition := ContractDefinition{}
+	contractDefinition := GetContractDefinitionOutput{}
 
 	req, err := http.NewRequest("GET", endpoint, nil)
 	if err != nil {
