@@ -219,10 +219,10 @@ func TestLoadDefaultConfig(t *testing.T) {
 	if cfg.AuthToken != authToken {
 		t.Errorf("unexpected auth token, expected %v got: %v", cfg.AuthToken, authToken)
 	}
-	if cfg.HTTPClient != nil {
+	if cfg.HTTPClient == nil {
 		t.Errorf("http client should not be nil")
 	}
-	if cfg.Logger != nil {
+	if cfg.Logger == nil {
 		t.Errorf("logger should not be nil")
 	}
 	if !reflect.DeepEqual(expectedAddresses, cfg.Addresses) {
