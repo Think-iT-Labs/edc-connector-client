@@ -35,7 +35,7 @@ type ListPoliciesInput struct {
 func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefinition, error) {
 	err := validateQueryPoliciesInput(listPoliciesInput.SortOrder)
 	if err != nil {
-		return nil, errors.Error("validation error")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_INPUT_VALIDATE)
 	}
 	endpoint := fmt.Sprintf("%s/policydefinitions/request", *c.Addresses.Management)
 	policies := []PolicyDefinition{}
@@ -43,23 +43,23 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 	listPoliciesInputJson, err := json.Marshal(listPoliciesInput)
 
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("marshall input")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesInputJson))
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(listPoliciesInputJson))
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("build request")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("list policies")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("read response")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	// when status code >= 400, it means there's an error from the api that we should handle
@@ -69,14 +69,15 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 		var v []internal.ConnectorApiError
 		err = json.Unmarshal(response, &v)
 		if err != nil {
-			return nil, errors.Wrap(err).FailedTo("while unmarshaling json")
+			return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
 		}
-		return nil, errors.Errorf("error from connector: %+v", v[0])
+		// TODO: can return more than 1 eleement in error array???
+		return nil, errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
 	}
 
 	err = json.Unmarshal(response, &policies)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("while unmarshaling json")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
 	}
 
 	return policies, nil

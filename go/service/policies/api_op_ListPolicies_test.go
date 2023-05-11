@@ -8,6 +8,7 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -81,5 +82,5 @@ func Test_ListPoliciesInternalServerError(t *testing.T) {
 	assert.Nil(t, policies)
 	assert.NotNil(t, err)
 
-	assert.Contains(t, err.Error(), "connector api error", "error message should contain 'connector api error'")
+	assert.Contains(t, err.Error(), internal.ACTION_API_SUCCESSFUL_RESULT, "error message should contain 'connector api error'")
 }

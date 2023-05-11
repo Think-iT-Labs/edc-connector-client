@@ -12,20 +12,20 @@ import (
 func (c *Client) DeletePolicy(policyId string) error {
 	endpoint := fmt.Sprintf("%s/policydefinitions/%s", *c.Addresses.Management, policyId)
 
-	req, err := http.NewRequest("DELETE", endpoint, nil)
+	req, err := http.NewRequest(http.MethodDelete, endpoint, nil)
 	if err != nil {
-		return errors.Wrap(err).FailedTo("build delete policy request")
+		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return errors.Wrap(err).FailedTo("perform HTTP request")
+		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return errors.Wrap(err).FailedTo("read response")
+		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	// when status code >= 400, it means there's an error from the api that we should handle
@@ -35,9 +35,10 @@ func (c *Client) DeletePolicy(policyId string) error {
 		var v []internal.ConnectorApiError
 		err = json.Unmarshal(response, &v)
 		if err != nil {
-			return errors.Wrap(err).FailedTo("unmarshal json")
+			return errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
 		}
-		return errors.Errorf("error from connector: %+v", v)
+		// TODO: can return more than 1 eleement in error array???
+		return errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
 	}
 
 	return nil

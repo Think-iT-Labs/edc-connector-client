@@ -27,23 +27,23 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 	createPolicyInputJson, err := json.Marshal(createPolicyInput)
 
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("marshal json")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(createPolicyInputJson))
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("create http request")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("perform request to the endpoint")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("read response bytes")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	// when status code >= 400, it means there's an error from the api that we should handle
@@ -53,15 +53,15 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 		var v []internal.ConnectorApiError
 		err = json.Unmarshal(response, &v)
 		if err != nil {
-			return nil, errors.Wrap(err).FailedTo("unmarshal json")
+			return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
 		}
 		// TODO: can return more than 1 eleement in error array???
-		return nil, errors.Wrap(v[0]).FailedTo("receive successful result from API")
+		return nil, errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
 	}
 
 	err = json.Unmarshal(response, &createPolicyOutput)
 	if err != nil {
-		return nil, errors.Wrap(err).FailedTo("unmarshal json")
+		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
 	}
 
 	return &createPolicyOutput, nil

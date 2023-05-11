@@ -28,8 +28,9 @@ func (f *ErrorFactory) Errorf(format string, a ...interface{}) error {
 	return fmt.Errorf(f.prefix+format, a...)
 }
 
-// Wrap returns a derived Factory that wraps the given errors in all // errors created.
-func (f *ErrorFactory) Wrap(err error) *ErrorFactory {
+// FromError returns a derived Factory that wraps the given errors in all
+// errors created.
+func (f *ErrorFactory) FromError(err error) *ErrorFactory {
 	return &ErrorFactory{
 		err:      err,
 		prefix:   f.prefix,
