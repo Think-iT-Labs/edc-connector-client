@@ -25,7 +25,6 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 	createPolicyOutput := CreatePolicyOutput{}
 
 	createPolicyInputJson, err := json.Marshal(createPolicyInput)
-
 	if err != nil {
 		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
@@ -54,7 +53,7 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 
 	err = json.Unmarshal(response, &createPolicyOutput)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return &createPolicyOutput, nil

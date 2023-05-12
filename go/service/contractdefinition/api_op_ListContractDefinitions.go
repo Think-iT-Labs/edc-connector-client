@@ -35,7 +35,7 @@ func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error
 
 	err = json.Unmarshal(response, &contractDefinitions)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return contractDefinitions, nil

@@ -15,7 +15,7 @@ func (c *Client) UpdateAssetProperties(asset AssetApiInput, assetId string) erro
 
 	assetProperties, err := json.Marshal(asset)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, assetEndpoint, bytes.NewBuffer(assetProperties))
@@ -39,7 +39,7 @@ func (c *Client) UpdateAssetProperties(asset AssetApiInput, assetId string) erro
 		var v []internal.ConnectorApiError
 		err = json.Unmarshal(response, &v)
 		if err != nil {
-			return errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+			return errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 		}
 		// TODO: can return more than 1 element in error array???
 		return errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)

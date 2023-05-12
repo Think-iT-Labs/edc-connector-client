@@ -37,7 +37,7 @@ func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, error) {
 
 	err = json.Unmarshal(response, &policyDefinition)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return &policyDefinition, nil

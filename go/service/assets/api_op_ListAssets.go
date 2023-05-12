@@ -41,7 +41,7 @@ func (c *Client) ListAssets() ([]AssetOutput, error) {
 
 	err = json.Unmarshal(response, &assets)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return assets, nil

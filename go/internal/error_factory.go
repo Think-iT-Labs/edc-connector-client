@@ -45,7 +45,7 @@ func (f *ErrorFactory) FailedTo(action string) error {
 
 // FailedTof behaves like Errorf but prepends "failed to".
 func (f *ErrorFactory) FailedTof(format string, a ...interface{}) error {
-	return f.Errorf("failed to "+format, a...)
+	return f.wrap(f.Errorf("failed to "+format, a...))
 }
 
 func (f *ErrorFactory) wrap(err error) error {

@@ -52,7 +52,6 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 	}
 
 	createAssetApiInputJson, err := json.Marshal(createAssetApiInput)
-
 	if err != nil {
 		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
@@ -79,7 +78,7 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 
 	err = json.Unmarshal(response, &createAssetOutput)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return &createAssetOutput, nil

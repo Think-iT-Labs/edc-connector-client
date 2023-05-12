@@ -40,7 +40,7 @@ func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContrac
 	ContractDefinitionOutput := CreateContractDefinitionOutput{}
 	err = json.Unmarshal(response, &ContractDefinitionOutput)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return &ContractDefinitionOutput, nil

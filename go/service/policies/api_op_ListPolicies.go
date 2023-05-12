@@ -41,7 +41,6 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 	policies := []PolicyDefinition{}
 
 	listPoliciesInputJson, err := json.Marshal(listPoliciesInput)
-
 	if err != nil {
 		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
@@ -70,7 +69,7 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 
 	err = json.Unmarshal(response, &policies)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
+		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return policies, nil
