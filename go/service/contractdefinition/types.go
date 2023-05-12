@@ -1,5 +1,9 @@
 package contractdefinition
 
+import "github.com/Think-iT-Labs/edc-connector-client/go/internal"
+
+var errors = internal.NewErrorFactory("contract-definitions")
+
 type ContractDefinition struct {
 	Id               string      `json:"id,omitempty"`
 	AccessPolicyId   string      `json:"accessPolicyId"`
