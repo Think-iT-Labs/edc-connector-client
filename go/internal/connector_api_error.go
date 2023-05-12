@@ -1,6 +1,9 @@
 package internal
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // ConnectorApiError represents an error that is returned from the connector API
 type ConnectorApiError struct {
@@ -11,5 +14,18 @@ type ConnectorApiError struct {
 }
 
 func (e ConnectorApiError) Error() string {
-	return fmt.Sprintf("{InvalidValue: %s, Message: %s, Path: %s Type: %s}", e.InvalidValue, e.Message, e.Path, e.Type) //fmt.Errorf("%s", e)
+	return fmt.Sprintf("{InvalidValue: %s, Message: %s, Path: %s Type: %s}", e.InvalidValue, e.Message, e.Path, e.Type)
+}
+
+func ParseConnectorApiError(response []byte) error {
+	// The connector API returns error in an array.
+	var v []ConnectorApiError
+	err := json.Unmarshal(response, &v)
+	if err != nil {
+		return &wrapError{
+			outer: fmt.Errorf("failed to: %s", ACTION_JSON_UNMARSHAL),
+			inner: err,
+		}
+	}
+	return v[0]
 }

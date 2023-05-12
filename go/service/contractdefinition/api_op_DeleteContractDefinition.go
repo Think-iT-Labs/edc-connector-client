@@ -1,7 +1,6 @@
 package contractdefinition
 
 import (
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -29,14 +28,7 @@ func (c *Client) DeleteContractDefinition(cDefId string) error {
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		// The contract definitions API returns error in an array.
-		var v []internal.ConnectorApiError
-		err = json.Unmarshal(response, &v)
-		if err != nil {
-			return errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
-		}
-		// TODO: can return more than 1 eleement in error array???
-		return errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
 	}
 
 	return nil

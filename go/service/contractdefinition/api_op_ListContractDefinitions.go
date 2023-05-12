@@ -30,14 +30,7 @@ func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error
 	}
 
 	if res.StatusCode != http.StatusOK {
-		// The contract definitions API returns error in an array.
-		var v []internal.ConnectorApiError
-		err = json.Unmarshal(response, &v)
-		if err != nil {
-			return nil, errors.FromError(err).FailedTo(internal.ACTION_JSON_UNMARSHAL)
-		}
-		// TODO: can return more than 1 eleement in error array???
-		return nil, errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
 	}
 
 	err = json.Unmarshal(response, &contractDefinitions)
