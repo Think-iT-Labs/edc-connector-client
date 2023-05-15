@@ -19,13 +19,23 @@ func (e ConnectorApiError) Error() string {
 
 func ParseConnectorApiError(response []byte) error {
 	// The connector API returns error in an array.
-	var v []ConnectorApiError
-	err := json.Unmarshal(response, &v)
+	var apiErrors ConnectorApiErrors
+	err := json.Unmarshal(response, &apiErrors)
 	if err != nil {
 		return &wrapError{
 			outer: fmt.Errorf("failed to: %s", ACTION_JSON_UNMARSHAL),
 			inner: err,
 		}
 	}
-	return v[0]
+	return apiErrors
+}
+
+type ConnectorApiErrors []ConnectorApiError
+
+func (es ConnectorApiErrors) Error() string {
+	var msg string
+	for _, e := range es {
+		msg = msg + " " + e.Error()
+	}
+	return fmt.Sprintf("[ " + msg + " ]")
 }
