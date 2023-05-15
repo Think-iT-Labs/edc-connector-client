@@ -300,7 +300,7 @@ describe("DataController", () => {
     });
   });
 
-  describe("edcClient.management.listAssets", () => {
+  describe("edcClient.management.queryAllAssets", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const edcClient = new EdcConnectorClient();
@@ -324,7 +324,7 @@ describe("DataController", () => {
       await edcClient.management.createAsset(context, assetInput);
 
       // when
-      const assets = await edcClient.management.listAssets(context);
+      const assets = await edcClient.management.queryAllAssets(context);
 
       // then
       expect(assets.length).toBeGreaterThan(0);
