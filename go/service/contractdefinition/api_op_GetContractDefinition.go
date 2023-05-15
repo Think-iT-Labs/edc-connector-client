@@ -30,8 +30,7 @@ func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDe
 	}
 
 	if res.StatusCode != http.StatusOK {
-		// The contract definitions API returns error in an array.
-		return nil, errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &contractDefinition)

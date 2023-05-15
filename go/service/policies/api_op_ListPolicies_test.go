@@ -1,6 +1,7 @@
 package policies
 
 import (
+	errlib "errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -82,5 +83,6 @@ func Test_ListPoliciesInternalServerError(t *testing.T) {
 	assert.Nil(t, policies)
 	assert.NotNil(t, err)
 
-	assert.Contains(t, err.Error(), internal.ACTION_API_SUCCESSFUL_RESULT, "error message should contain 'connector api error'")
+	innerError := errlib.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiError{}, innerError, "error should be of type  internal.ConnectorApiError")
 }

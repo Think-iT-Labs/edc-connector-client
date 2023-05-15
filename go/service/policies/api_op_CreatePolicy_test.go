@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	errlib "errors"
+
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
@@ -103,6 +105,7 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	assert.Nil(t, createdPolicy)
 	assert.NotNil(t, err)
 
-	assert.Contains(t, err.Error(), internal.ACTION_API_SUCCESSFUL_RESULT, "error message should contain 'connector api error'")
+	innerError := errlib.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiError{}, innerError, "error should be of type  internal.ConnectorApiError")
 
 }

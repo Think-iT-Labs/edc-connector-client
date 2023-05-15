@@ -34,7 +34,7 @@ func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContrac
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	ContractDefinitionOutput := CreateContractDefinitionOutput{}

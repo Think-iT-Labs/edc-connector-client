@@ -48,7 +48,7 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 	// when status code >= 400, it means there's an error from the api that we should handle
 	statusOk := res.StatusCode == 200 || res.StatusCode < 300
 	if !statusOk {
-		return nil, errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &createPolicyOutput)

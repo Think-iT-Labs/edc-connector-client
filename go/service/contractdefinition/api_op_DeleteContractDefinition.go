@@ -28,7 +28,7 @@ func (c *Client) DeleteContractDefinition(cDefId string) error {
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	return nil

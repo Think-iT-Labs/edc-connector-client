@@ -30,14 +30,7 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 	}
 
 	if res.StatusCode != http.StatusOK {
-		// The assets API returns error in an array.
-		var v []internal.ConnectorApiError
-		err = json.Unmarshal(response, &v)
-		if err != nil {
-			return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
-		}
-		// TODO: can return more than 1 element in error array???
-		return nil, errors.FromError(v[0]).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &asset)
@@ -69,7 +62,7 @@ func (c *Client) GetAssetDataAddress(assetId string) (*AssetDataAddressOutput, e
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &asset)

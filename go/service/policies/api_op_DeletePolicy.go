@@ -30,7 +30,7 @@ func (c *Client) DeletePolicy(policyId string) error {
 	// when status code >= 400, it means there's an error from the api that we should handle
 	statusOk := res.StatusCode == 200 || res.StatusCode < 300
 	if !statusOk {
-		return errors.FromError(internal.ParseConnectorApiError(response)).FailedTo(internal.ACTION_API_SUCCESSFUL_RESULT)
+		return errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 	return nil
 }
