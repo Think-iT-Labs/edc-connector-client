@@ -27,7 +27,7 @@ func NewErrorFactory(prefix string) *ErrorFactory {
 // Error behaves like errors.New() but prepends the factory prefix
 // to the error message
 func (f *ErrorFactory) Error(text string) error {
-	return f.wrap(errors.New(f.prefix + text))
+	return f.wrapFactoryErrorWith(errors.New(f.prefix + text))
 }
 
 // Errorf behaves like fmt.Errorf() but prepends the factory prefix
@@ -48,25 +48,23 @@ func (f *ErrorFactory) FromError(err error) *ErrorFactory {
 
 // FailedTo returns an error with a message "failed to <action>".
 func (f *ErrorFactory) FailedTo(action string) error {
-	return f.wrap(f.Errorf("failed to %s", action))
+	return f.wrapFactoryErrorWith(f.Errorf("failed to %s", action))
 }
 
 // FailedTof behaves like Errorf but prepends "failed to".
 func (f *ErrorFactory) FailedTof(format string, a ...interface{}) error {
 	messagef := fmt.Sprintf("failed to %s", format)
-	return f.wrap(f.Errorf(messagef, a...))
+	return f.wrapFactoryErrorWith(f.Errorf(messagef, a...))
 }
 
-// wraps factory's internal error with given err
-func (f *ErrorFactory) wrap(err error) error {
-	if !f.wrapping {
-		return err
+// wrapFactoryErrorWith returns an error combining outerError and factory's defaultInternalError
+// if f.wrapping == false, only outerError is returned
+func (f *ErrorFactory) wrapFactoryErrorWith(outerError error) error {
+	if f.wrapping {
+		return &wrapError{
+			inner: f.defaultInternalError,
+			outer: outerError,
+		}
 	}
-	if f.defaultInternalError == nil {
-		return nil
-	}
-	return &wrapError{
-		inner: f.defaultInternalError,
-		outer: err,
-	}
+	return outerError
 }
