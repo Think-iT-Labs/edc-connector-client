@@ -1,13 +1,12 @@
 package policies
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	errlib "errors"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
@@ -105,7 +104,7 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	assert.Nil(t, createdPolicy)
 	assert.NotNil(t, err)
 
-	innerError := errlib.Unwrap(err)
-	assert.IsTypef(t, internal.ConnectorApiError{}, innerError, "error should be of type  internal.ConnectorApiError")
+	innerError := errors.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiErrors{}, innerError, "error should be of type internal.ConnectorApiErrors")
 
 }

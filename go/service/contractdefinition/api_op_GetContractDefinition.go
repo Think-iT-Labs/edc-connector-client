@@ -15,27 +15,27 @@ func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDe
 
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 	defer res.Body.Close()
 
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
+		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &contractDefinition)
 	if err != nil {
-		return nil, errors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
+		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
 	return &contractDefinition, nil

@@ -1,7 +1,7 @@
 package policies
 
 import (
-	errlib "errors"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -82,6 +82,6 @@ func Test_GetPolicyBadRequestError(t *testing.T) {
 	assert.Nil(t, policy)
 	assert.NotNil(t, err)
 
-	innerError := errlib.Unwrap(err)
-	assert.IsTypef(t, internal.ConnectorApiError{}, innerError, "error should be of type  internal.ConnectorApiError")
+	innerError := errors.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiErrors{}, innerError, "error should be of type internal.ConnectorApiErrors")
 }

@@ -2,7 +2,7 @@ package assets
 
 import "github.com/Think-iT-Labs/edc-connector-client/go/internal"
 
-var errors = internal.NewErrorFactory("assets")
+var sdkErrors = internal.NewErrorFactory("assets")
 
 type DataProperties interface {
 	IsDataProperties()

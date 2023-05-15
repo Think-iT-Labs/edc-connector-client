@@ -4,7 +4,7 @@ import "github.com/Think-iT-Labs/edc-connector-client/go/internal"
 
 type PolicyType string
 
-var errors = internal.NewErrorFactory("policies")
+var sdkErrors = internal.NewErrorFactory("policies")
 
 const (
 	SetPolicyType      PolicyType = "set"

@@ -15,27 +15,27 @@ func (c *Client) UpdateAssetProperties(asset AssetApiInput, assetId string) erro
 
 	assetProperties, err := json.Marshal(asset)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, assetEndpoint, bytes.NewBuffer(assetProperties))
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
+		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	return nil
@@ -51,27 +51,27 @@ func (c *Client) UpdateAssetDataAddress(dataAddress DataAddress, assetId string)
 
 	assetDataAddress, err := json.Marshal(dataAddressPayload)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 	req, err := http.NewRequest(http.MethodPut, dataAddressEndpoint, bytes.NewBuffer(assetDataAddress))
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return errors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return errors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
+		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	return nil
