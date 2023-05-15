@@ -27,9 +27,7 @@ func (c *Client) DeletePolicy(policyId string) error {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
-	// when status code >= 400, it means there's an error from the api that we should handle
-	statusOk := res.StatusCode == 200 || res.StatusCode < 300
-	if !statusOk {
+	if res.StatusCode != http.StatusNoContent {
 		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 	return nil

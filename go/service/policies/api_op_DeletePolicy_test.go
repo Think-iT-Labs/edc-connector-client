@@ -16,6 +16,7 @@ import (
 func Test_DeletePolicy(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, ``)
 	}))
 	defer svr.Close()
