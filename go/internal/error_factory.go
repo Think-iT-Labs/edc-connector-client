@@ -7,8 +7,12 @@ import (
 
 // ErrorFactory creates and wraps errors
 type ErrorFactory struct {
-	err      error
-	prefix   string
+	// the error that the factory produces
+	err error
+	// prefix will be prepended to all error messages returned by the factory
+	prefix string
+	// if True, factory exposes err as wrapError.Inner
+	// Otherwise, factory.err would not be returned
 	wrapping bool
 }
 
@@ -20,10 +24,14 @@ func NewErrorFactory(prefix string) *ErrorFactory {
 	}
 }
 
+// Error behaves like errors.New() but prepends the factory prefix
+// to the error message
 func (f *ErrorFactory) Error(text string) error {
 	return f.wrap(errors.New(f.prefix + text))
 }
 
+// Errorf behaves like fmt.Errorf() but prepends the factory prefix
+// to the error message
 func (f *ErrorFactory) Errorf(format string, a ...interface{}) error {
 	return fmt.Errorf(f.prefix+format, a...)
 }
@@ -45,7 +53,8 @@ func (f *ErrorFactory) FailedTo(action string) error {
 
 // FailedTof behaves like Errorf but prepends "failed to".
 func (f *ErrorFactory) FailedTof(format string, a ...interface{}) error {
-	return f.wrap(f.Errorf("failed to "+format, a...))
+	messagef := fmt.Sprintf("failed to %s", format)
+	return f.wrap(f.Errorf(messagef, a...))
 }
 
 func (f *ErrorFactory) wrap(err error) error {

@@ -17,6 +17,8 @@ func (e ConnectorApiError) Error() string {
 	return fmt.Sprintf("{InvalidValue: %s, Message: %s, Path: %s Type: %s}", e.InvalidValue, e.Message, e.Path, e.Type)
 }
 
+// ParseConnectorApiError reads the HTTP response
+// and parses it to read the ConnectorApiErrors within
 func ParseConnectorApiError(response []byte) error {
 	// The connector API returns error in an array.
 	var apiErrors ConnectorApiErrors
@@ -35,7 +37,7 @@ type ConnectorApiErrors []ConnectorApiError
 func (es ConnectorApiErrors) Error() string {
 	var msg string
 	for _, e := range es {
-		msg = msg + " " + e.Error()
+		msg = msg + fmt.Sprintf("%s\n", e.Error())
 	}
 	return fmt.Sprintf("[ " + msg + " ]")
 }

@@ -3,11 +3,11 @@ package internal
 import "fmt"
 
 // wrapError represents an error that wraps another error
-// inner is the original error
-// outer is the outer layer
 // eg: wrapError{outer: "unmarshal json", inner: "unexpected ',' at 13:10"}
 type wrapError struct {
+	// inner is the original error
 	inner error
+	// outer is the outer layer
 	outer error
 }
 
