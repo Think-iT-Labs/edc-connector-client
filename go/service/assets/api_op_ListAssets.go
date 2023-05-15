@@ -16,11 +16,19 @@ type AssetOutput struct {
 	AssetProperties map[string]string `json:"properties"`
 }
 
-func (c *Client) ListAssets(queryInput apivalidator.QueryInput) ([]AssetOutput, error) {
-	err := apivalidator.ValidateQueryInput(queryInput.SortOrder)
-	if err != nil {
-		return nil, err
+func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, error) {
+	var queryInput apivalidator.QueryInput
+
+	if len(args) > 0 {
+		queryInput = args[0]
+		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		queryInput = apivalidator.QueryInput{}
 	}
+
 	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
 	assets := []AssetOutput{}
 	

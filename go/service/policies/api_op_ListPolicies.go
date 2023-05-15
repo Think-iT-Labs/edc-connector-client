@@ -10,11 +10,19 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
-func (c *Client) ListPolicies(queryInput apivalidator.QueryInput) ([]PolicyDefinition, []ApiErrorDetail, error) {
-	err := apivalidator.ValidateQueryInput(queryInput.SortOrder)
-	if err != nil {
-		return nil, nil, err
+func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefinition, []ApiErrorDetail, error)  {
+	var queryInput apivalidator.QueryInput
+
+	if len(args) > 0 {
+		queryInput = args[0]
+		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
+		if err != nil {
+			return nil, nil, err
+		}
+	} else {
+		queryInput = apivalidator.QueryInput{}
 	}
+
 	endpoint := fmt.Sprintf("%v/policydefinitions/request", *c.Addresses.Management)
 	policies := []PolicyDefinition{}
 

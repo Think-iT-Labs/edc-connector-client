@@ -9,7 +9,6 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
 	"github.com/stretchr/testify/assert"
-	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 func Test_ListPolicies(t *testing.T) {
@@ -39,7 +38,7 @@ func Test_ListPolicies(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, apiError, err := apiClient.ListPolicies(apivalidator.QueryInput{})
+	policies, apiError, err := apiClient.ListPolicies()
 
 	assert.NoError(t, err, "failed to list policies.")
 	assert.NotNil(t, policies)
@@ -78,7 +77,7 @@ func Test_ListPoliciesInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, apiError, err := apiClient.ListPolicies(apivalidator.QueryInput{})
+	policies, apiError, err := apiClient.ListPolicies()
 
 	assert.NoError(t, err, "failed to list policies.")
 	assert.Nil(t, policies)
