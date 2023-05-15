@@ -7,5 +7,5 @@ const (
 	ACTION_HTTP_DO_REQUEST    = "perform request to the endpoint"
 	ACTION_HTTP_READ_BYTES    = "read response bytes"
 	ACTION_INPUT_VALIDATE     = "validate input"
-	ERROR_API_ERROR           = "error from API"
+	ERROR_API_ERROR           = "error(s) from API"
 )

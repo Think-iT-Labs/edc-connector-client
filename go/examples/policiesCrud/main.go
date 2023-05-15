@@ -65,7 +65,7 @@ func main() {
 
 	policy, err := client.GetPolicy(policyId)
 	if err != nil {
-		fmt.Printf("error while getting an policy by id %+v\n", policyId)
+		fmt.Printf("error while getting an policy by id %+s. Full error:\n%v", policyId, err)
 		return
 	}
 	fmt.Println(*policy)

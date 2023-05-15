@@ -36,8 +36,13 @@ type ConnectorApiErrors []ConnectorApiError
 
 func (es ConnectorApiErrors) Error() string {
 	var msg string
-	for _, e := range es {
-		msg = msg + fmt.Sprintf("%s\n", e.Error())
+	if len(es) == 1 {
+		msg = fmt.Sprintf("[%s]", es[0].Error())
+	} else {
+		for _, e := range es {
+			msg = msg + fmt.Sprintf("%s,\n", e.Error())
+		}
+		msg = fmt.Sprintf("[\n%s]", msg)
 	}
-	return fmt.Sprintf("[ " + msg + " ]")
+	return msg
 }

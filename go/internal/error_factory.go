@@ -7,8 +7,8 @@ import (
 
 // ErrorFactory creates and wraps errors
 type ErrorFactory struct {
-	// the error that the factory produces
-	err error
+	// the error that the factory produces. Can be nil
+	defaultInternalError error
 	// prefix will be prepended to all error messages returned by the factory
 	prefix string
 	// if True, factory exposes err as wrapError.Inner
@@ -40,9 +40,9 @@ func (f *ErrorFactory) Errorf(format string, a ...interface{}) error {
 // errors created.
 func (f *ErrorFactory) FromError(err error) *ErrorFactory {
 	return &ErrorFactory{
-		err:      err,
-		prefix:   f.prefix,
-		wrapping: true,
+		defaultInternalError: err,
+		prefix:               f.prefix,
+		wrapping:             true,
 	}
 }
 
@@ -57,15 +57,16 @@ func (f *ErrorFactory) FailedTof(format string, a ...interface{}) error {
 	return f.wrap(f.Errorf(messagef, a...))
 }
 
+// wraps factory's internal error with given err
 func (f *ErrorFactory) wrap(err error) error {
 	if !f.wrapping {
 		return err
 	}
-	if f.err == nil {
+	if f.defaultInternalError == nil {
 		return nil
 	}
 	return &wrapError{
-		inner: f.err,
+		inner: f.defaultInternalError,
 		outer: err,
 	}
 }
