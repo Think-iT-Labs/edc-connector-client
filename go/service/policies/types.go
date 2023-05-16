@@ -1,6 +1,10 @@
 package policies
 
+import "github.com/Think-iT-Labs/edc-connector-client/go/internal"
+
 type PolicyType string
+
+var sdkErrors = internal.NewErrorFactory("policies")
 
 const (
 	SetPolicyType      PolicyType = "set"
@@ -68,11 +72,4 @@ type PolicyDefinition struct {
 	Id        string `json:"id,omitempty"`
 	CreatedAt int64  `json:"createdAt,omitempty"`
 	Policy    Policy `json:"policy,omitempty"`
-}
-
-type ApiErrorDetail struct {
-	InvalidValue *string `json:"invalidValue,omitempty"`
-	Message      *string `json:"message,omitempty"`
-	Path         *string `json:"path,omitempty"`
-	Type         *string `json:"type,omitempty"`
 }

@@ -7,6 +7,8 @@ import (
 	"io"
 	"net/http"
 	"reflect"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
 type DataAddress struct {
@@ -31,12 +33,12 @@ type CreateAssetOutput struct {
 }
 
 func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOutput, error) {
-	endpoint := fmt.Sprintf("%v/assets", *c.Addresses.Management)
+	endpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
 	createAssetOutput := CreateAssetOutput{}
 
 	err := validateDataAddressInput(createAssetInput.DataAddress)
 	if err != nil {
-		return nil, err
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_INPUT_VALIDATE)
 	}
 
 	dataAddressApiInput, err := createDataAddressFromInput(createAssetInput.DataAddress)
@@ -50,37 +52,36 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 	}
 
 	createAssetApiInputJson, err := json.Marshal(createAssetApiInput)
-
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while marshaling create asset input: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(createAssetApiInputJson))
+	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(createAssetApiInputJson))
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &createAssetOutput)
 	if err != nil {
-		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
-	return &createAssetOutput, err
+	return &createAssetOutput, nil
 }
 
 func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, error) {

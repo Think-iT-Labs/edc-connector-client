@@ -51,7 +51,7 @@ func main() {
 	)
 
 	if err != nil {
-		fmt.Printf("error while creating an asset: %v\n", err)
+		fmt.Printf("error while creating a contract definition: %v\n", err)
 		return
 	}
 	fmt.Printf("%+v\n", *contractDefinitionOutput)

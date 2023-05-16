@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,12 +9,14 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_DeletePolicy(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNoContent)
 		fmt.Fprintf(w, ``)
 	}))
 	defer svr.Close()
@@ -31,10 +34,9 @@ func Test_DeletePolicy(t *testing.T) {
 	assert.NoError(t, err, "failed to initialize api client")
 
 	policyId := "1234"
-	apiError, err := apiClient.DeletePolicy(policyId)
+	err = apiClient.DeletePolicy(policyId)
 
-	assert.NoError(t, err, "failed to create asset.")
-	assert.Nil(t, apiError)
+	assert.NoError(t, err, "failed to delete policy.")
 }
 
 func Test_DeletePolicyInternalServerError(t *testing.T) {
@@ -66,9 +68,10 @@ func Test_DeletePolicyInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	apiError, err := apiClient.DeletePolicy("1234")
+	err = apiClient.DeletePolicy("1234")
 
-	assert.NoError(t, err, "failed to list policies.")
-	assert.NotNil(t, apiError)
-	assert.Equal(t, len(apiError), 1)
+	assert.NotNil(t, err)
+
+	innerError := errors.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiErrors{}, innerError, "error should be of type internal.ConnectorApiErrors")
 }

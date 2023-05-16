@@ -1,6 +1,7 @@
 package policies
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,11 +40,10 @@ func Test_ListPolicies(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, apiError, err := apiClient.ListPolicies(ListPoliciesInput{})
+	policies, err := apiClient.ListPolicies(ListPoliciesInput{})
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to list policies.")
 	assert.NotNil(t, policies)
-	assert.Nil(t, apiError)
 	assert.Equal(t, len(policies), 1)
 	assert.Equal(t, policies[0].Id, "1234")
 	assert.Equal(t, policies[0].CreatedAt, int64(1680172087972))
@@ -77,10 +78,11 @@ func Test_ListPoliciesInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, apiError, err := apiClient.ListPolicies(ListPoliciesInput{})
+	policies, err := apiClient.ListPolicies(ListPoliciesInput{})
 
-	assert.NoError(t, err, "failed to list policies.")
 	assert.Nil(t, policies)
-	assert.NotNil(t, apiError)
-	assert.Equal(t, len(apiError), 1)
+	assert.NotNil(t, err)
+
+	innerError := errors.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiErrors{}, innerError, "error should be of type internal.ConnectorApiErrors")
 }
