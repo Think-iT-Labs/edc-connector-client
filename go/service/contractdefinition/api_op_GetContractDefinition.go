@@ -5,37 +5,38 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
 func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDefinition, error) {
-	endpoint := fmt.Sprintf("%v/contractdefinitions/%v", *c.Addresses.Management, ContractDefinitionId)
+	endpoint := fmt.Sprintf("%s/contractdefinitions/%s", *c.Addresses.Management, ContractDefinitionId)
 	contractDefinition := ContractDefinition{}
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing GET request to the endpoint %v: %v", endpoint, err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 	defer res.Body.Close()
 
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
-	statusOk := res.StatusCode == 200
-	if !statusOk {
-		return nil, fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, endpoint, response)
+	if res.StatusCode != http.StatusOK {
+		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &contractDefinition)
 	if err != nil {
-		return nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
-	return &contractDefinition, err
+	return &contractDefinition, nil
 }

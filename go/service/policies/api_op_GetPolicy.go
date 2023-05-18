@@ -3,45 +3,40 @@ package policies
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, []ApiErrorDetail, error) {
-	endpoint := fmt.Sprintf("%v/policydefinitions/%v", *c.Addresses.Management, policyId)
+func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, error) {
+	endpoint := fmt.Sprintf("%s/policydefinitions/%s", *c.Addresses.Management, policyId)
 	policyDefinition := PolicyDefinition{}
 
-	req, err := http.NewRequest("GET", endpoint, nil)
+	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
-		return nil, nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while performing GET request to the endpoint %v: %v", endpoint, err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
-	// when status code >= 400, it means there's an error from the api that we should handle
-	statusOk := res.StatusCode == 200 && res.StatusCode < 300
-	if !statusOk {
-		var v []ApiErrorDetail
-		err = json.Unmarshal(response, &v)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
-		}
-		return nil, v, nil
+	if res.StatusCode != http.StatusOK {
+		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &policyDefinition)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
-	return &policyDefinition, nil, err
+	return &policyDefinition, nil
 }

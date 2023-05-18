@@ -4,20 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
-func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefinition, []ApiErrorDetail, error)  {
+func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefinition, error) {
 	var queryInput apivalidator.QueryInput
 
 	if len(args) > 0 {
 		queryInput = args[0]
 		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 	} else {
 		queryInput = apivalidator.QueryInput{}
@@ -29,40 +30,33 @@ func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefiniti
 	listPoliciesQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
-		return nil, nil, fmt.Errorf("unexpected error while marshaling list policies query: %v", err)
+		return nil, fmt.Errorf("unexpected error while marshaling list policies query: %v", err)
 	}
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesQueryJson))
 	if err != nil {
-		return nil, nil, fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while reading response body: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
-	// when status code >= 400, it means there's an error from the api that we should handle
-	statusOk := res.StatusCode == 200 && res.StatusCode < 300
-	if !statusOk {
-		var v []ApiErrorDetail
-		err = json.Unmarshal(response, &v)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
-		}
-		return nil, v, nil
+	if res.StatusCode != http.StatusOK {
+		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	err = json.Unmarshal(response, &policies)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error while unmarshaling json: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
-	return policies, nil, err
+	return policies, nil
 }

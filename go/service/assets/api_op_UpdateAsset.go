@@ -6,41 +6,43 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
 func (c *Client) UpdateAssetProperties(asset AssetApiInput, assetId string) error {
-	assetEndpoint := fmt.Sprintf("%v/assets/%v", *c.Addresses.Management, assetId)
+	assetEndpoint := fmt.Sprintf("%s/assets/%s", *c.Addresses.Management, assetId)
 
 	assetProperties, err := json.Marshal(asset)
 	if err != nil {
-		return fmt.Errorf("unexpected error while marshaling create asset properties: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
-	req, err := http.NewRequest("PUT", assetEndpoint, bytes.NewBuffer(assetProperties))
+	req, err := http.NewRequest(http.MethodPut, assetEndpoint, bytes.NewBuffer(assetProperties))
 	if err != nil {
-		return fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("error while performing GET request to the endpoint %v: %v", assetEndpoint, err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return fmt.Errorf("error while reading response body: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, assetEndpoint, response)
+		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	return nil
 }
 
 func (c *Client) UpdateAssetDataAddress(dataAddress DataAddress, assetId string) error {
-	dataAddressEndpoint := fmt.Sprintf("%v/assets/%v/dataaddress", *c.Addresses.Management, assetId)
+	dataAddressEndpoint := fmt.Sprintf("%s/assets/%s/dataaddress", *c.Addresses.Management, assetId)
 
 	dataAddressPayload, err := createDataAddressFromInput(dataAddress)
 	if err != nil {
@@ -49,27 +51,27 @@ func (c *Client) UpdateAssetDataAddress(dataAddress DataAddress, assetId string)
 
 	assetDataAddress, err := json.Marshal(dataAddressPayload)
 	if err != nil {
-		return fmt.Errorf("unexpected error while marshaling create asset properties: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
-	req, err := http.NewRequest("PUT", dataAddressEndpoint, bytes.NewBuffer(assetDataAddress))
+	req, err := http.NewRequest(http.MethodPut, dataAddressEndpoint, bytes.NewBuffer(assetDataAddress))
 	if err != nil {
-		return fmt.Errorf("unexpected error while building HTTP request: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("error while performing GET request to the endpoint %v: %v", dataAddressEndpoint, err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
 	if err != nil {
-		return fmt.Errorf("error while reading response body: %v", err)
+		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
 	if res.StatusCode != http.StatusNoContent {
-		return fmt.Errorf("error: got %d from %s %s endpoint . Full response : \n %s", res.StatusCode, res.Request.Method, dataAddressEndpoint, response)
+		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
 	return nil

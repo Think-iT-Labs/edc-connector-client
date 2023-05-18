@@ -44,7 +44,7 @@ func main() {
 	policyId := "1234"
 	uuid := "f08e21cf-f4b4-49b5-aea1-bcec21336d09"
 
-	createPolicyOutput, apiError, err := client.CreatePolicy(policies.CreatePolicyInput{
+	createPolicyOutput, err := client.CreatePolicy(policies.CreatePolicyInput{
 		Id: &policyId,
 		Policy: policies.Policy{
 			UID: &uuid,
@@ -54,51 +54,31 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
-		return
-	}
 	fmt.Println(createPolicyOutput.Id)
 
-	allPolicies, apiError, err := client.ListPolicies(policies.ListPoliciesInput{})
+	allPolicies, err := client.ListPolicies(policies.ListPoliciesInput{})
 	if err != nil {
-		fmt.Printf("error while listing policies: %v", err)
-		return
-	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
+		fmt.Printf("error while listing policies: %+v \n", err)
 		return
 	}
 	fmt.Println(allPolicies)
 
-	policy, apiError, err := client.GetPolicy(policyId)
+	policy, err := client.GetPolicy(policyId)
 	if err != nil {
-		fmt.Printf("error while getting an policy by id %v\n", policyId)
-		return
-	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
+		fmt.Printf("error while getting an policy by id %+s. Full error:\n%v", policyId, err)
 		return
 	}
 	fmt.Println(*policy)
 
-	apiError, err = client.DeletePolicy(policy.Id)
+	err = client.DeletePolicy(policy.Id)
 	if err != nil {
-		fmt.Printf("error while deleting policy by id %v: %v\n", policy.Id, err)
-		return
-	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
+		fmt.Printf("error while deleting policy by id %+v: %+v\n", policy.Id, err)
 		return
 	}
 
-	allPolicies, apiError, err = client.ListPolicies(policies.ListPoliciesInput{})
+	allPolicies, err = client.ListPolicies(policies.ListPoliciesInput{})
 	if err != nil {
-		fmt.Println("error while listing assets")
-		return
-	}
-	if apiError != nil {
-		fmt.Println(*apiError[0].Message)
+		fmt.Printf("error while listing assets: %+v \n", err)
 		return
 	}
 	fmt.Println(allPolicies)

@@ -1,14 +1,16 @@
 package policies
 
 import (
+	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +18,7 @@ func Test_CreateAsset(t *testing.T) {
 	authToken := "dummy"
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		payload, err := ioutil.ReadAll(r.Body)
+		payload, err := io.ReadAll(r.Body)
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
@@ -53,7 +55,7 @@ func Test_CreateAsset(t *testing.T) {
 	assignee := "edc-user-1"
 	assigner := "edc-user-2"
 	policyId := "1234"
-	createPolicyOutput, apiError, err := apiClient.CreatePolicy(
+	createPolicyOutput, err := apiClient.CreatePolicy(
 		CreatePolicyInput{
 			Id: &policyId,
 			Policy: Policy{
@@ -63,9 +65,8 @@ func Test_CreateAsset(t *testing.T) {
 			},
 		},
 	)
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to create policy.")
 	assert.NotNil(t, createPolicyOutput)
-	assert.Nil(t, apiError)
 	assert.Equal(t, createPolicyOutput.Id, policyId)
 	assert.Equal(t, createPolicyOutput.CreatedAt, int64(1680004526))
 }
@@ -79,8 +80,7 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	{
 		"invalidValue": "internal server error",
 		"message": "internal server error",
-		"path": "/policydefinitions/",
-		"path": "POST"
+		"path": "/policydefinitions/"
 	}
 ]
 `)
@@ -99,10 +99,12 @@ func Test_CreatePolicyInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	createdPolicy, apiError, err := apiClient.CreatePolicy(CreatePolicyInput{})
+	createdPolicy, err := apiClient.CreatePolicy(CreatePolicyInput{})
 
-	assert.NoError(t, err, "failed to list policies.")
-	assert.NotNil(t, apiError)
 	assert.Nil(t, createdPolicy)
-	assert.Equal(t, len(apiError), 1)
+	assert.NotNil(t, err)
+
+	innerError := errors.Unwrap(err)
+	assert.IsTypef(t, internal.ConnectorApiErrors{}, innerError, "error should be of type internal.ConnectorApiErrors")
+
 }
