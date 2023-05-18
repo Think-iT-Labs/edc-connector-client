@@ -2,7 +2,7 @@ package contractdefinition
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
@@ -22,7 +22,7 @@ func (c *Client) DeleteContractDefinition(cDefId string) error {
 	}
 
 	defer res.Body.Close()
-	response, err := ioutil.ReadAll(res.Body)
+	response, err := io.ReadAll(res.Body)
 	if err != nil {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}

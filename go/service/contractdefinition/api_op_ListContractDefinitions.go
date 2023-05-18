@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
-	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]GetContractDefinitionOutput, error)  {

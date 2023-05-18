@@ -56,7 +56,7 @@ func main() {
 	}
 	fmt.Println(createPolicyOutput.Id)
 
-	allPolicies, err := client.ListPolicies(policies.ListPoliciesInput{})
+	allPolicies, err := client.ListPolicies()
 	if err != nil {
 		fmt.Printf("error while listing policies: %+v \n", err)
 		return
@@ -76,7 +76,7 @@ func main() {
 		return
 	}
 
-	allPolicies, err = client.ListPolicies(policies.ListPoliciesInput{})
+	allPolicies, err = client.ListPolicies()
 	if err != nil {
 		fmt.Printf("error while listing assets: %+v \n", err)
 		return

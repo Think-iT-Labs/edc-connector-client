@@ -7,8 +7,8 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
-	"github.com/Think-iT-Labs/edc-connector-client/go/internal/apivalidator"
 )
 
 type AssetOutput struct {
@@ -33,12 +33,14 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
 	assets := []AssetOutput{}
 	
-	listAssetsQueryJson, err := json.Marshal(queryInput)
+	fmt.Printf("the query before marshal %v", queryInput)
+
+	listAssetsQueryJson, err := json.Marshal(&queryInput)
 
 	if err != nil {
 		return nil, fmt.Errorf("unexpected error while marshaling list assets query: %v", err)
 	}
-
+	fmt.Printf("the query is %v", listAssetsQueryJson)
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
