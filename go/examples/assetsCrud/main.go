@@ -160,7 +160,7 @@ func main() {
 		return
 	}
 
-		allAssets, err = client.ListAssets()
+	allAssets, err = client.ListAssets()
 	if err != nil {
 		fmt.Println("error while listing assets")
 		return
@@ -178,14 +178,11 @@ func main() {
 		},
 	}	
 	
-	// filterExpression := *filter.FilterExpression
-	// filter.FilterExpression = &filterExpression
-	
-	_, err = client.ListAssets(filter)
+	filteredAssets, err := client.ListAssets(filter)
 	
 	if err != nil {
-		fmt.Printf("error while listing assets %v", filter )
+		fmt.Printf("error while listing assets with filter %v", filter )
 		return
 	}
-	// fmt.Println(filteredAssets)
+	fmt.Println(filteredAssets)
 }

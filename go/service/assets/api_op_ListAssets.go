@@ -32,15 +32,11 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 
 	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
 	assets := []AssetOutput{}
-	
-	fmt.Printf("the query before marshal %v", queryInput)
-
-	listAssetsQueryJson, err := json.Marshal(&queryInput)
+	listAssetsQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
 		return nil, fmt.Errorf("unexpected error while marshaling list assets query: %v", err)
 	}
-	fmt.Printf("the query is %v", listAssetsQueryJson)
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
