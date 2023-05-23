@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   consumer-connector:
-    image: ghcr.io/think-it-labs/edc-connector-client/test-connector:0.0.1-milestone-8
+    build: connector
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
       - "19191:9191" # connector default
@@ -21,7 +21,7 @@ services:
       - "host.docker.internal:host-gateway"
 
   provider-connector:
-    image: ghcr.io/think-it-labs/edc-connector-client/test-connector:0.0.1-milestone-8
+    build: connector
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
       - "29191:9191" # connector default

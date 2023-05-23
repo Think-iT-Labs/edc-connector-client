@@ -21,7 +21,7 @@ This project aims to increase the level of abstraction, bringing the _low-level_
 developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
 
 > Similarly to the **EDC Connector**, this library is at its early stage.
-> It aims to maintain compatibility with the latest version of the _Connector_, currently `v0.0.1-milestone-8`.
+> It aims to maintain compatibility with the latest version of the _Connector_, currently `0.0.1-milestone-9`.
 > The compatibility is reflected in the library's versioning.
 
 ## Usage
@@ -53,8 +53,8 @@ object, representing a unique connector.
 
 const context = edcConnectorClient.createContext("123456", {
   default: "https://edc.think-it.io/api",
-  management: "https://edc.think-it.io/api/v1/data",
-  protocol: "https://edc.think-it.io/api/v1/ids",
+  management: "https://edc.think-it.io/management",
+  protocol: "https://edc.think-it.io/protocol",
   public: "https://edc.think-it.io/public",
   control: "https://edc.think-it.io/control",
 });
