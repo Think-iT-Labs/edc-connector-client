@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +20,7 @@ func TestValidateQueryInput(t *testing.T) {
 		},
 		"invalid sort order": {
 			sortOrder:  SortOrder("INVALID"),
-			expectedErr: fmt.Errorf(ErrInvalidSortOrder, []SortOrder{SortOrderAscendant, SortOrderDescendant}),
+			expectedErr:sdkErrors.FailedTo(internal.ACTION_INPUT_VALIDATE),
 		},
 	}
 

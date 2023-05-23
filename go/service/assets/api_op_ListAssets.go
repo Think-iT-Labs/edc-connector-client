@@ -35,7 +35,7 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 	listAssetsQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while marshaling list assets query: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
 	if err != nil {

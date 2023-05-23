@@ -1,11 +1,14 @@
 package apivalidator
 
+import "github.com/Think-iT-Labs/edc-connector-client/go/internal"
+
 type SortOrder string
+
+var sdkErrors = internal.NewErrorFactory("query")
 
 const (
 	SortOrderAscendant  SortOrder = "ASC"
 	SortOrderDescendant SortOrder = "DESC"
-	ErrInvalidSortOrder = "invalid value of sortOrder, possible values are: %v"
 )
 
 type Criterion struct {

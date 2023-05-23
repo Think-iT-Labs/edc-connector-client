@@ -30,7 +30,7 @@ func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]Get
 	listContractDefinitionsQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while marshaling list contract defintions query: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 
@@ -41,7 +41,7 @@ func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]Get
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("error while performing POST request to the endpoint %v: %v", endpoint, err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
 	}
 
 	defer res.Body.Close()

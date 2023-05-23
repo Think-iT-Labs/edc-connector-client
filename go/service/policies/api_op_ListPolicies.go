@@ -40,7 +40,7 @@ func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefiniti
 	listPoliciesQueryJson, err := json.Marshal(queryInput)
 
 	if err != nil {
-		return nil, fmt.Errorf("unexpected error while marshaling list policies query: %v", err)
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
 	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesQueryJson))

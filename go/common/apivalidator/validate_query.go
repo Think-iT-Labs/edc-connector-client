@@ -1,9 +1,8 @@
-package apivalidator 
+package apivalidator
 
 import (
-	"fmt"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
-
 
 
 func ValidateQueryInput(sortOrder *SortOrder) error {
@@ -11,8 +10,7 @@ func ValidateQueryInput(sortOrder *SortOrder) error {
 		return nil
 	}
 	if *sortOrder != SortOrderAscendant && *sortOrder != SortOrderDescendant {
-		return fmt.Errorf(ErrInvalidSortOrder,
-			[]SortOrder{SortOrderAscendant, SortOrderDescendant})
+		return sdkErrors.FailedTo(internal.ACTION_INPUT_VALIDATE)
 	}
 	return nil
 }

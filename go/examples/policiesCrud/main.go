@@ -86,7 +86,7 @@ func main() {
 	filteredPolicies, err := client.ListPolicies(filter)
 		
 	if err != nil {
-		fmt.Printf("error while listing policies with filter %v", filter )
+		fmt.Printf("error while listing policies with filter %v: %+v\n", filter, err )
 		return
 	}
 	fmt.Println(filteredPolicies)
