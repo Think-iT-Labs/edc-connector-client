@@ -6,20 +6,14 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-    }
-    maven {
-        url = uri("https://maven.iais.fraunhofer.de/artifactory/eis-ids-public/")
-    }
 }
 
 val edcGroupId = "org.eclipse.edc"
-val edcVersion = "0.0.1-milestone-8"
+val edcVersion = "0.0.1-milestone-9"
 
 dependencies {
     implementation("${edcGroupId}:control-plane-core:${edcVersion}")
-    implementation("${edcGroupId}:ids:${edcVersion}")
+    implementation("${edcGroupId}:dsp:${edcVersion}")
     implementation("${edcGroupId}:configuration-filesystem:${edcVersion}")
     implementation("${edcGroupId}:vault-filesystem:${edcVersion}")
     implementation("${edcGroupId}:iam-mock:${edcVersion}")

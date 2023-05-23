@@ -12,7 +12,7 @@ import (
 func main() {
 	token := "example token"
 	defaultAddress := "http://localhost:19193/api"
-	managementAddress := "http://localhost:19193/api/v1/data"
+	managementAddress := "http://localhost:29193/management/v2"
 	protocolAddress := "http://localhost:19193/api/v1/ids"
 	publicAddress := "http://localhost:19193/public"
 	controlAddress := "http://localhost:19193/control"
@@ -41,53 +41,66 @@ func main() {
 		return
 	}
 
-	contractId := "contract-id"
-	contractDefinitionOutput, err := client.CreateContractDefinition(
-		contractdefinition.ContractDefinition{
-			Id:               contractId,
-			AccessPolicyId:   "example-access-policy-id",
-			ContractPolicyId: "example-contract-policy-id",
-			Criteria:         make([]contractdefinition.Criterion, 0),
-		},
-	)
+	contractId := "contract-id-1"
+	// contractDefinitionOutput, err := client.CreateContractDefinition(
+	// 	contractdefinition.ContractDefinition{
+	// 		Id:               contractId,
+	// 		AccessPolicyId:   "example-access-policy-id",
+	// 		ContractPolicyId: "example-contract-policy-id",
+	// 		Criteria:         make([]contractdefinition.Criterion, 0),
+	// 		Context:          sdktypes.Context{},
+	// 	},
+	// )
 
-	if err != nil {
-		fmt.Printf("error while creating a contract definition: %v\n", err)
-		return
-	}
-	fmt.Printf("%+v\n", *contractDefinitionOutput)
+	// if err != nil {
+	// 	fmt.Printf("error while creating a contract definition: %v\n", err)
+	// 	return
+	// }
+	// fmt.Printf("%+v\n", *contractDefinitionOutput)
 
-	contractDefinition, err := client.GetContractDefinition(contractId)
+	// contractDefinition, err := client.GetContractDefinition(contractId)
 
-	if err != nil {
-		fmt.Printf("error while getting a contract by id %s : %+v\n", contractId, err)
-		return
-	}
-	fmt.Printf("%+v\n", *contractDefinition)
+	// if err != nil {
+	// 	fmt.Printf("error while getting a contract by id %s : %+v\n", contractId, err)
+	// 	return
+	// }
+	// fmt.Printf("%+v\n", *contractDefinition)
+
+	// allContractDefinitions, err := client.ListContractDefinitions()
+	// if err != nil {
+	// 	fmt.Printf("error while listing contract definitions: %v", err)
+	// 	return
+	// }
+	// fmt.Printf("%+v\n", allContractDefinitions)
+
+	// err = client.UpdateContractDefinition(contractdefinition.ContractDefinition{
+	// 	Id:               contractId,
+	// 	AccessPolicyId:   "test-policy-id",
+	// 	ContractPolicyId: "test-contract-id",
+
+	// 	Criteria: []contractdefinition.Criterion{
+	// 		{
+	// 			OperandLeft:  "test_value_left",
+	// 			OperandRight: "test_value_right",
+	// 			Operator:     "LT",
+	// 		},
+	// 	},
+	// })
+
+	// if err != nil {
+	// 	fmt.Printf("error while updating contract definitions: %v", err)
+	// 	return
+	// }
+	// updatedDefinition, _ := client.GetContractDefinition(contractId)
+	// fmt.Printf("Updated contract def: %+v \n", *updatedDefinition)
+
+	// err = client.DeleteContractDefinition(contractDefinition.Id)
+	// if err != nil {
+	// 	fmt.Printf("error while deleting policy by id %v: %v\n", contractDefinition.Id, err)
+	// 	return
+	// }
 
 	allContractDefinitions, err := client.ListContractDefinitions()
-	if err != nil {
-		fmt.Printf("error while listing contract definitions: %v", err)
-		return
-	}
-	fmt.Printf("%+v\n", allContractDefinitions)
-
-	contractDefinition.Validity = 201
-	err = client.UpdateContractDefinition(*contractDefinition)
-	if err != nil {
-		fmt.Printf("error while updating contract definitions: %v", err)
-		return
-	}
-	updatedDefinition, _ := client.GetContractDefinition(contractId)
-	fmt.Printf("Updated contract def: %+v \n", *updatedDefinition)
-
-	err = client.DeleteContractDefinition(contractDefinition.Id)
-	if err != nil {
-		fmt.Printf("error while deleting policy by id %v: %v\n", contractDefinition.Id, err)
-		return
-	}
-
-	allContractDefinitions, err = client.ListContractDefinitions()
 	if err != nil {
 		fmt.Printf("error while listing contract definitions: %v", err)
 		return
@@ -103,12 +116,12 @@ func main() {
 				Operator:     "=",
 			},
 		},
-	}	
-		
+	}
+
 	filteredContractDefinitions, err := client.ListContractDefinitions(filter)
-		
+
 	if err != nil {
-		fmt.Printf("error while listing contract definitions with filter %v: \n%v", filter, err )
+		fmt.Printf("error while listing contract definitions with filter %v: \n%v", filter, err)
 		return
 	}
 	fmt.Println(filteredContractDefinitions)

@@ -11,7 +11,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CONNECTOR_TAG: 0.0.1-milestone-8
+  CONNECTOR_TAG: 0.0.1-milestone-9
 
 jobs:
   build-and-push-image:
