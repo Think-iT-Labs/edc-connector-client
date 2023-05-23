@@ -20,7 +20,7 @@ func TestValidateQueryInput(t *testing.T) {
 		},
 		"invalid sort order": {
 			sortOrder:  SortOrder("INVALID"),
-			expectedErr:sdkErrors.FailedTo(internal.ACTION_INPUT_VALIDATE),
+			expectedErr: sdkErrors.FailedTo(internal.ACTION_INPUT_VALIDATE),
 		},
 	}
 
