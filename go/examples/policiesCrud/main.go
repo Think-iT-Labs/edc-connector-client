@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	"github.com/Think-iT-Labs/edc-connector-client/go/service/policies"
@@ -56,13 +57,6 @@ func main() {
 	}
 	fmt.Println(createPolicyOutput.Id)
 
-	allPolicies, err := client.ListPolicies(policies.ListPoliciesInput{})
-	if err != nil {
-		fmt.Printf("error while listing policies: %+v \n", err)
-		return
-	}
-	fmt.Println(allPolicies)
-
 	policy, err := client.GetPolicy(policyId)
 	if err != nil {
 		fmt.Printf("error while getting an policy by id %+s. Full error:\n%v", policyId, err)
@@ -70,15 +64,42 @@ func main() {
 	}
 	fmt.Println(*policy)
 
+
+	allPolicies, err := client.ListPolicies()
+	if err != nil {
+		fmt.Printf("error while listing policies: %+v \n", err)
+		return
+	}
+	fmt.Println(allPolicies)
+
+	// Add a filtering query to listing policie
+	filter := apivalidator.QueryInput{
+		FilterExpression: &[]apivalidator.Criterion{
+			{
+				OperandLeft:  "id",
+				OperandRight: &policyId,
+				Operator:     "=",
+			},	
+		},
+	}
+
+	filteredPolicies, err := client.ListPolicies(filter)
+		
+	if err != nil {
+		fmt.Printf("error while listing policies with filter %v: %+v\n", filter, err )
+		return
+	}
+	fmt.Println(filteredPolicies)
+
 	err = client.DeletePolicy(policy.Id)
 	if err != nil {
 		fmt.Printf("error while deleting policy by id %+v: %+v\n", policy.Id, err)
 		return
 	}
 
-	allPolicies, err = client.ListPolicies(policies.ListPoliciesInput{})
+	allPolicies, err = client.ListPolicies()
 	if err != nil {
-		fmt.Printf("error while listing assets: %+v \n", err)
+		fmt.Printf("error while listing policies: %+v \n", err)
 		return
 	}
 	fmt.Println(allPolicies)

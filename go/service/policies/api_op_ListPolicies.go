@@ -7,45 +7,43 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-type SortOrder string
-
-const (
-	SortOrderAscendant  SortOrder = "ASC"
-	SortOrderDescendant SortOrder = "DESC"
-)
-
-type Criterion struct {
-	OperandLeft  string
-	OperandRight *string
-	Operator     string
-}
-
 type ListPoliciesInput struct {
 	Filter           *string      `json:"filter,omitempty"`
-	FilterExpression *[]Criterion `json:"filterExpression,omitempty"`
+	FilterExpression *[]apivalidator.Criterion `json:"filterExpression,omitempty"`
 	Limit            *int64       `json:"limit,omitempty"`
 	Offset           *int64       `json:"offset,omitempty"`
 	SortField        *string      `json:"sortField,omitempty"`
-	SortOrder        *SortOrder   `json:"sortOrder,omitempty"`
+	SortOrder        *apivalidator.SortOrder   `json:"sortOrder,omitempty"`
 }
 
-func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefinition, error) {
-	err := validateQueryPoliciesInput(listPoliciesInput.SortOrder)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_INPUT_VALIDATE)
+
+func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefinition, error) {
+	var queryInput apivalidator.QueryInput
+
+	if len(args) > 0 {
+		queryInput = args[0]
+		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		queryInput = apivalidator.QueryInput{}
 	}
-	endpoint := fmt.Sprintf("%s/policydefinitions/request", *c.Addresses.Management)
+
+	endpoint := fmt.Sprintf("%v/policydefinitions/request", *c.Addresses.Management)
 	policies := []PolicyDefinition{}
 
-	listPoliciesInputJson, err := json.Marshal(listPoliciesInput)
+	listPoliciesQueryJson, err := json.Marshal(queryInput)
+
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(listPoliciesInputJson))
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listPoliciesQueryJson))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
@@ -71,15 +69,4 @@ func (c *Client) ListPolicies(listPoliciesInput ListPoliciesInput) ([]PolicyDefi
 	}
 
 	return policies, nil
-}
-
-func validateQueryPoliciesInput(sortOrder *SortOrder) error {
-	if sortOrder == nil {
-		return nil
-	}
-	if *sortOrder != SortOrderAscendant && *sortOrder != SortOrderDescendant {
-		return fmt.Errorf("invalid value of sortOrder, possible values are: %v",
-			[]SortOrder{SortOrderAscendant, SortOrderDescendant})
-	}
-	return nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	"github.com/Think-iT-Labs/edc-connector-client/go/service/assets"
@@ -91,7 +92,7 @@ func main() {
 
 	err = client.UpdateAssetProperties(*updatedAssetProperties, assetId)
 	if err != nil {
-		fmt.Printf("error while updating an asset by id %v\n", assetId)
+		fmt.Printf("error while updating an asset by id %v\n %v", err, assetId)
 		return
 	}
 
@@ -131,6 +132,7 @@ func main() {
 		fmt.Printf("error while trying to create asset with custom data address: %v", err)
 		return
 	}
+	fmt.Println(createAssetsOutput)
 
 	asset, err = client.GetAsset(secondAssetId)
 	if err != nil {
@@ -154,14 +156,33 @@ func main() {
 
 	err = client.DeleteAsset(asset.Id)
 	if err != nil {
-		fmt.Printf("error while deleting asset by id %v\n", asset.Id)
+		fmt.Printf("error while deleting asset by id %v: \n%v", asset.Id, err)
 		return
 	}
 
 	allAssets, err = client.ListAssets()
 	if err != nil {
-		fmt.Println("error while listing assets")
+		fmt.Printf("error while listing assets: \n%v", err)
 		return
 	}
 	fmt.Println(allAssets)
+
+	// Add a filtering query
+	filter := apivalidator.QueryInput{
+		FilterExpression: &[]apivalidator.Criterion{
+			{
+				OperandLeft:  "asset:prop:id",
+				OperandRight: &assetId,
+				Operator:     "=",
+			},
+		},
+	}	
+	
+	filteredAssets, err := client.ListAssets(filter)
+	
+	if err != nil {
+		fmt.Printf("error while listing assets with filter %v: \n%v", filter, err )
+		return
+	}
+	fmt.Println(filteredAssets)
 }

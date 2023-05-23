@@ -40,7 +40,7 @@ func Test_ListPolicies(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, err := apiClient.ListPolicies(ListPoliciesInput{})
+	policies, err := apiClient.ListPolicies()
 
 	assert.NoError(t, err, "failed to list policies.")
 	assert.NotNil(t, policies)
@@ -78,7 +78,7 @@ func Test_ListPoliciesInternalServerError(t *testing.T) {
 	apiClient, err := New(*cfg)
 	assert.NoError(t, err, "failed to initialize api client")
 
-	policies, err := apiClient.ListPolicies(ListPoliciesInput{})
+	policies, err := apiClient.ListPolicies()
 
 	assert.Nil(t, policies)
 	assert.NotNil(t, err)

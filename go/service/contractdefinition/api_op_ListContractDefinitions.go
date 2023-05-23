@@ -1,19 +1,40 @@
 package contractdefinition
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) ListContractDefinitions() ([]GetContractDefinitionOutput, error) {
-	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Addresses.Management)
+func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]GetContractDefinitionOutput, error)  {
+	var queryInput apivalidator.QueryInput
+
+	if len(args) > 0 {
+		queryInput = args[0]
+		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		queryInput = apivalidator.QueryInput{}
+	}
+
+	endpoint := fmt.Sprintf("%s/contractdefinitions/request", *c.Addresses.Management)
 	contractDefinitions := []GetContractDefinitionOutput{}
 
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	listContractDefinitionsQueryJson, err := json.Marshal(queryInput)
+
+	if err != nil {
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+	}
+
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listContractDefinitionsQueryJson))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}

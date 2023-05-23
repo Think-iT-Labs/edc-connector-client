@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/config"
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	"github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition"
@@ -93,4 +94,22 @@ func main() {
 	}
 	fmt.Printf("all contract definitions after delete: %+v\n", allContractDefinitions)
 
+	// Add a filtering query
+	filter := apivalidator.QueryInput{
+		FilterExpression: &[]apivalidator.Criterion{
+			{
+				OperandLeft:  "id",
+				OperandRight: &contractId,
+				Operator:     "=",
+			},
+		},
+	}	
+		
+	filteredContractDefinitions, err := client.ListContractDefinitions(filter)
+		
+	if err != nil {
+		fmt.Printf("error while listing contract definitions with filter %v: \n%v", filter, err )
+		return
+	}
+	fmt.Println(filteredContractDefinitions)
 }

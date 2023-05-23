@@ -1,11 +1,13 @@
 package assets
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
@@ -15,11 +17,27 @@ type AssetOutput struct {
 	AssetProperties map[string]string `json:"properties"`
 }
 
-func (c *Client) ListAssets() ([]AssetOutput, error) {
-	endpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
-	assets := []AssetOutput{}
+func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, error) {
+	var queryInput apivalidator.QueryInput
 
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
+	if len(args) > 0 {
+		queryInput = args[0]
+		err := apivalidator.ValidateQueryInput(args[0].SortOrder)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		queryInput = apivalidator.QueryInput{}
+	}
+
+	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
+	assets := []AssetOutput{}
+	listAssetsQueryJson, err := json.Marshal(queryInput)
+
+	if err != nil {
+		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+	}
+	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}

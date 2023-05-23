@@ -44,7 +44,7 @@ func Test_ListAssets(t *testing.T) {
 
 	assets, err := apiClient.ListAssets()
 
-	assert.NoError(t, err, "failed to create asset.")
+	assert.NoError(t, err, "failed to list asset.")
 	assert.NotNil(t, assets)
 	assert.Equal(t, len(assets), 1)
 	assert.Equal(t, assets[0].AssetProperties["asset:prop:name"], "product description")
