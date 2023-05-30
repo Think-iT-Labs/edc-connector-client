@@ -1,16 +1,26 @@
-import { DataAddressProperties } from "./data-address";
-
+import { CreateResult, EDC_NAMESPACE } from ".";
+import { DataAddress } from "./data-address";
+import { ContextProperties } from "./context";
 export interface Asset {
-  '@id'?: string;
-  properties: {
-    [key: string]: string | undefined;
-    "asset:prop:id": string;
-    "asset:prop:name"?: string;
-  };
+  properties: AssetProperties;
   createdAt: string;
+  "@id": string;
 }
 
-export interface AssetInput {
-  asset: Omit<Asset, "createdAt">;
-  dataAddress: DataAddressProperties;
+interface AssetProperties {
+  [key: string]: string | undefined;
+  name?: string;
+  description?: string;
+  contenttype?: string;
 }
+
+export interface AssetInput extends ContextProperties {
+  asset: Partial<Asset>;
+  dataAddress: Partial<DataAddress>;
+}
+
+export type AssetResponse = {
+  [K in keyof AssetProperties as `${typeof EDC_NAMESPACE}:${string &
+    K}`]: AssetProperties[K];
+} & ContextProperties &
+  CreateResult;

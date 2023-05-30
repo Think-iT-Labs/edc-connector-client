@@ -3,6 +3,7 @@ import { Criterion } from "./criterion";
 export * from "./action";
 export * from "./addresses";
 export * from "./asset";
+export * from "./context";
 export * from "./catalog";
 export * from "./constraint";
 export * from "./contract-agreement";
@@ -20,13 +21,11 @@ export * from "./policy";
 export * from "./prohibition";
 export * from "./transfer-process";
 
-export class CreateResult {
-  '@id': string;
-  'edc:createdAt': number;
+export const EDC_NAMESPACE = "edc";
 
-  id(): string {
-    return this['@id']
-  }
+export interface CreateResult {
+  "edc:createdAt": number;
+  "@id": string;
 }
 
 export interface ApiErrorDetail {
