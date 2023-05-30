@@ -3,6 +3,7 @@ import {
   Addresses,
   AssetInput,
   ContractDefinitionInput,
+  EDC_NAMESPACE,
   EdcConnectorClient,
   PolicyDefinitionInput,
 } from "../../src";
@@ -23,14 +24,14 @@ describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
+    management: "http://localhost:19193/management/v2",
     protocol: "http://consumer-connector:9194/protocol",
     public: "http://localhost:19291/public",
     control: "http://localhost:19292/control",
   };
   const provider: Addresses = {
     default: "http://localhost:29191/api",
-    management: "http://localhost:29193/management",
+    management: "http://localhost:29193/management/v2",
     protocol: "http://provider-connector:9194/protocol",
     public: "http://localhost:29291/public",
     control: "http://localhost:29292/control",
@@ -42,11 +43,12 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
@@ -64,8 +66,8 @@ describe("DataController", () => {
       );
 
       // then
-      expect(createResult).toHaveProperty("createdAt");
-      expect(createResult).toHaveProperty("id");
+      expect(createResult).toHaveProperty("edc:createdAt");
+      expect(createResult).toHaveProperty("@id");
     });
 
     it("fails creating two assets with the same id", async () => {
@@ -73,11 +75,12 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
@@ -117,11 +120,12 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
@@ -137,7 +141,7 @@ describe("DataController", () => {
       // when
       const asset = await edcClient.management.deleteAsset(
         context,
-        assetInput.asset.properties["asset:prop:id"],
+        assetInput.asset["@id"] as string,
       );
 
       // then
@@ -176,11 +180,12 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
@@ -196,15 +201,12 @@ describe("DataController", () => {
       // when
       const asset = await edcClient.management.getAsset(
         context,
-        assetInput.asset.properties["asset:prop:id"],
+        assetInput.asset["@id"] as string,
       );
 
       // then
-      expect(asset).toHaveProperty("createdAt");
-      expect(asset).toHaveProperty(
-        "id",
-        assetInput.asset.properties["asset:prop:id"],
-      );
+      expect(asset).toHaveProperty("@context");
+      expect(asset).toHaveProperty("@id", assetInput.asset["@id"]);
     });
 
     it("fails to fetch an not existant asset", async () => {
@@ -236,12 +238,13 @@ describe("DataController", () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
-      const assetInput: AssetInput = {
+      const assetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
@@ -257,17 +260,16 @@ describe("DataController", () => {
       // when
       const assetDataAddress = await edcClient.management.getAssetDataAddress(
         context,
-        assetInput.asset.properties["asset:prop:id"],
+        assetInput.asset["@id"],
       );
 
       // then
-      expect(assetDataAddress).toHaveProperty("properties");
+      expect(assetDataAddress).toHaveProperty("@type");
       expect(assetDataAddress).toEqual(
         expect.objectContaining({
-          properties: {
-            name: assetInput.dataAddress.properties.name,
-            baseUrl: assetInput.dataAddress.properties.baseUrl,
-          },
+          [`${EDC_NAMESPACE}:name`]: assetInput.dataAddress.name,
+          [`${EDC_NAMESPACE}:baseUrl`]: assetInput.dataAddress.baseUrl,
+          [`${EDC_NAMESPACE}:type`]: assetInput.dataAddress.type,
         }),
       );
     });
@@ -289,6 +291,7 @@ describe("DataController", () => {
       );
 
       maybeAssetDataAddress.catch((error) => {
+        console.log("error", error);
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
@@ -304,19 +307,18 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": crypto.randomUUID(),
           properties: {
-            "asset:prop:id": crypto.randomUUID(),
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
         },
       };
       await edcClient.management.createAsset(context, assetInput);
@@ -327,11 +329,7 @@ describe("DataController", () => {
       // then
       expect(assets.length).toBeGreaterThan(0);
       expect(
-        assets.find(
-          (asset) =>
-            asset.properties["asset:prop:id"] ===
-            assetInput.asset.properties["asset:prop:id"],
-        ),
+        assets.find((asset) => asset?.["@id"] === assetInput.asset?.["@id"]),
       ).toBeTruthy();
     });
   });
@@ -427,11 +425,11 @@ describe("DataController", () => {
       // when
       const policy = await edcClient.management.getPolicy(
         context,
-        createResult.id(),
+        createResult["@id"],
       );
 
       // then
-      expect(policy.id).toBe(createResult.id());
+      expect(policy.id).toBe(createResult["@id"]);
     });
 
     it("fails to fetch an not existant policy", async () => {
@@ -511,7 +509,7 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        '@id': crypto.randomUUID(),
+        "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
@@ -533,7 +531,7 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        '@id': crypto.randomUUID(),
+        "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
@@ -570,7 +568,7 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        '@id': 'definition-' + crypto.randomUUID(),
+        "@id": "definition-" + crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
@@ -581,14 +579,16 @@ describe("DataController", () => {
       );
 
       // when
-      const contractDefinitions = await edcClient.management.queryAllContractDefinitions(
-        context,
-      );
+      const contractDefinitions =
+        await edcClient.management.queryAllContractDefinitions(context);
 
       // then
       expect(contractDefinitions.length).toBeGreaterThan(0);
       expect(
-        contractDefinitions.find((contractDefinition) => contractDefinition.id() === contractDefinitionInput.id()),
+        contractDefinitions.find(
+          (contractDefinition) =>
+            contractDefinition.id() === contractDefinitionInput.id(),
+        ),
       ).toBeTruthy();
     });
   });
@@ -613,11 +613,11 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.getContractDefinition(
           context,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
-      expect(contractDefinition.id).toBe(createResult.id());
+      expect(contractDefinition.id).toBe(createResult["@id"]);
     });
 
     it("fails to fetch an not existant contract definition", async () => {
@@ -664,7 +664,7 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.deleteContractDefinition(
           context,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
@@ -730,19 +730,18 @@ describe("DataController", () => {
       });
 
       const assetInput: AssetInput = {
+        "@context": {},
         asset: {
+          "@id": assetId,
           properties: {
-            "asset:prop:id": assetId,
-            "asset:prop:name": "product description",
-            "asset:prop:contenttype": "application/json",
+            name: "product description",
+            contenttype: "application/json",
           },
         },
         dataAddress: {
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
         },
       };
       await edcClient.management.createAsset(providerContext, assetInput);
@@ -770,7 +769,7 @@ describe("DataController", () => {
 
       const contractDefinitionId = crypto.randomUUID();
       const contractDefinitionInput: ContractDefinitionInput = {
-        '@id': contractDefinitionId,
+        "@id": contractDefinitionId,
         accessPolicyId: policyId,
         contractPolicyId: policyId,
         assetsSelector: [],
@@ -844,7 +843,8 @@ describe("DataController", () => {
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
         contractNegotiations.find(
-          (contractNegotiation) => contractNegotiation.id === createResult.id(),
+          (contractNegotiation) =>
+            contractNegotiation.id === createResult["@id"],
         ),
       ).toBeTruthy();
     });
@@ -892,11 +892,11 @@ describe("DataController", () => {
       // when
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
       );
 
       // then
-      expect(contractNegotiation).toHaveProperty("id", createResult.id());
+      expect(contractNegotiation).toHaveProperty("id", createResult["@id"]);
     });
 
     it("fails to fetch an not existant contract negotiation", async () => {
@@ -939,7 +939,7 @@ describe("DataController", () => {
       const contractNegotiationState =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
@@ -985,19 +985,19 @@ describe("DataController", () => {
       // when
       const cancelledNegotiation = await edcClient.management.cancelNegotiation(
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
       );
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
         "ERROR",
       );
 
       const contractNegotiation =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
@@ -1044,7 +1044,7 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
         "CONFIRMED",
       );
 
@@ -1068,14 +1068,14 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
         "DECLINED",
       );
 
       const declinedProviderNegotiation =
         await edcClient.management.getNegotiation(
           consumerContext,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
@@ -1097,7 +1097,7 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
         "CONFIRMED",
       );
 
@@ -1105,7 +1105,7 @@ describe("DataController", () => {
       const contractAgreement =
         await edcClient.management.getAgreementForNegotiation(
           consumerContext,
-          createResult.id(),
+          createResult["@id"],
         );
 
       // then
@@ -1127,12 +1127,12 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
         "CONFIRMED",
       );
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult.id(),
+        createResult["@id"],
       );
 
       // when
@@ -1145,7 +1145,8 @@ describe("DataController", () => {
       expect(
         contractAgreements.find(
           (contractAgreement) =>
-            contractAgreement.id() === contractNegotiation.contractAgreementId(),
+            contractAgreement.id() ===
+            contractNegotiation.contractAgreementId(),
         ),
       ).toBeTruthy();
     });
@@ -1283,7 +1284,7 @@ describe("DataController", () => {
         expect(transferProcesses.length).toBeGreaterThan(0);
         expect(
           transferProcesses.find(
-            (transferProcess) => createResult.id() === transferProcess.id,
+            (transferProcess) => createResult["@id"] === transferProcess.id,
           ),
         ).toBeTruthy();
       });
