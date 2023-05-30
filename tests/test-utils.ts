@@ -42,13 +42,13 @@ export async function createContractAgreement(
   await waitForNegotiationState(
     client,
     consumerContext,
-    createResult.id(),
+    createResult["@id"],
     "FINALIZED",
   );
 
   const contractNegotiation = await client.management.getNegotiation(
     consumerContext,
-    createResult.id(),
+    createResult["@id"],
   );
 
   const contractAgreement = await client.management.getAgreement(
@@ -70,30 +70,31 @@ export async function createContractNegotiation(
 ): Promise<ContractNegotiationMetadata> {
   // Register dataplanes
   client.management.registerDataplane(providerContext, {
-    "id": "provider-dataplane",
-    "url": "http://provider-connector:9192/control/transfer",
-    "allowedSourceTypes": ["HttpData"],
-    "allowedDestTypes": ["HttpProxy", "HttpData"],
-    "properties": {
-      "publicApiUrl": "http://provider-connector:9291/public/",
+    id: "provider-dataplane",
+    url: "http://provider-connector:9192/control/transfer",
+    allowedSourceTypes: ["HttpData"],
+    allowedDestTypes: ["HttpProxy", "HttpData"],
+    properties: {
+      publicApiUrl: "http://provider-connector:9291/public/",
     },
   });
 
   client.management.registerDataplane(consumerContext, {
-    "id": "consumer-dataplane",
-    "url": "http://consumer-connector:9192/control/transfer",
-    "allowedSourceTypes": ["HttpData"],
-    "allowedDestTypes": ["HttpProxy", "HttpData"],
-    "properties": {
-      "publicApiUrl": "http://consumer-connector:9291/public/",
+    id: "consumer-dataplane",
+    url: "http://consumer-connector:9192/control/transfer",
+    allowedSourceTypes: ["HttpData"],
+    allowedDestTypes: ["HttpProxy", "HttpData"],
+    properties: {
+      publicApiUrl: "http://consumer-connector:9291/public/",
     },
   });
 
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
+    "@context": {},
     asset: {
-      '@id': assetId,
+      "@id": assetId,
       properties: {
         "asset:prop:id": assetId,
         "asset:prop:name": "product description",
@@ -101,11 +102,9 @@ export async function createContractNegotiation(
       },
     },
     dataAddress: {
+      name: "Test asset",
+      baseUrl: "https://jsonplaceholder.typicode.com/users",
       type: "HttpData",
-      properties: {
-        name: "Test asset",
-        baseUrl: "https://jsonplaceholder.typicode.com/users",
-      },
     },
   };
   await client.management.createAsset(providerContext, assetInput);
@@ -113,10 +112,10 @@ export async function createContractNegotiation(
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
-    '@id': policyId,
+    "@id": policyId,
     policy: {
       "@context": "http://www.w3.org/ns/odrl.jsonld",
-      "permissions": [],
+      permissions: [],
     },
   };
   await client.management.createPolicy(providerContext, policyInput);
@@ -124,7 +123,7 @@ export async function createContractNegotiation(
   const contractDefinitionId = "definition-" + crypto.randomUUID();
   // Crate contract definition on the provider's side
   const contractDefinitionInput: ContractDefinitionInput = {
-    '@id': contractDefinitionId,
+    "@id": contractDefinitionId,
     accessPolicyId: policyId,
     contractPolicyId: policyId,
     assetsSelector: [],
@@ -139,22 +138,25 @@ export async function createContractNegotiation(
     providerUrl: providerContext.protocol,
   });
 
-  const offer = catalog.getDatasets()
-    .flatMap(it => it.getOffers())
-    .find(offer => offer.assetId() === assetId)!;
+  const offer = catalog
+    .getDatasets()
+    .flatMap((it) => it.getOffers())
+    .find((offer) => offer.assetId() === assetId)!;
 
   // Initiate contract negotiation on the consumer's side
-  const createResult = await client.management
-    .initiateContractNegotiation(consumerContext, {
+  const createResult = await client.management.initiateContractNegotiation(
+    consumerContext,
+    {
       connectorAddress: providerContext.protocol,
       connectorId: "provider",
       offer: {
         offerId: offer.id(),
         assetId: assetId,
-        policy: offer
+        policy: offer,
       },
       protocol: "dataspace-protocol-http",
-    });
+    },
+  );
 
   return {
     assetId,

@@ -1,6 +1,6 @@
 import { EdcConnectorClientContext } from "../context";
 import {
-  Asset,
+  AssetResponse,
   AssetInput,
   Catalog,
   CatalogRequest,
@@ -56,7 +56,7 @@ export class ManagementController {
   async createAsset(
     context: EdcConnectorClientContext,
     input: AssetInput,
-  ): Promise<CreateResult> {
+  ): Promise<AssetResponse> {
     return this.#inner.request(context.management, {
       path: "/v2/assets",
       method: "POST",
@@ -84,7 +84,7 @@ export class ManagementController {
   async getAsset(
     context: EdcConnectorClientContext,
     assetId: string,
-  ): Promise<Asset> {
+  ): Promise<AssetResponse> {
     return this.#inner.request(context.management, {
       path: `/v2/assets/${assetId}`,
       method: "GET",
@@ -97,7 +97,7 @@ export class ManagementController {
     assetId: string,
   ): Promise<DataAddressProperties> {
     return this.#inner.request(context.management, {
-      path: `/assets/${assetId}/address`,
+      path: `/assets/${assetId}/dataaddress`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -106,7 +106,7 @@ export class ManagementController {
   async queryAllAssets(
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
-  ): Promise<Asset[]> {
+  ): Promise<AssetResponse[]> {
     return this.#inner.request(context.management, {
       path: "/assets/request",
       method: "POST",
