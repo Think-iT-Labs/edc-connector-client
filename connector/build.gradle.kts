@@ -9,9 +9,10 @@ repositories {
 }
 
 val edcGroupId = "org.eclipse.edc"
-val edcVersion = "0.0.1-milestone-9"
+val edcVersion = "0.1.0"
 
 dependencies {
+    implementation("${edcGroupId}:runtime-metamodel:${edcVersion}")
     implementation("${edcGroupId}:control-plane-core:${edcVersion}")
     implementation("${edcGroupId}:dsp:${edcVersion}")
     implementation("${edcGroupId}:configuration-filesystem:${edcVersion}")

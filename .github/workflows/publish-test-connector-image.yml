@@ -2,7 +2,7 @@ name: Create and publish a Docker image
 
 on:
   push:
-    branches: 
+    branches:
       - main
     paths:
       - connector/**
@@ -11,7 +11,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  CONNECTOR_TAG: 0.0.1-milestone-9
+  CONNECTOR_TAG: 0.1.0
 
 jobs:
   build-and-push-image:
