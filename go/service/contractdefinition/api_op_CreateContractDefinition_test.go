@@ -10,6 +10,7 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sdktypes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,7 +31,17 @@ func TestClient_CreateContractDefinition(t *testing.T) {
 					Id:               "1234",
 					AccessPolicyId:   "1234",
 					ContractPolicyId: "1234",
-					Criteria:         make([]Criterion, 0),
+					Criteria: []Criterion{
+						{
+							OperandLeft:  "edc.asset.id",
+							Operator:     "equals",
+							OperandRight: "test",
+							Type:         "test",
+						},
+					},
+					Context: sdktypes.Context{
+						"wc3": "testContext",
+					},
 				},
 			},
 			want: &CreateContractDefinitionOutput{
@@ -47,10 +58,20 @@ func TestClient_CreateContractDefinition(t *testing.T) {
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
-	"id": "1234",
+	"@id": "1234",
 	"accessPolicyId": "1234",
 	"contractPolicyId": "1234",
-	"criteria": []
+	"@context": {
+		"wc3": "testContext"
+	},
+	"criteria": [
+		{
+			"operandLeft": "edc.asset.id",
+			"opernadRight": "test",
+			"operator": "equals",
+			"@type": "test"
+		}
+	]
 }`, string(payload), "invalid payload")
 
 		fmt.Fprintf(w, `

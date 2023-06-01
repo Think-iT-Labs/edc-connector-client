@@ -29,6 +29,7 @@ func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContrac
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
+	fmt.Println(string(contractDefinitionApiInput))
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}

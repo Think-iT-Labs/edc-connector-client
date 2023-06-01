@@ -39,7 +39,7 @@ func Test_UpdateContractDefinition(t *testing.T) {
 			Id:               "dummy",
 			AccessPolicyId:   "test-policy-id",
 			ContractPolicyId: "test-contract-id",
-			Validity:         3600,
+
 			Criteria: []Criterion{
 				{
 					OperandLeft:  "test_value_left",

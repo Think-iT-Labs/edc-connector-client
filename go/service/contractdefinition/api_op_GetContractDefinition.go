@@ -9,9 +9,9 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDefinition, error) {
+func (c *Client) GetContractDefinition(ContractDefinitionId string) (*CreateContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%s/contractdefinitions/%s", *c.Addresses.Management, ContractDefinitionId)
-	contractDefinition := ContractDefinition{}
+	createContractDefinitionOutput := CreateContractDefinitionOutput{}
 
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -33,10 +33,10 @@ func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDe
 		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
-	err = json.Unmarshal(response, &contractDefinition)
+	err = json.Unmarshal(response, &createContractDefinitionOutput)
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
 	}
 
-	return &contractDefinition, nil
+	return &createContractDefinitionOutput, nil
 }

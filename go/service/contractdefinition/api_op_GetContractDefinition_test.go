@@ -9,6 +9,7 @@ import (
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/edc"
 	edchttp "github.com/Think-iT-Labs/edc-connector-client/go/edc/transport/http"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sdktypes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,13 +29,25 @@ func TestClient_GetContractDefinition(t *testing.T) {
 				ContractDefinitionId: "1234",
 			},
 			want: &GetContractDefinitionOutput{
-				ContractDefinition: ContractDefinition{Id: "1234",
-					AccessPolicyId:   "1234",
-					ContractPolicyId: "1234",
-					Criteria:         make([]Criterion, 0),
-					Validity:         31536000,
+				Context: sdktypes.Context{
+					"dct":    "https://purl.org/dc/terms/",
+					"edc":    "https://w3id.org/edc/v0.0.1/ns/",
+					"dcat":   "https://www.w3.org/ns/dcat/",
+					"odrl":   "http://www.w3.org/ns/odrl/2/",
+					"dspace": "https://w3id.org/dspace/v0.8/",
 				},
-				CreatedAt: 1683810256318,
+				Id:               "1234",
+				Type:             "edc:ContractDefinition",
+				AccessPolicyId:   "accessPolicyId",
+				ContractPolicyId: "contractPolicyId",
+				Criteria: []GetCriterionOutput{
+					{
+						Type:         "edc:CriterionDto",
+						OperandLeft:  "edc.asset.id",
+						OperandRight: "test",
+						Operator:     "equals",
+					},
+				},
 			},
 			wantErr: false,
 		},
@@ -43,13 +56,24 @@ func TestClient_GetContractDefinition(t *testing.T) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `
 {
-	"id": "1234",
-	"accessPolicyId": "1234",
-	"contractPolicyId": "1234",
-	"criteria": [],
-	"validity": 31536000,
-	"createdAt": 1683810256318
-}		
+	"@id": "1234",
+	"@type": "edc:ContractDefinition",
+	"edc:accessPolicyId": "accessPolicyId",
+	"edc:contractPolicyId": "contractPolicyId",
+	"edc:criteria": {
+		"@type": "edc:CriterionDto",
+		"edc:operandLeft": "edc.asset.id",
+		"edc:operandRight": "test",
+		"edc:operator": "equals"
+	},
+	"@context": {
+		"dct": "https://purl.org/dc/terms/",
+		"edc": "https://w3id.org/edc/v0.0.1/ns/",
+		"dcat": "https://www.w3.org/ns/dcat/",
+		"odrl": "http://www.w3.org/ns/odrl/2/",
+		"dspace": "https://w3id.org/dspace/v0.8/"
+	}
+}
 `)
 	}))
 	defer svr.Close()
