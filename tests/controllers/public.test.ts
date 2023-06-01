@@ -69,19 +69,18 @@ describe("PublicController", () => {
         consumerContext,
       );
 
-      const receiverCallback = receiverServer.waitForEvent(
-        contractAgreement.id,
-      );
+      const receiverCallback = receiverServer.waitForEvent('endpoint-data-reference');
 
       await edcClient.management.initiateTransfer(
         consumerContext,
         {
           assetId,
           "connectorId": "provider",
-          "connectorAddress": `${providerContext.protocol}/data`,
-          "contractId": contractAgreement.id,
+          "connectorAddress": providerContext.protocol,
+          "contractId": contractAgreement.id(),
           "managedResources": false,
           "dataDestination": { "type": "HttpProxy" },
+          "protocol": "dataspace-protocol-http"
         },
       );
 

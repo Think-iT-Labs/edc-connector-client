@@ -1,4 +1,4 @@
-import { Policy } from "./policy";
+import { JsonLdId, JsonLdValue } from "./jsonld";
 
 export interface ContractNegotiationRequest {
   connectorAddress: string;
@@ -6,23 +6,34 @@ export interface ContractNegotiationRequest {
   offer: {
     offerId: string;
     assetId: string;
-    policy: Policy;
+    policy: any;
   };
   protocol: string;
 }
 
-export interface ContractNegotiation {
-  id: string;
-  updatedAt: number;
-  createdAt: number;
-  contractAgreementId?: string;
+export class ContractNegotiation extends JsonLdId {
+  updatedAt?: number;
+  createdAt?: number;
+  'https://w3id.org/edc/v0.0.1/ns/contractAgreementId': Array<JsonLdValue>
   counterPartyAddress?: string;
   errorDetail?: string;
   protocol?: string;
-  state: string;
-  type: "CONSUMER" | "PROVIDER";
+  state?: string;
+  type?: "CONSUMER" | "PROVIDER";
+
+  contractAgreementId(): string {
+    return this['https://w3id.org/edc/v0.0.1/ns/contractAgreementId']
+      .map(it => Object.assign(new JsonLdValue(), it))[0]
+      .value()
+  }
 }
 
-export interface ContractNegotiationState {
-  state: string;
+export class ContractNegotiationState {
+  'https://w3id.org/edc/v0.0.1/ns/state': Array<JsonLdValue>;
+
+  state(): string {
+    return this['https://w3id.org/edc/v0.0.1/ns/state']
+      .map(it => Object.assign(new JsonLdValue(), it))[0]
+      .value();
+  }
 }

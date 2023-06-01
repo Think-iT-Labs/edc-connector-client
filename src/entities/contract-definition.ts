@@ -1,10 +1,10 @@
 import { Criterion } from "./criterion";
 
 export interface ContractDefinitionInput {
-  id: string;
+  '@id'?: string;
   accessPolicyId: string;
   contractPolicyId: string;
-  criteria: Criterion[];
+  assetsSelector: Criterion[];
 }
 export interface ContractDefinition extends ContractDefinitionInput {
   createdAt: number;

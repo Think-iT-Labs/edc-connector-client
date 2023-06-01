@@ -19,11 +19,14 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@think-it-labs/typed-error": "^0.1.4"
+    "@think-it-labs/typed-error": "^0.1.4",
+    "jsonld": "^8.2.0",
+    "schema-dts-gen": "^1.1.2"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.1.0",
     "@types/jest": "^28.1.6",
+    "@types/jsonld": "^1.5.8",
     "@types/node": "^18.11.9",
     "commitlint": "^17.1.2",
     "husky": "^8.0.1",

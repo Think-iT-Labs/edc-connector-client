@@ -13,15 +13,20 @@ export * from "./criterion";
 export * from "./data-address";
 export * from "./dataplane";
 export * from "./duty";
+export * from "./jsonld";
 export * from "./health";
 export * from "./permission";
 export * from "./policy";
 export * from "./prohibition";
 export * from "./transfer-process";
 
-export interface CreateResult {
-  createdAt: number;
-  id: string;
+export class CreateResult {
+  '@id': string;
+  'edc:createdAt': number;
+
+  id(): string {
+    return this['@id']
+  }
 }
 
 export interface ApiErrorDetail {

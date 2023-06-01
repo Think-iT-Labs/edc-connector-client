@@ -6,11 +6,9 @@ import {
   ContractAgreement,
   ContractDefinitionInput,
   ContractNegotiation,
-  ContractOffer,
   CreateResult,
   EdcConnectorClient,
   EdcConnectorClientContext,
-  Policy,
   PolicyDefinitionInput,
   TransferProcessResponse,
 } from "../src";
@@ -44,22 +42,24 @@ export async function createContractAgreement(
   await waitForNegotiationState(
     client,
     consumerContext,
-    createResult.id,
-    "CONFIRMED",
+    createResult.id(),
+    "FINALIZED",
   );
 
   const contractNegotiation = await client.management.getNegotiation(
     consumerContext,
-    createResult.id,
+    createResult.id(),
+  );
+
+  const contractAgreement = await client.management.getAgreement(
+    consumerContext,
+    contractNegotiation.contractAgreementId(),
   );
 
   return {
     ...rest,
     contractNegotiation,
-    contractAgreement: await client.management.getAgreement(
-      consumerContext,
-      contractNegotiation.contractAgreementId as string,
-    ),
+    contractAgreement,
   };
 }
 
@@ -93,6 +93,7 @@ export async function createContractNegotiation(
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
     asset: {
+      '@id': assetId,
       properties: {
         "asset:prop:id": assetId,
         "asset:prop:name": "product description",
@@ -100,10 +101,10 @@ export async function createContractNegotiation(
       },
     },
     dataAddress: {
+      type: "HttpData",
       properties: {
         name: "Test asset",
         baseUrl: "https://jsonplaceholder.typicode.com/users",
-        type: "HttpData",
       },
     },
   };
@@ -112,32 +113,21 @@ export async function createContractNegotiation(
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
-    id: policyId,
+    '@id': policyId,
     policy: {
-      "uid": "231802-bb34-11ec-8422-0242ac120002",
-      "permissions": [
-        {
-          "target": assetId,
-          "action": {
-            "type": "USE",
-          },
-          "edctype": "dataspaceconnector:permission",
-        },
-      ],
-      "@type": {
-        "@policytype": "set",
-      },
+      "@context": "http://www.w3.org/ns/odrl.jsonld",
+      "permissions": [],
     },
   };
   await client.management.createPolicy(providerContext, policyInput);
 
+  const contractDefinitionId = "definition-" + crypto.randomUUID();
   // Crate contract definition on the provider's side
-  const contractDefinitionId = crypto.randomUUID();
   const contractDefinitionInput: ContractDefinitionInput = {
-    id: contractDefinitionId,
+    '@id': contractDefinitionId,
     accessPolicyId: policyId,
     contractPolicyId: policyId,
-    criteria: [],
+    assetsSelector: [],
   };
   await client.management.createContractDefinition(
     providerContext,
@@ -145,24 +135,25 @@ export async function createContractNegotiation(
   );
 
   // Retrieve catalog and select contract offer
-  const catalog = await client.management.requestCatalog(consumerContext, {
-    providerUrl: `${providerContext.protocol}/data`,
+  const catalog = await client.management.requestDcatCatalog(consumerContext, {
+    providerUrl: providerContext.protocol,
   });
-  const contractOffer = catalog.contractOffers.find((offer) =>
-    offer.asset?.id === assetId
-  ) as ContractOffer;
+
+  const offer = catalog.getDatasets()
+    .flatMap(it => it.getOffers())
+    .find(offer => offer.assetId() === assetId)!;
 
   // Initiate contract negotiation on the consumer's side
   const createResult = await client.management
     .initiateContractNegotiation(consumerContext, {
-      connectorAddress: `${providerContext.protocol}/data`,
+      connectorAddress: providerContext.protocol,
       connectorId: "provider",
       offer: {
-        offerId: contractOffer.id as string,
-        assetId,
-        policy: contractOffer.policy as Policy,
+        offerId: offer.id(),
+        assetId: assetId,
+        policy: offer
       },
-      protocol: "ids-multipart",
+      protocol: "dataspace-protocol-http",
     });
 
   return {
@@ -185,12 +176,12 @@ export async function waitForNegotiationState(
   do {
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const { state } = await client.management.getNegotiationState(
+    const state = await client.management.getNegotiationState(
       context,
       negotiationId,
     );
 
-    waiting = state !== targetState;
+    waiting = state.state() !== targetState;
   } while (waiting);
 }
 
@@ -211,9 +202,7 @@ export function createReceiverServer() {
       },
     );
 
-    if (body.properties?.cid) {
-      emitter.emit(body.properties.cid, body);
-    }
+    emitter.emit("endpoint-data-reference", body);
 
     res.statusCode = 204;
     res.end();

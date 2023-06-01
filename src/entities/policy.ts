@@ -9,6 +9,7 @@ export type PolicyType =
 
 export interface Policy {
   uid?: string;
+  "@context"?: string;
   "@type"?: {
     "@policytype": PolicyType;
   };
@@ -23,12 +24,14 @@ export interface Policy {
 }
 
 export interface PolicyDefinition {
+  '@id': string;
   id: string;
   createdAt: number;
   policy: Policy;
 }
 
 export interface PolicyDefinitionInput {
+  '@id'?: string;
   id?: string;
   policy: Policy;
 }

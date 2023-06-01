@@ -1,12 +1,12 @@
 import { Policy } from "./policy";
+import { JsonLdId } from "./jsonld"
 
-export interface ContractAgreement {
-  id: string;
-  assetId: string;
-  consumerAgentId: string;
+export class ContractAgreement extends JsonLdId {
+  assetId?: string;
+  consumerAgentId?: string;
   contractEndDate?: number;
   constractSigningDate?: number;
   constractStartDate?: number;
-  policy: Policy;
-  providerAgentId: string;
+  policy?: Policy;
+  providerAgentId?: string;
 }

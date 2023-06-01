@@ -41,5 +41,6 @@ export type DataAddress =
   | AzureStorageDataAddress;
 
 export interface DataAddressProperties {
+  type: string,
   properties: Partial<DataAddress>;
 }

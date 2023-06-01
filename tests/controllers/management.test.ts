@@ -50,10 +50,9 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
-            name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -82,10 +81,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -126,10 +125,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -185,10 +184,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -246,10 +245,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -268,7 +267,6 @@ describe("DataController", () => {
           properties: {
             name: assetInput.dataAddress.properties.name,
             baseUrl: assetInput.dataAddress.properties.baseUrl,
-            type: assetInput.dataAddress.properties.type,
           },
         }),
       );
@@ -314,10 +312,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -429,11 +427,11 @@ describe("DataController", () => {
       // when
       const policy = await edcClient.management.getPolicy(
         context,
-        createResult.id,
+        createResult.id(),
       );
 
       // then
-      expect(policy.id).toBe(createResult.id);
+      expect(policy.id).toBe(createResult.id());
     });
 
     it("fails to fetch an not existant policy", async () => {
@@ -513,10 +511,10 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        id: crypto.randomUUID(),
+        '@id': crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
-        criteria: [],
+        assetsSelector: [],
       };
 
       // when
@@ -535,10 +533,10 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        id: crypto.randomUUID(),
+        '@id': crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
-        criteria: [],
+        assetsSelector: [],
       };
 
       // when
@@ -572,10 +570,10 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        id: crypto.randomUUID(),
+        '@id': 'definition-' + crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
-        criteria: [],
+        assetsSelector: [],
       };
       await edcClient.management.createContractDefinition(
         context,
@@ -583,14 +581,14 @@ describe("DataController", () => {
       );
 
       // when
-      const policies = await edcClient.management.queryAllContractDefinitions(
+      const contractDefinitions = await edcClient.management.queryAllContractDefinitions(
         context,
       );
 
       // then
-      expect(policies.length).toBeGreaterThan(0);
+      expect(contractDefinitions.length).toBeGreaterThan(0);
       expect(
-        policies.find((policy) => policy.id === contractDefinitionInput.id),
+        contractDefinitions.find((contractDefinition) => contractDefinition.id() === contractDefinitionInput.id()),
       ).toBeTruthy();
     });
   });
@@ -604,7 +602,7 @@ describe("DataController", () => {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
-        criteria: [],
+        assetsSelector: [],
       };
       const createResult = await edcClient.management.createContractDefinition(
         context,
@@ -615,11 +613,11 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.getContractDefinition(
           context,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
-      expect(contractDefinition.id).toBe(createResult.id);
+      expect(contractDefinition.id).toBe(createResult.id());
     });
 
     it("fails to fetch an not existant contract definition", async () => {
@@ -655,7 +653,7 @@ describe("DataController", () => {
         id: crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
-        criteria: [],
+        assetsSelector: [],
       };
       const createResult = await edcClient.management.createContractDefinition(
         context,
@@ -666,7 +664,7 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.deleteContractDefinition(
           context,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
@@ -740,10 +738,10 @@ describe("DataController", () => {
           },
         },
         dataAddress: {
+          type: "HttpData",
           properties: {
             name: "Test asset",
             baseUrl: "https://jsonplaceholder.typicode.com/users",
-            type: "HttpData",
           },
         },
       };
@@ -772,10 +770,10 @@ describe("DataController", () => {
 
       const contractDefinitionId = crypto.randomUUID();
       const contractDefinitionInput: ContractDefinitionInput = {
-        id: contractDefinitionId,
+        '@id': contractDefinitionId,
         accessPolicyId: policyId,
         contractPolicyId: policyId,
-        criteria: [],
+        assetsSelector: [],
       };
       await edcClient.management.createContractDefinition(
         providerContext,
@@ -786,7 +784,7 @@ describe("DataController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: `${provider.protocol}/data`,
+          providerUrl: provider.protocol,
         },
       );
 
@@ -846,7 +844,7 @@ describe("DataController", () => {
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
         contractNegotiations.find(
-          (contractNegotiation) => contractNegotiation.id === createResult.id,
+          (contractNegotiation) => contractNegotiation.id === createResult.id(),
         ),
       ).toBeTruthy();
     });
@@ -894,11 +892,11 @@ describe("DataController", () => {
       // when
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult.id,
+        createResult.id(),
       );
 
       // then
-      expect(contractNegotiation).toHaveProperty("id", createResult.id);
+      expect(contractNegotiation).toHaveProperty("id", createResult.id());
     });
 
     it("fails to fetch an not existant contract negotiation", async () => {
@@ -941,7 +939,7 @@ describe("DataController", () => {
       const contractNegotiationState =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
@@ -987,19 +985,19 @@ describe("DataController", () => {
       // when
       const cancelledNegotiation = await edcClient.management.cancelNegotiation(
         consumerContext,
-        createResult.id,
+        createResult.id(),
       );
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id,
+        createResult.id(),
         "ERROR",
       );
 
       const contractNegotiation =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
@@ -1046,7 +1044,7 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id,
+        createResult.id(),
         "CONFIRMED",
       );
 
@@ -1070,14 +1068,14 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id,
+        createResult.id(),
         "DECLINED",
       );
 
       const declinedProviderNegotiation =
         await edcClient.management.getNegotiation(
           consumerContext,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
@@ -1099,7 +1097,7 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id,
+        createResult.id(),
         "CONFIRMED",
       );
 
@@ -1107,7 +1105,7 @@ describe("DataController", () => {
       const contractAgreement =
         await edcClient.management.getAgreementForNegotiation(
           consumerContext,
-          createResult.id,
+          createResult.id(),
         );
 
       // then
@@ -1129,12 +1127,12 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult.id,
+        createResult.id(),
         "CONFIRMED",
       );
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult.id,
+        createResult.id(),
       );
 
       // when
@@ -1147,7 +1145,7 @@ describe("DataController", () => {
       expect(
         contractAgreements.find(
           (contractAgreement) =>
-            contractAgreement.id === contractNegotiation.contractAgreementId,
+            contractAgreement.id() === contractNegotiation.contractAgreementId(),
         ),
       ).toBeTruthy();
     });
@@ -1223,7 +1221,7 @@ describe("DataController", () => {
         );
 
         const receiverCallback = receiverServer.waitForEvent(
-          contractAgreement.id,
+          contractAgreement.id(),
         );
 
         // when
@@ -1232,8 +1230,8 @@ describe("DataController", () => {
           {
             assetId,
             connectorId: "provider",
-            connectorAddress: `${providerContext.protocol}/data`,
-            contractId: contractAgreement.id,
+            connectorAddress: providerContext.protocol,
+            contractId: contractAgreement.id(),
             managedResources: false,
             dataDestination: { type: "HttpProxy" },
           },
@@ -1260,7 +1258,7 @@ describe("DataController", () => {
         );
 
         const receiverCallback = receiverServer.waitForEvent(
-          contractAgreement.id,
+          contractAgreement.id(),
         );
 
         const createResult = await edcClient.management.initiateTransfer(
@@ -1268,8 +1266,8 @@ describe("DataController", () => {
           {
             assetId,
             connectorId: "provider",
-            connectorAddress: `${providerContext.protocol}/data`,
-            contractId: contractAgreement.id,
+            connectorAddress: providerContext.protocol,
+            contractId: contractAgreement.id(),
             managedResources: false,
             dataDestination: { type: "HttpProxy" },
           },
@@ -1285,7 +1283,7 @@ describe("DataController", () => {
         expect(transferProcesses.length).toBeGreaterThan(0);
         expect(
           transferProcesses.find(
-            (transferProcess) => createResult.id === transferProcess.id,
+            (transferProcess) => createResult.id() === transferProcess.id,
           ),
         ).toBeTruthy();
       });
