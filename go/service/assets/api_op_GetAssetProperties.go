@@ -9,26 +9,8 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
+func (c *Client) GetAssetProperties(assetId string) (*AssetProperties, error) {
 	endpoint := fmt.Sprintf("%s/assets/%s", *c.Addresses.Management, assetId)
-	asset := &AssetOutput{}
-
-	err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
-		Method:             http.MethodGet,
-		Endpoint:           endpoint,
-		ResponsePayload:    asset,
-		ExpectedStatusCode: http.StatusOK,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return asset, nil
-}
-
-func (c *Client) GetAssetDataAddress(assetId string) (*AssetDataAddressOutput, error) {
-	endpoint := fmt.Sprintf("%s/assets/%s/address", *c.Addresses.Management, assetId)
-	asset := AssetDataAddressOutput{}
 
 	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 	if err != nil {
@@ -50,6 +32,7 @@ func (c *Client) GetAssetDataAddress(assetId string) (*AssetDataAddressOutput, e
 		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
+	asset := AssetProperties{}
 	err = json.Unmarshal(response, &asset)
 	if err != nil {
 		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)

@@ -44,12 +44,12 @@ func Test_UpdateAssetProperties(t *testing.T) {
 	assert.NoError(t, err, "failed to initialize api client")
 
 	assetId := "1234"
-	err = apiClient.UpdateAssetProperties(AssetApiInput{
-		AssetProperties: map[string]string{
+	err = apiClient.UpdateAssetProperties(assetId, AssetProperties{
+		PublicProperties: map[string]string{
 			"asset:prop:name":        "product description",
 			"asset:prop:contenttype": "application/json",
 		},
-	}, assetId)
+	})
 	assert.NoError(t, err, "failed to update asset.")
 }
 
@@ -88,13 +88,10 @@ func Test_UpdateAssetDataAddress(t *testing.T) {
 	assetId := "1234"
 	httpName := "dummy asset server"
 	httpBaseUrl := "http://dummy.dum"
-	dataAddressType := "HttpData"
-	err = apiClient.UpdateAssetDataAddress(DataAddress{
-		HttpDataAddress: &HttpData{
-			Type:    &dataAddressType,
-			Name:    &httpName,
-			BaseUrl: &httpBaseUrl,
-		},
-	}, assetId)
+	err = apiClient.UpdateAssetDataAddress(assetId, HttpData{
+		HttpAssetName: httpName,
+		BaseUrl:       httpBaseUrl,
+	},
+	)
 	assert.NoError(t, err, "failed to update asset.")
 }

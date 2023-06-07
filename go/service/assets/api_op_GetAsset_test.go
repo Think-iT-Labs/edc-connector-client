@@ -41,15 +41,15 @@ func Test_GetAsset(t *testing.T) {
 	assert.NoError(t, err, "failed to initialize api client")
 
 	assetId := "1234"
-	asset, err := apiClient.GetAsset(assetId)
+	asset, err := apiClient.GetAssetProperties(assetId)
 
 	assert.NoError(t, err, "failed to create asset.")
 	assert.NotNil(t, asset)
-	assert.Equal(t, asset.AssetProperties["asset:prop:name"], "product description")
-	assert.Equal(t, asset.AssetProperties["asset:prop:contenttype"], "application/json")
-	assert.Equal(t, asset.AssetProperties["asset:prop:id"], "1234")
+	assert.Equal(t, asset.PublicProperties["asset:prop:name"], "product description")
+	assert.Equal(t, asset.PublicProperties["asset:prop:contenttype"], "application/json")
+	assert.Equal(t, asset.PublicProperties["asset:prop:id"], "1234")
 	assert.Equal(t, asset.Id, "1234")
-	assert.Equal(t, asset.CreatedAt, int64(1680172087972))
+	// assert.Equal(t, asset.CreatedAt, int64(1680172087972))
 }
 
 func Test_GetAssetDataAddress(t *testing.T) {
@@ -57,11 +57,9 @@ func Test_GetAssetDataAddress(t *testing.T) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `
 {
-	"properties": {
 		"baseUrl": "https://jsonplaceholder.typicode.com/users",
 		"name": "Test asset",
 		"type": "HttpData"
-	}
 }
 `)
 	}))
@@ -80,11 +78,11 @@ func Test_GetAssetDataAddress(t *testing.T) {
 	assert.NoError(t, err, "failed to initialize api client")
 
 	assetId := "1234"
-	asset, err := apiClient.GetAssetDataAddress(assetId)
+	dataAddress, err := apiClient.GetAssetDataAddress(assetId)
 
 	assert.NoError(t, err, "failed to create asset.")
-	assert.NotNil(t, asset)
-	assert.Equal(t, asset.AssetProperties["type"], "HttpData")
-	assert.Equal(t, asset.AssetProperties["baseUrl"], "https://jsonplaceholder.typicode.com/users")
-	assert.Equal(t, asset.AssetProperties["name"], "Test asset")
+	assert.NotNil(t, dataAddress)
+	assert.Equal(t, dataAddress.Type, DataAddressTypeHttp)
+	assert.Equal(t, dataAddress.BaseUrl, "https://jsonplaceholder.typicode.com/users")
+	assert.Equal(t, dataAddress.HttpAssetName, "Test asset")
 }

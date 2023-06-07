@@ -26,7 +26,10 @@ func ParseConnectorApiError(response []byte) error {
 	if err != nil {
 		return &wrapError{
 			outer: fmt.Errorf("failed to: %s", ACTION_JSON_UNMARSHAL),
-			inner: err,
+			inner: &wrapError{
+				inner: err,
+				outer: fmt.Errorf("%s", response),
+			},
 		}
 	}
 	return apiErrors
