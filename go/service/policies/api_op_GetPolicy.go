@@ -1,9 +1,7 @@
 package policies
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
@@ -11,32 +9,16 @@ import (
 
 func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, error) {
 	endpoint := fmt.Sprintf("%s/policydefinitions/%s", *c.Addresses.Management, policyId)
-	policyDefinition := PolicyDefinition{}
+	policyDefinition := &PolicyDefinition{}
 
-	req, err := http.NewRequest(http.MethodGet, endpoint, nil)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
+	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+		Method:             http.MethodGet,
+		Endpoint:           endpoint,
+		ResponsePayload:    policyDefinition,
+		ExpectedStatusCode: http.StatusOK,
+	}); err != nil {
+		return nil, err
 	}
 
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
-	}
-
-	defer res.Body.Close()
-	response, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
-	}
-
-	err = json.Unmarshal(response, &policyDefinition)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
-	}
-
-	return &policyDefinition, nil
+	return policyDefinition, nil
 }
