@@ -57,6 +57,9 @@ func main() {
 				"contenttype": "application/json",
 				"version":     "0.0.1",
 			},
+			PrivateProperties: map[string]string{
+				"secret": "very-private-thing",
+			},
 		},
 		assets.HttpData{
 			BaseUrl:       httpBaseUrl,
@@ -84,7 +87,8 @@ func main() {
 	fmt.Printf("asset of id %s: %+v\n ", assetId, *asset)
 
 	updatedAssetProperties := assets.AssetProperties{
-		PublicProperties: map[string]string{"asset:prop:name": "updated name"},
+		PublicProperties:  map[string]string{"name": "updated name"},
+		PrivateProperties: map[string]string{"secret": "updated private prop"},
 	}
 
 	err = client.UpdateAssetProperties(assetId, updatedAssetProperties)
@@ -99,7 +103,7 @@ func main() {
 		return
 	}
 
-	if assetProperties.PublicProperties["asset:prop:name"] != "updated name" {
+	if assetProperties.PublicProperties["name"] != "updated name" || assetProperties.PrivateProperties["secret"] != "updated private prop" {
 		fmt.Printf("asset update failed %v\n", asset)
 		return
 	}
@@ -116,9 +120,11 @@ func main() {
 		assets.AssetProperties{
 			Id: secondAssetId,
 			PublicProperties: map[string]string{
-				"asset:prop:id":          secondAssetId,
-				"asset:prop:name":        secondAssetName,
-				"asset:prop:contenttype": "application/json",
+				"edc:name":        secondAssetName,
+				"edc:contenttype": "application/json",
+			},
+			PrivateProperties: map[string]string{
+				"secret": "top secret 2",
 			},
 		},
 		customData,
@@ -146,7 +152,7 @@ func main() {
 		return
 	}
 
-	if assetDA.Type != "HttpData" {
+	if assetDA.(assets.HttpData).Type != "HttpData" {
 		fmt.Printf("error unexpected data address for id \"%s\". expected:\n %v \n got: \n %v\n", secondAssetId, "HttpData", assetDA)
 		return
 	}

@@ -20,26 +20,31 @@ func Test_CreateAsset(t *testing.T) {
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
+	"@context": {
+		"edc": "https://w3id.org/edc/v0.0.1/ns/"
+	},
+	"@id": "",
 	"asset": {
-		"properties": {
-			"asset:prop:id": "1234",
-			"asset:prop:name": "product description",
-			"asset:prop:contenttype": "application/json"
+		"@id": "1234",
+		"edc:properties": {
+			"name": "product description",
+			"contentType": "application/json"
+		},
+		"edc:privateProperties": {
+			"private_name": "private private"
 		}
 	},
 	"dataAddress": {
-		"properties": {
-			"name": "Test asset",
-			"baseUrl": "https://jsonplaceholder.typicode.com/users",
-			"type": "HttpData"
-		}
+		"edc:type": "HttpData",
+		"edc:name": "Test asset",
+		"edc:baseUrl": "https://jsonplaceholder.typicode.com/users"
 	}
 }`, string(payload), "invalid payload")
 
 		fmt.Fprintf(w, `
 {
 	"createdAt": 1680004526,
-	"id": "1234"
+	"@id": "1234"
 }		
 `)
 	}))
@@ -62,10 +67,13 @@ func Test_CreateAsset(t *testing.T) {
 	assetId := "1234"
 	createAssetOutput, err := apiClient.CreateAsset(
 		AssetProperties{
+			Id: assetId,
 			PublicProperties: map[string]string{
-				"asset:prop:id":          assetId,
-				"asset:prop:name":        "product description",
-				"asset:prop:contenttype": "application/json",
+				"name":        "product description",
+				"contentType": "application/json",
+			},
+			PrivateProperties: map[string]string{
+				"private_name": "private private",
 			},
 		},
 		HttpData{
@@ -85,25 +93,28 @@ func Test_CreateAssetWithCustomDataAddress(t *testing.T) {
 		assert.NoError(t, err, "error while reading request body")
 		assert.JSONEq(t, `
 {
+	"@context": {
+		"edc": "https://w3id.org/edc/v0.0.1/ns/"
+	},
+	"@id": "",
 	"asset": {
-		"properties": {
-			"asset:prop:id": "1234",
-			"asset:prop:name": "product description",
-			"asset:prop:contenttype": "application/json"
+		"@id": "1234",
+		"edc:properties": {
+			"edc:name": "product description",
+			"edc:contentType": "application/json"
 		}
 	},
 	"dataAddress": {
-		"properties": {
-			"name": "This is custom Address",
-			"customKey": "This is custom key"
-		}
+		"edc:type": "Custom",
+		"name": "This is custom Address",
+		"customKey": "This is custom key"
 	}
 }`, string(payload), "invalid payload")
 
 		fmt.Fprintf(w, `
 {
 	"createdAt": 1680004526,
-	"id": "1234"
+	"@id": "1234"
 }`)
 	}))
 	defer svr.Close()
@@ -127,10 +138,10 @@ func Test_CreateAssetWithCustomDataAddress(t *testing.T) {
 	assetId := "1234"
 	createAssetOutput, err := apiClient.CreateAsset(
 		AssetProperties{
+			Id: assetId,
 			PublicProperties: map[string]string{
-				"asset:prop:id":          assetId,
-				"asset:prop:name":        "product description",
-				"asset:prop:contenttype": "application/json",
+				"edc:name":        "product description",
+				"edc:contentType": "application/json",
 			},
 		},
 		customDataAddress,

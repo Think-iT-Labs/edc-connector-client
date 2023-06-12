@@ -16,7 +16,7 @@ type UpdateAssetPropertiesRequestPayload struct {
 	AssetProperties
 }
 
-func (c *Client) UpdateAssetProperties(assetId string, asset AssetProperties) error {
+func (c *Client) UpdateAssetProperties(assetId string, newProps AssetProperties) error {
 	assetEndpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
 
 	requestpayload, err := json.Marshal(UpdateAssetPropertiesRequestPayload{
@@ -24,7 +24,7 @@ func (c *Client) UpdateAssetProperties(assetId string, asset AssetProperties) er
 			Id:      assetId,
 			Context: sharedtypes.EdcContext,
 		},
-		asset,
+		newProps,
 	})
 	if err != nil {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)

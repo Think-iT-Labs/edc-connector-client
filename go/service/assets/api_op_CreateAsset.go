@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"reflect"
-	"strings"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sharedtypes"
@@ -14,12 +12,7 @@ import (
 type CreateAssetRequestPayload struct {
 	sharedtypes.BaseRequest
 	AssetProperties `json:"asset"`
-	DataAddress     CreateDataAddressPayload `json:"dataAddress"`
-}
-
-type CreateDataAddressPayload struct {
-	DataAddress
-	Type DataAddressType
+	DataAddress     ModifyDataAddressPayload `json:"dataAddress"`
 }
 
 func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*sharedtypes.BaseResponse, error) {
@@ -29,7 +22,7 @@ func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*s
 			Context: sharedtypes.EdcContext,
 		},
 		AssetProperties: asset,
-		DataAddress: CreateDataAddressPayload{
+		DataAddress: ModifyDataAddressPayload{
 			Type:        getDataAddressType(dataAddress),
 			DataAddress: dataAddress,
 		},
@@ -49,31 +42,4 @@ func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*s
 	}
 
 	return &createAssetResponse, nil
-}
-
-func getDataAddressType(dataAddress DataAddress) DataAddressType {
-	if _, ok := dataAddress.(HttpData); ok {
-		return DataAddressTypeHttp
-	}
-	if _, ok := dataAddress.(S3Data); ok {
-		return DataAddressTypeS3
-	}
-	if _, ok := dataAddress.(AzureData); ok {
-		return DataAddressTypeAzure
-	}
-	return DataAddressTypeCustom
-}
-
-func (dap CreateDataAddressPayload) MarshalJSON() ([]byte, error) {
-	result := make(map[string]interface{}, 0)
-	result["edc:type"] = dap.Type
-
-	da := reflect.TypeOf(dap.DataAddress)
-	for i := 0; i < da.NumField(); i++ {
-		field := da.Field(i)
-		// get tag without instructions such as 'omitempty'
-		jsonTag := strings.Split(field.Tag.Get("json"), ",")[0]
-		result[jsonTag] = reflect.ValueOf(dap.DataAddress).Field(i).String()
-	}
-	return json.Marshal(result)
 }

@@ -13,7 +13,10 @@ import (
 func (c *Client) UpdateAssetDataAddress(assetId string, dataAddress DataAddress) error {
 	dataAddressEndpoint := fmt.Sprintf("%s/assets/%s/dataaddress", *c.Addresses.Management, assetId)
 
-	assetDataAddress, err := json.Marshal(dataAddress)
+	assetDataAddress, err := json.Marshal(ModifyDataAddressPayload{
+		Type:        getDataAddressType(dataAddress),
+		DataAddress: dataAddress,
+	})
 	if err != nil {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
 	}

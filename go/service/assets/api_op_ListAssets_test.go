@@ -18,12 +18,15 @@ func Test_ListAssets(t *testing.T) {
 [
 	{
 		"createdAt": 1680172087972,
-		"properties": {
-		  "asset:prop:name": "product description",
-		  "asset:prop:contenttype": "application/json",
-		  "asset:prop:id": "1234"
+		"edc:properties": {
+		  "edc:name": "product description",
+		  "edc:contenttype": "application/json",
+		  "edc:id": "1234"
 		},
-		"id": "1234"
+		"edc:privateProperties": {
+			"private": "yes"
+		},
+		"@id": "1234"
 	  }
 ]
 `)
@@ -47,9 +50,9 @@ func Test_ListAssets(t *testing.T) {
 	assert.NoError(t, err, "failed to list asset.")
 	assert.NotNil(t, assets)
 	assert.Equal(t, len(assets), 1)
-	assert.Equal(t, assets[0].PublicProperties["asset:prop:name"], "product description")
-	assert.Equal(t, assets[0].PublicProperties["asset:prop:contenttype"], "application/json")
-	assert.Equal(t, assets[0].PublicProperties["asset:prop:id"], "1234")
-	assert.Equal(t, assets[0].Id, "1234")
+	assert.Equal(t, "product description", assets[0].PublicProperties["edc:name"])
+	assert.Equal(t, "application/json", assets[0].PublicProperties["edc:contenttype"])
+	assert.Equal(t, "1234", assets[0].PublicProperties["edc:id"])
+	assert.Equal(t, "1234", assets[0].Id)
 	// assert.Equal(t, assets[0].CreatedAt, int64(1680172087972)) //not returned by the API for now. bug???
 }

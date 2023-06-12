@@ -11,11 +11,10 @@ const (
 
 type DataAddressBase struct {
 	Type DataAddressType `json:"edc:type"`
-	Name string          `json:"edc:name,omitempty"`
 }
 
 type HttpData struct {
-	// DataAddressBase
+	DataAddressBase
 	HttpAssetName    string `json:"edc:name,omitempty"`
 	Path             string `json:"path,omitempty"`
 	Method           string `json:"method,omitempty"`
@@ -31,15 +30,15 @@ type HttpData struct {
 }
 
 type S3Data struct {
-	// DataAddressBase
-	S3AssetName     string `json:"edc:name,omitempty"`
+	DataAddressBase
+	S3AssetName     string `json:"name,omitempty"`
 	BucketName      string `json:"bucketName,omitempty"`
 	AccessKeyId     string `json:"accessKeyId,omitempty"`
 	SecretAccessKey string `json:"secretAccessKey,omitempty"`
 }
 
 type AzureData struct {
-	// DataAddressBase
+	DataAddressBase
 	Container string `json:"container,omitempty"`
 	Account   string `json:"account,omitempty"`
 	BlobName  string `json:"blobname,omitempty"`
