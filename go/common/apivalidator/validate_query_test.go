@@ -10,16 +10,16 @@ import (
 
 func TestValidateQueryInput(t *testing.T) {
 	testCases := map[string]struct {
-		sortOrder    SortOrder
-		expectedErr  error
-		expectedMsg  string
+		sortOrder   SortOrder
+		expectedErr error
+		expectedMsg string
 	}{
 		"valid sort order": {
 			sortOrder:   SortOrderAscendant,
 			expectedErr: nil,
 		},
 		"invalid sort order": {
-			sortOrder:  SortOrder("INVALID"),
+			sortOrder:   SortOrder("INVALID"),
 			expectedErr: sdkErrors.FailedTo(internal.ACTION_INPUT_VALIDATE),
 		},
 	}
@@ -28,7 +28,7 @@ func TestValidateQueryInput(t *testing.T) {
 		t.Run(testName, func(t *testing.T) {
 			err := ValidateQueryInput(&testCase.sortOrder)
 			assert.Equal(t, testCase.expectedErr, err)
-	
+
 			if err != nil {
 				assert.EqualError(t, err, fmt.Sprintf("%v", testCase.expectedErr))
 			}

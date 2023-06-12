@@ -103,12 +103,12 @@ func main() {
 				Operator:     "=",
 			},
 		},
-	}	
-		
+	}
+
 	filteredContractDefinitions, err := client.ListContractDefinitions(filter)
-		
+
 	if err != nil {
-		fmt.Printf("error while listing contract definitions with filter %v: \n%v", filter, err )
+		fmt.Printf("error while listing contract definitions with filter %v: \n%v", filter, err)
 		return
 	}
 	fmt.Println(filteredContractDefinitions)

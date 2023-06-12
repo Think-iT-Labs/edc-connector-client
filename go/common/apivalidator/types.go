@@ -12,9 +12,9 @@ const (
 )
 
 type Criterion struct {
-	OperandLeft  string `json:"operandLeft,omitempty"`
+	OperandLeft  string  `json:"operandLeft,omitempty"`
 	OperandRight *string `json:"operandRight,omitempty"`
-	Operator     string `json:"operator,omitempty"`
+	Operator     string  `json:"operator,omitempty"`
 }
 
 type QueryInput struct {

@@ -4,7 +4,6 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-
 func ValidateQueryInput(sortOrder *SortOrder) error {
 	if sortOrder == nil {
 		return nil
