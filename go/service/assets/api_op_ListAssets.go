@@ -1,10 +1,7 @@
 package assets
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
@@ -31,36 +28,19 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 	}
 
 	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
-	assets := []AssetOutput{}
-	listAssetsQueryJson, err := json.Marshal(queryInput)
+	assets := &[]AssetOutput{}
+
+	err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+		Method:             http.MethodPost,
+		Endpoint:           endpoint,
+		RequestPayload:     queryInput,
+		ResponsePayload:    assets,
+		ExpectedStatusCode: http.StatusOK,
+	})
 
 	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
-	}
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listAssetsQueryJson))
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
+		return nil, err
 	}
 
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
-	}
-
-	defer res.Body.Close()
-	response, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
-	}
-
-	err = json.Unmarshal(response, &assets)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
-	}
-
-	return assets, nil
+	return *assets, nil
 }
