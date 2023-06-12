@@ -49,10 +49,11 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 	}
 
 	err = c.invokeOperation(internal.InvokeHTTPOperationOptions{
-		Method:          http.MethodPost,
-		Endpoint:        endpoint,
-		RequestPayload:  createAssetApiInput,
-		ResponsePayload: createAssetOutput,
+		Method:             http.MethodPost,
+		Endpoint:           endpoint,
+		RequestPayload:     createAssetApiInput,
+		ResponsePayload:    createAssetOutput,
+		ExpectedStatusCode: http.StatusOK,
 	})
 
 	if err != nil {

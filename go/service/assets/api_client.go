@@ -26,13 +26,20 @@ type Client struct {
 
 func (c *Client) invokeOperation(options internal.InvokeHTTPOperationOptions) error {
 
-	input, err := json.Marshal(options.RequestPayload)
+	var req *http.Request
+	var err error
+	if options.RequestPayload != nil {
+		input, err := json.Marshal(options.RequestPayload)
 
-	if err != nil {
-		return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+		if err != nil {
+			return sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+		}
+
+		req, err = http.NewRequest(options.Method, options.Endpoint, bytes.NewBuffer(input))
+	} else {
+		req, err = http.NewRequest(options.Method, options.Endpoint, nil)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, options.Endpoint, bytes.NewBuffer(input))
 	if err != nil {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
 	}
@@ -44,17 +51,20 @@ func (c *Client) invokeOperation(options internal.InvokeHTTPOperationOptions) er
 
 	defer res.Body.Close()
 	response, err := io.ReadAll(res.Body)
+
 	if err != nil {
 		return sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
 	}
 
-	if res.StatusCode != http.StatusOK {
+	if res.StatusCode != options.ExpectedStatusCode {
 		return sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
 	}
 
-	err = json.Unmarshal(response, options.ResponsePayload)
-	if err != nil {
-		return sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
+	if options.ResponsePayload != nil {
+		err = json.Unmarshal(response, options.ResponsePayload)
+		if err != nil {
+			return sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
+		}
 	}
 
 	return nil

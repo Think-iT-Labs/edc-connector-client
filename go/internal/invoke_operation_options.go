@@ -11,4 +11,6 @@ type InvokeHTTPOperationOptions struct {
 	RequestPayload interface{}
 	// ResponsePayload defines the response interface that HTTP response should be marshalled to.
 	ResponsePayload interface{}
+	// ExpectedStatusCode defines the expected status code in the HTTP response.
+	ExpectedStatusCode int
 }
