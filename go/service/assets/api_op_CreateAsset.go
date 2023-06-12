@@ -1,10 +1,7 @@
 package assets
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"reflect"
 
@@ -34,7 +31,7 @@ type CreateAssetOutput struct {
 
 func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOutput, error) {
 	endpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
-	createAssetOutput := CreateAssetOutput{}
+	createAssetOutput := &CreateAssetOutput{}
 
 	err := validateDataAddressInput(createAssetInput.DataAddress)
 	if err != nil {
@@ -51,37 +48,18 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 		DataAddressApiInput: *dataAddressApiInput,
 	}
 
-	createAssetApiInputJson, err := json.Marshal(createAssetApiInput)
+	err = c.invokeOperation(internal.InvokeHTTPOperationOptions{
+		Method:          http.MethodPost,
+		Endpoint:        endpoint,
+		RequestPayload:  createAssetApiInput,
+		ResponsePayload: createAssetOutput,
+	})
+
 	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, endpoint, bytes.NewBuffer(createAssetApiInputJson))
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
-	}
-
-	defer res.Body.Close()
-	response, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
-	}
-
-	err = json.Unmarshal(response, &createAssetOutput)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
-	}
-
-	return &createAssetOutput, nil
+	return createAssetOutput, nil
 }
 
 func createDataAddressFromInput(dataAddress DataAddress) (*DataAddressApiInput, error) {
