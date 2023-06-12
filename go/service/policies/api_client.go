@@ -25,7 +25,6 @@ type Client struct {
 }
 
 func (c *Client) invokeOperation(options internal.InvokeHTTPOperationOptions) error {
-
 	var req *http.Request
 	var err error
 	if options.RequestPayload != nil {
@@ -68,7 +67,6 @@ func (c *Client) invokeOperation(options internal.InvokeHTTPOperationOptions) er
 	}
 
 	return nil
-
 }
 
 func New(cfg edc.Config) (*Client, error) {
