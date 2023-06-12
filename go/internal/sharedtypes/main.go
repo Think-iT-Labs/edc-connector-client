@@ -1,11 +1,11 @@
 package sharedtypes
 
-type RequestBase struct {
+type BaseRequest struct {
 	Context map[string]string `json:"@context"`
 	Id      string            `json:"@id"`
 }
 
-type ResponseBase struct {
+type BaseResponse struct {
 	Context   map[string]string `json:"@context"`
 	CreatedAt int64             `json:"edc:createdAt"`
 	Id        string            `json:"@id"`

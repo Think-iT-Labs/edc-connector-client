@@ -7,12 +7,12 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Think-iT-Labs/edc-connector-client/go/common/sharedtypes"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sharedtypes"
 )
 
 type CreateAssetRequestPayload struct {
-	sharedtypes.RequestBase
+	sharedtypes.BaseRequest
 	AssetProperties `json:"asset"`
 	DataAddress     CreateDataAddressPayload `json:"dataAddress"`
 }
@@ -22,10 +22,10 @@ type CreateDataAddressPayload struct {
 	Type DataAddressType
 }
 
-func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*sharedtypes.ResponseBase, error) {
+func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*sharedtypes.BaseResponse, error) {
 
 	requestpayload := CreateAssetRequestPayload{
-		RequestBase: sharedtypes.RequestBase{
+		BaseRequest: sharedtypes.BaseRequest{
 			Context: sharedtypes.EdcContext,
 		},
 		AssetProperties: asset,
@@ -35,7 +35,7 @@ func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*s
 		},
 	}
 	endpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
-	createAssetResponse := sharedtypes.ResponseBase{}
+	createAssetResponse := sharedtypes.BaseResponse{}
 	err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
 		Endpoint:           endpoint,

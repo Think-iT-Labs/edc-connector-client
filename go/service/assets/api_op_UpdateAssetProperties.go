@@ -7,12 +7,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Think-iT-Labs/edc-connector-client/go/common/sharedtypes"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sharedtypes"
 )
 
 type UpdateAssetPropertiesRequestPayload struct {
-	sharedtypes.RequestBase
+	sharedtypes.BaseRequest
 	AssetProperties
 }
 
@@ -20,7 +20,7 @@ func (c *Client) UpdateAssetProperties(assetId string, asset AssetProperties) er
 	assetEndpoint := fmt.Sprintf("%s/assets", *c.Addresses.Management)
 
 	requestpayload, err := json.Marshal(UpdateAssetPropertiesRequestPayload{
-		sharedtypes.RequestBase{
+		sharedtypes.BaseRequest{
 			Id:      assetId,
 			Context: sharedtypes.EdcContext,
 		},

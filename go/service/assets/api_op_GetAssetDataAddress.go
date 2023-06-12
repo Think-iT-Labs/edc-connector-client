@@ -6,12 +6,12 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/Think-iT-Labs/edc-connector-client/go/common/sharedtypes"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
+	"github.com/Think-iT-Labs/edc-connector-client/go/internal/sharedtypes"
 )
 
 type DataAddressResponse struct {
-	sharedtypes.ResponseBase
+	sharedtypes.BaseResponse
 	DataAddressBase
 	HttpData
 	S3Data
