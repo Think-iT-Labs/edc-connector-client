@@ -73,7 +73,7 @@ func main() {
 	fmt.Printf("%+v\n", allContractDefinitions)
 
 	contractDefinition.Validity = 201
-	err = client.UpdateContractDefinition(*contractDefinition)
+	err = client.UpdateContractDefinition(contractDefinition.ContractDefinition)
 	if err != nil {
 		fmt.Printf("error while updating contract definitions: %v", err)
 		return

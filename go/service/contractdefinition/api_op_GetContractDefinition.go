@@ -7,9 +7,9 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) GetContractDefinition(ContractDefinitionId string) (*ContractDefinition, error) {
+func (c *Client) GetContractDefinition(ContractDefinitionId string) (*GetContractDefinitionOutput, error) {
 	endpoint := fmt.Sprintf("%s/contractdefinitions/%s", *c.Addresses.Management, ContractDefinitionId)
-	contractDefinition := &ContractDefinition{}
+	contractDefinition := &GetContractDefinitionOutput{}
 
 	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
