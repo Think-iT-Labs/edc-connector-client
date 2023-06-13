@@ -30,7 +30,7 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
 	assets := &[]AssetOutput{}
 
-	err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
 		Endpoint:           endpoint,
 		RequestPayload:     queryInput,

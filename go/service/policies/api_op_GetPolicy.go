@@ -11,7 +11,7 @@ func (c *Client) GetPolicy(policyId string) (*PolicyDefinition, error) {
 	endpoint := fmt.Sprintf("%s/policydefinitions/%s", *c.Addresses.Management, policyId)
 	policyDefinition := &PolicyDefinition{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodGet,
 		Endpoint:           endpoint,
 		ResponsePayload:    policyDefinition,

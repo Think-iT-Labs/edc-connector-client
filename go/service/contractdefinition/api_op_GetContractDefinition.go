@@ -11,7 +11,7 @@ func (c *Client) GetContractDefinition(ContractDefinitionId string) (*GetContrac
 	endpoint := fmt.Sprintf("%s/contractdefinitions/%s", *c.Addresses.Management, ContractDefinitionId)
 	contractDefinition := &GetContractDefinitionOutput{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
 		Method:             http.MethodGet,
 		ResponsePayload:    contractDefinition,

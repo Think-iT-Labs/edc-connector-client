@@ -33,7 +33,7 @@ func (c *Client) ListPolicies(args ...apivalidator.QueryInput) ([]PolicyDefiniti
 	endpoint := fmt.Sprintf("%v/policydefinitions/request", *c.Addresses.Management)
 	policies := &[]PolicyDefinition{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
 		Method:             http.MethodPost,
 		RequestPayload:     queryInput,

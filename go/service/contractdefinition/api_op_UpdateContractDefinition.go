@@ -9,7 +9,7 @@ import (
 
 func (c *Client) UpdateContractDefinition(cd ContractDefinition) error {
 	endpoint := fmt.Sprintf("%s/contractdefinitions/%s", *c.Management, cd.Id)
-	return c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	return c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
 		Method:             http.MethodPut,
 		RequestPayload:     cd,

@@ -10,7 +10,7 @@ import (
 func (c *Client) UpdateAssetProperties(asset AssetApiInput, assetId string) error {
 	endpoint := fmt.Sprintf("%s/assets/%s", *c.Addresses.Management, assetId)
 
-	return c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	return c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPut,
 		Endpoint:           endpoint,
 		ExpectedStatusCode: http.StatusNoContent,
@@ -26,7 +26,7 @@ func (c *Client) UpdateAssetDataAddress(dataAddress DataAddress, assetId string)
 		return err
 	}
 
-	return c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	return c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
 		Method:             http.MethodPut,
 		RequestPayload:     payload,

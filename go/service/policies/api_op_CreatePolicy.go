@@ -21,7 +21,7 @@ func (c *Client) CreatePolicy(createPolicyInput CreatePolicyInput) (*CreatePolic
 	endpoint := fmt.Sprintf("%s/policydefinitions", *c.Addresses.Management)
 	createPolicyOutput := &CreatePolicyOutput{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
 		Endpoint:           endpoint,
 		RequestPayload:     createPolicyInput,

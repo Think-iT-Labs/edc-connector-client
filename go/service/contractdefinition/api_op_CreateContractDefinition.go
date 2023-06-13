@@ -11,7 +11,7 @@ func (c *Client) CreateContractDefinition(cd ContractDefinition) (*CreateContrac
 	endpoint := fmt.Sprintf("%s/contractdefinitions", *c.Management)
 	contractDefinitionOutput := &CreateContractDefinitionOutput{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
 		Endpoint:           endpoint,
 		RequestPayload:     cd,

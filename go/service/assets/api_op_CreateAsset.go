@@ -48,7 +48,7 @@ func (c *Client) CreateAsset(createAssetInput CreateAssetInput) (*CreateAssetOut
 		DataAddressApiInput: *dataAddressApiInput,
 	}
 
-	err = c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	err = c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
 		Endpoint:           endpoint,
 		RequestPayload:     createAssetApiInput,

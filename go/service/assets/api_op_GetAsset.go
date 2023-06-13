@@ -13,7 +13,7 @@ func (c *Client) GetAsset(assetId string) (*AssetOutput, error) {
 	endpoint := fmt.Sprintf("%s/assets/%s", *c.Addresses.Management, assetId)
 	asset := &AssetOutput{}
 
-	err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodGet,
 		Endpoint:           endpoint,
 		ResponsePayload:    asset,

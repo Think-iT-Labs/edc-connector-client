@@ -11,7 +11,7 @@ func (c *Client) DeleteAsset(assetId string) error {
 
 	endpoint := fmt.Sprintf("%s/assets/%s", *c.Addresses.Management, assetId)
 
-	return c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	return c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodDelete,
 		Endpoint:           endpoint,
 		ExpectedStatusCode: http.StatusNoContent,

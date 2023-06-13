@@ -24,7 +24,7 @@ func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]Get
 	endpoint := fmt.Sprintf("%s/contractdefinitions/request", *c.Addresses.Management)
 	contractDefinitions := &[]GetContractDefinitionOutput{}
 
-	if err := c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Endpoint:           endpoint,
 		Method:             http.MethodPost,
 		ExpectedStatusCode: http.StatusOK,

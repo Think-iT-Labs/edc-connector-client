@@ -1,22 +1,5 @@
 mode: set
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:27.85,30.35 3 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:30.35,33.17 2 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:33.17,35.4 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:37.3,37.87 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:38.8,40.3 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:42.2,42.16 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:42.16,44.3 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:46.2,47.16 2 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:47.16,49.3 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:51.2,54.16 3 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:54.16,56.3 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:58.2,58.50 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:58.50,60.3 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:62.2,62.36 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:62.36,64.17 2 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:64.17,66.4 1 0
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:69.2,69.12 1 1
-github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:72.43,78.2 2 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:23.43,31.2 3 1
 github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:10.107,20.17 3 1
 github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:20.17,22.3 1 0
 github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:24.2,24.38 1 1

@@ -10,7 +10,7 @@ import (
 func (c *Client) DeletePolicy(policyId string) error {
 	endpoint := fmt.Sprintf("%s/policydefinitions/%s", *c.Addresses.Management, policyId)
 
-	return c.invokeOperation(internal.InvokeHTTPOperationOptions{
+	return c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodDelete,
 		Endpoint:           endpoint,
 		ExpectedStatusCode: http.StatusNoContent,
