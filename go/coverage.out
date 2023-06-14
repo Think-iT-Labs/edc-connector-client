@@ -1,0 +1,17 @@
+mode: set
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_client.go:23.43,31.2 3 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:10.107,20.17 3 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:20.17,22.3 1 0
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_CreateContractDefinition.go:24.2,24.38 1 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_DeleteContractDefinition.go:10.64,18.2 2 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_GetContractDefinition.go:10.107,19.17 3 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_GetContractDefinition.go:19.17,21.3 1 0
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_GetContractDefinition.go:22.2,22.32 1 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:11.114,14.19 2 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:14.19,17.17 3 0
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:17.17,19.4 1 0
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:20.8,22.3 1 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:24.2,33.17 3 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:33.17,35.3 1 0
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_ListContractDefinitions.go:37.2,37.34 1 1
+github.com/Think-iT-Labs/edc-connector-client/go/service/contractdefinition/api_op_UpdateContractDefinition.go:10.72,18.2 2 1

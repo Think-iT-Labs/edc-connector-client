@@ -1,17 +1,14 @@
 package contractdefinition
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/Think-iT-Labs/edc-connector-client/go/common/apivalidator"
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]GetContractDefinitionOutput, error)  {
+func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]GetContractDefinitionOutput, error) {
 	var queryInput apivalidator.QueryInput
 
 	if len(args) > 0 {
@@ -25,39 +22,17 @@ func (c *Client) ListContractDefinitions(args ...apivalidator.QueryInput) ([]Get
 	}
 
 	endpoint := fmt.Sprintf("%s/contractdefinitions/request", *c.Addresses.Management)
-	contractDefinitions := []GetContractDefinitionOutput{}
+	contractDefinitions := &[]GetContractDefinitionOutput{}
 
-	listContractDefinitionsQueryJson, err := json.Marshal(queryInput)
-
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_JSON_MARSHAL)
+	if err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
+		Endpoint:           endpoint,
+		Method:             http.MethodPost,
+		ExpectedStatusCode: http.StatusOK,
+		RequestPayload:     queryInput,
+		ResponsePayload:    contractDefinitions,
+	}); err != nil {
+		return nil, err
 	}
 
-
-	req, err := http.NewRequest("POST", endpoint, bytes.NewBuffer(listContractDefinitionsQueryJson))
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_BUILD_REQUEST)
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_DO_REQUEST)
-	}
-
-	defer res.Body.Close()
-	response, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTo(internal.ACTION_HTTP_READ_BYTES)
-	}
-
-	if res.StatusCode != http.StatusOK {
-		return nil, sdkErrors.FromError(internal.ParseConnectorApiError(response)).Error(internal.ERROR_API_ERROR)
-	}
-
-	err = json.Unmarshal(response, &contractDefinitions)
-	if err != nil {
-		return nil, sdkErrors.FromError(err).FailedTof(internal.ACTION_JSON_UNMARSHAL, response)
-	}
-
-	return contractDefinitions, nil
+	return *contractDefinitions, nil
 }
