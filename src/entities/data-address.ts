@@ -1,5 +1,5 @@
 export interface BaseDataAddress {
-  [key: string]: string | undefined;
+  [key: string]: string | undefined | any;
   type: string;
 }
 

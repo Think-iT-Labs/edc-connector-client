@@ -16,7 +16,7 @@ interface AssetProperties {
 
 export interface AssetInput extends ContextProperties {
   asset: Partial<Asset>;
-  dataAddress: Partial<DataAddress>;
+  dataAddress: Partial<DataAddress> & { properties?: Partial<DataAddress> };
 }
 
 export type AssetResponse = {

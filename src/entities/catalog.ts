@@ -13,34 +13,39 @@ export interface CatalogRequest {
 }
 
 export class DCATCatalog extends JsonLdId {
-  'https://www.w3.org/ns/dcat/dataset': Array<Dataset>;
+  "https://www.w3.org/ns/dcat/dataset": Dataset[];
 
-  getDatasets(): Array<Dataset> {
-    return this['https://www.w3.org/ns/dcat/dataset'].map(it => Object.assign(new Dataset(), it));
+  getDatasets(): Dataset[] {
+    return this["https://www.w3.org/ns/dcat/dataset"].map((it) =>
+      Object.assign(new Dataset(), it),
+    );
   }
 }
 
 export class Dataset extends JsonLdId {
-  'http://www.w3.org/ns/odrl/2/hasPolicy': Array<Offer>
+  "http://www.w3.org/ns/odrl/2/hasPolicy": Offer[];
 
-  getOffers(): Array<Offer> {
-    return this['http://www.w3.org/ns/odrl/2/hasPolicy'].map(it => Object.assign(new Offer(), it));
+  getOffers(): Offer[] {
+    return this["http://www.w3.org/ns/odrl/2/hasPolicy"].map((it) =>
+      Object.assign(new Offer(), it),
+    );
   }
 }
 
 export class Offer extends JsonLdId {
-  'http://www.w3.org/ns/odrl/2/target': Array<JsonLdValue>
+  "http://www.w3.org/ns/odrl/2/target": JsonLdValue[];
 
   getAssetId(): string {
     return this.getTarget().value();
   }
 
   assetId() {
-    return this.id().split(':')[1];
+    return this.id().split(":")[1];
   }
 
   getTarget(): JsonLdValue {
-    return this['http://www.w3.org/ns/odrl/2/target'].map(it => Object.assign(new JsonLdValue(), it))[0]
+    return this["http://www.w3.org/ns/odrl/2/target"].map((it) =>
+      Object.assign(new JsonLdValue(), it),
+    )[0];
   }
-
 }
