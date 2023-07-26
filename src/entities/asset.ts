@@ -14,7 +14,7 @@ interface AssetProperties {
   contenttype?: string;
 }
 
-export interface AssetInput extends ContextProperties {
+export interface AssetInput {
   asset: Partial<Asset>;
   dataAddress: Partial<DataAddress> & { properties?: Partial<DataAddress> };
 }

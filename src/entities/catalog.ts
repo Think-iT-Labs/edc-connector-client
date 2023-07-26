@@ -1,4 +1,4 @@
-import { QuerySpec } from ".";
+import { ContextProperties, QuerySpec } from ".";
 import { ContractOffer } from "./contract-offer";
 import { JsonLdId, JsonLdValue } from "./jsonld";
 
@@ -7,10 +7,21 @@ export interface Catalog {
   contractOffers: ContractOffer[];
 }
 
-export interface CatalogRequest {
+const CONNECTOR_PROTOCOL = "dataspace-protocol-http";
+
+type DefaultCatalogValues = Pick<CatalogRequest, "protocol">;
+
+export const defaultCatalogValues: DefaultCatalogValues = {
+  protocol: CONNECTOR_PROTOCOL,
+};
+
+export interface CatalogRequest extends ContextProperties {
   providerUrl: string;
+  protocol: string;
   querySpec?: QuerySpec;
 }
+
+export type CatalogRequestinput = Pick<CatalogRequest, "providerUrl">;
 
 export class DCATCatalog extends JsonLdId {
   "https://www.w3.org/ns/dcat/dataset": Dataset[];
