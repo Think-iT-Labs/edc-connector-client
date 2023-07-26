@@ -24,14 +24,14 @@ describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management/v2",
+    management: "http://localhost:19193/management",
     protocol: "http://consumer-connector:9194/protocol",
     public: "http://localhost:19291/public",
     control: "http://localhost:19292/control",
   };
   const provider: Addresses = {
     default: "http://localhost:29191/api",
-    management: "http://localhost:29193/management/v2",
+    management: "http://localhost:29193/management",
     protocol: "http://provider-connector:9194/protocol",
     public: "http://localhost:29291/public",
     control: "http://localhost:29292/control",
@@ -43,7 +43,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -75,7 +74,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -120,7 +118,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -180,7 +177,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -239,7 +235,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -306,7 +301,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": crypto.randomUUID(),
           properties: {
@@ -508,7 +502,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
@@ -531,7 +524,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
@@ -569,7 +561,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": "definition-" + crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
@@ -601,7 +592,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
@@ -653,7 +643,6 @@ describe("DataController", () => {
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
@@ -710,27 +699,7 @@ describe("DataController", () => {
       const providerContext = edcClient.createContext(apiToken, provider);
       const assetId = crypto.randomUUID();
 
-      edcClient.management.registerDataplane(consumerContext, {
-        id: "consumer-dataplane",
-        url: "http://consumer-connector:9192/control/transfer",
-        allowedSourceTypes: ["HttpData"],
-        allowedDestTypes: ["HttpProxy", "HttpData"],
-        properties: {
-          publicApiUrl: "http://consumer-connector:9291/public/",
-        },
-      });
-      edcClient.management.registerDataplane(providerContext, {
-        id: "provider-dataplane",
-        url: "http://provider-connector:9192/control/transfer",
-        allowedSourceTypes: ["HttpData"],
-        allowedDestTypes: ["HttpProxy", "HttpData"],
-        properties: {
-          publicApiUrl: "http://provider-connector:9291/public/",
-        },
-      });
-
       const assetInput: AssetInput = {
-        "@context": {},
         asset: {
           "@id": assetId,
           properties: {
@@ -760,16 +729,12 @@ describe("DataController", () => {
               edctype: "dataspaceconnector:permission",
             },
           ],
-          "@type": {
-            "@policytype": "set",
-          },
         },
       };
       await edcClient.management.createPolicy(providerContext, policyInput);
 
       const contractDefinitionId = crypto.randomUUID();
       const contractDefinitionInput: ContractDefinitionInput = {
-        "@context": {},
         "@id": contractDefinitionId,
         accessPolicyId: policyId,
         contractPolicyId: policyId,
@@ -789,8 +754,8 @@ describe("DataController", () => {
       );
 
       // then
-      expect(catalog).toHaveProperty("id", "default");
-      expect(catalog).toHaveProperty("contractOffers");
+      expect(catalog).toHaveProperty("@type", "dcat:Catalog");
+      expect(catalog).toHaveProperty("dcat:dataset");
     });
   });
 
@@ -804,7 +769,7 @@ describe("DataController", () => {
       - provider will decline
     */
 
-    it.skip("kickstart a contract negotiation", async () => {
+    it("kickstart a contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -824,7 +789,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.queryNegotiations", () => {
-    it.skip("retrieves all contract negotiations", async () => {
+    it("retrieves all contract negotiations", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -850,7 +815,7 @@ describe("DataController", () => {
       ).toBeTruthy();
     });
 
-    it.skip("filters negotiations on the provider side based on agreements' assed ID", async () => {
+    it("filters negotiations on the provider side based on agreements' assed ID", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -879,7 +844,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.getNegotiation", () => {
-    it.skip("retrieves target contract negotiation", async () => {
+    it("retrieves target contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -897,10 +862,10 @@ describe("DataController", () => {
       );
 
       // then
-      expect(contractNegotiation).toHaveProperty("id", createResult["@id"]);
+      expect(contractNegotiation).toHaveProperty("@id", createResult["@id"]);
     });
 
-    it.skip("fails to fetch an not existant contract negotiation", async () => {
+    it("fails to fetch an not existant contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
@@ -925,7 +890,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.getNegotiationState", () => {
-    it.skip("returns the state of a target negotiation", async () => {
+    it("returns the state of a target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -947,7 +912,7 @@ describe("DataController", () => {
       expect(contractNegotiationState).toHaveProperty("state");
     });
 
-    it.skip("fails to fetch an not existant contract negotiation's state", async () => {
+    it("fails to fetch an not existant contract negotiation's state", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
@@ -972,7 +937,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.cancelNegotiation", () => {
-    it.skip("cancel the a requested target negotiation", async () => {
+    it("cancel the a requested target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1006,7 +971,7 @@ describe("DataController", () => {
       expect(contractNegotiation).toHaveProperty("state", "ERROR");
     });
 
-    it.skip("fails to cancel an not existant contract negotiation", async () => {
+    it("fails to cancel an not existant contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
@@ -1087,7 +1052,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.getAgreementForNegotiation", () => {
-    it.skip("returns the a agreement for a target negotiation", async () => {
+    it("returns the a agreement for a target negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1117,7 +1082,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.queryAllAgreements", () => {
-    it.skip("retrieves all contract agreements", async () => {
+    it("retrieves all contract agreements", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1156,7 +1121,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.getAgreement", () => {
-    it.skip("retrieves target contract agreement", async () => {
+    it("retrieves target contract agreement", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1172,12 +1137,12 @@ describe("DataController", () => {
 
       // then
       expect(contractAgreement).toHaveProperty(
-        "id",
-        contractNegotiation.contractAgreementId,
+        "@id",
+        contractNegotiation.contractAgreementId(),
       );
     });
 
-    it.skip("fails to fetch an not existant contract negotiation", async () => {
+    it("fails to fetch an not existant contract negotiation", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
@@ -1213,7 +1178,7 @@ describe("DataController", () => {
     });
 
     describe("edcClient.management.initiateTransfer", () => {
-      it.skip("initiate the transfer process", async () => {
+      it("initiate the transfer process", async () => {
         // given
         const edcClient = new EdcConnectorClient();
         const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1250,7 +1215,7 @@ describe("DataController", () => {
     });
 
     describe("edcClient.management.queryAllTransferProcesses", () => {
-      it.skip("retrieves all tranfer processes", async () => {
+      it("retrieves all tranfer processes", async () => {
         // given
         const edcClient = new EdcConnectorClient();
         const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1295,7 +1260,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.registerDataplane", () => {
-    it.skip("succesfully register a dataplane", async () => {
+    it("succesfully register a dataplane", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
@@ -1321,7 +1286,7 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.listDataplanes", () => {
-    it.skip("succesfully list available dataplanes", async () => {
+    it("succesfully list available dataplanes", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);

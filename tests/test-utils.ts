@@ -11,6 +11,8 @@ import {
   EdcConnectorClientContext,
   PolicyDefinitionInput,
   TransferProcessResponse,
+  defaultCatalogValues,
+  defaultContextValues,
 } from "../src";
 
 interface ContractNegotiationMetadata {
@@ -68,31 +70,9 @@ export async function createContractNegotiation(
   providerContext: EdcConnectorClientContext,
   consumerContext: EdcConnectorClientContext,
 ): Promise<ContractNegotiationMetadata> {
-  // Register dataplanes
-  client.management.registerDataplane(providerContext, {
-    id: "provider-dataplane",
-    url: "http://provider-connector:9192/control/transfer",
-    allowedSourceTypes: ["HttpData"],
-    allowedDestTypes: ["HttpProxy", "HttpData"],
-    properties: {
-      publicApiUrl: "http://provider-connector:9291/public/",
-    },
-  });
-
-  client.management.registerDataplane(consumerContext, {
-    id: "consumer-dataplane",
-    url: "http://consumer-connector:9192/control/transfer",
-    allowedSourceTypes: ["HttpData"],
-    allowedDestTypes: ["HttpProxy", "HttpData"],
-    properties: {
-      publicApiUrl: "http://consumer-connector:9291/public/",
-    },
-  });
-
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
-    "@context": {},
     asset: {
       "@id": assetId,
       properties: {
@@ -135,6 +115,8 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await client.management.requestDcatCatalog(consumerContext, {
+    protocol: defaultCatalogValues.protocol,
+    "@context": defaultContextValues,
     providerUrl: providerContext.protocol,
   });
 
