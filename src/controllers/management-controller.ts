@@ -26,7 +26,7 @@ import jsonld from "jsonld";
 
 export class ManagementController {
   #inner: Inner;
-  protocol: String = 'dataspace-protocol-http';
+  protocol: String = "dataspace-protocol-http";
 
   constructor(inner: Inner) {
     this.#inner = inner;
@@ -58,17 +58,18 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: AssetInput,
   ): Promise<IdResponse> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/assets",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: {
-        ...input,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/assets",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          ...input,
+          "@context": defaultContextValues,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
   }
 
   async deleteAsset(
@@ -112,10 +113,13 @@ export class ManagementController {
       path: "/v2/assets/request",
       method: "POST",
       apiToken: context.apiToken,
-      body: Object.keys(query).length === 0 ? null : {
-        ...query,
-        "@context": defaultContextValues,
-      },
+      body:
+        Object.keys(query).length === 0
+          ? null
+          : {
+              ...query,
+              "@context": defaultContextValues,
+            },
     });
   }
 
@@ -123,17 +127,18 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: PolicyDefinitionInput,
   ): Promise<IdResponse> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/policydefinitions",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: {
-        ...input,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/policydefinitions",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          ...input,
+          "@context": defaultContextValues,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
   }
 
   async deletePolicy(
@@ -162,38 +167,43 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<PolicyDefinition[]> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/policydefinitions/request",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: Object.keys(query).length === 0 ? null : {
-        ...query,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) =>
-      (expanded as Array<any>).map((it) =>
-        Object.assign(new PolicyDefinition(), it),
-      ),
-    );
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/policydefinitions/request",
+        method: "POST",
+        apiToken: context.apiToken,
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": defaultContextValues,
+              },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) =>
+        (expanded as Array<any>).map((it) =>
+          Object.assign(new PolicyDefinition(), it),
+        ),
+      );
   }
 
   async createContractDefinition(
     context: EdcConnectorClientContext,
     input: ContractDefinitionInput,
   ): Promise<IdResponse> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/contractdefinitions",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: {
-        ...input,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/contractdefinitions",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          ...input,
+          "@context": defaultContextValues,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
   }
 
   async deleteContractDefinition(
@@ -227,10 +237,13 @@ export class ManagementController {
         path: "/v2/contractdefinitions/request",
         method: "POST",
         apiToken: context.apiToken,
-        body: Object.keys(query).length === 0 ? null : {
-          ...query,
-          "@context": defaultContextValues,
-        },
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": defaultContextValues,
+              },
       })
       .then((body) => jsonld.expand(body))
       .then((expanded) =>
@@ -250,9 +263,9 @@ export class ManagementController {
         method: "POST",
         apiToken: context.apiToken,
         body: {
-          '@context': defaultContextValues,
-          'protocol': this.protocol,
-          ...input
+          "@context": defaultContextValues,
+          protocol: this.protocol,
+          ...input,
         },
       })
       .then((body) => jsonld.expand(body))
@@ -263,18 +276,19 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: ContractNegotiationRequest,
   ): Promise<IdResponse> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/contractnegotiations",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: {
-        'protocol': this.protocol,
-        '@context': defaultContextValues,
-        ...input
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/contractnegotiations",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          protocol: this.protocol,
+          "@context": defaultContextValues,
+          ...input,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
   }
 
   async queryNegotiations(
@@ -285,10 +299,13 @@ export class ManagementController {
       path: "/v2/contractnegotiations/request",
       method: "POST",
       apiToken: context.apiToken,
-      body: Object.keys(query).length === 0 ? null : {
-        ...query,
-        "@context": defaultContextValues,
-      },
+      body:
+        Object.keys(query).length === 0
+          ? null
+          : {
+              ...query,
+              "@context": defaultContextValues,
+            },
     });
   }
 
@@ -350,36 +367,39 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<ContractAgreement> {
-    return this.#inner.request<any>(context.management, {
-      path: `/v2/contractnegotiations/${negotiationId}/agreement`,
-      method: "GET",
-      apiToken: context.apiToken,
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) =>
-      Object.assign(new ContractAgreement(), expanded[0]),
-    )
+    return this.#inner
+      .request<any>(context.management, {
+        path: `/v2/contractnegotiations/${negotiationId}/agreement`,
+        method: "GET",
+        apiToken: context.apiToken,
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new ContractAgreement(), expanded[0]));
   }
 
   async queryAllAgreements(
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractAgreement[]> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/contractagreements/request",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: Object.keys(query).length === 0 ? null : {
-        ...query,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) =>
-      (expanded as Array<any>).map((it) =>
-        Object.assign(new ContractAgreement(), it),
-      ),
-    );
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/contractagreements/request",
+        method: "POST",
+        apiToken: context.apiToken,
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": defaultContextValues,
+              },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) =>
+        (expanded as Array<any>).map((it) =>
+          Object.assign(new ContractAgreement(), it),
+        ),
+      );
   }
 
   async getAgreement(
@@ -400,38 +420,40 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     input: TransferProcessInput,
   ): Promise<IdResponse> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/transferprocesses",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: {
-        '@context': defaultContextValues,
-        'protocol': this.protocol,
-        ...input,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/transferprocesses",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          "@context": defaultContextValues,
+          protocol: this.protocol,
+          ...input,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
   }
 
   async queryAllTransferProcesses(
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<TransferProcess[]> {
-    return this.#inner.request<any>(context.management, {
-      path: "/v2/transferprocesses/request",
-      method: "POST",
-      apiToken: context.apiToken,
-      body: Object.keys(query).length === 0 ? null : {
-        ...query,
-        "@context": defaultContextValues,
-      },
-    })
-    .then((body) => jsonld.expand(body))
-    .then((expanded) =>
-      (expanded as Array<any>).map((it) =>
-        Object.assign(new TransferProcess(), it),
-      ),
-    );
+    return this.#inner
+      .request<any>(context.management, {
+        path: "/v2/transferprocesses/request",
+        method: "POST",
+        apiToken: context.apiToken,
+        body: {
+          ...query,
+          "@context": defaultContextValues,
+        },
+      })
+      .then((body) => jsonld.expand(body))
+      .then((expanded) =>
+        (expanded as Array<any>).map((it) =>
+          Object.assign(new TransferProcess(), it),
+        ),
+      );
   }
 }
