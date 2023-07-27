@@ -1,46 +1,43 @@
 import { QuerySpec } from ".";
-import { ContractOffer } from "./contract-offer";
 import { JsonLdId, JsonLdValue } from "./jsonld";
-
-export interface Catalog {
-  id: string;
-  contractOffers: ContractOffer[];
-}
 
 export interface CatalogRequest {
   providerUrl: string;
   querySpec?: QuerySpec;
 }
 
-export class DCATCatalog extends JsonLdId {
-  'https://www.w3.org/ns/dcat/dataset': Array<Dataset>;
+export type CatalogRequestinput = Pick<CatalogRequest, "providerUrl">;
 
-  getDatasets(): Array<Dataset> {
-    return this['https://www.w3.org/ns/dcat/dataset'].map(it => Object.assign(new Dataset(), it));
+export class Catalog extends JsonLdId {
+  "https://www.w3.org/ns/dcat/dataset": Dataset[];
+
+  get datasets(): Dataset[] {
+    return this["https://www.w3.org/ns/dcat/dataset"].map((it) =>
+      Object.assign(new Dataset(), it),
+    );
   }
 }
 
 export class Dataset extends JsonLdId {
-  'http://www.w3.org/ns/odrl/2/hasPolicy': Array<Offer>
+  "http://www.w3.org/ns/odrl/2/hasPolicy": Offer[];
 
-  getOffers(): Array<Offer> {
-    return this['http://www.w3.org/ns/odrl/2/hasPolicy'].map(it => Object.assign(new Offer(), it));
+  get offers(): Offer[] {
+    return this["http://www.w3.org/ns/odrl/2/hasPolicy"].map((it) =>
+      Object.assign(new Offer(), it),
+    );
   }
 }
 
 export class Offer extends JsonLdId {
-  'http://www.w3.org/ns/odrl/2/target': Array<JsonLdValue>
+  "http://www.w3.org/ns/odrl/2/target": JsonLdValue<string>[];
 
-  getAssetId(): string {
-    return this.getTarget().value();
+  get assetId(): string {
+    return this.target;
   }
 
-  assetId() {
-    return this.id().split(':')[1];
+  get target(): string {
+    return this["http://www.w3.org/ns/odrl/2/target"].map((it) =>
+      Object.assign(new JsonLdValue(), it),
+    )[0].value;
   }
-
-  getTarget(): JsonLdValue {
-    return this['http://www.w3.org/ns/odrl/2/target'].map(it => Object.assign(new JsonLdValue(), it))[0]
-  }
-
 }

@@ -7,7 +7,7 @@
   "typings": "dist/src/index.d.ts",
   "scripts": {
     "transpile": "tsc",
-    "test": "jest"
+    "test": "jest --forceExit"
   },
   "engines": {
     "node": ">=18"
