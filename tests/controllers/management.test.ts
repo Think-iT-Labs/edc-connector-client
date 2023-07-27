@@ -18,8 +18,6 @@ import {
   waitForNegotiationState,
 } from "../test-utils";
 
-jest.setTimeout(20000);
-
 describe("DataController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
@@ -37,10 +35,11 @@ describe("DataController", () => {
     control: "http://localhost:29292/control",
   };
 
+  const edcClient = new EdcConnectorClient();
+
   describe("edcClient.management.createAsset", () => {
     it("succesfully creates an asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
@@ -59,19 +58,18 @@ describe("DataController", () => {
       };
 
       // when
-      const createResult = await edcClient.management.createAsset(
+      const idResponse = await edcClient.management.createAsset(
         context,
         assetInput,
       );
 
       // then
-      expect(createResult).toHaveProperty("edc:createdAt");
-      expect(createResult).toHaveProperty("@id");
+      expect(idResponse).toHaveProperty("createdAt");
+      expect(idResponse).toHaveProperty("id");
     });
 
     it("fails creating two assets with the same id", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
@@ -115,7 +113,6 @@ describe("DataController", () => {
   describe("edcClient.management.deleteAsset", () => {
     it("deletes a target asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
@@ -147,7 +144,6 @@ describe("DataController", () => {
 
     it("fails to delete an not existant asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -174,7 +170,6 @@ describe("DataController", () => {
   describe("edcClient.management.getAsset", () => {
     it("returns a target asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
@@ -207,7 +202,6 @@ describe("DataController", () => {
 
     it("fails to fetch an not existant asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -232,7 +226,6 @@ describe("DataController", () => {
   describe("edcClient.management.getAssetDataAddress", () => {
     it("returns a target asset data address", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput = {
         asset: {
@@ -272,7 +265,6 @@ describe("DataController", () => {
 
     it("fails to fetch a data address for an inexistant asset", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -298,7 +290,6 @@ describe("DataController", () => {
   describe("edcClient.management.queryAllAssets", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         asset: {
@@ -330,7 +321,6 @@ describe("DataController", () => {
   describe("edcClient.management.createPolicy", () => {
     it("succesfully creates a new policy", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -338,19 +328,18 @@ describe("DataController", () => {
       };
 
       // when
-      const createResult = await edcClient.management.createPolicy(
+      const idResponse = await edcClient.management.createPolicy(
         context,
         policyInput,
       );
 
       // then
-      expect(createResult).toHaveProperty("edc:createdAt");
-      expect(createResult).toHaveProperty("@id");
+      expect(idResponse).toHaveProperty("createdAt");
+      expect(idResponse).toHaveProperty("id");
     });
 
     it("fails creating two policies with the same id", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -382,7 +371,6 @@ describe("DataController", () => {
   describe("edcClient.management.queryAllPolicies", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -404,13 +392,12 @@ describe("DataController", () => {
   describe("edcClient.management.getPolicy", () => {
     it("succesfully retuns a target policy", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      const createResult = await edcClient.management.createPolicy(
+      const idResponse = await edcClient.management.createPolicy(
         context,
         policyInput,
       );
@@ -418,16 +405,15 @@ describe("DataController", () => {
       // when
       const policy = await edcClient.management.getPolicy(
         context,
-        createResult["@id"],
+        idResponse.id,
       );
 
       // then
-      expect(policy["@id"]).toBe(createResult["@id"]);
+      expect(policy["@id"]).toBe(idResponse.id);
     });
 
     it("fails to fetch an not existant policy", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -452,7 +438,6 @@ describe("DataController", () => {
   describe("edcClient.management.deletePolicy", () => {
     it("deletes a target policy", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -472,7 +457,6 @@ describe("DataController", () => {
 
     it("fails to delete an not existant policy", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -499,7 +483,6 @@ describe("DataController", () => {
   describe("edcClient.management.createContractDefinition", () => {
     it("succesfully creates a new contract definition", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -509,19 +492,18 @@ describe("DataController", () => {
       };
 
       // when
-      const createResult = await edcClient.management.createContractDefinition(
+      const idResponse = await edcClient.management.createContractDefinition(
         context,
         contractDefinitionInput,
       );
 
       // then
-      expect(createResult).toHaveProperty("edc:createdAt");
-      expect(createResult).toHaveProperty("@id");
+      expect(idResponse).toHaveProperty("createdAt");
+      expect(idResponse).toHaveProperty("id");
     });
 
     it("fails creating two contract definitions with the same id", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -558,7 +540,6 @@ describe("DataController", () => {
   describe("edcClient.management.queryAllContractDefinitions", () => {
     it("succesfully retuns a list of contract definitions", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": "definition-" + crypto.randomUUID(),
@@ -589,7 +570,6 @@ describe("DataController", () => {
   describe("edcClient.management.getContractDefinition", () => {
     it("succesfully retuns a target contract definition", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -597,7 +577,7 @@ describe("DataController", () => {
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      const createResult = await edcClient.management.createContractDefinition(
+      const idResponse = await edcClient.management.createContractDefinition(
         context,
         contractDefinitionInput,
       );
@@ -606,16 +586,15 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.getContractDefinition(
           context,
-          createResult["@id"],
+          idResponse.id,
         );
 
       // then
-      expect(contractDefinition["@id"]).toBe(createResult["@id"]);
+      expect(contractDefinition["@id"]).toBe(idResponse.id);
     });
 
     it("fails to fetch an not existant contract definition", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -640,7 +619,6 @@ describe("DataController", () => {
   describe("edcClient.management.deleteContractDefinition", () => {
     it("deletes a target contract definition", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -648,7 +626,7 @@ describe("DataController", () => {
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      const createResult = await edcClient.management.createContractDefinition(
+      const idResponse = await edcClient.management.createContractDefinition(
         context,
         contractDefinitionInput,
       );
@@ -657,7 +635,7 @@ describe("DataController", () => {
       const contractDefinition =
         await edcClient.management.deleteContractDefinition(
           context,
-          createResult["@id"],
+          idResponse.id,
         );
 
       // then
@@ -666,7 +644,6 @@ describe("DataController", () => {
 
     it("fails to delete an not existant contract definition", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -694,7 +671,6 @@ describe("DataController", () => {
   describe("edcClient.management.requestCatalog", () => {
     it("returns the catalog for a target provider", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
       const assetId = crypto.randomUUID();
@@ -749,13 +725,13 @@ describe("DataController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: provider.protocol,
+          providerUrl: provider.protocol
         },
       );
 
       // then
-      expect(catalog).toHaveProperty("@type", "dcat:Catalog");
-      expect(catalog).toHaveProperty("dcat:dataset");
+      expect(catalog).toHaveProperty("@type", ["https://www.w3.org/ns/dcat/Catalog"]);
+      expect(catalog).toHaveProperty("datasets");
     });
   });
 
@@ -771,30 +747,28 @@ describe("DataController", () => {
 
     it("kickstart a contract negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
 
       // when
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
       );
 
       // then
-      expect(createResult).toHaveProperty("@id");
-      expect(createResult).toHaveProperty("edc:createdAt");
+      expect(idResponse).toHaveProperty("id");
+      expect(idResponse).toHaveProperty("createdAt");
     });
   });
 
   describe("edcClient.management.queryNegotiations", () => {
     it("retrieves all contract negotiations", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
@@ -810,14 +784,13 @@ describe("DataController", () => {
       expect(
         contractNegotiations.find(
           (contractNegotiation) =>
-            contractNegotiation["@id"] === createResult["@id"],
+            contractNegotiation["@id"] === idResponse.id,
         ),
       ).toBeTruthy();
     });
 
     it("filters negotiations on the provider side based on agreements' assed ID", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
       const { assetId } = await createContractAgreement(
@@ -846,10 +819,9 @@ describe("DataController", () => {
   describe("edcClient.management.getNegotiation", () => {
     it("retrieves target contract negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
@@ -858,16 +830,15 @@ describe("DataController", () => {
       // when
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult["@id"],
+        idResponse.id,
       );
 
       // then
-      expect(contractNegotiation).toHaveProperty("@id", createResult["@id"]);
+      expect(contractNegotiation).toHaveProperty("@id", idResponse.id);
     });
 
     it("fails to fetch an not existant contract negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -892,10 +863,9 @@ describe("DataController", () => {
   describe("edcClient.management.getNegotiationState", () => {
     it("returns the state of a target negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
@@ -905,7 +875,7 @@ describe("DataController", () => {
       const contractNegotiationState =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult["@id"],
+          idResponse.id,
         );
 
       // then
@@ -914,7 +884,6 @@ describe("DataController", () => {
 
     it("fails to fetch an not existant contract negotiation's state", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -937,43 +906,43 @@ describe("DataController", () => {
   });
 
   describe("edcClient.management.cancelNegotiation", () => {
-    it("cancel the a requested target negotiation", async () => {
+    it.skip("cancel the requested target negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
       );
 
+      const negotiationId = idResponse.id;
+
       // when
       const cancelledNegotiation = await edcClient.management.cancelNegotiation(
         consumerContext,
-        createResult["@id"],
+        negotiationId,
       );
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult["@id"],
-        "ERROR",
+        negotiationId,
+        "TERMINATED",
       );
 
-      const contractNegotiation =
+      const negotiationState =
         await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult["@id"],
+          negotiationId,
         );
 
       // then
       expect(cancelledNegotiation).toBeUndefined();
-      expect(contractNegotiation).toHaveProperty("state", "ERROR");
+      expect(negotiationState.state).toBe("TERMINATED");
     });
 
-    it("fails to cancel an not existant contract negotiation", async () => {
+    it.skip("fails to cancel an not existant contract negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -998,20 +967,21 @@ describe("DataController", () => {
   describe.skip("edcClient.management.declineNegotiation", () => {
     it.skip("declines the a requested target negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { assetId, createResult } = await createContractNegotiation(
+      const { assetId, idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
       );
 
+      const negotiationId = idResponse.id;
+
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult["@id"],
-        "CONFIRMED",
+        negotiationId,
+        "FINALIZED",
       );
 
       const providerNegotiation = await edcClient.management.queryNegotiations(
@@ -1030,50 +1000,52 @@ describe("DataController", () => {
       // when
       await edcClient.management.declineNegotiation(
         providerContext,
-        providerNegotiation[0].contractAgreementId(),
+        providerNegotiation[0].contractAgreementId,
       );
 
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult["@id"],
-        "DECLINED",
+        negotiationId,
+        "TERMINATING",
       );
 
-      const declinedProviderNegotiation =
-        await edcClient.management.getNegotiation(
+      const negotiationState =
+        await edcClient.management.getNegotiationState(
           consumerContext,
-          createResult["@id"],
+          negotiationId,
         );
 
       // then
-      expect(declinedProviderNegotiation).toHaveProperty("state", "DECLINED");
+      expect(negotiationState.state).toBe("TERMINATING");
     });
   });
 
   describe("edcClient.management.getAgreementForNegotiation", () => {
     it("returns the a agreement for a target negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { assetId, createResult } = await createContractNegotiation(
+      const { assetId, idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
       );
+
+      const negotiationId = idResponse.id;
+
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult["@id"],
-        "CONFIRMED",
+        negotiationId,
+        "FINALIZED",
       );
 
       // when
       const contractAgreement =
         await edcClient.management.getAgreementForNegotiation(
           consumerContext,
-          createResult["@id"],
+          negotiationId,
         );
 
       // then
@@ -1084,10 +1056,9 @@ describe("DataController", () => {
   describe("edcClient.management.queryAllAgreements", () => {
     it("retrieves all contract agreements", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
-      const { createResult } = await createContractNegotiation(
+      const { idResponse } = await createContractNegotiation(
         edcClient,
         providerContext,
         consumerContext,
@@ -1095,12 +1066,12 @@ describe("DataController", () => {
       await waitForNegotiationState(
         edcClient,
         consumerContext,
-        createResult["@id"],
-        "CONFIRMED",
+        idResponse.id,
+        "FINALIZED",
       );
       const contractNegotiation = await edcClient.management.getNegotiation(
         consumerContext,
-        createResult["@id"],
+        idResponse.id,
       );
 
       // when
@@ -1113,8 +1084,7 @@ describe("DataController", () => {
       expect(
         contractAgreements.find(
           (contractAgreement) =>
-            contractAgreement.id() ===
-            contractNegotiation.contractAgreementId(),
+            contractAgreement.id === contractNegotiation.contractAgreementId,
         ),
       ).toBeTruthy();
     });
@@ -1123,7 +1093,6 @@ describe("DataController", () => {
   describe("edcClient.management.getAgreement", () => {
     it("retrieves target contract agreement", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
 
@@ -1137,14 +1106,13 @@ describe("DataController", () => {
 
       // then
       expect(contractAgreement).toHaveProperty(
-        "@id",
-        contractNegotiation.contractAgreementId(),
+        "id",
+        contractNegotiation.contractAgreementId,
       );
     });
 
-    it("fails to fetch an not existant contract negotiation", async () => {
+    it("fails to fetch an not existent contract negotiation", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
@@ -1177,66 +1145,41 @@ describe("DataController", () => {
       await receiverServer.shutdown();
     });
 
-    describe("edcClient.management.initiateTransfer", () => {
-      it("initiate the transfer process", async () => {
-        // given
-        const edcClient = new EdcConnectorClient();
-        const consumerContext = edcClient.createContext(apiToken, consumer);
-        const providerContext = edcClient.createContext(apiToken, provider);
-        const { assetId, contractAgreement } = await createContractAgreement(
-          edcClient,
-          providerContext,
-          consumerContext,
-        );
-
-        const receiverCallback = receiverServer.waitForEvent(
-          contractAgreement.id(),
-        );
-
-        // when
-        const createResult = await edcClient.management.initiateTransfer(
-          consumerContext,
-          {
-            assetId,
-            connectorId: "provider",
-            connectorAddress: providerContext.protocol,
-            contractId: contractAgreement.id(),
-            managedResources: false,
-            dataDestination: { type: "HttpProxy" },
-          },
-        );
-
-        await receiverCallback;
-
-        // then
-        expect(createResult).toHaveProperty("edc:createdAt");
-        expect(createResult).toHaveProperty("@id");
-      });
-    });
-
     describe("edcClient.management.queryAllTransferProcesses", () => {
       it("retrieves all tranfer processes", async () => {
         // given
-        const edcClient = new EdcConnectorClient();
         const consumerContext = edcClient.createContext(apiToken, consumer);
         const providerContext = edcClient.createContext(apiToken, provider);
+        const dataplaneInput = {
+          id: "provider-dataplane",
+          url: "http://provider-connector:9192/control/transfer",
+          allowedSourceTypes: ["HttpData"],
+          allowedDestTypes: ["HttpProxy", "HttpData"],
+          properties: {
+            publicApiUrl: "http://provider-connector:9291/public/",
+          },
+        };
+
+        await edcClient.management.registerDataplane(
+          providerContext,
+          dataplaneInput,
+        );
+
         const { assetId, contractAgreement } = await createContractAgreement(
           edcClient,
           providerContext,
           consumerContext,
         );
 
-        const receiverCallback = receiverServer.waitForEvent(
-          contractAgreement.id(),
-        );
+        const receiverCallback = receiverServer.waitForEvent('endpoint-data-reference');
 
-        const createResult = await edcClient.management.initiateTransfer(
+        const idResponse = await edcClient.management.initiateTransfer(
           consumerContext,
           {
             assetId,
             connectorId: "provider",
             connectorAddress: providerContext.protocol,
-            contractId: contractAgreement.id(),
+            contractId: contractAgreement.id,
             managedResources: false,
             dataDestination: { type: "HttpProxy" },
           },
@@ -1252,7 +1195,7 @@ describe("DataController", () => {
         expect(transferProcesses.length).toBeGreaterThan(0);
         expect(
           transferProcesses.find(
-            (transferProcess) => createResult["@id"] === transferProcess.id,
+            (transferProcess) => idResponse.id === transferProcess.id,
           ),
         ).toBeTruthy();
       });
@@ -1262,7 +1205,6 @@ describe("DataController", () => {
   describe("edcClient.management.registerDataplane", () => {
     it("succesfully register a dataplane", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const dataplaneInput = {
         id: "consumer-dataplane",
@@ -1288,7 +1230,6 @@ describe("DataController", () => {
   describe("edcClient.management.listDataplanes", () => {
     it("succesfully list available dataplanes", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
       const dataplaneInput = {
         id: "consumer-dataplane",

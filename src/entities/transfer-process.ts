@@ -1,20 +1,20 @@
 import { DataAddress } from "./data-address";
+import { JsonLdId } from "./jsonld";
 
-export interface TransferProcess {
-  createdAt: number;
-  updatedAt: number;
-  id: string;
-  type: string; // TODO(@fdionisi): specialise
-  state: string; // TODO(@fdionisi): specialise
-  stateTimestamp: number;
-  errorDetail: null | string;
-  dataRequest: {
+export class TransferProcess extends JsonLdId {
+  createdAt?: number;
+  updatedAt?: number;
+  type?: string; // TODO(@fdionisi): specialise
+  state?: string; // TODO(@fdionisi): specialise
+  stateTimestamp?: number;
+  errorDetail?: null | string;
+  dataRequest?: {
     id: string;
     assetId: string;
     contractId: string;
     connectorId: string;
   };
-  dataDestination: { properties: { type: string } };
+  dataDestination?: { properties: { type: string } };
 }
 
 export interface TransferProcessInput {
@@ -23,7 +23,6 @@ export interface TransferProcessInput {
   connectorId: string;
   contractId: string;
   dataDestination: DataAddress;
-  protocol?: string;
   transferType?: TransferType;
   id?: string;
   properties?: Record<string, string>;

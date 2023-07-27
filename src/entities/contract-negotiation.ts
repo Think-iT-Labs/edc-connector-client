@@ -8,32 +8,31 @@ export interface ContractNegotiationRequest {
     assetId: string;
     policy: any;
   };
-  protocol: string;
 }
 
 export class ContractNegotiation extends JsonLdId {
   updatedAt?: number;
   createdAt?: number;
-  'https://w3id.org/edc/v0.0.1/ns/contractAgreementId': Array<JsonLdValue>
+  'https://w3id.org/edc/v0.0.1/ns/contractAgreementId': JsonLdValue<string>[];
   counterPartyAddress?: string;
   errorDetail?: string;
   protocol?: string;
   state?: string;
   type?: "CONSUMER" | "PROVIDER";
 
-  contractAgreementId(): string {
+  get contractAgreementId(): string {
     return this['https://w3id.org/edc/v0.0.1/ns/contractAgreementId']
       .map(it => Object.assign(new JsonLdValue(), it))[0]
-      .value()
+      .value
   }
 }
 
 export class ContractNegotiationState {
-  'https://w3id.org/edc/v0.0.1/ns/state': Array<JsonLdValue>;
+  'https://w3id.org/edc/v0.0.1/ns/state': JsonLdValue<string>[];
 
-  state(): string {
+  get state(): string {
     return this['https://w3id.org/edc/v0.0.1/ns/state']
       .map(it => Object.assign(new JsonLdValue(), it))[0]
-      .value();
+      .value;
   }
 }

@@ -1,6 +1,7 @@
-import { CreateResult, EDC_NAMESPACE } from ".";
+import { EDC_NAMESPACE } from ".";
 import { DataAddress } from "./data-address";
 import { ContextProperties } from "./context";
+import { IdResponse } from "./id-response";
 export interface Asset {
   properties: AssetProperties;
   createdAt: string;
@@ -23,4 +24,4 @@ export type AssetResponse = {
   [K in keyof AssetProperties as `${typeof EDC_NAMESPACE}:${string &
     K}`]: AssetProperties[K];
 } & ContextProperties &
-  CreateResult;
+  IdResponse;

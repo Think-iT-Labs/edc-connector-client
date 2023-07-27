@@ -1,15 +1,15 @@
 export class JsonLdId {
   '@id': string;
 
-  id() {
+  get id() {
     return this['@id'];
   }
 }
 
-export class JsonLdValue {
-  '@value': string;
+export class JsonLdValue<T> {
+  '@value': T;
 
-  value() {
+  get value(): T {
     return this['@value'];
   }
 }

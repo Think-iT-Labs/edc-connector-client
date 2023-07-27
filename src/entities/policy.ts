@@ -1,6 +1,7 @@
 import { Duty } from "./duty";
 import { Permission } from "./permission";
 import { Prohibition } from "./prohibition";
+import { JsonLdId } from "./jsonld";
 
 export type PolicyType =
   | "set"
@@ -23,11 +24,9 @@ export interface Policy {
   traget?: string;
 }
 
-export interface PolicyDefinition {
-  '@id': string;
-  id: string;
-  createdAt: number;
-  policy: Policy;
+export class PolicyDefinition extends JsonLdId {
+  createdAt?: number;
+  policy?: Policy;
 }
 
 export interface PolicyDefinitionInput {

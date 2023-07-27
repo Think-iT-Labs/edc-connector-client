@@ -77,7 +77,7 @@ export class Inner {
             "request was malformed",
           );
 
-          error.body = await response.json();
+          error.body = await response.text();
 
           throw error;
         }
@@ -87,7 +87,7 @@ export class Inner {
             "resource not found",
           );
 
-          error.body = await response.json();
+          error.body = await response.text();
 
           throw error;
         }
@@ -97,7 +97,7 @@ export class Inner {
             "duplicated resource",
           );
 
-          error.body = await response.json();
+          error.body = await response.text();
 
           throw error;
         }
@@ -110,10 +110,11 @@ export class Inner {
       }
     } catch (error) {
       if (!(error instanceof EdcConnectorClientError)) {
+        const typedError = error as any;
         error = new EdcConnectorClientError(
           EdcConnectorClientErrorType.Unknown,
-          "something went wrong",
-          { cause: error as Error },
+          `something went wrong: ${typedError.message}. ${typedError.body}`,
+          { cause: typedError },
         );
       }
 

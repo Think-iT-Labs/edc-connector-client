@@ -6,8 +6,6 @@ import {
 } from "../../src";
 import { createContractAgreement, createReceiverServer } from "../test-utils";
 
-jest.setTimeout(30000);
-
 describe("PublicController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
@@ -61,8 +59,24 @@ describe("PublicController", () => {
     it("initiate the transfer process", async () => {
       // given
       const edcClient = new EdcConnectorClient();
+
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
+      const dataplaneInput = {
+        id: "provider-dataplane",
+        url: "http://provider-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://provider-connector:9291/public/",
+        },
+      };
+
+      await edcClient.management.registerDataplane(
+        providerContext,
+        dataplaneInput,
+      );
+
       const { assetId, contractAgreement } = await createContractAgreement(
         edcClient,
         providerContext,
@@ -77,10 +91,9 @@ describe("PublicController", () => {
           assetId,
           "connectorId": "provider",
           "connectorAddress": providerContext.protocol,
-          "contractId": contractAgreement.id(),
+          "contractId": contractAgreement.id,
           "managedResources": false,
-          "dataDestination": { "type": "HttpProxy" },
-          "protocol": "dataspace-protocol-http"
+          "dataDestination": { "type": "HttpProxy" }
         },
       );
 
@@ -104,7 +117,7 @@ describe("PublicController", () => {
           }
 
           if (data.value) {
-            d.push(...data.value);
+            d.push(... data.value);
           }
         }
         resolve(JSON.parse(Buffer.from(d).toString()));

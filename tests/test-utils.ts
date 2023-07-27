@@ -6,20 +6,18 @@ import {
   ContractAgreement,
   ContractDefinitionInput,
   ContractNegotiation,
-  CreateResult,
   EdcConnectorClient,
   EdcConnectorClientContext,
+  IdResponse,
   PolicyDefinitionInput,
   TransferProcessResponse,
-  defaultCatalogValues,
-  defaultContextValues,
 } from "../src";
 
 interface ContractNegotiationMetadata {
   assetId: string;
   policyId: string;
   contractDefinitionId: string;
-  createResult: CreateResult;
+  idResponse: IdResponse;
 }
 
 interface ContractAgreementMetadata {
@@ -35,27 +33,29 @@ export async function createContractAgreement(
   providerContext: EdcConnectorClientContext,
   consumerContext: EdcConnectorClientContext,
 ): Promise<ContractAgreementMetadata> {
-  const { createResult, ...rest } = await createContractNegotiation(
+  const { idResponse, ...rest } = await createContractNegotiation(
     client,
     providerContext,
     consumerContext,
   );
 
+  const negotiationId = idResponse.id
+
   await waitForNegotiationState(
     client,
     consumerContext,
-    createResult["@id"],
+    negotiationId,
     "FINALIZED",
   );
 
   const contractNegotiation = await client.management.getNegotiation(
     consumerContext,
-    createResult["@id"],
+    negotiationId,
   );
 
   const contractAgreement = await client.management.getAgreement(
     consumerContext,
-    contractNegotiation.contractAgreementId(),
+    contractNegotiation.contractAgreementId,
   );
 
   return {
@@ -114,29 +114,26 @@ export async function createContractNegotiation(
   );
 
   // Retrieve catalog and select contract offer
-  const catalog = await client.management.requestDcatCatalog(consumerContext, {
-    protocol: defaultCatalogValues.protocol,
-    "@context": defaultContextValues,
+  const catalog = await client.management.requestCatalog(consumerContext, {
     providerUrl: providerContext.protocol,
   });
 
   const offer = catalog
-    .getDatasets()
-    .flatMap((it) => it.getOffers())
-    .find((offer) => offer.assetId() === assetId)!;
+    .datasets
+    .flatMap((it) => it.offers)
+    .find((offer) => offer.assetId === assetId)!;
 
   // Initiate contract negotiation on the consumer's side
-  const createResult = await client.management.initiateContractNegotiation(
+  const idResponse = await client.management.initiateContractNegotiation(
     consumerContext,
     {
       connectorAddress: providerContext.protocol,
       connectorId: "provider",
       offer: {
-        offerId: offer.id(),
+        offerId: offer.id,
         assetId: assetId,
         policy: offer,
       },
-      protocol: "dataspace-protocol-http",
     },
   );
 
@@ -144,7 +141,7 @@ export async function createContractNegotiation(
     assetId,
     policyId,
     contractDefinitionId,
-    createResult,
+    idResponse,
   };
 }
 
@@ -154,19 +151,27 @@ export async function waitForNegotiationState(
   negotiationId: string,
   targetState: string,
   interval = 500,
+  times = 20,
 ): Promise<void> {
   let waiting = true;
+  let actualState: string;
 
   do {
+    times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const state = await client.management.getNegotiationState(
+    const response = await client.management.getNegotiationState(
       context,
       negotiationId,
     );
 
-    waiting = state.state() !== targetState;
-  } while (waiting);
+    actualState = response.state;
+
+    waiting = actualState !== targetState;
+  } while (waiting && times > 0);
+
+  expect(actualState).toBe(targetState)
+
 }
 
 export function createReceiverServer() {

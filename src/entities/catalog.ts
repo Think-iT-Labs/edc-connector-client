@@ -1,32 +1,17 @@
-import { ContextProperties, QuerySpec } from ".";
-import { ContractOffer } from "./contract-offer";
+import { QuerySpec } from ".";
 import { JsonLdId, JsonLdValue } from "./jsonld";
 
-export interface Catalog {
-  id: string;
-  contractOffers: ContractOffer[];
-}
-
-const CONNECTOR_PROTOCOL = "dataspace-protocol-http";
-
-type DefaultCatalogValues = Pick<CatalogRequest, "protocol">;
-
-export const defaultCatalogValues: DefaultCatalogValues = {
-  protocol: CONNECTOR_PROTOCOL,
-};
-
-export interface CatalogRequest extends ContextProperties {
+export interface CatalogRequest {
   providerUrl: string;
-  protocol: string;
   querySpec?: QuerySpec;
 }
 
 export type CatalogRequestinput = Pick<CatalogRequest, "providerUrl">;
 
-export class DCATCatalog extends JsonLdId {
+export class Catalog extends JsonLdId {
   "https://www.w3.org/ns/dcat/dataset": Dataset[];
 
-  getDatasets(): Dataset[] {
+  get datasets(): Dataset[] {
     return this["https://www.w3.org/ns/dcat/dataset"].map((it) =>
       Object.assign(new Dataset(), it),
     );
@@ -36,7 +21,7 @@ export class DCATCatalog extends JsonLdId {
 export class Dataset extends JsonLdId {
   "http://www.w3.org/ns/odrl/2/hasPolicy": Offer[];
 
-  getOffers(): Offer[] {
+  get offers(): Offer[] {
     return this["http://www.w3.org/ns/odrl/2/hasPolicy"].map((it) =>
       Object.assign(new Offer(), it),
     );
@@ -44,19 +29,15 @@ export class Dataset extends JsonLdId {
 }
 
 export class Offer extends JsonLdId {
-  "http://www.w3.org/ns/odrl/2/target": JsonLdValue[];
+  "http://www.w3.org/ns/odrl/2/target": JsonLdValue<string>[];
 
-  getAssetId(): string {
-    return this.getTarget().value();
+  get assetId(): string {
+    return this.target;
   }
 
-  assetId() {
-    return this.id().split(":")[1];
-  }
-
-  getTarget(): JsonLdValue {
+  get target(): string {
     return this["http://www.w3.org/ns/odrl/2/target"].map((it) =>
       Object.assign(new JsonLdValue(), it),
-    )[0];
+    )[0].value;
   }
 }
