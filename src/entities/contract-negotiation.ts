@@ -3,6 +3,7 @@ import { JsonLdId, JsonLdValue } from "./jsonld";
 export interface ContractNegotiationRequest {
   connectorAddress: string;
   connectorId: string;
+  providerId: string;
   offer: {
     offerId: string;
     assetId: string;

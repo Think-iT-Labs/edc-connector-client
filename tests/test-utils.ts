@@ -129,6 +129,7 @@ export async function createContractNegotiation(
     {
       connectorAddress: providerContext.protocol,
       connectorId: "provider",
+      providerId: "provider",
       offer: {
         offerId: offer.id,
         assetId: assetId,

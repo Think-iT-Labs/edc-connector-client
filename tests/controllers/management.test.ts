@@ -18,7 +18,7 @@ import {
   waitForNegotiationState,
 } from "../test-utils";
 
-describe("DataController", () => {
+describe("ManagementController", () => {
   const apiToken = "123456";
   const consumer: Addresses = {
     default: "http://localhost:19191/api",
