@@ -152,7 +152,7 @@ export async function waitForNegotiationState(
   negotiationId: string,
   targetState: string,
   interval = 500,
-  times = 20,
+  times = 10,
 ): Promise<void> {
   let waiting = true;
   let actualState: string;

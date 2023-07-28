@@ -13,5 +13,5 @@ export default <Config.InitialOptions> {
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test))\\.(tsx?)$",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  testTimeout: 20000,
+  testTimeout: 10000,
 };
