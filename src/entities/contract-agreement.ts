@@ -1,19 +1,24 @@
 import { Policy } from "./policy";
-import { JsonLdId, JsonLdValue } from "./jsonld"
+import { JsonLdId } from "./jsonld"
 
 export class ContractAgreement extends JsonLdId {
-  'https://w3id.org/edc/v0.0.1/ns/assetId': JsonLdValue<string>[];
-  consumerAgentId?: string;
-  contractEndDate?: number;
-  constractSigningDate?: number;
-  constractStartDate?: number;
+
   policy?: Policy;
-  providerAgentId?: string;
 
   get assetId(): string {
-    return this['https://w3id.org/edc/v0.0.1/ns/assetId']
-      .map(it => Object.assign(new JsonLdValue(), it))[0]
-      .value
+    return this.mandatoryValue('edc', 'assetId');
+  }
+
+  get providerId(): string {
+    return this.mandatoryValue('edc', 'providerId');
+  }
+
+  get consumerId(): string {
+    return this.mandatoryValue('edc', 'providerId');
+  }
+
+  get contractSigningDate(): number {
+    return this.mandatoryValue('edc', 'providerId');
   }
 
 }

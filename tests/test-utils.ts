@@ -118,10 +118,11 @@ export async function createContractNegotiation(
     providerUrl: providerContext.protocol,
   });
 
+
   const offer = catalog
     .datasets
-    .flatMap((it) => it.offers)
-    .find((offer) => offer.assetId === assetId)!;
+    .flatMap(it => it.offers)
+    .find(offer => offer.assetId === assetId)!;
 
   // Initiate contract negotiation on the consumer's side
   const idResponse = await client.management.initiateContractNegotiation(

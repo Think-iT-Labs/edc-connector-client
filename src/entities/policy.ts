@@ -21,7 +21,7 @@ export interface Policy {
   obligations?: Duty[];
   permissions?: Permission[];
   prohibitions?: Prohibition[];
-  traget?: string;
+  target?: string;
 }
 
 export class PolicyDefinition extends JsonLdId {

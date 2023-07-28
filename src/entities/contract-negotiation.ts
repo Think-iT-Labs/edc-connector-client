@@ -1,4 +1,4 @@
-import { JsonLdId, JsonLdValue } from "./jsonld";
+import { JsonLdId, JsonLdObject } from "./jsonld";
 
 export interface ContractNegotiationRequest {
   connectorAddress: string;
@@ -14,7 +14,6 @@ export interface ContractNegotiationRequest {
 export class ContractNegotiation extends JsonLdId {
   updatedAt?: number;
   createdAt?: number;
-  'https://w3id.org/edc/v0.0.1/ns/contractAgreementId': JsonLdValue<string>[];
   counterPartyAddress?: string;
   errorDetail?: string;
   protocol?: string;
@@ -22,18 +21,12 @@ export class ContractNegotiation extends JsonLdId {
   type?: "CONSUMER" | "PROVIDER";
 
   get contractAgreementId(): string {
-    return this['https://w3id.org/edc/v0.0.1/ns/contractAgreementId']
-      .map(it => Object.assign(new JsonLdValue(), it))[0]
-      .value
+    return this.mandatoryValue('edc', 'contractAgreementId');
   }
 }
 
-export class ContractNegotiationState {
-  'https://w3id.org/edc/v0.0.1/ns/state': JsonLdValue<string>[];
-
+export class ContractNegotiationState extends JsonLdObject {
   get state(): string {
-    return this['https://w3id.org/edc/v0.0.1/ns/state']
-      .map(it => Object.assign(new JsonLdValue(), it))[0]
-      .value;
+    return this.mandatoryValue('edc', 'state');
   }
 }
