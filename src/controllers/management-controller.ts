@@ -444,7 +444,7 @@ export class ManagementController {
         path: "/v2/transferprocesses/request",
         method: "POST",
         apiToken: context.apiToken,
-        body: {
+        body: Object.keys(query).length === 0 ? null : {
           ...query,
           "@context": defaultContextValues,
         },

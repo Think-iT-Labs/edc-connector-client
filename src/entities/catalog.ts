@@ -6,8 +6,6 @@ export interface CatalogRequest {
   querySpec?: QuerySpec;
 }
 
-export type CatalogRequestinput = Pick<CatalogRequest, "providerUrl">;
-
 export class Catalog extends JsonLdId {
   "https://www.w3.org/ns/dcat/dataset": Dataset[];
 

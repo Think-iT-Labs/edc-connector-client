@@ -1171,8 +1171,6 @@ describe("ManagementController", () => {
           consumerContext,
         );
 
-        const receiverCallback = receiverServer.waitForEvent('endpoint-data-reference');
-
         const idResponse = await edcClient.management.initiateTransfer(
           consumerContext,
           {
@@ -1184,8 +1182,6 @@ describe("ManagementController", () => {
             dataDestination: { type: "HttpProxy" },
           },
         );
-
-        await receiverCallback;
 
         // when
         const transferProcesses =

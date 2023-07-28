@@ -9,7 +9,7 @@ repositories {
 }
 
 val edcGroupId = "org.eclipse.edc"
-val edcVersion = "0.1.3"
+val edcVersion = "0.1.2"
 
 dependencies {
     implementation("${edcGroupId}:runtime-metamodel:${edcVersion}")
