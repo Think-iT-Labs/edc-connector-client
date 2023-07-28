@@ -9,7 +9,7 @@ export interface Asset {
 }
 
 interface AssetProperties {
-  [key: string]: string | undefined;
+  [key: string]: string | undefined | any;
   name?: string;
   description?: string;
   contenttype?: string;

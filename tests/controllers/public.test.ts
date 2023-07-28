@@ -83,9 +83,7 @@ describe("PublicController", () => {
         consumerContext,
       );
 
-      const receiverCallback = receiverServer.waitForEvent('endpoint-data-reference');
-
-      await edcClient.management.initiateTransfer(
+      const idResponse = await edcClient.management.initiateTransfer(
         consumerContext,
         {
           assetId,
@@ -97,7 +95,7 @@ describe("PublicController", () => {
         },
       );
 
-      const transferProcessResponse = await receiverCallback;
+      const transferProcessResponse = await receiverServer.waitForEvent(idResponse.id);
 
       // when
       const data = await edcClient.public.getTranferedData(consumerContext, {

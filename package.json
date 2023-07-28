@@ -1,6 +1,6 @@
 {
   "name": "@think-it-labs/edc-connector-client",
-  "version": "0.0.1-milestone-8.beta-5",
+  "version": "0.1.2",
   "description": "EDC Connector HTTP client",
   "private": false,
   "main": "dist/src/index.js",
@@ -20,8 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@think-it-labs/typed-error": "^0.1.4",
-    "jsonld": "^8.2.0",
-    "schema-dts-gen": "^1.1.2"
+    "jsonld": "^8.2.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.1.0",

@@ -192,7 +192,9 @@ export function createReceiverServer() {
       },
     );
 
-    emitter.emit("endpoint-data-reference", body);
+    if (body.id) {
+      emitter.emit(body.id, body);
+    }
 
     res.statusCode = 204;
     res.end();

@@ -19,7 +19,7 @@ import {
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
-  defaultContextValues,
+  EDC_CONTEXT,
 } from "../entities";
 import { Inner } from "../inner";
 import jsonld from "jsonld";
@@ -27,6 +27,9 @@ import jsonld from "jsonld";
 export class ManagementController {
   #inner: Inner;
   protocol: String = "dataspace-protocol-http";
+  defaultContextValues = {
+    edc: EDC_CONTEXT,
+  };
 
   constructor(inner: Inner) {
     this.#inner = inner;
@@ -65,7 +68,7 @@ export class ManagementController {
         apiToken: context.apiToken,
         body: {
           ...input,
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
         },
       })
       .then((body) => jsonld.expand(body))
@@ -118,7 +121,7 @@ export class ManagementController {
           ? null
           : {
               ...query,
-              "@context": defaultContextValues,
+              "@context": this.defaultContextValues,
             },
     });
   }
@@ -134,7 +137,7 @@ export class ManagementController {
         apiToken: context.apiToken,
         body: {
           ...input,
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
         },
       })
       .then((body) => jsonld.expand(body))
@@ -177,7 +180,7 @@ export class ManagementController {
             ? null
             : {
                 ...query,
-                "@context": defaultContextValues,
+                "@context": this.defaultContextValues,
               },
       })
       .then((body) => jsonld.expand(body))
@@ -199,7 +202,7 @@ export class ManagementController {
         apiToken: context.apiToken,
         body: {
           ...input,
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
         },
       })
       .then((body) => jsonld.expand(body))
@@ -242,7 +245,7 @@ export class ManagementController {
             ? null
             : {
                 ...query,
-                "@context": defaultContextValues,
+                "@context": this.defaultContextValues,
               },
       })
       .then((body) => jsonld.expand(body))
@@ -263,7 +266,7 @@ export class ManagementController {
         method: "POST",
         apiToken: context.apiToken,
         body: {
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
           protocol: this.protocol,
           ...input,
         },
@@ -283,7 +286,7 @@ export class ManagementController {
         apiToken: context.apiToken,
         body: {
           protocol: this.protocol,
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
           ...input,
         },
       })
@@ -304,7 +307,7 @@ export class ManagementController {
           ? null
           : {
               ...query,
-              "@context": defaultContextValues,
+              "@context": this.defaultContextValues,
             },
     });
   }
@@ -391,7 +394,7 @@ export class ManagementController {
             ? null
             : {
                 ...query,
-                "@context": defaultContextValues,
+                "@context": this.defaultContextValues,
               },
       })
       .then((body) => jsonld.expand(body))
@@ -426,7 +429,7 @@ export class ManagementController {
         method: "POST",
         apiToken: context.apiToken,
         body: {
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
           protocol: this.protocol,
           ...input,
         },
@@ -446,7 +449,7 @@ export class ManagementController {
         apiToken: context.apiToken,
         body: Object.keys(query).length === 0 ? null : {
           ...query,
-          "@context": defaultContextValues,
+          "@context": this.defaultContextValues,
         },
       })
       .then((body) => jsonld.expand(body))
