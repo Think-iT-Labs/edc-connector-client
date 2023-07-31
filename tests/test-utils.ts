@@ -6,11 +6,9 @@ import {
   ContractAgreement,
   ContractDefinitionInput,
   ContractNegotiation,
-  ContractOffer,
-  CreateResult,
   EdcConnectorClient,
   EdcConnectorClientContext,
-  Policy,
+  IdResponse,
   PolicyDefinitionInput,
   TransferProcessResponse,
 } from "../src";
@@ -19,7 +17,7 @@ interface ContractNegotiationMetadata {
   assetId: string;
   policyId: string;
   contractDefinitionId: string;
-  createResult: CreateResult;
+  idResponse: IdResponse;
 }
 
 interface ContractAgreementMetadata {
@@ -35,31 +33,35 @@ export async function createContractAgreement(
   providerContext: EdcConnectorClientContext,
   consumerContext: EdcConnectorClientContext,
 ): Promise<ContractAgreementMetadata> {
-  const { createResult, ...rest } = await createContractNegotiation(
+  const { idResponse, ...rest } = await createContractNegotiation(
     client,
     providerContext,
     consumerContext,
   );
 
+  const negotiationId = idResponse.id
+
   await waitForNegotiationState(
     client,
     consumerContext,
-    createResult.id,
-    "CONFIRMED",
+    negotiationId,
+    "FINALIZED",
   );
 
   const contractNegotiation = await client.management.getNegotiation(
     consumerContext,
-    createResult.id,
+    negotiationId,
+  );
+
+  const contractAgreement = await client.management.getAgreement(
+    consumerContext,
+    contractNegotiation.contractAgreementId,
   );
 
   return {
     ...rest,
     contractNegotiation,
-    contractAgreement: await client.management.getAgreement(
-      consumerContext,
-      contractNegotiation.contractAgreementId as string,
-    ),
+    contractAgreement,
   };
 }
 
@@ -68,31 +70,11 @@ export async function createContractNegotiation(
   providerContext: EdcConnectorClientContext,
   consumerContext: EdcConnectorClientContext,
 ): Promise<ContractNegotiationMetadata> {
-  // Register dataplanes
-  client.management.registerDataplane(providerContext, {
-    "id": "provider-dataplane",
-    "url": "http://provider-connector:9192/control/transfer",
-    "allowedSourceTypes": ["HttpData"],
-    "allowedDestTypes": ["HttpProxy", "HttpData"],
-    "properties": {
-      "publicApiUrl": "http://provider-connector:9291/public/",
-    },
-  });
-
-  client.management.registerDataplane(consumerContext, {
-    "id": "consumer-dataplane",
-    "url": "http://consumer-connector:9192/control/transfer",
-    "allowedSourceTypes": ["HttpData"],
-    "allowedDestTypes": ["HttpProxy", "HttpData"],
-    "properties": {
-      "publicApiUrl": "http://consumer-connector:9291/public/",
-    },
-  });
-
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
     asset: {
+      "@id": assetId,
       properties: {
         "asset:prop:id": assetId,
         "asset:prop:name": "product description",
@@ -100,11 +82,9 @@ export async function createContractNegotiation(
       },
     },
     dataAddress: {
-      properties: {
-        name: "Test asset",
-        baseUrl: "https://jsonplaceholder.typicode.com/users",
-        type: "HttpData",
-      },
+      name: "Test asset",
+      baseUrl: "https://jsonplaceholder.typicode.com/users",
+      type: "HttpData",
     },
   };
   await client.management.createAsset(providerContext, assetInput);
@@ -112,32 +92,21 @@ export async function createContractNegotiation(
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
-    id: policyId,
+    "@id": policyId,
     policy: {
-      "uid": "231802-bb34-11ec-8422-0242ac120002",
-      "permissions": [
-        {
-          "target": assetId,
-          "action": {
-            "type": "USE",
-          },
-          "edctype": "dataspaceconnector:permission",
-        },
-      ],
-      "@type": {
-        "@policytype": "set",
-      },
+      "@context": "http://www.w3.org/ns/odrl.jsonld",
+      permissions: [],
     },
   };
   await client.management.createPolicy(providerContext, policyInput);
 
+  const contractDefinitionId = "definition-" + crypto.randomUUID();
   // Crate contract definition on the provider's side
-  const contractDefinitionId = crypto.randomUUID();
   const contractDefinitionInput: ContractDefinitionInput = {
-    id: contractDefinitionId,
+    "@id": contractDefinitionId,
     accessPolicyId: policyId,
     contractPolicyId: policyId,
-    criteria: [],
+    assetsSelector: [],
   };
   await client.management.createContractDefinition(
     providerContext,
@@ -146,30 +115,35 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await client.management.requestCatalog(consumerContext, {
-    providerUrl: `${providerContext.protocol}/data`,
+    providerUrl: providerContext.protocol,
   });
-  const contractOffer = catalog.contractOffers.find((offer) =>
-    offer.asset?.id === assetId
-  ) as ContractOffer;
+
+
+  const offer = catalog
+    .datasets
+    .flatMap(it => it.offers)
+    .find(offer => offer.assetId === assetId)!;
 
   // Initiate contract negotiation on the consumer's side
-  const createResult = await client.management
-    .initiateContractNegotiation(consumerContext, {
-      connectorAddress: `${providerContext.protocol}/data`,
+  const idResponse = await client.management.initiateContractNegotiation(
+    consumerContext,
+    {
+      connectorAddress: providerContext.protocol,
       connectorId: "provider",
+      providerId: "provider",
       offer: {
-        offerId: contractOffer.id as string,
-        assetId,
-        policy: contractOffer.policy as Policy,
+        offerId: offer.id,
+        assetId: assetId,
+        policy: offer,
       },
-      protocol: "ids-multipart",
-    });
+    },
+  );
 
   return {
     assetId,
     policyId,
     contractDefinitionId,
-    createResult,
+    idResponse,
   };
 }
 
@@ -179,19 +153,27 @@ export async function waitForNegotiationState(
   negotiationId: string,
   targetState: string,
   interval = 500,
+  times = 10,
 ): Promise<void> {
   let waiting = true;
+  let actualState: string;
 
   do {
+    times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const { state } = await client.management.getNegotiationState(
+    const response = await client.management.getNegotiationState(
       context,
       negotiationId,
     );
 
-    waiting = state !== targetState;
-  } while (waiting);
+    actualState = response.state;
+
+    waiting = actualState !== targetState;
+  } while (waiting && times > 0);
+
+  expect(actualState).toBe(targetState)
+
 }
 
 export function createReceiverServer() {
@@ -211,8 +193,8 @@ export function createReceiverServer() {
       },
     );
 
-    if (body.properties?.cid) {
-      emitter.emit(body.properties.cid, body);
+    if (body.id) {
+      emitter.emit(body.id, body);
     }
 
     res.statusCode = 204;

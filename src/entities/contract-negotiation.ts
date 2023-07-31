@@ -1,28 +1,32 @@
-import { Policy } from "./policy";
+import { JsonLdId, JsonLdObject } from "./jsonld";
 
 export interface ContractNegotiationRequest {
   connectorAddress: string;
   connectorId: string;
+  providerId: string;
   offer: {
     offerId: string;
     assetId: string;
-    policy: Policy;
+    policy: any;
   };
-  protocol: string;
 }
 
-export interface ContractNegotiation {
-  id: string;
-  updatedAt: number;
-  createdAt: number;
-  contractAgreementId?: string;
+export class ContractNegotiation extends JsonLdId {
+  updatedAt?: number;
+  createdAt?: number;
   counterPartyAddress?: string;
   errorDetail?: string;
   protocol?: string;
-  state: string;
-  type: "CONSUMER" | "PROVIDER";
+  state?: string;
+  type?: "CONSUMER" | "PROVIDER";
+
+  get contractAgreementId(): string {
+    return this.mandatoryValue('edc', 'contractAgreementId');
+  }
 }
 
-export interface ContractNegotiationState {
-  state: string;
+export class ContractNegotiationState extends JsonLdObject {
+  get state(): string {
+    return this.mandatoryValue('edc', 'state');
+  }
 }

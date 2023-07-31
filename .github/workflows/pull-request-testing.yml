@@ -2,7 +2,7 @@ name: Pull request testing
 
 on:
   push:
-    branches-ignore: 
+    branches-ignore:
       - main
     paths:
       - '.github/workflows/pull-request-testing.yml'
@@ -15,33 +15,8 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  dependencies:
-    name: Install and cache dependencies
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v3
-
-      - name: Use Node.js 18.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '18.x'
-
-      - name: Cache dependencies 
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-            */*/node_modules
-          key: yarn-deps-${{ hashFiles('**/yarn.lock') }}
-
-      - name: Install dependencies
-        run: |
-          yarn
-
-  unit:
+  tests:
     name: Unit and integration tests
-    needs: dependencies
     runs-on: ubuntu-latest
     steps:
       - name: Check out Git repository
@@ -55,20 +30,23 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Docker environment
-        uses: isbang/compose-action@v1.1.0
+        run: |
+          docker compose up -d
+          docker compose logs -f > logs &
 
       - name: Use Node.js 18.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: '18.x'
 
-      - name: Cache dependencies 
+      - name: Cache dependencies
         uses: actions/cache@v3
         with:
           path: |
             node_modules
             */*/node_modules
           key: yarn-deps-${{ hashFiles('**/yarn.lock') }}
+
 
       - name: Install dependencies
         run: |
@@ -78,3 +56,8 @@ jobs:
         run: yarn test
         env:
           CI: true
+
+      - name: Print docker logs
+        if: failure()
+        run: |
+          cat logs

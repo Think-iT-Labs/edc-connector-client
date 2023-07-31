@@ -1,5 +1,5 @@
 export interface BaseDataAddress {
-  [key: string]: string | undefined;
+  [key: string]: string | undefined | any;
   type: string;
 }
 
@@ -40,6 +40,4 @@ export type DataAddress =
   | S3StorageDataAddress
   | AzureStorageDataAddress;
 
-export interface DataAddressProperties {
-  properties: Partial<DataAddress>;
-}
+export type DataAddressProperties = Partial<DataAddress>;

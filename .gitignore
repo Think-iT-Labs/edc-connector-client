@@ -1,3 +1,6 @@
+.idea/
+connector/.gradle
+connector/build
 coverage/
 dist/
 node_modules/

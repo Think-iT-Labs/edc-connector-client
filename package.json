@@ -1,13 +1,13 @@
 {
   "name": "@think-it-labs/edc-connector-client",
-  "version": "0.0.1-milestone-8.beta-5",
+  "version": "0.1.2",
   "description": "EDC Connector HTTP client",
   "private": false,
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "scripts": {
     "transpile": "tsc",
-    "test": "jest"
+    "test": "jest --forceExit"
   },
   "engines": {
     "node": ">=18"
@@ -19,11 +19,13 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "@think-it-labs/typed-error": "^0.1.4"
+    "@think-it-labs/typed-error": "^0.1.4",
+    "jsonld": "^8.2.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^17.1.0",
     "@types/jest": "^28.1.6",
+    "@types/jsonld": "^1.5.8",
     "@types/node": "^18.11.9",
     "commitlint": "^17.1.2",
     "husky": "^8.0.1",
