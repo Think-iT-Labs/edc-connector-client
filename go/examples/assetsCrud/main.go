@@ -14,7 +14,7 @@ func main() {
 	token := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
 	defaultAddress := "http://localhost:19193/api"
 	managementAddress := "http://localhost:19193/management/v2"
-	protocolAddress := "http://localhost:19193/api/v1/ids"
+	protocolAddress := "http://localhost:19193/protocol"
 	publicAddress := "http://localhost:19193/public"
 	controlAddress := "http://localhost:19193/control"
 
