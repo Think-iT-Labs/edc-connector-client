@@ -271,8 +271,12 @@ export class ManagementController {
           ...input,
         },
       })
-      .then((body) => jsonld.expand(body))
-      .then((expanded) => Object.assign(new Catalog(), expanded[0]));
+      .then(async body => {
+        const expanded = await jsonld.expand(body);
+        var catalog = Object.assign(new Catalog(), expanded[0]);
+        catalog._compacted = body;
+        return catalog;
+      });
   }
 
   async initiateContractNegotiation(

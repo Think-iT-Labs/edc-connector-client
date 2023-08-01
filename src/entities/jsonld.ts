@@ -3,6 +3,14 @@ import { EDC_CONTEXT } from "./context";
 export class JsonLdObject {
 
   [propertyName: string]: any;
+  /*
+   * this _compacted field is a workaround for a bug existing in the json-ld
+   * which causes the EDC offer ids to be "truncated". For further info, take a
+   * look at https://github.com/digitalbazaar/jsonld.js/issues/523
+   * Once that issue will be fixed, we can get rid of the _compacted and all
+   * its usages.
+   */
+  _compacted: any;
 
   mandatoryValue<T>(prefix: string, name: string): T {
     return this.optionalValue(prefix, name)!;
@@ -17,9 +25,13 @@ export class JsonLdObject {
 
   arrayOf<T extends Object>(newInstance: (() => T), prefix: string, name: string): T[] {
     var namespace = this.getNamespaceUrl(prefix);
-    return (this[`${namespace}${name}`] as T[]).map(it =>
-      Object.assign(newInstance(), it),
-    );
+    return (this[`${namespace}${name}`] as T[])
+      .map((element, index) => {
+        const instance = Object.assign(newInstance(), element);
+        const jsonLd = instance as any as JsonLdObject;
+        jsonLd._compacted = this._compacted[`${prefix}:${name}`][index]
+        return instance;
+      });
   }
 
   private getNamespaceUrl(prefix: string): string {
@@ -36,7 +48,11 @@ export class JsonLdId extends JsonLdObject {
   '@id': string;
 
   get id() {
-    return this['@id'];
+    if (this._compacted) {
+      return this._compacted['@id'];
+    } else {
+      return this['@id'];
+    }
   }
 }
 
