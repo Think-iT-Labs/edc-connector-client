@@ -287,6 +287,91 @@ describe("ManagementController", () => {
     });
   });
 
+  describe("edcClient.management.updateAssetDataAddress", () => {
+    it("updates a target asset data address", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      const updateDataAddressInput = {
+        type: "HttpData",
+        properties: {
+          name: "updated test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+      };
+      const assetInput = {
+        asset: {
+          "@id": crypto.randomUUID(),
+          properties: {
+            name: "product description",
+            contenttype: "application/json",
+          },
+        },
+        dataAddress: {
+          type: "HttpData",
+          properties: {
+            name: "Test asset",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+          },
+        },
+      };
+      await edcClient.management.createAsset(context, assetInput);
+
+      // when
+      await edcClient.management.updateAssetDataAddress(
+        context,
+        assetInput.asset["@id"],
+        updateDataAddressInput,
+      );
+
+      const assetDataAddress = await edcClient.management.getAssetDataAddress(
+        context,
+        assetInput.asset["@id"],
+      );
+
+      // then
+      expect(assetDataAddress).toHaveProperty("@type");
+      expect(assetDataAddress).toEqual(
+        expect.objectContaining({
+          [`${EDC_NAMESPACE}:name`]: updateDataAddressInput.properties.name,
+          [`${EDC_NAMESPACE}:baseUrl`]:
+            updateDataAddressInput.properties.baseUrl,
+          [`${EDC_NAMESPACE}:type`]: updateDataAddressInput.type,
+        }),
+      );
+    });
+
+    it("fails to update a data address for an inexistant asset", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      const updateDataAddressInput = {
+        type: "HttpData",
+        properties: {
+          name: "updated test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+      };
+
+      // when
+      const maybeAssetDataAddress = edcClient.management.updateAssetDataAddress(
+        context,
+        crypto.randomUUID(),
+        updateDataAddressInput,
+      );
+      // then
+      await expect(maybeAssetDataAddress).rejects.toThrowError(
+        "resource not found",
+      );
+
+      maybeAssetDataAddress.catch((error) => {
+        expect(error).toBeInstanceOf(EdcConnectorClientError);
+        expect(error as EdcConnectorClientError).toHaveProperty(
+          "type",
+          EdcConnectorClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
   describe("edcClient.management.queryAllAssets", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
@@ -725,12 +810,14 @@ describe("ManagementController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: provider.protocol
+          providerUrl: provider.protocol,
         },
       );
 
       // then
-      expect(catalog).toHaveProperty("@type", ["https://www.w3.org/ns/dcat/Catalog"]);
+      expect(catalog).toHaveProperty("@type", [
+        "https://www.w3.org/ns/dcat/Catalog",
+      ]);
       expect(catalog).toHaveProperty("datasets");
     });
   });
@@ -783,8 +870,7 @@ describe("ManagementController", () => {
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
         contractNegotiations.find(
-          (contractNegotiation) =>
-            contractNegotiation["@id"] === idResponse.id,
+          (contractNegotiation) => contractNegotiation["@id"] === idResponse.id,
         ),
       ).toBeTruthy();
     });
@@ -930,11 +1016,10 @@ describe("ManagementController", () => {
         "TERMINATED",
       );
 
-      const negotiationState =
-        await edcClient.management.getNegotiationState(
-          consumerContext,
-          negotiationId,
-        );
+      const negotiationState = await edcClient.management.getNegotiationState(
+        consumerContext,
+        negotiationId,
+      );
 
       // then
       expect(cancelledNegotiation).toBeUndefined();
@@ -1010,11 +1095,10 @@ describe("ManagementController", () => {
         "TERMINATING",
       );
 
-      const negotiationState =
-        await edcClient.management.getNegotiationState(
-          consumerContext,
-          negotiationId,
-        );
+      const negotiationState = await edcClient.management.getNegotiationState(
+        consumerContext,
+        negotiationId,
+      );
 
       // then
       expect(negotiationState.state).toBe("TERMINATING");

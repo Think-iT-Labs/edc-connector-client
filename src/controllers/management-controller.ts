@@ -108,6 +108,22 @@ export class ManagementController {
     });
   }
 
+  async updateAssetDataAddress(
+    context: EdcConnectorClientContext,
+    assetId: string,
+    input: DataAddressProperties,
+  ): Promise<void> {
+    return this.#inner.request(context.management, {
+      path: `/v2/assets/${assetId}/dataaddress`,
+      method: "PUT",
+      apiToken: context.apiToken,
+      body: {
+        ...input,
+        "@context": this.defaultContextValues,
+      },
+    });
+  }
+
   async queryAllAssets(
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
@@ -447,10 +463,13 @@ export class ManagementController {
         path: "/v2/transferprocesses/request",
         method: "POST",
         apiToken: context.apiToken,
-        body: Object.keys(query).length === 0 ? null : {
-          ...query,
-          "@context": this.defaultContextValues,
-        },
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": this.defaultContextValues,
+              },
       })
       .then((body) => jsonld.expand(body))
       .then((expanded) =>
