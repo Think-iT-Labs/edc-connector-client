@@ -110,6 +110,77 @@ describe("ManagementController", () => {
     });
   });
 
+  describe("edcClient.management.updateAsset", () => {
+    it("updates a target asset", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      const assetInput = {
+        asset: {
+          "@id": crypto.randomUUID(),
+          properties: {
+            name: "product description",
+            contenttype: "application/json",
+          },
+        },
+        dataAddress: {
+          type: "HttpData",
+          properties: {
+            name: "Test asset",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+          },
+        },
+      };
+      await edcClient.management.createAsset(context, assetInput);
+      const updateAssetInput = {
+        "@id": assetInput.asset["@id"],
+        name: "updated test asset",
+        contenttype: "text/plain",
+      };
+
+      // when
+      await edcClient.management.updateAsset(context, updateAssetInput);
+
+      const updatedAsset = await edcClient.management.getAsset(
+        context,
+        assetInput.asset["@id"],
+      );
+
+      // then
+      expect(updatedAsset).toHaveProperty("@type");
+      expect(updatedAsset).toEqual(
+        expect.objectContaining({
+          [`${EDC_NAMESPACE}:properties`]: {
+            [`${EDC_NAMESPACE}:name`]: updateAssetInput.name,
+            [`${EDC_NAMESPACE}:id`]: updateAssetInput["@id"],
+            [`${EDC_NAMESPACE}:contenttype`]: updateAssetInput.contenttype,
+          },
+        }),
+      );
+    });
+
+    it("fails to update an inexistant asset", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      // when
+      const maybeUpdatedAsset = edcClient.management.updateAsset(context, {
+        "@id": crypto.randomUUID(),
+      });
+
+      // then
+      await expect(maybeUpdatedAsset).rejects.toThrowError(
+        "resource not found",
+      );
+
+      maybeUpdatedAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcConnectorClientError);
+        expect(error as EdcConnectorClientError).toHaveProperty(
+          "type",
+          EdcConnectorClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
   describe("edcClient.management.deleteAsset", () => {
     it("deletes a target asset", async () => {
       // given

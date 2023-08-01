@@ -8,7 +8,7 @@ export interface Asset {
   "@id": string;
 }
 
-interface AssetProperties {
+export interface AssetProperties {
   [key: string]: string | undefined | any;
   name?: string;
   description?: string;

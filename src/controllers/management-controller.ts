@@ -20,6 +20,7 @@ import {
   TransferProcess,
   TransferProcessInput,
   EDC_CONTEXT,
+  AssetProperties,
 } from "../entities";
 import { Inner } from "../inner";
 import jsonld from "jsonld";
@@ -73,6 +74,21 @@ export class ManagementController {
       })
       .then((body) => jsonld.expand(body))
       .then((expanded) => Object.assign(new IdResponse(), expanded[0]));
+  }
+
+  async updateAsset(
+    context: EdcConnectorClientContext,
+    input: AssetProperties,
+  ): Promise<void> {
+    return this.#inner.request(context.management, {
+      path: "/v2/assets",
+      method: "PUT",
+      apiToken: context.apiToken,
+      body: {
+        ...input,
+        "@context": this.defaultContextValues,
+      },
+    });
   }
 
   async deleteAsset(
