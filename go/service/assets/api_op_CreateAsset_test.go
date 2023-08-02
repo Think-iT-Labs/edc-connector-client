@@ -23,9 +23,8 @@ func Test_CreateAsset(t *testing.T) {
 	"@context": {
 		"edc": "https://w3id.org/edc/v0.0.1/ns/"
 	},
-	"@id": "",
+	"@id": "1234",
 	"asset": {
-		"@id": "1234",
 		"edc:properties": {
 			"name": "product description",
 			"contentType": "application/json"
@@ -43,7 +42,7 @@ func Test_CreateAsset(t *testing.T) {
 
 		fmt.Fprintf(w, `
 {
-	"createdAt": 1680004526,
+	"edc:createdAt": 1680004526,
 	"@id": "1234"
 }		
 `)
@@ -96,9 +95,8 @@ func Test_CreateAssetWithCustomDataAddress(t *testing.T) {
 	"@context": {
 		"edc": "https://w3id.org/edc/v0.0.1/ns/"
 	},
-	"@id": "",
+	"@id": "1234",
 	"asset": {
-		"@id": "1234",
 		"edc:properties": {
 			"edc:name": "product description",
 			"edc:contentType": "application/json"

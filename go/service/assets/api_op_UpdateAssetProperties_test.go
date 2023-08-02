@@ -24,7 +24,7 @@ func Test_UpdateAssetProperties(t *testing.T) {
 	},
 	"@id": "1234",
 	"edc:properties": {
-		"edc:name": "product description",
+		"edc:name": "new product description",
 		"edc:contentType": "application/json"
 	},
 	"edc:privateProperties": {

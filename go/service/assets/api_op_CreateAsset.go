@@ -20,6 +20,7 @@ func (c *Client) CreateAsset(asset AssetProperties, dataAddress DataAddress) (*s
 	requestpayload := CreateAssetRequestPayload{
 		BaseRequest: sharedtypes.BaseRequest{
 			Context: sharedtypes.EdcContext,
+			Id:      asset.Id,
 		},
 		AssetProperties: asset,
 		DataAddress: ModifyDataAddressPayload{
