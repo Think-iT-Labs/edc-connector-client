@@ -18,6 +18,11 @@ export class JsonLdObject {
 
   optionalValue<T>(prefix: string, name: string): T | undefined {
     var namespace = this.getNamespaceUrl(prefix);
+    if (this._compacted) {
+      const key = `${prefix}:${name}`;
+      return this._compacted[key]
+    }
+
     return (this[`${namespace}${name}`] as JsonLdValue<T>[])
       ?.map(it => Object.assign(new JsonLdValue(), it))
       ?.at(0)?.value;
@@ -29,7 +34,8 @@ export class JsonLdObject {
       .map((element, index) => {
         const instance = Object.assign(newInstance(), element);
         const jsonLd = instance as any as JsonLdObject;
-        jsonLd._compacted = this._compacted[`${prefix}:${name}`][index]
+        const object = this._compacted[`${prefix}:${name}`]
+        jsonLd._compacted = Array.isArray(object) ? object[index] : object;
         return instance;
       });
   }

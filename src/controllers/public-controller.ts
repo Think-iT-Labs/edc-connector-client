@@ -8,7 +8,7 @@ export class PublicController {
     this.#inner = inner;
   }
 
-  async getTranferedData(
+  async getTransferredData(
     context: EdcConnectorClientContext,
     headers: Record<string, string | undefined>,
   ): Promise<Response> {
