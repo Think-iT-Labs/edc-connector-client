@@ -10,7 +10,13 @@ export class JsonLdObject {
    * Once that issue will be fixed, we can get rid of the _compacted and all
    * its usages.
    */
-  _compacted: any;
+  set _compacted(_compacted: any) {
+    this.__compacted = _compacted;
+  }
+
+  get _compacted() {
+    return this.__compacted;
+  }
 
   mandatoryValue<T>(prefix: string, name: string): T {
     return this.optionalValue(prefix, name)!;
@@ -54,12 +60,20 @@ export class JsonLdId extends JsonLdObject {
   '@id': string;
 
   get id() {
-    if (this._compacted) {
-      return this._compacted['@id'];
-    } else {
-      return this['@id'];
+    return this['@id'];
+  }
+
+  set _compacted(compacted: any) {
+    this.__compacted = compacted;
+    if (compacted) {
+      this['@id'] = compacted['@id'];
     }
   }
+
+  get _compacted() {
+    return this.__compacted;
+  }
+
 }
 
 export class JsonLdValue<T> {

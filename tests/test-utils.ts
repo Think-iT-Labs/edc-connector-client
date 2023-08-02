@@ -124,7 +124,6 @@ export async function createContractNegotiation(
     .flatMap(it => it.offers)
     .find(offer => offer.assetId === assetId)!;
 
-  offer['@id'] = offer._compacted['@id'];
   offer._compacted = undefined;
 
   // Initiate contract negotiation on the consumer's side
