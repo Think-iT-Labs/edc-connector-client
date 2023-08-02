@@ -1,5 +1,7 @@
 import { EdcConnectorClientContext } from "../context";
 import {
+  expand,
+  expandArray,
   AssetResponse,
   AssetInput,
   Catalog,
@@ -14,7 +16,6 @@ import {
   Dataplane,
   DataplaneInput,
   IdResponse,
-  JsonLdObject,
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
@@ -23,7 +24,6 @@ import {
   EDC_CONTEXT,
 } from "../entities";
 import { Inner } from "../inner";
-import jsonld from "jsonld";
 
 export class ManagementController {
   #inner: Inner;
@@ -72,7 +72,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => this.expand(body, () => new IdResponse()));
+      .then(body => expand(body, () => new IdResponse()));
   }
 
   async deleteAsset(
@@ -140,7 +140,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => this.expand(body, () => new IdResponse()));
+      .then(body => expand(body, () => new IdResponse()));
   }
 
   async deletePolicy(
@@ -163,7 +163,7 @@ export class ManagementController {
       method: "GET",
       apiToken: context.apiToken,
     })
-    .then(body => this.expand(body, () => new PolicyDefinition()));
+    .then(body => expand(body, () => new PolicyDefinition()));
   }
 
   async queryAllPolicies(
@@ -183,7 +183,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => this.expandArray(body, () => new PolicyDefinition()));
+      .then(body => expandArray(body, () => new PolicyDefinition()));
   }
 
   async createContractDefinition(
@@ -200,7 +200,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => this.expand(body, () => new IdResponse()));
+      .then(body => expand(body, () => new IdResponse()));
   }
 
   async deleteContractDefinition(
@@ -242,7 +242,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => this.expandArray(body, () => new ContractDefinition()));
+      .then(body => expandArray(body, () => new ContractDefinition()));
   }
 
   async requestCatalog(
@@ -260,7 +260,7 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => this.expand(body, () => new Catalog()));
+      .then(body => expand(body, () => new Catalog()));
   }
 
   async initiateContractNegotiation(
@@ -278,7 +278,7 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => this.expand(body, () => new IdResponse()));
+      .then(body => expand(body, () => new IdResponse()));
   }
 
   async queryNegotiations(
@@ -297,7 +297,7 @@ export class ManagementController {
               "@context": this.defaultContextValues,
             },
     })
-    .then(body => this.expandArray(body, () => new ContractNegotiation()));
+    .then(body => expandArray(body, () => new ContractNegotiation()));
   }
 
   async getNegotiation(
@@ -310,7 +310,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => this.expand(body, () => new ContractNegotiation()));
+      .then(body => expand(body, () => new ContractNegotiation()));
   }
 
   async getNegotiationState(
@@ -323,7 +323,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => this.expand(body, () => new ContractNegotiationState()));
+      .then(body => expand(body, () => new ContractNegotiationState()));
   }
 
   async cancelNegotiation(
@@ -358,7 +358,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => this.expand(body, () => new ContractAgreement()));
+      .then(body => expand(body, () => new ContractAgreement()));
   }
 
   async queryAllAgreements(
@@ -378,7 +378,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => this.expandArray(body, () => new ContractAgreement()));
+      .then(body => expandArray(body, () => new ContractAgreement()));
   }
 
   async getAgreement(
@@ -391,7 +391,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => this.expand(body, () => new ContractAgreement()));
+      .then(body => expand(body, () => new ContractAgreement()));
   }
 
   async initiateTransfer(
@@ -409,7 +409,7 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => this.expand(body, () => new IdResponse()));
+      .then(body => expand(body, () => new IdResponse()));
   }
 
   async queryAllTransferProcesses(
@@ -426,22 +426,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => this.expandArray(body, () => new TransferProcess()));
+      .then(body => expandArray(body, () => new TransferProcess()));
   }
 
-  private async expand<T extends JsonLdObject>(body: any, newInstance: (() => T)): Promise<T> {
-    const expanded = await jsonld.expand(body);
-    var instance = Object.assign(newInstance(), expanded[0]);
-    instance._compacted = body;
-    return instance;
-  }
-
-  private async expandArray<T extends JsonLdObject>(body: any, newInstance: (() => T)): Promise<T[]> {
-    const expanded = await jsonld.expand(body);
-    return (expanded as Array<any>).map((element, index) => {
-      var instance = Object.assign(newInstance(), element);
-      instance._compacted = body[index];
-      return instance;
-    });
-  }
 }

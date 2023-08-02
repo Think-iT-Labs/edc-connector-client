@@ -1,4 +1,21 @@
 import { EDC_CONTEXT } from "./context";
+import jsonld from "jsonld";
+
+export async function expand<T extends JsonLdObject>(body: any, newInstance: (() => T)): Promise<T> {
+  const expanded = await jsonld.expand(body);
+  var instance = Object.assign(newInstance(), expanded[0]);
+  instance._compacted = body;
+  return instance;
+};
+
+export async function expandArray<T extends JsonLdObject>(body: any, newInstance: (() => T)): Promise<T[]> {
+  const expanded = await jsonld.expand(body);
+  return (expanded as Array<any>).map((element, index) => {
+    var instance = Object.assign(newInstance(), element);
+    instance._compacted = body[index];
+    return instance;
+  });
+}
 
 export class JsonLdObject {
 
