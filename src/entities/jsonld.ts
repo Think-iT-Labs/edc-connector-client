@@ -26,6 +26,11 @@ export class JsonLdObject {
    * look at https://github.com/digitalbazaar/jsonld.js/issues/523
    * Once that issue will be fixed, we can get rid of the _compacted and all
    * its usages.
+   *
+   * Why is this needed: "compacted" is the json-ld representation of the object
+   * we are receiving from the connector, we are keeping it next to the expanded
+   * representation (that is, the content of this JsonLdObject object), getting
+   * the data out of it, if it is valued.
    */
   set _compacted(_compacted: any) {
     this.__compacted = _compacted;
@@ -40,12 +45,12 @@ export class JsonLdObject {
   }
 
   optionalValue<T>(prefix: string, name: string): T | undefined {
-    var namespace = this.getNamespaceUrl(prefix);
     if (this._compacted) {
       const key = `${prefix}:${name}`;
       return this._compacted[key]
     }
 
+    var namespace = this.getNamespaceUrl(prefix);
     return (this[`${namespace}${name}`] as JsonLdValue<T>[])
       ?.map(it => Object.assign(new JsonLdValue(), it))
       ?.at(0)?.value;
