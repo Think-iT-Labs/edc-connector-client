@@ -9,6 +9,7 @@ on:
       - 'jest.config.ts'
       - 'src/**/*.ts'
       - 'tests/**/*.ts'
+      - 'connector'
 
 env:
   REGISTRY: ghcr.io

@@ -1,9 +1,14 @@
-import { ContextProperties } from "./context";
 import { Criterion } from "./criterion";
+import { JsonLdId } from "./jsonld";
 
-export interface ContractDefinition extends ContextProperties {
-  "@id": string;
-  validity?: number;
+export class ContractDefinition extends JsonLdId {
+  get accessPolicyId(): string {
+    return this.mandatoryValue('edc', 'accessPolicyId');
+  }
+
+  get contractPolicyId(): string {
+    return this.mandatoryValue('edc', 'contractPolicyId');
+  }
 }
 
 export interface ContractDefinitionInput extends Partial<ContractDefinition> {

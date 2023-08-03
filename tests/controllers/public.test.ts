@@ -33,14 +33,14 @@ describe("PublicController", () => {
     await receiverServer.shutdown();
   });
 
-  describe("edcClient.public.getTranferedData", () => {
+  describe("edcClient.public.getTransferredData", () => {
     it("fails to return an object in response", async () => {
       // given
       const edcClient = new EdcConnectorClient();
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeData = edcClient.public.getTranferedData(context, {});
+      const maybeData = edcClient.public.getTransferredData(context, {});
 
       // then
       await expect(maybeData).rejects.toThrowError(
@@ -98,7 +98,7 @@ describe("PublicController", () => {
       const transferProcessResponse = await receiverServer.waitForEvent(idResponse.id);
 
       // when
-      const data = await edcClient.public.getTranferedData(consumerContext, {
+      const data = await edcClient.public.getTransferredData(consumerContext, {
         [transferProcessResponse.authKey]: transferProcessResponse.authCode,
       });
 

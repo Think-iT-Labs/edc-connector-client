@@ -1083,8 +1083,7 @@ describe("ManagementController", () => {
       expect(contractAgreements.length).toBeGreaterThan(0);
       expect(
         contractAgreements.find(
-          (contractAgreement) =>
-            contractAgreement.id === contractNegotiation.contractAgreementId,
+          agreement => agreement.id === contractNegotiation.contractAgreementId
         ),
       ).toBeTruthy();
     });

@@ -21,7 +21,7 @@ This project aims to increase the level of abstraction, bringing the _low-level_
 developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
 
 > Similarly to the **EDC Connector**, this library is at its early stage.
-> It aims to maintain compatibility with the latest version of the _Connector_, currently `0.1.2`.
+> It aims to maintain compatibility with the latest version of the _Connector_, currently `0.1.3`.
 > The compatibility is reflected in the library's versioning.
 
 ## Usage
