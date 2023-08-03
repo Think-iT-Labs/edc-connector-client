@@ -2,14 +2,6 @@ name: Pull request testing
 
 on:
   push:
-    branches-ignore:
-      - main
-    paths:
-      - '.github/workflows/pull-request-testing.yml'
-      - 'jest.config.ts'
-      - 'src/**/*.ts'
-      - 'tests/**/*.ts'
-      - 'connector'
 
 env:
   REGISTRY: ghcr.io
