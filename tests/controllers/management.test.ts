@@ -1224,10 +1224,8 @@ describe("ManagementController", () => {
 
   describe("edcClient.management.listDataplanes", () => {
     it("succesfully list available dataplanes", async () => {
-      // given
       const context = edcClient.createContext(apiToken, consumer);
-      const dataplaneInput = {
-        id: "consumer-dataplane",
+      const input = {
         url: "http://consumer-connector:9192/control/transfer",
         allowedSourceTypes: ["HttpData"],
         allowedDestTypes: ["HttpProxy", "HttpData"],
@@ -1235,28 +1233,20 @@ describe("ManagementController", () => {
           publicApiUrl: "http://consumer-connector:9291/public/",
         },
       };
-      await edcClient.management.registerDataplane(context, dataplaneInput);
+      await edcClient.management.registerDataplane(context, input);
 
-      // when
       const dataplanes = await edcClient.management.listDataplanes(context);
 
-      // then
       expect(dataplanes.length).toBeGreaterThan(0);
       dataplanes.forEach((dataplane) => {
-        expect(dataplane).toHaveProperty("id", dataplaneInput.id);
-        expect(dataplane).toHaveProperty("url", dataplaneInput.url);
-        expect(dataplane).toHaveProperty(
-          "allowedDestTypes",
-          dataplaneInput.allowedDestTypes,
-        );
-        expect(dataplane).toHaveProperty(
-          "allowedSourceTypes",
-          dataplaneInput.allowedSourceTypes,
-        );
-        expect(dataplane).toHaveProperty(
-          "properties",
-          dataplaneInput.properties,
-        );
+        expect(dataplane).toHaveProperty("id");
+        expect(dataplane).toHaveProperty("url", input.url);
+        expect(dataplane)
+          .toHaveProperty("allowedDestTypes", input.allowedDestTypes);
+        expect(dataplane)
+          .toHaveProperty("allowedSourceTypes", input.allowedSourceTypes);
+        expect(dataplane.properties)
+        .toHaveProperty("edc:publicApiUrl", "http://consumer-connector:9291/public/");
       });
     });
   });
