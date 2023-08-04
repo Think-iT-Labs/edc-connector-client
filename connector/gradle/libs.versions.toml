@@ -1,0 +1,27 @@
+[metadata]
+format.version = "1.1"
+
+[versions]
+edc = "0.2.0"
+shadow = "7.1.2"
+
+[libraries]
+edc-runtime-metamodel = { module = "org.eclipse.edc:runtime-metamodel", version.ref = "edc" }
+edc-control-plane-core = { module = "org.eclipse.edc:control-plane-core", version.ref = "edc" }
+edc-dsp = { module = "org.eclipse.edc:dsp", version.ref = "edc" }
+edc-configuration-filesystem = { module = "org.eclipse.edc:configuration-filesystem", version.ref = "edc" }
+edc-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
+edc-iam-mock = { module = "org.eclipse.edc:iam-mock", version.ref = "edc" }
+edc-management-api = { module = "org.eclipse.edc:management-api", version.ref = "edc" }
+edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-transfer-data-plane = { module = "org.eclipse.edc:transfer-data-plane", version.ref = "edc" }
+edc-transfer-pull-http-receiver = { module = "org.eclipse.edc:transfer-pull-http-receiver", version.ref = "edc" }
+edc-data-plane-selector-api = { module = "org.eclipse.edc:data-plane-selector-api", version.ref = "edc" }
+edc-data-plane-selector-core = { module = "org.eclipse.edc:data-plane-selector-core", version.ref = "edc" }
+edc-data-plane-selector-client = { module = "org.eclipse.edc:data-plane-selector-client", version.ref = "edc" }
+edc-data-plane-api = { module = "org.eclipse.edc:data-plane-api", version.ref = "edc" }
+edc-data-plane-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
+edc-data-plane-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
