@@ -85,6 +85,10 @@ export class JsonLdId extends JsonLdObject {
     return this['@id'];
   }
 
+  set id(id: string) {
+    this['@id'] = id;
+  }
+
   set _compacted(compacted: any) {
     this.__compacted = compacted;
     if (compacted) {
