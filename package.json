@@ -3,6 +3,11 @@
   "version": "0.1.3",
   "description": "EDC Connector HTTP client",
   "private": false,
+  "homepage": "https://github.com/Think-iT-Labs/edc-connector-client",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Think-iT-Labs/edc-connector-client"
+  },
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "scripts": {
