@@ -34,6 +34,7 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    dependsOn("distTar", "distZip")
     mergeServiceFiles()
     archiveFileName.set("connector.jar")
 }
