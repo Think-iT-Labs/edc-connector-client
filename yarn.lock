@@ -836,9 +836,9 @@
     pretty-format "^28.0.0"
 
 "@types/jsonld@^1.5.8":
-  version "1.5.8"
-  resolved "https://registry.npmjs.org/@types/jsonld/-/jsonld-1.5.8.tgz"
-  integrity sha512-4l5t/jDnJpqZ+i7CLTTgPcT5BYXnAnwJupb07aAokPufCV0SjDHcwctUkSTuhIuSU9yHok+WOOngIGCtpL96gw==
+  version "1.5.9"
+  resolved "https://registry.yarnpkg.com/@types/jsonld/-/jsonld-1.5.9.tgz#aca18d90b91488d15f8b4e941f660da4093be783"
+  integrity sha512-K76ImkErPYL2wGPZpNFSKp6wE+h/APecZLJrU7UfDaGqt/f+D9Rrg1aR7VdRrQ6k5DUNRZ2vn9yACwmpOr9QcA==
 
 "@types/minimist@^1.2.0":
   version "1.2.2"
