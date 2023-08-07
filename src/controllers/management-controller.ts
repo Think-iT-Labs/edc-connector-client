@@ -12,7 +12,6 @@ import {
   ContractNegotiation,
   ContractNegotiationRequest,
   ContractNegotiationState,
-  DataAddressProperties,
   Dataplane,
   DataplaneInput,
   IdResponse,
@@ -54,12 +53,13 @@ export class ManagementController {
   async listDataplanes(
     context: EdcConnectorClientContext,
   ): Promise<Dataplane[]> {
-    return this.#inner.request(context.management, {
-      path: "/v2/dataplanes",
-      method: "GET",
-      apiToken: context.apiToken,
-    })
-    .then(body => expandArray(body, () => new Dataplane()));
+    return this.#inner
+      .request(context.management, {
+        path: "/v2/dataplanes",
+        method: "GET",
+        apiToken: context.apiToken,
+      })
+      .then((body) => expandArray(body, () => new Dataplane()));
   }
 
   async createAsset(
@@ -68,7 +68,7 @@ export class ManagementController {
   ): Promise<IdResponse> {
     return this.#inner
       .request(context.management, {
-        path: "/v2/assets",
+        path: "/v3/assets",
         method: "POST",
         apiToken: context.apiToken,
         body: {
@@ -76,7 +76,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => expand(body, () => new IdResponse()));
+      .then((body) => expand(body, () => new IdResponse()));
   }
 
   async deleteAsset(
@@ -84,7 +84,7 @@ export class ManagementController {
     assetId: string,
   ): Promise<void> {
     return this.#inner.request(context.management, {
-      path: `/v2/assets/${assetId}`,
+      path: `/v3/assets/${assetId}`,
       method: "DELETE",
       apiToken: context.apiToken,
     });
@@ -95,18 +95,7 @@ export class ManagementController {
     assetId: string,
   ): Promise<AssetResponse> {
     return this.#inner.request(context.management, {
-      path: `/v2/assets/${assetId}`,
-      method: "GET",
-      apiToken: context.apiToken,
-    });
-  }
-
-  async getAssetDataAddress(
-    context: EdcConnectorClientContext,
-    assetId: string,
-  ): Promise<DataAddressProperties> {
-    return this.#inner.request(context.management, {
-      path: `/v2/assets/${assetId}/dataaddress`,
+      path: `/v3/assets/${assetId}`,
       method: "GET",
       apiToken: context.apiToken,
     });
@@ -117,7 +106,7 @@ export class ManagementController {
     query: QuerySpec = {},
   ): Promise<AssetResponse[]> {
     return this.#inner.request(context.management, {
-      path: "/v2/assets/request",
+      path: "/v3/assets/request",
       method: "POST",
       apiToken: context.apiToken,
       body:
@@ -144,7 +133,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => expand(body, () => new IdResponse()));
+      .then((body) => expand(body, () => new IdResponse()));
   }
 
   async deletePolicy(
@@ -162,12 +151,13 @@ export class ManagementController {
     context: EdcConnectorClientContext,
     policyId: string,
   ): Promise<PolicyDefinition> {
-    return this.#inner.request(context.management, {
-      path: `/v2/policydefinitions/${policyId}`,
-      method: "GET",
-      apiToken: context.apiToken,
-    })
-    .then(body => expand(body, () => new PolicyDefinition()));
+    return this.#inner
+      .request(context.management, {
+        path: `/v2/policydefinitions/${policyId}`,
+        method: "GET",
+        apiToken: context.apiToken,
+      })
+      .then((body) => expand(body, () => new PolicyDefinition()));
   }
 
   async queryAllPolicies(
@@ -187,7 +177,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => expandArray(body, () => new PolicyDefinition()));
+      .then((body) => expandArray(body, () => new PolicyDefinition()));
   }
 
   async createContractDefinition(
@@ -204,7 +194,7 @@ export class ManagementController {
           "@context": this.defaultContextValues,
         },
       })
-      .then(body => expand(body, () => new IdResponse()));
+      .then((body) => expand(body, () => new IdResponse()));
   }
 
   async deleteContractDefinition(
@@ -246,7 +236,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => expandArray(body, () => new ContractDefinition()));
+      .then((body) => expandArray(body, () => new ContractDefinition()));
   }
 
   async requestCatalog(
@@ -264,7 +254,7 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => expand(body, () => new Catalog()));
+      .then((body) => expand(body, () => new Catalog()));
   }
 
   async initiateContractNegotiation(
@@ -282,26 +272,27 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => expand(body, () => new IdResponse()));
+      .then((body) => expand(body, () => new IdResponse()));
   }
 
   async queryNegotiations(
     context: EdcConnectorClientContext,
     query: QuerySpec = {},
   ): Promise<ContractNegotiation[]> {
-    return this.#inner.request(context.management, {
-      path: "/v2/contractnegotiations/request",
-      method: "POST",
-      apiToken: context.apiToken,
-      body:
-        Object.keys(query).length === 0
-          ? null
-          : {
-              ...query,
-              "@context": this.defaultContextValues,
-            },
-    })
-    .then(body => expandArray(body, () => new ContractNegotiation()));
+    return this.#inner
+      .request(context.management, {
+        path: "/v2/contractnegotiations/request",
+        method: "POST",
+        apiToken: context.apiToken,
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": this.defaultContextValues,
+              },
+      })
+      .then((body) => expandArray(body, () => new ContractNegotiation()));
   }
 
   async getNegotiation(
@@ -314,7 +305,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => expand(body, () => new ContractNegotiation()));
+      .then((body) => expand(body, () => new ContractNegotiation()));
   }
 
   async getNegotiationState(
@@ -327,7 +318,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => expand(body, () => new ContractNegotiationState()));
+      .then((body) => expand(body, () => new ContractNegotiationState()));
   }
 
   async cancelNegotiation(
@@ -362,7 +353,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => expand(body, () => new ContractAgreement()));
+      .then((body) => expand(body, () => new ContractAgreement()));
   }
 
   async queryAllAgreements(
@@ -382,7 +373,7 @@ export class ManagementController {
                 "@context": this.defaultContextValues,
               },
       })
-      .then(body => expandArray(body, () => new ContractAgreement()));
+      .then((body) => expandArray(body, () => new ContractAgreement()));
   }
 
   async getAgreement(
@@ -395,7 +386,7 @@ export class ManagementController {
         method: "GET",
         apiToken: context.apiToken,
       })
-      .then(body => expand(body, () => new ContractAgreement()));
+      .then((body) => expand(body, () => new ContractAgreement()));
   }
 
   async initiateTransfer(
@@ -413,7 +404,7 @@ export class ManagementController {
           ...input,
         },
       })
-      .then(body => expand(body, () => new IdResponse()));
+      .then((body) => expand(body, () => new IdResponse()));
   }
 
   async queryAllTransferProcesses(
@@ -425,12 +416,14 @@ export class ManagementController {
         path: "/v2/transferprocesses/request",
         method: "POST",
         apiToken: context.apiToken,
-        body: Object.keys(query).length === 0 ? null : {
-          ...query,
-          "@context": this.defaultContextValues,
-        },
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": this.defaultContextValues,
+              },
       })
-      .then(body => expandArray(body, () => new TransferProcess()));
+      .then((body) => expandArray(body, () => new TransferProcess()));
   }
-
 }

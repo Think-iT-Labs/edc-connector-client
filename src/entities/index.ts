@@ -31,7 +31,6 @@ export interface ApiErrorDetail {
 }
 
 export interface QuerySpec {
-  filter?: string;
   filterExpression?: Criterion[];
   limit?: number;
   offset?: number;

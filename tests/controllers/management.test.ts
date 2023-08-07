@@ -42,12 +42,10 @@ describe("ManagementController", () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
@@ -72,12 +70,10 @@ describe("ManagementController", () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
@@ -115,12 +111,10 @@ describe("ManagementController", () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
@@ -135,7 +129,7 @@ describe("ManagementController", () => {
       // when
       const asset = await edcClient.management.deleteAsset(
         context,
-        assetInput.asset["@id"] as string,
+        assetInput["@id"] as string,
       );
 
       // then
@@ -172,12 +166,10 @@ describe("ManagementController", () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
@@ -192,12 +184,12 @@ describe("ManagementController", () => {
       // when
       const asset = await edcClient.management.getAsset(
         context,
-        assetInput.asset["@id"] as string,
+        assetInput["@id"] as string,
       );
 
       // then
       expect(asset).toHaveProperty("@context");
-      expect(asset).toHaveProperty("@id", assetInput.asset["@id"]);
+      expect(asset).toHaveProperty("@id", assetInput["@id"]);
     });
 
     it("fails to fetch an not existant asset", async () => {
@@ -223,81 +215,15 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.getAssetDataAddress", () => {
-    it("returns a target asset data address", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-      const assetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
-        },
-        dataAddress: {
-          type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
-        },
-      };
-      await edcClient.management.createAsset(context, assetInput);
-
-      // when
-      const assetDataAddress = await edcClient.management.getAssetDataAddress(
-        context,
-        assetInput.asset["@id"],
-      );
-
-      // then
-      expect(assetDataAddress).toHaveProperty("@type");
-      expect(assetDataAddress).toEqual(
-        expect.objectContaining({
-          [`${EDC_NAMESPACE}:name`]: assetInput.dataAddress.properties.name,
-          [`${EDC_NAMESPACE}:baseUrl`]:
-            assetInput.dataAddress.properties.baseUrl,
-          [`${EDC_NAMESPACE}:type`]: assetInput.dataAddress.type,
-        }),
-      );
-    });
-
-    it("fails to fetch a data address for an inexistant asset", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-
-      // when
-      const maybeAssetDataAddress = edcClient.management.getAssetDataAddress(
-        context,
-        crypto.randomUUID(),
-      );
-      // then
-      await expect(maybeAssetDataAddress).rejects.toThrowError(
-        "resource not found",
-      );
-
-      maybeAssetDataAddress.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.NotFound,
-        );
-      });
-    });
-  });
-
   describe("edcClient.management.queryAllAssets", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
-        asset: {
-          "@id": crypto.randomUUID(),
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           name: "Test asset",
@@ -313,7 +239,7 @@ describe("ManagementController", () => {
       // then
       expect(assets.length).toBeGreaterThan(0);
       expect(
-        assets.find((asset) => asset?.["@id"] === assetInput.asset?.["@id"]),
+        assets.find((asset) => asset?.["@id"] === assetInput["@id"]),
       ).toBeTruthy();
     });
   });
@@ -676,12 +602,10 @@ describe("ManagementController", () => {
       const assetId = crypto.randomUUID();
 
       const assetInput: AssetInput = {
-        asset: {
-          "@id": assetId,
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": assetId,
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           name: "Test asset",
@@ -725,12 +649,14 @@ describe("ManagementController", () => {
       const catalog = await edcClient.management.requestCatalog(
         consumerContext,
         {
-          providerUrl: provider.protocol
+          providerUrl: provider.protocol,
         },
       );
 
       // then
-      expect(catalog).toHaveProperty("@type", ["https://www.w3.org/ns/dcat/Catalog"]);
+      expect(catalog).toHaveProperty("@type", [
+        "https://www.w3.org/ns/dcat/Catalog",
+      ]);
       expect(catalog).toHaveProperty("datasets");
     });
   });
@@ -783,8 +709,7 @@ describe("ManagementController", () => {
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
         contractNegotiations.find(
-          (contractNegotiation) =>
-            contractNegotiation["@id"] === idResponse.id,
+          (contractNegotiation) => contractNegotiation["@id"] === idResponse.id,
         ),
       ).toBeTruthy();
     });
@@ -930,11 +855,10 @@ describe("ManagementController", () => {
         "TERMINATED",
       );
 
-      const negotiationState =
-        await edcClient.management.getNegotiationState(
-          consumerContext,
-          negotiationId,
-        );
+      const negotiationState = await edcClient.management.getNegotiationState(
+        consumerContext,
+        negotiationId,
+      );
 
       // then
       expect(cancelledNegotiation).toBeUndefined();
@@ -1010,11 +934,10 @@ describe("ManagementController", () => {
         "TERMINATING",
       );
 
-      const negotiationState =
-        await edcClient.management.getNegotiationState(
-          consumerContext,
-          negotiationId,
-        );
+      const negotiationState = await edcClient.management.getNegotiationState(
+        consumerContext,
+        negotiationId,
+      );
 
       // then
       expect(negotiationState.state).toBe("TERMINATING");
@@ -1083,7 +1006,8 @@ describe("ManagementController", () => {
       expect(contractAgreements.length).toBeGreaterThan(0);
       expect(
         contractAgreements.find(
-          agreement => agreement.id === contractNegotiation.contractAgreementId
+          (agreement) =>
+            agreement.id === contractNegotiation.contractAgreementId,
         ),
       ).toBeTruthy();
     });
@@ -1241,12 +1165,18 @@ describe("ManagementController", () => {
       dataplanes.forEach((dataplane) => {
         expect(dataplane).toHaveProperty("id");
         expect(dataplane).toHaveProperty("url", input.url);
-        expect(dataplane)
-          .toHaveProperty("allowedDestTypes", input.allowedDestTypes);
-        expect(dataplane)
-          .toHaveProperty("allowedSourceTypes", input.allowedSourceTypes);
-        expect(dataplane.properties)
-        .toHaveProperty("edc:publicApiUrl", "http://consumer-connector:9291/public/");
+        expect(dataplane).toHaveProperty(
+          "allowedDestTypes",
+          input.allowedDestTypes,
+        );
+        expect(dataplane).toHaveProperty(
+          "allowedSourceTypes",
+          input.allowedSourceTypes,
+        );
+        expect(dataplane.properties).toHaveProperty(
+          `${EDC_NAMESPACE}:publicApiUrl`,
+          "http://consumer-connector:9291/public/",
+        );
       });
     });
   });
