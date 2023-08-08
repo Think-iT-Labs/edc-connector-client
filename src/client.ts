@@ -1,13 +1,10 @@
 import { EdcConnectorClientContext } from "./context";
-import {
-  ManagementController,
-  ObservabilityController,
-  PublicController,
-} from "./controllers";
+import { ObservabilityController, PublicController } from "./controllers";
 import { Addresses } from "./entities";
 import { Inner } from "./inner";
 
 import { version } from "../package.json";
+import { ManagementController } from "./facades/management";
 
 export class EdcConnectorClient {
   readonly management: ManagementController;

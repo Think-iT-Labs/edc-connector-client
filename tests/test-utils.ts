@@ -48,15 +48,17 @@ export async function createContractAgreement(
     "FINALIZED",
   );
 
-  const contractNegotiation = await client.management.getNegotiation(
-    consumerContext,
-    negotiationId,
-  );
+  const contractNegotiation =
+    await client.management.contractNegotiationController.get(
+      consumerContext,
+      negotiationId,
+    );
 
-  const contractAgreement = await client.management.getAgreement(
-    consumerContext,
-    contractNegotiation.contractAgreementId,
-  );
+  const contractAgreement =
+    await client.management.contractAgreementController.get(
+      consumerContext,
+      contractNegotiation.contractAgreementId,
+    );
 
   return {
     ...rest,
@@ -85,7 +87,7 @@ export async function createContractNegotiation(
       type: "HttpData",
     },
   };
-  await client.management.createAsset(providerContext, assetInput);
+  await client.management.assetController.create(providerContext, assetInput);
 
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
@@ -96,7 +98,10 @@ export async function createContractNegotiation(
       permissions: [],
     },
   };
-  await client.management.createPolicy(providerContext, policyInput);
+  await client.management.policyDefinitionController.create(
+    providerContext,
+    policyInput,
+  );
 
   const contractDefinitionId = "definition-" + crypto.randomUUID();
   // Crate contract definition on the provider's side
@@ -106,15 +111,19 @@ export async function createContractNegotiation(
     contractPolicyId: policyId,
     assetsSelector: [],
   };
-  await client.management.createContractDefinition(
+  await client.management.contractDefinitionController.create(
     providerContext,
     contractDefinitionInput,
   );
 
   // Retrieve catalog and select contract offer
-  const catalog = await client.management.requestCatalog(consumerContext, {
-    providerUrl: providerContext.protocol,
-  });
+  const catalog =
+    await client.management.contractDefinitionController.requestCatalog(
+      consumerContext,
+      {
+        providerUrl: providerContext.protocol,
+      },
+    );
 
   const offer = catalog.datasets
     .flatMap((it) => it.offers)
@@ -123,19 +132,20 @@ export async function createContractNegotiation(
   offer._compacted = undefined;
 
   // Initiate contract negotiation on the consumer's side
-  const idResponse = await client.management.initiateContractNegotiation(
-    consumerContext,
-    {
-      connectorAddress: providerContext.protocol,
-      connectorId: "provider",
-      providerId: "provider",
-      offer: {
-        offerId: offer.id,
-        assetId: assetId,
-        policy: offer,
+  const idResponse =
+    await client.management.contractNegotiationController.initiate(
+      consumerContext,
+      {
+        connectorAddress: providerContext.protocol,
+        connectorId: "provider",
+        providerId: "provider",
+        offer: {
+          offerId: offer.id,
+          assetId: assetId,
+          policy: offer,
+        },
       },
-    },
-  );
+    );
 
   return {
     assetId,
@@ -160,10 +170,11 @@ export async function waitForNegotiationState(
     times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const response = await client.management.getNegotiationState(
-      context,
-      negotiationId,
-    );
+    const response =
+      await client.management.contractNegotiationController.getState(
+        context,
+        negotiationId,
+      );
 
     actualState = response.state;
 

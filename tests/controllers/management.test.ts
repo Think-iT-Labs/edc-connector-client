@@ -37,7 +37,7 @@ describe("ManagementController", () => {
 
   const edcClient = new EdcConnectorClient();
 
-  describe("edcClient.management.createAsset", () => {
+  describe("edcClient.management.assetController.create", () => {
     it("succesfully creates an asset", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -56,7 +56,7 @@ describe("ManagementController", () => {
       };
 
       // when
-      const idResponse = await edcClient.management.createAsset(
+      const idResponse = await edcClient.management.assetController.create(
         context,
         assetInput,
       );
@@ -85,8 +85,8 @@ describe("ManagementController", () => {
       };
 
       // when
-      await edcClient.management.createAsset(context, assetInput);
-      const maybeCreateResult = edcClient.management.createAsset(
+      await edcClient.management.assetController.create(context, assetInput);
+      const maybeCreateResult = edcClient.management.assetController.create(
         context,
         assetInput,
       );
@@ -106,7 +106,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.deleteAsset", () => {
+  describe("edcClient.management.delete", () => {
     it("deletes a target asset", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -124,10 +124,10 @@ describe("ManagementController", () => {
           },
         },
       };
-      await edcClient.management.createAsset(context, assetInput);
+      await edcClient.management.assetController.create(context, assetInput);
 
       // when
-      const asset = await edcClient.management.deleteAsset(
+      const asset = await edcClient.management.assetController.delete(
         context,
         assetInput["@id"] as string,
       );
@@ -141,7 +141,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.deleteAsset(
+      const maybeAsset = edcClient.management.assetController.delete(
         context,
         crypto.randomUUID(),
       );
@@ -161,7 +161,7 @@ describe("ManagementController", () => {
     it.todo("fails to delete an asset that is part of an agreed contract");
   });
 
-  describe("edcClient.management.getAsset", () => {
+  describe("edcClient.management.get", () => {
     it("returns a target asset", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -179,10 +179,10 @@ describe("ManagementController", () => {
           },
         },
       };
-      await edcClient.management.createAsset(context, assetInput);
+      await edcClient.management.assetController.create(context, assetInput);
 
       // when
-      const asset = await edcClient.management.getAsset(
+      const asset = await edcClient.management.assetController.get(
         context,
         assetInput["@id"] as string,
       );
@@ -197,7 +197,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.getAsset(
+      const maybeAsset = edcClient.management.assetController.get(
         context,
         crypto.randomUUID(),
       );
@@ -231,10 +231,12 @@ describe("ManagementController", () => {
           type: "HttpData",
         },
       };
-      await edcClient.management.createAsset(context, assetInput);
+      await edcClient.management.assetController.create(context, assetInput);
 
       // when
-      const assets = await edcClient.management.queryAllAssets(context);
+      const assets = await edcClient.management.assetController.queryAllAssets(
+        context,
+      );
 
       // then
       expect(assets.length).toBeGreaterThan(0);
@@ -339,10 +341,11 @@ describe("ManagementController", () => {
       };
 
       // when
-      const idResponse = await edcClient.management.createPolicy(
-        context,
-        policyInput,
-      );
+      const idResponse =
+        await edcClient.management.policyDefinitionController.create(
+          context,
+          policyInput,
+        );
 
       // then
       expect(idResponse).toHaveProperty("createdAt");
@@ -358,11 +361,15 @@ describe("ManagementController", () => {
       };
 
       // when
-      await edcClient.management.createPolicy(context, policyInput);
-      const maybeCreateResult = edcClient.management.createPolicy(
+      await edcClient.management.policyDefinitionController.create(
         context,
         policyInput,
       );
+      const maybeCreateResult =
+        edcClient.management.policyDefinitionController.create(
+          context,
+          policyInput,
+        );
 
       // then
       await expect(maybeCreateResult).rejects.toThrowError(
@@ -379,7 +386,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.queryAllPolicies", () => {
+  describe("edcClient.management.policyDefinitionController.queryAll", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -387,10 +394,14 @@ describe("ManagementController", () => {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.createPolicy(context, policyInput);
+      await edcClient.management.policyDefinitionController.create(
+        context,
+        policyInput,
+      );
 
       // when
-      const policies = await edcClient.management.queryAllPolicies(context);
+      const policies =
+        await edcClient.management.policyDefinitionController.queryAll(context);
 
       // then
       expect(policies.length).toBeGreaterThan(0);
@@ -400,7 +411,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.getPolicy", () => {
+  describe("edcClient.management.policyDefinitionController.get", () => {
     it("succesfully retuns a target policy", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -408,13 +419,14 @@ describe("ManagementController", () => {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      const idResponse = await edcClient.management.createPolicy(
-        context,
-        policyInput,
-      );
+      const idResponse =
+        await edcClient.management.policyDefinitionController.create(
+          context,
+          policyInput,
+        );
 
       // when
-      const policy = await edcClient.management.getPolicy(
+      const policy = await edcClient.management.policyDefinitionController.get(
         context,
         idResponse.id,
       );
@@ -428,7 +440,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybePolicy = edcClient.management.getPolicy(
+      const maybePolicy = edcClient.management.policyDefinitionController.get(
         context,
         crypto.randomUUID(),
       );
@@ -446,7 +458,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.deletePolicy", () => {
+  describe("edcClient.management.policyDefinitionController.delete", () => {
     it("deletes a target policy", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -454,13 +466,17 @@ describe("ManagementController", () => {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.createPolicy(context, policyInput);
+      await edcClient.management.policyDefinitionController.create(
+        context,
+        policyInput,
+      );
 
       // when
-      const policy = await edcClient.management.deletePolicy(
-        context,
-        policyInput["@id"]!,
-      );
+      const policy =
+        await edcClient.management.policyDefinitionController.delete(
+          context,
+          policyInput["@id"]!,
+        );
 
       // then
       expect(policy).toBeUndefined();
@@ -471,7 +487,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.deletePolicy(
+      const maybeAsset = edcClient.management.policyDefinitionController.delete(
         context,
         crypto.randomUUID(),
       );
@@ -491,7 +507,7 @@ describe("ManagementController", () => {
     it.todo("fails to delete a policy that is part of an agreed contract");
   });
 
-  describe("edcClient.management.createContractDefinition", () => {
+  describe("edcClient.management.contractDefinitionController.create", () => {
     it("succesfully creates a new contract definition", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -503,10 +519,11 @@ describe("ManagementController", () => {
       };
 
       // when
-      const idResponse = await edcClient.management.createContractDefinition(
-        context,
-        contractDefinitionInput,
-      );
+      const idResponse =
+        await edcClient.management.contractDefinitionController.create(
+          context,
+          contractDefinitionInput,
+        );
 
       // then
       expect(idResponse).toHaveProperty("createdAt");
@@ -524,14 +541,15 @@ describe("ManagementController", () => {
       };
 
       // when
-      await edcClient.management.createContractDefinition(
+      await edcClient.management.contractDefinitionController.create(
         context,
         contractDefinitionInput,
       );
-      const maybeCreateResult = edcClient.management.createContractDefinition(
-        context,
-        contractDefinitionInput,
-      );
+      const maybeCreateResult =
+        edcClient.management.contractDefinitionController.create(
+          context,
+          contractDefinitionInput,
+        );
 
       // then
       await expect(maybeCreateResult).rejects.toThrowError(
@@ -548,7 +566,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.queryAllContractDefinitions", () => {
+  describe("edcClient.management.contractDefinitionController.queryAll", () => {
     it("succesfully retuns a list of contract definitions", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -558,14 +576,16 @@ describe("ManagementController", () => {
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      await edcClient.management.createContractDefinition(
+      await edcClient.management.contractDefinitionController.create(
         context,
         contractDefinitionInput,
       );
 
       // when
       const contractDefinitions =
-        await edcClient.management.queryAllContractDefinitions(context);
+        await edcClient.management.contractDefinitionController.queryAll(
+          context,
+        );
 
       // then
       expect(contractDefinitions.length).toBeGreaterThan(0);
@@ -578,7 +598,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.getContractDefinition", () => {
+  describe("edcClient.management.contractDefinitionController.get", () => {
     it("succesfully retuns a target contract definition", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -588,14 +608,15 @@ describe("ManagementController", () => {
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      const idResponse = await edcClient.management.createContractDefinition(
-        context,
-        contractDefinitionInput,
-      );
+      const idResponse =
+        await edcClient.management.contractDefinitionController.create(
+          context,
+          contractDefinitionInput,
+        );
 
       // when
       const contractDefinition =
-        await edcClient.management.getContractDefinition(
+        await edcClient.management.contractDefinitionController.get(
           context,
           idResponse.id,
         );
@@ -609,7 +630,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybePolicy = edcClient.management.getContractDefinition(
+      const maybePolicy = edcClient.management.contractDefinitionController.get(
         context,
         crypto.randomUUID(),
       );
@@ -627,7 +648,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.deleteContractDefinition", () => {
+  describe("edcClient.management.contractDefinitionController.delete", () => {
     it("deletes a target contract definition", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -637,14 +658,15 @@ describe("ManagementController", () => {
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      const idResponse = await edcClient.management.createContractDefinition(
-        context,
-        contractDefinitionInput,
-      );
+      const idResponse =
+        await edcClient.management.contractDefinitionController.create(
+          context,
+          contractDefinitionInput,
+        );
 
       // when
       const contractDefinition =
-        await edcClient.management.deleteContractDefinition(
+        await edcClient.management.contractDefinitionController.delete(
           context,
           idResponse.id,
         );
@@ -659,7 +681,7 @@ describe("ManagementController", () => {
 
       // when
       const maybeContractDefinition =
-        edcClient.management.deleteContractDefinition(
+        edcClient.management.contractDefinitionController.delete(
           context,
           crypto.randomUUID(),
         );
@@ -777,7 +799,10 @@ describe("ManagementController", () => {
           type: "HttpData",
         },
       };
-      await edcClient.management.createAsset(providerContext, assetInput);
+      await edcClient.management.assetController.create(
+        providerContext,
+        assetInput,
+      );
 
       const policyId = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
@@ -795,7 +820,10 @@ describe("ManagementController", () => {
           ],
         },
       };
-      await edcClient.management.createPolicy(providerContext, policyInput);
+      await edcClient.management.policyDefinitionController.create(
+        providerContext,
+        policyInput,
+      );
 
       const contractDefinitionId = crypto.randomUUID();
       const contractDefinitionInput: ContractDefinitionInput = {
@@ -804,7 +832,7 @@ describe("ManagementController", () => {
         contractPolicyId: policyId,
         assetsSelector: [],
       };
-      await edcClient.management.createContractDefinition(
+      await edcClient.management.contractDefinitionController.create(
         providerContext,
         contractDefinitionInput,
       );
@@ -853,7 +881,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.queryNegotiations", () => {
+  describe("edcClient.management.contractNegotiationController.queryAll", () => {
     it("retrieves all contract negotiations", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -865,9 +893,10 @@ describe("ManagementController", () => {
       );
 
       // when
-      const contractNegotiations = await edcClient.management.queryNegotiations(
-        consumerContext,
-      );
+      const contractNegotiations =
+        await edcClient.management.contractNegotiationController.queryAll(
+          consumerContext,
+        );
 
       // then
       expect(contractNegotiations.length).toBeGreaterThan(0);
@@ -890,22 +919,25 @@ describe("ManagementController", () => {
 
       // when
       const [providerNegotiation] =
-        await edcClient.management.queryNegotiations(providerContext, {
-          filterExpression: [
-            {
-              operandLeft: "contractAgreement.assetId",
-              operandRight: assetId,
-              operator: "=",
-            },
-          ],
-        });
+        await edcClient.management.contractNegotiationController.queryAll(
+          providerContext,
+          {
+            filterExpression: [
+              {
+                operandLeft: "contractAgreement.assetId",
+                operandRight: assetId,
+                operator: "=",
+              },
+            ],
+          },
+        );
 
       // then
       expect(providerNegotiation).toBeTruthy();
     });
   });
 
-  describe("edcClient.management.getNegotiation", () => {
+  describe("edcClient.management.contractNegotiationController.get", () => {
     it("retrieves target contract negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -917,10 +949,11 @@ describe("ManagementController", () => {
       );
 
       // when
-      const contractNegotiation = await edcClient.management.getNegotiation(
-        consumerContext,
-        idResponse.id,
-      );
+      const contractNegotiation =
+        await edcClient.management.contractNegotiationController.get(
+          consumerContext,
+          idResponse.id,
+        );
 
       // then
       expect(contractNegotiation).toHaveProperty("@id", idResponse.id);
@@ -931,7 +964,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.getNegotiation(
+      const maybeAsset = edcClient.management.contractNegotiationController.get(
         context,
         crypto.randomUUID(),
       );
@@ -949,7 +982,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.getNegotiationState", () => {
+  describe("edcClient.management.contractNegotiationController.getState", () => {
     it("returns the state of a target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -962,7 +995,7 @@ describe("ManagementController", () => {
 
       // when
       const contractNegotiationState =
-        await edcClient.management.getNegotiationState(
+        await edcClient.management.contractNegotiationController.getState(
           consumerContext,
           idResponse.id,
         );
@@ -976,10 +1009,11 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.getNegotiationState(
-        context,
-        crypto.randomUUID(),
-      );
+      const maybeAsset =
+        edcClient.management.contractNegotiationController.getState(
+          context,
+          crypto.randomUUID(),
+        );
 
       // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
@@ -994,7 +1028,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.cancelNegotiation", () => {
+  describe("edcClient.management.contractNegotiationController.cancel", () => {
     it.skip("cancel the requested target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1008,10 +1042,11 @@ describe("ManagementController", () => {
       const negotiationId = idResponse.id;
 
       // when
-      const cancelledNegotiation = await edcClient.management.cancelNegotiation(
-        consumerContext,
-        negotiationId,
-      );
+      const cancelledNegotiation =
+        await edcClient.management.contractNegotiationController.cancel(
+          consumerContext,
+          negotiationId,
+        );
       await waitForNegotiationState(
         edcClient,
         consumerContext,
@@ -1034,10 +1069,11 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.cancelNegotiation(
-        context,
-        crypto.randomUUID(),
-      );
+      const maybeAsset =
+        edcClient.management.contractNegotiationController.cancel(
+          context,
+          crypto.randomUUID(),
+        );
 
       // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
@@ -1052,7 +1088,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe.skip("edcClient.management.declineNegotiation", () => {
+  describe.skip("edcClient.management.contractNegotiationController.decline", () => {
     it.skip("declines the a requested target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1072,21 +1108,22 @@ describe("ManagementController", () => {
         "FINALIZED",
       );
 
-      const providerNegotiation = await edcClient.management.queryNegotiations(
-        providerContext,
-        {
-          filterExpression: [
-            {
-              operandLeft: "contractAgreement.assetId",
-              operandRight: assetId,
-              operator: "=",
-            },
-          ],
-        },
-      );
+      const providerNegotiation =
+        await edcClient.management.contractNegotiationController.queryAll(
+          providerContext,
+          {
+            filterExpression: [
+              {
+                operandLeft: "contractAgreement.assetId",
+                operandRight: assetId,
+                operator: "=",
+              },
+            ],
+          },
+        );
 
       // when
-      await edcClient.management.declineNegotiation(
+      await edcClient.management.contractNegotiationController.decline(
         providerContext,
         providerNegotiation[0].contractAgreementId,
       );
@@ -1108,7 +1145,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.getAgreementForNegotiation", () => {
+  describe("edcClient.management.contractNegotiationController.getAgreement", () => {
     it("returns the a agreement for a target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1130,7 +1167,7 @@ describe("ManagementController", () => {
 
       // when
       const contractAgreement =
-        await edcClient.management.getAgreementForNegotiation(
+        await edcClient.management.contractNegotiationController.getAgreement(
           consumerContext,
           negotiationId,
         );
@@ -1140,7 +1177,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.queryAllAgreements", () => {
+  describe("edcClient.management.contractAgreementController.queryAll", () => {
     it("retrieves all contract agreements", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1156,15 +1193,17 @@ describe("ManagementController", () => {
         idResponse.id,
         "FINALIZED",
       );
-      const contractNegotiation = await edcClient.management.getNegotiation(
-        consumerContext,
-        idResponse.id,
-      );
+      const contractNegotiation =
+        await edcClient.management.contractNegotiationController.get(
+          consumerContext,
+          idResponse.id,
+        );
 
       // when
-      const contractAgreements = await edcClient.management.queryAllAgreements(
-        consumerContext,
-      );
+      const contractAgreements =
+        await edcClient.management.contractAgreementController.queryAll(
+          consumerContext,
+        );
 
       // then
       expect(contractAgreements.length).toBeGreaterThan(0);
@@ -1203,7 +1242,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.getAgreement(
+      const maybeAsset = edcClient.management.contractAgreementController.get(
         context,
         crypto.randomUUID(),
       );
@@ -1232,7 +1271,7 @@ describe("ManagementController", () => {
       await receiverServer.shutdown();
     });
 
-    describe("edcClient.management.queryAllTransferProcesses", () => {
+    describe("edcClient.management.transferProcessController.queryAll", () => {
       it("retrieves all tranfer processes", async () => {
         // given
         const consumerContext = edcClient.createContext(apiToken, consumer);
@@ -1247,7 +1286,7 @@ describe("ManagementController", () => {
           },
         };
 
-        await edcClient.management.registerDataplane(
+        await edcClient.management.dataplaneController.register(
           providerContext,
           dataplaneInput,
         );
@@ -1258,21 +1297,24 @@ describe("ManagementController", () => {
           consumerContext,
         );
 
-        const idResponse = await edcClient.management.initiateTransfer(
-          consumerContext,
-          {
-            assetId,
-            connectorId: "provider",
-            connectorAddress: providerContext.protocol,
-            contractId: contractAgreement.id,
-            managedResources: false,
-            dataDestination: { type: "HttpProxy" },
-          },
-        );
+        const idResponse =
+          await edcClient.management.transferProcessController.initiate(
+            consumerContext,
+            {
+              assetId,
+              connectorId: "provider",
+              connectorAddress: providerContext.protocol,
+              contractId: contractAgreement.id,
+              managedResources: false,
+              dataDestination: { type: "HttpProxy" },
+            },
+          );
 
         // when
         const transferProcesses =
-          await edcClient.management.queryAllTransferProcesses(consumerContext);
+          await edcClient.management.transferProcessController.queryAll(
+            consumerContext,
+          );
 
         // then
         expect(transferProcesses.length).toBeGreaterThan(0);
@@ -1285,7 +1327,7 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.registerDataplane", () => {
+  describe("edcClient.management.dataplaneController.register", () => {
     it("succesfully register a dataplane", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
@@ -1300,10 +1342,11 @@ describe("ManagementController", () => {
       };
 
       // when
-      const registration = await edcClient.management.registerDataplane(
-        context,
-        dataplaneInput,
-      );
+      const registration =
+        await edcClient.management.dataplaneController.register(
+          context,
+          dataplaneInput,
+        );
 
       // then
       expect(registration).toBeUndefined();
@@ -1321,9 +1364,11 @@ describe("ManagementController", () => {
           publicApiUrl: "http://consumer-connector:9291/public/",
         },
       };
-      await edcClient.management.registerDataplane(context, input);
+      await edcClient.management.dataplaneController.register(context, input);
 
-      const dataplanes = await edcClient.management.listDataplanes(context);
+      const dataplanes = await edcClient.management.dataplaneController.list(
+        context,
+      );
 
       expect(dataplanes.length).toBeGreaterThan(0);
       dataplanes.forEach((dataplane) => {
