@@ -43,9 +43,7 @@ describe("PublicController", () => {
       const maybeData = edcClient.public.getTransferredData(context, {});
 
       // then
-      await expect(maybeData).rejects.toThrowError(
-        "request was malformed",
-      );
+      await expect(maybeData).rejects.toThrowError("request was malformed");
 
       maybeData.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -72,7 +70,7 @@ describe("PublicController", () => {
         },
       };
 
-      await edcClient.management.registerDataplane(
+      await edcClient.management.dataplanes.register(
         providerContext,
         dataplaneInput,
       );
@@ -83,19 +81,21 @@ describe("PublicController", () => {
         consumerContext,
       );
 
-      const idResponse = await edcClient.management.initiateTransfer(
+      const idResponse = await edcClient.management.transferProcesses.initiate(
         consumerContext,
         {
           assetId,
-          "connectorId": "provider",
-          "connectorAddress": providerContext.protocol,
-          "contractId": contractAgreement.id,
-          "managedResources": false,
-          "dataDestination": { "type": "HttpProxy" }
+          connectorId: "provider",
+          connectorAddress: providerContext.protocol,
+          contractId: contractAgreement.id,
+          managedResources: false,
+          dataDestination: { type: "HttpProxy" },
         },
       );
 
-      const transferProcessResponse = await receiverServer.waitForEvent(idResponse.id);
+      const transferProcessResponse = await receiverServer.waitForEvent(
+        idResponse.id,
+      );
 
       // when
       const data = await edcClient.public.getTransferredData(consumerContext, {
@@ -115,7 +115,7 @@ describe("PublicController", () => {
           }
 
           if (data.value) {
-            d.push(... data.value);
+            d.push(...data.value);
           }
         }
         resolve(JSON.parse(Buffer.from(d).toString()));
