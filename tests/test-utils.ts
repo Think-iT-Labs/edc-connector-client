@@ -39,7 +39,7 @@ export async function createContractAgreement(
     consumerContext,
   );
 
-  const negotiationId = idResponse.id
+  const negotiationId = idResponse.id;
 
   await waitForNegotiationState(
     client,
@@ -73,13 +73,11 @@ export async function createContractNegotiation(
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
-    asset: {
-      "@id": assetId,
-      properties: {
-        "asset:prop:id": assetId,
-        "asset:prop:name": "product description",
-        "asset:prop:contenttype": "application/json",
-      },
+    "@id": assetId,
+    properties: {
+      "asset:prop:id": assetId,
+      "asset:prop:name": "product description",
+      "asset:prop:contenttype": "application/json",
     },
     dataAddress: {
       name: "Test asset",
@@ -118,11 +116,9 @@ export async function createContractNegotiation(
     providerUrl: providerContext.protocol,
   });
 
-
-  const offer = catalog
-    .datasets
-    .flatMap(it => it.offers)
-    .find(offer => offer.assetId === assetId)!;
+  const offer = catalog.datasets
+    .flatMap((it) => it.offers)
+    .find((offer) => offer.assetId === assetId)!;
 
   offer._compacted = undefined;
 
@@ -174,8 +170,7 @@ export async function waitForNegotiationState(
     waiting = actualState !== targetState;
   } while (waiting && times > 0);
 
-  expect(actualState).toBe(targetState)
-
+  expect(actualState).toBe(targetState);
 }
 
 export function createReceiverServer() {
