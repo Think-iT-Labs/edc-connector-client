@@ -8,13 +8,7 @@ import (
 	"github.com/Think-iT-Labs/edc-connector-client/go/internal"
 )
 
-type AssetOutput struct {
-	CreatedAt       int64             `json:"createdAt"`
-	Id              string            `json:"id"`
-	AssetProperties map[string]string `json:"properties"`
-}
-
-func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, error) {
+func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetProperties, error) {
 	var queryInput apivalidator.QueryInput
 
 	if len(args) > 0 {
@@ -27,8 +21,8 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 		queryInput = apivalidator.QueryInput{}
 	}
 
-	endpoint := fmt.Sprintf("%v/assets/request", *c.Addresses.Management)
-	assets := &[]AssetOutput{}
+	endpoint := fmt.Sprintf("%s/assets/request", *c.Addresses.Management)
+	assets := []AssetProperties{}
 
 	err := c.HTTPClient.InvokeOperation(internal.InvokeHTTPOperationOptions{
 		Method:             http.MethodPost,
@@ -37,10 +31,9 @@ func (c *Client) ListAssets(args ...apivalidator.QueryInput) ([]AssetOutput, err
 		ResponsePayload:    assets,
 		ExpectedStatusCode: http.StatusOK,
 	})
-
 	if err != nil {
 		return nil, err
 	}
 
-	return *assets, nil
+	return assets, nil
 }

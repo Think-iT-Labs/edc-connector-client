@@ -9,7 +9,7 @@ repositories {
 }
 
 val edcGroupId = "org.eclipse.edc"
-val edcVersion = "0.0.1-milestone-9"
+val edcVersion = "0.1.3"
 
 dependencies {
     implementation("${edcGroupId}:control-plane-core:${edcVersion}")

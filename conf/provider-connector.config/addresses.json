@@ -3,8 +3,8 @@
   "name": "provider.edc.think-it.io",
   "addresses": {
     "default": "http://localhost:29191/api",
-    "data": "http://localhost:29193/management",
-    "ids": "http://provider-connector:9194/protocol",
+    "management": "http://localhost:29193/management",
+    "protocol": "http://provider-connector:9194/protocol",
     "public": "http://localhost:29291/public",
     "control": "http://localhost:29292/control"
   }
