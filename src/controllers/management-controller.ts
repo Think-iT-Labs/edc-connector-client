@@ -119,6 +119,21 @@ export class ManagementController {
     });
   }
 
+  async updateAsset(
+    context: EdcConnectorClientContext,
+    input: AssetInput,
+  ): Promise<void> {
+    return this.#inner.request(context.management, {
+      path: "/v3/assets",
+      method: "PUT",
+      apiToken: context.apiToken,
+      body: {
+        ...input,
+        "@context": this.defaultContextValues,
+      },
+    });
+  }
+
   async createPolicy(
     context: EdcConnectorClientContext,
     input: PolicyDefinitionInput,

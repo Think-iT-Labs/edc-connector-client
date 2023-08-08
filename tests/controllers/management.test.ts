@@ -244,6 +244,91 @@ describe("ManagementController", () => {
     });
   });
 
+  describe("edcClient.management.updateAsset", () => {
+    it("updates a target asset", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      const assetInput = {
+        "@id": crypto.randomUUID(),
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
+        },
+        dataAddress: {
+          type: "HttpData",
+          properties: {
+            name: "Test asset",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+          },
+        },
+      };
+      await edcClient.management.createAsset(context, assetInput);
+      const updateAssetInput = {
+        "@id": assetInput["@id"],
+        properties: { name: "updated test asset", contenttype: "text/plain" },
+        dataAddress: {
+          type: "s3",
+        },
+      };
+
+      // when
+      await edcClient.management.updateAsset(context, updateAssetInput);
+
+      const updatedAsset = await edcClient.management.getAsset(
+        context,
+        assetInput["@id"],
+      );
+
+      // then
+      expect(updatedAsset).toHaveProperty("@type");
+      expect(updatedAsset).toEqual(
+        expect.objectContaining({
+          [`${EDC_NAMESPACE}:properties`]: {
+            [`${EDC_NAMESPACE}:name`]: updateAssetInput.properties.name,
+            [`${EDC_NAMESPACE}:id`]: updateAssetInput["@id"],
+            [`${EDC_NAMESPACE}:contenttype`]:
+              updateAssetInput.properties.contenttype,
+          },
+          [`${EDC_NAMESPACE}:dataAddress`]: {
+            [`${EDC_NAMESPACE}:type`]: updateAssetInput.dataAddress.type,
+            "@type": "edc:DataAddress",
+          },
+        }),
+      );
+    });
+
+    it("fails to update an inexistant asset", async () => {
+      // given
+      const context = edcClient.createContext(apiToken, consumer);
+      const updateAssetInput = {
+        "@id": crypto.randomUUID(),
+        properties: { name: "updated test asset", contenttype: "text/plain" },
+        dataAddress: {
+          type: "s3",
+        },
+      };
+
+      // when
+      const maybeUpdatedAsset = edcClient.management.updateAsset(
+        context,
+        updateAssetInput,
+      );
+
+      // then
+      await expect(maybeUpdatedAsset).rejects.toThrowError(
+        "resource not found",
+      );
+
+      maybeUpdatedAsset.catch((error) => {
+        expect(error).toBeInstanceOf(EdcConnectorClientError);
+        expect(error as EdcConnectorClientError).toHaveProperty(
+          "type",
+          EdcConnectorClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
   describe("edcClient.management.createPolicy", () => {
     it("succesfully creates a new policy", async () => {
       // given
