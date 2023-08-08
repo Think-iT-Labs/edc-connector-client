@@ -17,6 +17,16 @@ export class TransferProcess extends JsonLdId {
   dataDestination?: { properties: { type: string } };
 }
 
+export class TransferProcessState extends JsonLdId {
+  state?: TransferProcessStates;
+}
+
+export enum TransferProcessStates {
+  FINALIZED = "FINALIZED",
+  STARTED = "STARTED",
+  REQUESTING = "REQUESTING",
+}
+
 export interface TransferProcessInput {
   assetId: string;
   connectorAddress: string;

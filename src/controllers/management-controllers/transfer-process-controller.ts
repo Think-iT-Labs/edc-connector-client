@@ -7,6 +7,7 @@ import {
   TransferProcess,
   TransferProcessInput,
   EDC_CONTEXT,
+  TransferProcessState,
 } from "../../entities";
 import { Inner } from "../../inner";
 
@@ -57,5 +58,18 @@ export class TransferProcessController {
               },
       })
       .then((body) => expandArray(body, () => new TransferProcess()));
+  }
+
+  async getState(
+    context: EdcConnectorClientContext,
+    transferProcessId: string,
+  ): Promise<TransferProcessState> {
+    return this.#inner
+      .request(context.management, {
+        path: `/v2/transferprocesses/${transferProcessId}/state`,
+        method: "GET",
+        apiToken: context.apiToken,
+      })
+      .then((body) => expand(body, () => new TransferProcessState()));
   }
 }
