@@ -1,6 +1,7 @@
 import { Inner } from "../inner";
 import {
   AssetController,
+  CatalogController,
   ContractAgreementController,
   ContractDefinitionController,
   ContractNegotiationController,
@@ -16,25 +17,28 @@ export class ManagementController {
     this.#inner = inner;
   }
 
-  get assetController() {
+  get assets() {
     return new AssetController(this.#inner);
   }
-  get contractAgreementController() {
+  get catalog() {
+    return new CatalogController(this.#inner);
+  }
+  get contractAgreements() {
     return new ContractAgreementController(this.#inner);
   }
-  get contractDefinitionController() {
+  get contractDefinitions() {
     return new ContractDefinitionController(this.#inner);
   }
-  get contractNegotiationController() {
+  get contractNegotiations() {
     return new ContractNegotiationController(this.#inner);
   }
-  get dataplaneController() {
+  get dataplanes() {
     return new DataplaneController(this.#inner);
   }
-  get policyDefinitionController() {
+  get policyDefinitions() {
     return new PolicyDefinitionController(this.#inner);
   }
-  get transferProcessController() {
+  get transferProcesses() {
     return new TransferProcessController(this.#inner);
   }
 }

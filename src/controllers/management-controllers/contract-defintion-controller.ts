@@ -2,8 +2,6 @@ import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
   expandArray,
-  Catalog,
-  CatalogRequest,
   ContractDefinition,
   ContractDefinitionInput,
   IdResponse,
@@ -14,7 +12,6 @@ import { Inner } from "../../inner";
 
 export class ContractDefinitionController {
   #inner: Inner;
-  protocol: String = "dataspace-protocol-http";
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
@@ -80,23 +77,5 @@ export class ContractDefinitionController {
               },
       })
       .then((body) => expandArray(body, () => new ContractDefinition()));
-  }
-
-  async requestCatalog(
-    context: EdcConnectorClientContext,
-    input: CatalogRequest,
-  ): Promise<Catalog> {
-    return this.#inner
-      .request(context.management, {
-        path: "/v2/catalog/request",
-        method: "POST",
-        apiToken: context.apiToken,
-        body: {
-          "@context": this.defaultContextValues,
-          protocol: this.protocol,
-          ...input,
-        },
-      })
-      .then((body) => expand(body, () => new Catalog()));
   }
 }

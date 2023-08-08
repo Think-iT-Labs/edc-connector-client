@@ -70,7 +70,7 @@ describe("PublicController", () => {
         },
       };
 
-      await edcClient.management.dataplaneController.register(
+      await edcClient.management.dataplanes.register(
         providerContext,
         dataplaneInput,
       );
@@ -81,18 +81,17 @@ describe("PublicController", () => {
         consumerContext,
       );
 
-      const idResponse =
-        await edcClient.management.transferProcessController.initiate(
-          consumerContext,
-          {
-            assetId,
-            connectorId: "provider",
-            connectorAddress: providerContext.protocol,
-            contractId: contractAgreement.id,
-            managedResources: false,
-            dataDestination: { type: "HttpProxy" },
-          },
-        );
+      const idResponse = await edcClient.management.transferProcesses.initiate(
+        consumerContext,
+        {
+          assetId,
+          connectorId: "provider",
+          connectorAddress: providerContext.protocol,
+          contractId: contractAgreement.id,
+          managedResources: false,
+          dataDestination: { type: "HttpProxy" },
+        },
+      );
 
       const transferProcessResponse = await receiverServer.waitForEvent(
         idResponse.id,
