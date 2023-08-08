@@ -78,4 +78,19 @@ export class ContractDefinitionController {
       })
       .then((body) => expandArray(body, () => new ContractDefinition()));
   }
+
+  async update(
+    context: EdcConnectorClientContext,
+    input: ContractDefinitionInput,
+  ): Promise<void> {
+    return this.#inner.request(context.management, {
+      path: "/v2/contractdefinitions",
+      method: "PUT",
+      apiToken: context.apiToken,
+      body: {
+        ...input,
+        "@context": this.defaultContextValues,
+      },
+    });
+  }
 }

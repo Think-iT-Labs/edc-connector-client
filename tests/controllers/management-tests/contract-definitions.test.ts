@@ -2,6 +2,7 @@ import * as crypto from "node:crypto";
 import {
   Addresses,
   ContractDefinitionInput,
+  EDC_NAMESPACE,
   EdcConnectorClient,
 } from "../../../src";
 import {
@@ -205,6 +206,85 @@ describe("ManagementController", () => {
           "type",
           EdcConnectorClientErrorType.NotFound,
         );
+      });
+    });
+
+    describe("edcClient.management.updateContractDefinition", () => {
+      it("updates a target contract definition", async () => {
+        // given
+        const context = edcClient.createContext(apiToken, consumer);
+        const contractDefinitionInput: ContractDefinitionInput = {
+          "@id": crypto.randomUUID(),
+          accessPolicyId: crypto.randomUUID(),
+          contractPolicyId: crypto.randomUUID(),
+          assetsSelector: [],
+        };
+
+        await edcClient.management.contractDefinitions.create(
+          context,
+          contractDefinitionInput,
+        );
+        const updateContractDefinitionInput = {
+          "@id": contractDefinitionInput["@id"],
+          accessPolicyId: crypto.randomUUID(),
+          contractPolicyId: crypto.randomUUID(),
+          assetsSelector: [],
+        };
+
+        // when
+        await edcClient.management.contractDefinitions.update(
+          context,
+          updateContractDefinitionInput,
+        );
+
+        const updatedContractDefinition =
+          await edcClient.management.contractDefinitions.get(
+            context,
+            updateContractDefinitionInput["@id"] as string,
+          );
+
+        // then
+        expect(updatedContractDefinition).toHaveProperty("@type");
+        expect(
+          updatedContractDefinition[`${EDC_NAMESPACE}:accessPolicyId`],
+        ).toEqual(updateContractDefinitionInput.accessPolicyId);
+        expect(
+          updatedContractDefinition[`${EDC_NAMESPACE}:contractPolicyId`],
+        ).toEqual(updateContractDefinitionInput.contractPolicyId);
+        expect(
+          updatedContractDefinition[`${EDC_NAMESPACE}:assetsSelector`],
+        ).toEqual(updateContractDefinitionInput.assetsSelector);
+      });
+
+      it("fails to update an inexistant contract definition", async () => {
+        // given
+        const context = edcClient.createContext(apiToken, consumer);
+        const updateContractDefinitionInput = {
+          "@id": crypto.randomUUID(),
+          accessPolicyId: crypto.randomUUID(),
+          contractPolicyId: crypto.randomUUID(),
+          assetsSelector: [],
+        };
+
+        // when
+        const maybeUpdatedContractDefinition =
+          edcClient.management.contractDefinitions.update(
+            context,
+            updateContractDefinitionInput,
+          );
+
+        // then
+        await expect(maybeUpdatedContractDefinition).rejects.toThrowError(
+          "resource not found",
+        );
+
+        maybeUpdatedContractDefinition.catch((error) => {
+          expect(error).toBeInstanceOf(EdcConnectorClientError);
+          expect(error as EdcConnectorClientError).toHaveProperty(
+            "type",
+            EdcConnectorClientErrorType.NotFound,
+          );
+        });
       });
     });
   });

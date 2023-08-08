@@ -34,12 +34,10 @@ describe("ManagementController", () => {
       const assetId = crypto.randomUUID();
 
       const assetInput: AssetInput = {
-        asset: {
-          "@id": assetId,
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
+        "@id": assetId,
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
         },
         dataAddress: {
           name: "Test asset",
