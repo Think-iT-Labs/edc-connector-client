@@ -87,23 +87,12 @@ export class ContractNegotiationController {
       .then((body) => expand(body, () => new ContractNegotiationState()));
   }
 
-  async cancel(
+  async terminate(
     context: EdcConnectorClientContext,
     negotiationId: string,
   ): Promise<void> {
     return this.#inner.request(context.management, {
-      path: `/v2/contractnegotiations/${negotiationId}/cancel`,
-      method: "POST",
-      apiToken: context.apiToken,
-    });
-  }
-
-  async decline(
-    context: EdcConnectorClientContext,
-    negotiationId: string,
-  ): Promise<void> {
-    return this.#inner.request(context.management, {
-      path: `/v2/contractnegotiations/${negotiationId}/decline`,
+      path: `/v2/contractnegotiations/${negotiationId}/terminate`,
       method: "POST",
       apiToken: context.apiToken,
     });

@@ -83,7 +83,7 @@ describe("ManagementController", () => {
           await edcClient.management.transferProcesses.queryAll(
             consumerContext,
           );
-        console.log("transferProcesses", transferProcesses);
+
         // then
         expect(transferProcesses.length).toBeGreaterThan(0);
         expect(
@@ -199,11 +199,10 @@ describe("ManagementController", () => {
           consumerContext,
           idResponse["@id"],
         );
-      console.log("transferProcessState", transferProcessState);
 
       // then
-      expect(TransferProcessStates).toContain(
-        `${EDC_NAMESPACE}:${transferProcessState.state}`,
+      expect(Object.values(TransferProcessStates)).toContain(
+        transferProcessState[`${EDC_NAMESPACE}:state`],
       );
     });
   });

@@ -64,12 +64,10 @@ export class TransferProcessController {
     context: EdcConnectorClientContext,
     transferProcessId: string,
   ): Promise<TransferProcessState> {
-    return this.#inner
-      .request(context.management, {
-        path: `/v2/transferprocesses/${transferProcessId}/state`,
-        method: "GET",
-        apiToken: context.apiToken,
-      })
-      .then((body) => expand(body, () => new TransferProcessState()));
+    return this.#inner.request(context.management, {
+      path: `/v2/transferprocesses/${transferProcessId}/state`,
+      method: "GET",
+      apiToken: context.apiToken,
+    });
   }
 }

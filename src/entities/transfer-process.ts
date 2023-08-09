@@ -22,6 +22,7 @@ export class TransferProcessState extends JsonLdId {
 }
 
 export enum TransferProcessStates {
+  INITIAL = "INITIAL",
   FINALIZED = "FINALIZED",
   STARTED = "STARTED",
   REQUESTING = "REQUESTING",

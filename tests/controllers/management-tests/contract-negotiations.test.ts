@@ -203,8 +203,8 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.contractNegotiations.cancel", () => {
-    it.skip("cancel the requested target negotiation", async () => {
+  describe("edcClient.management.contractNegotiations.terminate", () => {
+    it.skip("terminate the requested target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
@@ -218,7 +218,7 @@ describe("ManagementController", () => {
 
       // when
       const cancelledNegotiation =
-        await edcClient.management.contractNegotiations.cancel(
+        await edcClient.management.contractNegotiations.terminate(
           consumerContext,
           negotiationId,
         );
@@ -245,7 +245,7 @@ describe("ManagementController", () => {
       const context = edcClient.createContext(apiToken, consumer);
 
       // when
-      const maybeAsset = edcClient.management.contractNegotiations.cancel(
+      const maybeAsset = edcClient.management.contractNegotiations.terminate(
         context,
         crypto.randomUUID(),
       );
@@ -260,64 +260,6 @@ describe("ManagementController", () => {
           EdcConnectorClientErrorType.NotFound,
         );
       });
-    });
-  });
-
-  describe.skip("edcClient.management.contractNegotiations.decline", () => {
-    it.skip("declines the a requested target negotiation", async () => {
-      // given
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
-      const { assetId, idResponse } = await createContractNegotiation(
-        edcClient,
-        providerContext,
-        consumerContext,
-      );
-
-      const negotiationId = idResponse.id;
-
-      await waitForNegotiationState(
-        edcClient,
-        consumerContext,
-        negotiationId,
-        "FINALIZED",
-      );
-
-      const providerNegotiation =
-        await edcClient.management.contractNegotiations.queryAll(
-          providerContext,
-          {
-            filterExpression: [
-              {
-                operandLeft: "contractAgreement.assetId",
-                operandRight: assetId,
-                operator: "=",
-              },
-            ],
-          },
-        );
-
-      // when
-      await edcClient.management.contractNegotiations.decline(
-        providerContext,
-        providerNegotiation[0].contractAgreementId,
-      );
-
-      await waitForNegotiationState(
-        edcClient,
-        consumerContext,
-        negotiationId,
-        "TERMINATING",
-      );
-
-      const negotiationState =
-        await edcClient.management.contractNegotiations.getState(
-          consumerContext,
-          negotiationId,
-        );
-
-      // then
-      expect(negotiationState.state).toBe("TERMINATING");
     });
   });
 
