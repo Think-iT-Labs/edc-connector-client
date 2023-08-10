@@ -204,7 +204,7 @@ describe("ManagementController", () => {
   });
 
   describe("edcClient.management.contractNegotiations.terminate", () => {
-    it.skip("terminate the requested target negotiation", async () => {
+    it("terminate the requested target negotiation", async () => {
       // given
       const consumerContext = edcClient.createContext(apiToken, consumer);
       const providerContext = edcClient.createContext(apiToken, provider);
@@ -221,6 +221,7 @@ describe("ManagementController", () => {
         await edcClient.management.contractNegotiations.terminate(
           consumerContext,
           negotiationId,
+          "a reason to terminate",
         );
       await waitForNegotiationState(
         edcClient,
@@ -240,7 +241,7 @@ describe("ManagementController", () => {
       expect(negotiationState.state).toBe("TERMINATED");
     });
 
-    it.skip("fails to cancel an not existant contract negotiation", async () => {
+    it("fails to cancel an not existant contract negotiation", async () => {
       // given
       const context = edcClient.createContext(apiToken, consumer);
 
@@ -248,6 +249,7 @@ describe("ManagementController", () => {
       const maybeAsset = edcClient.management.contractNegotiations.terminate(
         context,
         crypto.randomUUID(),
+        "a reason to terminate",
       );
 
       // then

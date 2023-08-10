@@ -90,11 +90,17 @@ export class ContractNegotiationController {
   async terminate(
     context: EdcConnectorClientContext,
     negotiationId: string,
+    reason: string,
   ): Promise<void> {
     return this.#inner.request(context.management, {
       path: `/v2/contractnegotiations/${negotiationId}/terminate`,
       method: "POST",
       apiToken: context.apiToken,
+      body: {
+        reason: reason,
+        "@id": negotiationId,
+        "@context": this.defaultContextValues,
+      },
     });
   }
 
