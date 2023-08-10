@@ -17,6 +17,30 @@ export class TransferProcess extends JsonLdId {
   dataDestination?: { properties: { type: string } };
 }
 
+export class TransferProcessState extends JsonLdId {
+  state?: TransferProcessStates;
+}
+
+export enum TransferProcessStates {
+  INITIAL = "INITIAL",
+  PROVISIONING = "PROVISIONING",
+  PROVISIONING_REQUESTED = "PROVISIONING_REQUESTED",
+  PROVISIONED = "PROVISIONED",
+  REQUESTING = "REQUESTING",
+  REQUESTED = "REQUESTED",
+  STARTING = "STARTING",
+  STARTED = "STARTED",
+  SUSPENDING = "SUSPENDING",
+  SUSPENDED = "SUSPENDED",
+  COMPLETING = "COMPLETING",
+  COMPLETED = "COMPLETED",
+  TERMINATING = "TERMINATING",
+  TERMINATED = "TERMINATED",
+  DEPROVISIONING = "DEPROVISIONING",
+  DEPROVISIONING_REQUESTED = "DEPROVISIONING_REQUESTED",
+  DEPROVISIONED = "DEPROVISIONED",
+}
+
 export interface TransferProcessInput {
   assetId: string;
   connectorAddress: string;
