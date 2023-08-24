@@ -12,23 +12,27 @@ import { Inner } from "../../inner";
 
 export class PolicyDefinitionController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async create(
-    context: EdcConnectorClientContext,
     input: PolicyDefinitionInput,
+    context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/policydefinitions",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           ...input,
           "@context": this.defaultContextValues,
@@ -38,38 +42,44 @@ export class PolicyDefinitionController {
   }
 
   async delete(
-    context: EdcConnectorClientContext,
     policyId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v2/policydefinitions/${policyId}`,
       method: "DELETE",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async get(
-    context: EdcConnectorClientContext,
     policyId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: `/v2/policydefinitions/${policyId}`,
         method: "GET",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new PolicyDefinition()));
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition[]> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/policydefinitions/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null

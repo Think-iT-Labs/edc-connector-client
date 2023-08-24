@@ -1,9 +1,8 @@
 import * as crypto from "node:crypto";
 import {
-  Addresses,
   AssetInput,
   EDC_NAMESPACE,
-  EdcConnectorClient,
+  EdcConnectorClientBuilder,
 } from "../../../src";
 import {
   EdcConnectorClientError,
@@ -11,21 +10,16 @@ import {
 } from "../../../src/error";
 
 describe("AssetController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
+  const edcClient = new EdcConnectorClientBuilder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build();
 
-  const edcClient = new EdcConnectorClient();
+  const assets = edcClient.management.assets;
 
-  describe("edcClient.management.assets.create", () => {
+  describe("create", () => {
     it("succesfully creates an asset", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -41,10 +35,7 @@ describe("AssetController", () => {
       };
 
       // when
-      const idResponse = await edcClient.management.assets.create(
-        context,
-        assetInput,
-      );
+      const idResponse = await assets.create(assetInput);
 
       // then
       expect(idResponse).toHaveProperty("createdAt");
@@ -53,7 +44,6 @@ describe("AssetController", () => {
 
     it("fails creating two assets with the same id", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -70,11 +60,8 @@ describe("AssetController", () => {
       };
 
       // when
-      await edcClient.management.assets.create(context, assetInput);
-      const maybeCreateResult = edcClient.management.assets.create(
-        context,
-        assetInput,
-      );
+      await assets.create(assetInput);
+      const maybeCreateResult = assets.create(assetInput);
 
       // then
       await expect(maybeCreateResult).rejects.toThrowError(
@@ -91,10 +78,9 @@ describe("AssetController", () => {
     });
   });
 
-  describe("edcClient.management.delete", () => {
+  describe("delete", () => {
     it("deletes a target asset", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -109,27 +95,18 @@ describe("AssetController", () => {
           },
         },
       };
-      await edcClient.management.assets.create(context, assetInput);
+      await assets.create(assetInput);
 
       // when
-      const asset = await edcClient.management.assets.delete(
-        context,
-        assetInput["@id"] as string,
-      );
+      const asset = await assets.delete(assetInput["@id"] as string);
 
       // then
       expect(asset).toBeUndefined();
     });
 
     it("fails to delete an not existant asset", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-
       // when
-      const maybeAsset = edcClient.management.assets.delete(
-        context,
-        crypto.randomUUID(),
-      );
+      const maybeAsset = assets.delete(crypto.randomUUID());
 
       // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
@@ -146,10 +123,9 @@ describe("AssetController", () => {
     it.todo("fails to delete an asset that is part of an agreed contract");
   });
 
-  describe("edcClient.management.assets.get", () => {
+  describe("get", () => {
     it("returns a target asset", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -164,13 +140,10 @@ describe("AssetController", () => {
           },
         },
       };
-      await edcClient.management.assets.create(context, assetInput);
+      await assets.create(assetInput);
 
       // when
-      const asset = await edcClient.management.assets.get(
-        context,
-        assetInput["@id"] as string,
-      );
+      const asset = await assets.get(assetInput["@id"] as string);
 
       // then
       expect(asset).toHaveProperty("@context");
@@ -178,14 +151,8 @@ describe("AssetController", () => {
     });
 
     it("fails to fetch an not existant asset", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-
       // when
-      const maybeAsset = edcClient.management.assets.get(
-        context,
-        crypto.randomUUID(),
-      );
+      const maybeAsset = assets.get(crypto.randomUUID());
 
       // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
@@ -200,10 +167,9 @@ describe("AssetController", () => {
     });
   });
 
-  describe("edcClient.management.assets.queryAll", () => {
+  describe("queryAll", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -216,23 +182,22 @@ describe("AssetController", () => {
           type: "HttpData",
         },
       };
-      await edcClient.management.assets.create(context, assetInput);
+      await assets.create(assetInput);
 
       // when
-      const assets = await edcClient.management.assets.queryAll(context);
+      const result = await assets.queryAll();
 
       // then
-      expect(assets.length).toBeGreaterThan(0);
+      expect(result.length).toBeGreaterThan(0);
       expect(
-        assets.find((asset) => asset?.["@id"] === assetInput["@id"]),
+        result.find((asset) => asset?.["@id"] === assetInput["@id"]),
       ).toBeTruthy();
     });
   });
 
-  describe("edcClient.management.assets.update", () => {
+  describe("update", () => {
     it("updates a target asset", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const assetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -247,7 +212,7 @@ describe("AssetController", () => {
           },
         },
       };
-      await edcClient.management.assets.create(context, assetInput);
+      await assets.create(assetInput);
       const updateAssetInput = {
         "@id": assetInput["@id"],
         properties: { name: "updated test asset", contenttype: "text/plain" },
@@ -257,10 +222,9 @@ describe("AssetController", () => {
       };
 
       // when
-      await edcClient.management.assets.update(context, updateAssetInput);
+      await assets.update(updateAssetInput);
 
-      const updatedAsset = await edcClient.management.assets.get(
-        context,
+      const updatedAsset = await assets.get(
         assetInput["@id"],
       );
 
@@ -284,7 +248,6 @@ describe("AssetController", () => {
 
     it("fails to update an inexistant asset", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const updateAssetInput = {
         "@id": crypto.randomUUID(),
         properties: { name: "updated test asset", contenttype: "text/plain" },
@@ -294,8 +257,7 @@ describe("AssetController", () => {
       };
 
       // when
-      const maybeUpdatedAsset = edcClient.management.assets.update(
-        context,
+      const maybeUpdatedAsset = assets.update(
         updateAssetInput,
       );
 

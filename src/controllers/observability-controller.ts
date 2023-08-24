@@ -4,46 +4,56 @@ import { Inner } from "../inner";
 
 export class ObservabilityController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
-  async checkHealth(context: EdcConnectorClientContext): Promise<HealthStatus> {
-    return this.#inner.request(context.default, {
+  async checkHealth(context?: EdcConnectorClientContext): Promise<HealthStatus> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.default, {
       path: "/check/health",
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async checkLiveness(
-    context: EdcConnectorClientContext,
+    context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    return this.#inner.request(context.default, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.default, {
       path: "/check/liveness",
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async checkReadiness(
-    context: EdcConnectorClientContext,
+    context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    return this.#inner.request(context.default, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.default, {
       path: "/check/readiness",
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async checkStartup(
-    context: EdcConnectorClientContext,
+    context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    return this.#inner.request(context.default, {
+    const actualContext = context || this.#context!;
+    
+    return this.#inner.request(actualContext.default, {
       path: "/check/startup",
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 }

@@ -1,23 +1,15 @@
-import { Addresses, EdcConnectorClient } from "../../src";
+import { EdcConnectorClientBuilder } from "../../src";
 
 describe("ObservabilityController", () => {
-  const apiToken = "123456";
-  const addresses: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
+    const edcClient = new EdcConnectorClientBuilder()
+    .apiToken("123456")
+    .defaultUrl("http://localhost:19191/api")
+    .build();
 
   describe("edcClient.observability.checkHealth", () => {
     it("succesfully return a HealthStatus response", async () => {
-      // given
-      const edcClient = new EdcConnectorClient();
-      const context = edcClient.createContext(apiToken, addresses);
-
       // when
-      const healthStatus = await edcClient.observability.checkHealth(context);
+      const healthStatus = await edcClient.observability.checkHealth();
 
       // then
       expect(healthStatus).toBeTruthy();
@@ -26,12 +18,8 @@ describe("ObservabilityController", () => {
 
   describe("edcClient.observability.checkLiveness", () => {
     it("succesfully return a HealthStatus response", async () => {
-      // given
-      const edcClient = new EdcConnectorClient();
-      const context = edcClient.createContext(apiToken, addresses);
-
       // when
-      const healthStatus = await edcClient.observability.checkLiveness(context);
+      const healthStatus = await edcClient.observability.checkLiveness();
 
       // then
       expect(healthStatus).toBeTruthy();
@@ -40,14 +28,8 @@ describe("ObservabilityController", () => {
 
   describe("edcClient.observability.checkReadiness", () => {
     it("succesfully return a HealthStatus response", async () => {
-      // given
-      const edcClient = new EdcConnectorClient();
-      const context = edcClient.createContext(apiToken, addresses);
-
       // when
-      const healthStatus = await edcClient.observability.checkReadiness(
-        context,
-      );
+      const healthStatus = await edcClient.observability.checkReadiness();
 
       // then
       expect(healthStatus).toBeTruthy();
@@ -56,12 +38,8 @@ describe("ObservabilityController", () => {
 
   describe("edcClient.observability.checkStartup", () => {
     it("succesfully return a HealthStatus response", async () => {
-      // given
-      const edcClient = new EdcConnectorClient();
-      const context = edcClient.createContext(apiToken, addresses);
-
       // when
-      const healthStatus = await edcClient.observability.checkStartup(context);
+      const healthStatus = await edcClient.observability.checkStartup();
 
       // then
       expect(healthStatus).toBeTruthy();

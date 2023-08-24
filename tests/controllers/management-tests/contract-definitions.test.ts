@@ -1,31 +1,23 @@
 import * as crypto from "node:crypto";
 import {
-  Addresses,
   ContractDefinitionInput,
   EDC_NAMESPACE,
-  EdcConnectorClient,
+  EdcConnectorClientBuilder,
 } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
 } from "../../../src/error";
 
-describe("ManagementController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
+describe("ContractDefinitionController", () => {
+  const edcClient = new EdcConnectorClientBuilder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build();
 
-  const edcClient = new EdcConnectorClient();
-
-  describe("edcClient.management.contractDefinitions.create", () => {
+  describe("create", () => {
     it("succesfully creates a new contract definition", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -35,7 +27,6 @@ describe("ManagementController", () => {
 
       // when
       const idResponse = await edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
 
@@ -46,7 +37,6 @@ describe("ManagementController", () => {
 
     it("fails creating two contract definitions with the same id", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -56,11 +46,9 @@ describe("ManagementController", () => {
 
       // when
       await edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
       const maybeCreateResult = edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
 
@@ -79,10 +67,9 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.contractDefinitions.queryAll", () => {
+  describe("queryAll", () => {
     it("succesfully retuns a list of contract definitions", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": "definition-" + crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -90,13 +77,12 @@ describe("ManagementController", () => {
         assetsSelector: [],
       };
       await edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
 
       // when
       const contractDefinitions =
-        await edcClient.management.contractDefinitions.queryAll(context);
+        await edcClient.management.contractDefinitions.queryAll();
 
       // then
       expect(contractDefinitions.length).toBeGreaterThan(0);
@@ -109,10 +95,9 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.contractDefinitions.get", () => {
+  describe("get", () => {
     it("succesfully retuns a target contract definition", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -120,14 +105,12 @@ describe("ManagementController", () => {
         assetsSelector: [],
       };
       const idResponse = await edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
 
       // when
       const contractDefinition =
         await edcClient.management.contractDefinitions.get(
-          context,
           idResponse.id,
         );
 
@@ -136,12 +119,8 @@ describe("ManagementController", () => {
     });
 
     it("fails to fetch an not existant contract definition", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-
       // when
       const maybePolicy = edcClient.management.contractDefinitions.get(
-        context,
         crypto.randomUUID(),
       );
 
@@ -158,10 +137,9 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.contractDefinitions.delete", () => {
+  describe("delete", () => {
     it("deletes a target contract definition", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -169,14 +147,12 @@ describe("ManagementController", () => {
         assetsSelector: [],
       };
       const idResponse = await edcClient.management.contractDefinitions.create(
-        context,
         contractDefinitionInput,
       );
 
       // when
       const contractDefinition =
         await edcClient.management.contractDefinitions.delete(
-          context,
           idResponse.id,
         );
 
@@ -185,13 +161,9 @@ describe("ManagementController", () => {
     });
 
     it("fails to delete an not existant contract definition", async () => {
-      // given
-      const context = edcClient.createContext(apiToken, consumer);
-
       // when
       const maybeContractDefinition =
         edcClient.management.contractDefinitions.delete(
-          context,
           crypto.randomUUID(),
         );
 
@@ -212,7 +184,6 @@ describe("ManagementController", () => {
     describe("edcClient.management.updateContractDefinition", () => {
       it("updates a target contract definition", async () => {
         // given
-        const context = edcClient.createContext(apiToken, consumer);
         const contractDefinitionInput: ContractDefinitionInput = {
           "@id": crypto.randomUUID(),
           accessPolicyId: crypto.randomUUID(),
@@ -221,7 +192,6 @@ describe("ManagementController", () => {
         };
 
         await edcClient.management.contractDefinitions.create(
-          context,
           contractDefinitionInput,
         );
         const updateContractDefinitionInput = {
@@ -233,13 +203,11 @@ describe("ManagementController", () => {
 
         // when
         await edcClient.management.contractDefinitions.update(
-          context,
           updateContractDefinitionInput,
         );
 
         const updatedContractDefinition =
           await edcClient.management.contractDefinitions.get(
-            context,
             updateContractDefinitionInput["@id"] as string,
           );
 
@@ -258,7 +226,6 @@ describe("ManagementController", () => {
 
       it("fails to update an inexistant contract definition", async () => {
         // given
-        const context = edcClient.createContext(apiToken, consumer);
         const updateContractDefinitionInput = {
           "@id": crypto.randomUUID(),
           accessPolicyId: crypto.randomUUID(),
@@ -269,7 +236,6 @@ describe("ManagementController", () => {
         // when
         const maybeUpdatedContractDefinition =
           edcClient.management.contractDefinitions.update(
-            context,
             updateContractDefinitionInput,
           );
 

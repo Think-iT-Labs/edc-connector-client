@@ -14,24 +14,28 @@ import { Inner } from "../../inner";
 
 export class ContractNegotiationController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   protocol: String = "dataspace-protocol-http";
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async initiate(
-    context: EdcConnectorClientContext,
     input: ContractNegotiationRequest,
+    context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/contractnegotiations",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           protocol: this.protocol,
           "@context": this.defaultContextValues,
@@ -42,14 +46,16 @@ export class ContractNegotiationController {
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation[]> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/contractnegotiations/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
@@ -62,40 +68,46 @@ export class ContractNegotiationController {
   }
 
   async get(
-    context: EdcConnectorClientContext,
     negotiationId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: `/v2/contractnegotiations/${negotiationId}`,
         method: "GET",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new ContractNegotiation()));
   }
 
   async getState(
-    context: EdcConnectorClientContext,
     negotiationId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiationState> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: `/v2/contractnegotiations/${negotiationId}/state`,
         method: "GET",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new ContractNegotiationState()));
   }
 
   async terminate(
-    context: EdcConnectorClientContext,
     negotiationId: string,
     reason: string,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v2/contractnegotiations/${negotiationId}/terminate`,
       method: "POST",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
       body: {
         reason: reason,
         "@id": negotiationId,
@@ -105,14 +117,16 @@ export class ContractNegotiationController {
   }
 
   async getAgreement(
-    context: EdcConnectorClientContext,
     negotiationId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement> {
+    const actualContext = context || this.#context!;
+    
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: `/v2/contractnegotiations/${negotiationId}/agreement`,
         method: "GET",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new ContractAgreement()));
   }

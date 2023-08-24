@@ -12,23 +12,27 @@ import { Inner } from "../../inner";
 
 export class ContractDefinitionController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async create(
-    context: EdcConnectorClientContext,
     input: ContractDefinitionInput,
+    context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/contractdefinitions",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           ...input,
           "@context": this.defaultContextValues,
@@ -38,36 +42,42 @@ export class ContractDefinitionController {
   }
 
   async delete(
-    context: EdcConnectorClientContext,
     contractDefinitionId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v2/contractdefinitions/${contractDefinitionId}`,
       method: "DELETE",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async get(
-    context: EdcConnectorClientContext,
     contractDefinitionId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v2/contractdefinitions/${contractDefinitionId}`,
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition[]> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/contractdefinitions/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
@@ -80,13 +90,15 @@ export class ContractDefinitionController {
   }
 
   async update(
-    context: EdcConnectorClientContext,
     input: ContractDefinitionInput,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: "/v2/contractdefinitions",
       method: "PUT",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
       body: {
         ...input,
         "@context": this.defaultContextValues,

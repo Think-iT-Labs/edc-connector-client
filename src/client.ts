@@ -7,16 +7,28 @@ import { version } from "../package.json";
 import { ManagementController } from "./facades/management";
 
 export class EdcConnectorClient {
-  readonly management: ManagementController;
-  readonly observability: ObservabilityController;
-  readonly public: PublicController;
+
+  apiToken: string | undefined;
+  addresses: Addresses = {};
+  inner = new Inner();
 
   constructor() {
-    const inner = new Inner();
 
-    this.management = new ManagementController(inner);
-    this.observability = new ObservabilityController(inner);
-    this.public = new PublicController(inner);
+  }
+
+  get management() {
+    const context = new EdcConnectorClientContext(this.apiToken, this.addresses);
+    return new ManagementController(this.inner, context);
+  }
+
+  get observability() {
+    const context = new EdcConnectorClientContext(this.apiToken, this.addresses);
+    return new ObservabilityController(this.inner, context);
+  }
+
+  get public() {
+    const context = new EdcConnectorClientContext(this.apiToken, this.addresses);
+    return new PublicController(this.inner, context);
   }
 
   createContext(
@@ -28,5 +40,44 @@ export class EdcConnectorClient {
 
   static version(): string {
     return version;
+  }
+
+}
+
+export class EdcConnectorClientBuilder {
+  instance = new EdcConnectorClient();
+
+  apiToken(apiToken: string): EdcConnectorClientBuilder {
+    this.instance.apiToken = apiToken
+    return this;
+  }
+
+  managementUrl(managementUrl: string): EdcConnectorClientBuilder {
+    this.instance.addresses.management = managementUrl;
+    return this;
+  }
+
+  defaultUrl(defaultUrl: string): EdcConnectorClientBuilder {
+    this.instance.addresses.default = defaultUrl;
+    return this;
+  }
+
+  protocolUrl(protocolUrl: string): EdcConnectorClientBuilder {
+    this.instance.addresses.protocol = protocolUrl;
+    return this;
+  }
+
+  publicUrl(publicUrl: string): EdcConnectorClientBuilder {
+    this.instance.addresses.public = publicUrl;
+    return this;
+  }
+
+  controlUrl(controlUrl: string): EdcConnectorClientBuilder {
+    this.instance.addresses.control = controlUrl;
+    return this;
+  }
+
+  build(): EdcConnectorClient {
+    return this.instance;
   }
 }
