@@ -10,26 +10,34 @@ export class EdcConnectorClientContext implements Addresses {
   }
 
   get default(): string {
-    return this.#addresses.default!;
+    return this.getOrError(this.#addresses.default, 'default address');
   }
 
   get protocol(): string {
-    return this.#addresses.protocol!;
+    return this.getOrError(this.#addresses.protocol, 'protocol address');
   }
 
   get management(): string {
-    return this.#addresses.management!;
+    return this.getOrError(this.#addresses.management, 'management address');
   }
 
   get control(): string {
-    return this.#addresses.control!;
+    return this.getOrError(this.#addresses.control, 'control address');
   }
 
   get public(): string {
-    return this.#addresses.public!;
+    return this.getOrError(this.#addresses.public, 'public address');
   }
 
   get apiToken(): string | undefined {
     return this.#apiToken;
+  }
+
+  private getOrError(property: string | undefined, propertyName: string) : string {
+    if (property) {
+      return property!;
+    } else {
+      throw new Error(`'${propertyName}' has not been set on the client`)
+    }
   }
 }

@@ -10,7 +10,7 @@ export class EdcConnectorClient {
 
   apiToken: string | undefined;
   addresses: Addresses = {};
-  inner = new Inner();
+  private inner = new Inner();
 
   constructor() {
 
@@ -45,7 +45,7 @@ export class EdcConnectorClient {
 }
 
 export class EdcConnectorClientBuilder {
-  instance = new EdcConnectorClient();
+  private instance = new EdcConnectorClient();
 
   apiToken(apiToken: string): EdcConnectorClientBuilder {
     this.instance.apiToken = apiToken
