@@ -10,6 +10,7 @@ describe("PublicController", () => {
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .protocolUrl("http://consumer-connector:9194/protocol")
+    .publicUrl("http://localhost:19291/public")
     .build();
 
   const provider = new EdcConnectorClientBuilder()
