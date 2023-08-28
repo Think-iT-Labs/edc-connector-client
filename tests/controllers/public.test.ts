@@ -10,13 +10,13 @@ describe("PublicController", () => {
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .protocolUrl("http://consumer-connector:9194/protocol")
-    .publicUrl("http://localhost:19291/public")
     .build();
 
   const provider = new EdcConnectorClientBuilder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
     .protocolUrl("http://provider-connector:9194/protocol")
+    .publicUrl("http://localhost:29291/public")
     .build();
 
   const receiverServer = createReceiverServer();
@@ -32,7 +32,7 @@ describe("PublicController", () => {
   describe("edcClient.public.getTransferredData", () => {
     it("fails to return an object in response", async () => {
       // when
-      const maybeData = consumer.public.getTransferredData({});
+      const maybeData = provider.public.getTransferredData({});
 
       // then
       await expect(maybeData).rejects.toThrowError("request was malformed");
@@ -80,7 +80,7 @@ describe("PublicController", () => {
       );
 
       // when
-      const data = await consumer.public.getTransferredData({
+      const data = await provider.public.getTransferredData({
         [transferProcessResponse.authKey]: transferProcessResponse.authCode,
       });
 
