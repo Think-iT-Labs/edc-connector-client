@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import { EdcConnectorClientBuilder } from "../../../src";
+import { EdcConnectorClient } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
@@ -11,13 +11,13 @@ import {
 } from "../../test-utils";
 
 describe("ContractNegotiationController", () => {
-  const consumer = new EdcConnectorClientBuilder()
+  const consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .protocolUrl("http://consumer-connector:9194/protocol")
     .build();
 
-  const provider = new EdcConnectorClientBuilder()
+  const provider = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
     .protocolUrl("http://provider-connector:9194/protocol")

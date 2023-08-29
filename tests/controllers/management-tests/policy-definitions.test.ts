@@ -1,6 +1,6 @@
 import * as crypto from "node:crypto";
 import {
-  EdcConnectorClientBuilder,
+  EdcConnectorClient,
   PolicyDefinitionInput,
 } from "../../../src";
 import {
@@ -9,7 +9,7 @@ import {
 } from "../../../src/error";
 
 describe("PolicyDefinitionController", () => {
-  const edcClient = new EdcConnectorClientBuilder()
+  const edcClient = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .build();

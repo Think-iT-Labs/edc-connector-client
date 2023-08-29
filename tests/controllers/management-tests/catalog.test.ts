@@ -2,20 +2,20 @@ import * as crypto from "node:crypto";
 import {
   AssetInput,
   ContractDefinitionInput,
-  EdcConnectorClientBuilder,
+  EdcConnectorClient,
   PolicyDefinitionInput,
 } from "../../../src";
 
 describe("CatalogController", () => {
   const providerProtocolUrl = "http://provider-connector:9194/protocol";
 
-  const consumerManagement = new EdcConnectorClientBuilder()
+  const consumerManagement = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .build()
     .management;
 
-  const providerManagement = new EdcConnectorClientBuilder()
+  const providerManagement = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
     .build()

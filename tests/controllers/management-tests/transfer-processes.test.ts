@@ -1,6 +1,6 @@
 import {
   EDC_NAMESPACE,
-  EdcConnectorClientBuilder,
+  EdcConnectorClient,
   TransferProcessStates,
 } from "../../../src";
 import {
@@ -9,13 +9,13 @@ import {
 } from "../../test-utils";
 
 describe("TransferProcessController", () => {
-  const consumer = new EdcConnectorClientBuilder()
+  const consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .protocolUrl("http://consumer-connector:9194/protocol")
     .build();
 
-  const provider = new EdcConnectorClientBuilder()
+  const provider = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
     .protocolUrl("http://provider-connector:9194/protocol")

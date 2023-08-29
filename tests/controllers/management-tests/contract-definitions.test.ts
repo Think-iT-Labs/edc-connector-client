@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 import {
   ContractDefinitionInput,
   EDC_NAMESPACE,
-  EdcConnectorClientBuilder,
+  EdcConnectorClient,
 } from "../../../src";
 import {
   EdcConnectorClientError,
@@ -10,7 +10,7 @@ import {
 } from "../../../src/error";
 
 describe("ContractDefinitionController", () => {
-  const edcClient = new EdcConnectorClientBuilder()
+  const edcClient = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .build();

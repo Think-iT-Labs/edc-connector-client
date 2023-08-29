@@ -1,7 +1,7 @@
-import { EdcConnectorClientBuilder } from "../../src";
+import { EdcConnectorClient } from "../../src";
 
 describe("ObservabilityController", () => {
-    const edcClient = new EdcConnectorClientBuilder()
+    const edcClient = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .defaultUrl("http://localhost:19191/api")
     .build();

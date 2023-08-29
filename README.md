@@ -41,12 +41,12 @@ Once installed, clients can be instanciated by construcing a `EdcConnectorClient
 ### With internal context
 
 The standard way of using the client would be associating it with a connector,
-for doing that it can be instantiated through the `EdcConnectorClientBuilder`
+for doing that it can be instantiated through the `EdcConnectorClient.Builder`
 
 ```ts
-import { EdcConnectorClientBuilder } from "@think-it-labs/edc-connector-client"
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client"
 
-const client = new EdcConnectorClientBuilder()
+const client = new EdcConnectorClient.Builder()
   .apiToken("123456")
   .managementUrl("https://edc.think-it.io/management")
   .publicUrl("https://edc.think-it.io/public")
