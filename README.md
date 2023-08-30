@@ -38,28 +38,24 @@ yarn add @think-it-labs/edc-connector-client
 
 Once installed, clients can be instanciated by construcing a `EdcConnectorClient`.
 
+### With internal context
+
+The standard way of using the client would be associating it with a connector,
+for doing that it can be instantiated through the `EdcConnectorClient.Builder`
+
 ```ts
 import { EdcConnectorClient } from "@think-it-labs/edc-connector-client"
 
-const edcConnectorClient = new EdcConnectorClient();
-
+const client = new EdcConnectorClient.Builder()
+  .apiToken("123456")
+  .managementUrl("https://edc.think-it.io/management")
+  .publicUrl("https://edc.think-it.io/public")
+  .build();
 ```
 
-The `EdcConnectorClient` is connector-agnostic; hence it doesn't know nor store
-connectors' token and addresses. Instead, these are passed to each method through a context
-object, representing a unique connector.
-
+At this point the calls can be made against the specified connector:
 ```ts
-
-const context = edcConnectorClient.createContext("123456", {
-  default: "https://edc.think-it.io/api",
-  management: "https://edc.think-it.io/management",
-  protocol: "https://edc.think-it.io/protocol",
-  public: "https://edc.think-it.io/public",
-  control: "https://edc.think-it.io/control",
-});
-
-const result = await edcConnectorClient.management.createAsset(context, {
+const result = await client.management.assets.create({
   asset: {
     properties: {
       "asset:prop:id": "a-http-asset-id",
@@ -77,8 +73,54 @@ const result = await edcConnectorClient.management.createAsset(context, {
     },
   },
 });
-
 ```
+
+### Without internal context
+
+A single connector instance can be used to call multiple connectors, just creating
+different contexts and passing them to the specific call.
+
+The connector can be instantiated directly without the builder:
+```ts
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client"
+
+const client = new EdcConnectorClient();
+```
+
+Context objects can be created with a `createContext` call:
+```ts
+const context = client.createContext("123456", {
+  default: "https://edc.think-it.io/api",
+  management: "https://edc.think-it.io/management",
+  protocol: "https://edc.think-it.io/protocol",
+  public: "https://edc.think-it.io/public",
+  control: "https://edc.think-it.io/control",
+});
+```
+
+And the context can be passed to every call as latest argument:
+```ts
+const result = await client.management.assets.create(context, {
+  asset: {
+    properties: {
+      "asset:prop:id": "a-http-asset-id",
+      "asset:prop:name": "A HTTP asset",
+    }
+  },
+  dataAddress: {
+    properties: {
+      name: "An HTTP address",
+      baseUrl: "https://example.com/",
+      type: "HttpData",
+      path: "/some-data",
+      contentType: "application/json",
+      method: "GET",
+    },
+  },
+});
+```
+
+## Error handling
 
 All API methods are _type, and error-safe_, which means arguments are fully typed
 with [TypeScript](https://www.typescriptlang.org/), and thrown errors are always
@@ -112,15 +154,12 @@ try {
 
 ```
 
-> **Note** if you encounter an `Unknown` error you should report this behaviour
-> along steps to reproduce it. `Unknown` behaviours are unwanted and must be fixed asap.
+> **Note** if you encounter an `Unknown` error you should report this behavior
+> along steps to reproduce it. `Unknown` behaviors are unwanted and must be fixed asap.
 
 ## Development
 
-The development of this library is following a TDD approach. At the moment it
-doesn't cover all EDC Connector capabilities, but aims to do so.
-
-`docker-compose` is used to run the development environment. It runs two
+`docker compose` is used to run the development environment. It runs two
 connectors with capabilities described in the
 [gradle configuration](connector/build.gradle.kts) file.
 

@@ -1,40 +1,30 @@
 import * as crypto from "node:crypto";
 import {
-  Addresses,
   AssetInput,
   ContractDefinitionInput,
   EdcConnectorClient,
   PolicyDefinitionInput,
 } from "../../../src";
 
-describe("ManagementController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
-  const provider: Addresses = {
-    default: "http://localhost:29191/api",
-    management: "http://localhost:29193/management",
-    protocol: "http://provider-connector:9194/protocol",
-    public: "http://localhost:29291/public",
-    control: "http://localhost:29292/control",
-  };
+describe("CatalogController", () => {
+  const providerProtocolUrl = "http://provider-connector:9194/protocol";
 
-  const edcClient = new EdcConnectorClient();
+  const consumerManagement = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build()
+    .management;
 
-  describe("edcClient.management.catalog.queryAll", () => {
+  const providerManagement = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:29193/management")
+    .build()
+    .management;
+
+  describe("queryAll", () => {
     it("returns the catalog for a target provider", async () => {
       // given
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
-      const assetId = crypto.randomUUID();
-
       const assetInput: AssetInput = {
-        "@id": assetId,
         properties: {
           name: "product description",
           contenttype: "application/json",
@@ -45,7 +35,7 @@ describe("ManagementController", () => {
           type: "HttpData",
         },
       };
-      await edcClient.management.assets.create(providerContext, assetInput);
+      await providerManagement.assets.create(assetInput);
 
       const policyId = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
@@ -54,7 +44,6 @@ describe("ManagementController", () => {
           uid: "231802-bb34-11ec-8422-0242ac120002",
           permissions: [
             {
-              target: assetId,
               action: {
                 type: "USE",
               },
@@ -63,10 +52,7 @@ describe("ManagementController", () => {
           ],
         },
       };
-      await edcClient.management.policyDefinitions.create(
-        providerContext,
-        policyInput,
-      );
+      await providerManagement.policyDefinitions.create(policyInput);
 
       const contractDefinitionId = crypto.randomUUID();
       const contractDefinitionInput: ContractDefinitionInput = {
@@ -75,16 +61,14 @@ describe("ManagementController", () => {
         contractPolicyId: policyId,
         assetsSelector: [],
       };
-      await edcClient.management.contractDefinitions.create(
-        providerContext,
+      await providerManagement.contractDefinitions.create(
         contractDefinitionInput,
       );
 
       // when
-      const catalog = await edcClient.management.catalog.queryAll(
-        consumerContext,
+      const catalog = await consumerManagement.catalog.request(
         {
-          providerUrl: provider.protocol,
+          providerUrl: providerProtocolUrl,
         },
       );
 

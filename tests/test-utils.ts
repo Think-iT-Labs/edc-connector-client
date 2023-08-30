@@ -7,7 +7,6 @@ import {
   ContractDefinitionInput,
   ContractNegotiation,
   EdcConnectorClient,
-  EdcConnectorClientContext,
   IdResponse,
   PolicyDefinitionInput,
   TransferProcessResponse,
@@ -29,32 +28,26 @@ interface ContractAgreementMetadata {
 }
 
 export async function createContractAgreement(
-  client: EdcConnectorClient,
-  providerContext: EdcConnectorClientContext,
-  consumerContext: EdcConnectorClientContext,
+  provider: EdcConnectorClient,
+  consumer: EdcConnectorClient,
 ): Promise<ContractAgreementMetadata> {
   const { idResponse, ...rest } = await createContractNegotiation(
-    client,
-    providerContext,
-    consumerContext,
+    provider, consumer
   );
 
   const negotiationId = idResponse.id;
 
   await waitForNegotiationState(
-    client,
-    consumerContext,
+    consumer,
     negotiationId,
     "FINALIZED",
   );
 
-  const contractNegotiation = await client.management.contractNegotiations.get(
-    consumerContext,
+  const contractNegotiation = await consumer.management.contractNegotiations.get(
     negotiationId,
   );
 
-  const contractAgreement = await client.management.contractAgreements.get(
-    consumerContext,
+  const contractAgreement = await consumer.management.contractAgreements.get(
     contractNegotiation.contractAgreementId,
   );
 
@@ -66,9 +59,8 @@ export async function createContractAgreement(
 }
 
 export async function createContractNegotiation(
-  client: EdcConnectorClient,
-  providerContext: EdcConnectorClientContext,
-  consumerContext: EdcConnectorClientContext,
+  provider: EdcConnectorClient,
+  consumer: EdcConnectorClient,
 ): Promise<ContractNegotiationMetadata> {
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
@@ -85,7 +77,7 @@ export async function createContractNegotiation(
       type: "HttpData",
     },
   };
-  await client.management.assets.create(providerContext, assetInput);
+  await provider.management.assets.create(assetInput);
 
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
@@ -96,10 +88,7 @@ export async function createContractNegotiation(
       permissions: [],
     },
   };
-  await client.management.policyDefinitions.create(
-    providerContext,
-    policyInput,
-  );
+  await provider.management.policyDefinitions.create(policyInput);
 
   const contractDefinitionId = "definition-" + crypto.randomUUID();
   // Crate contract definition on the provider's side
@@ -109,14 +98,11 @@ export async function createContractNegotiation(
     contractPolicyId: policyId,
     assetsSelector: [],
   };
-  await client.management.contractDefinitions.create(
-    providerContext,
-    contractDefinitionInput,
-  );
+  await provider.management.contractDefinitions.create(contractDefinitionInput);
 
   // Retrieve catalog and select contract offer
-  const catalog = await client.management.catalog.queryAll(consumerContext, {
-    providerUrl: providerContext.protocol,
+  const catalog = await consumer.management.catalog.request({
+    providerUrl: provider.addresses.protocol!,
   });
 
   const offer = catalog.datasets
@@ -126,10 +112,9 @@ export async function createContractNegotiation(
   offer._compacted = undefined;
 
   // Initiate contract negotiation on the consumer's side
-  const idResponse = await client.management.contractNegotiations.initiate(
-    consumerContext,
+  const idResponse = await consumer.management.contractNegotiations.initiate(
     {
-      connectorAddress: providerContext.protocol,
+      connectorAddress: provider.addresses.protocol!,
       connectorId: "provider",
       providerId: "provider",
       offer: {
@@ -150,7 +135,6 @@ export async function createContractNegotiation(
 
 export async function waitForNegotiationState(
   client: EdcConnectorClient,
-  context: EdcConnectorClientContext,
   negotiationId: string,
   targetState: string,
   interval = 500,
@@ -164,7 +148,6 @@ export async function waitForNegotiationState(
     await new Promise((resolve) => setTimeout(resolve, interval));
 
     const response = await client.management.contractNegotiations.getState(
-      context,
       negotiationId,
     );
 

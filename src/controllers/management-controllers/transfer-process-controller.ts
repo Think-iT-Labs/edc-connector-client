@@ -13,24 +13,28 @@ import { Inner } from "../../inner";
 
 export class TransferProcessController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   protocol: String = "dataspace-protocol-http";
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async initiate(
-    context: EdcConnectorClientContext,
     input: TransferProcessInput,
+    context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/transferprocesses",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           "@context": this.defaultContextValues,
           protocol: this.protocol,
@@ -41,14 +45,16 @@ export class TransferProcessController {
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<TransferProcess[]> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/transferprocesses/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
@@ -61,13 +67,15 @@ export class TransferProcessController {
   }
 
   async getState(
-    context: EdcConnectorClientContext,
     transferProcessId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<TransferProcessState> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+    
+    return this.#inner.request(actualContext.management, {
       path: `/v2/transferprocesses/${transferProcessId}/state`,
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 }

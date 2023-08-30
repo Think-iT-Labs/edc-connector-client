@@ -1,6 +1,5 @@
 import * as crypto from "node:crypto";
 import {
-  Addresses,
   EdcConnectorClient,
   PolicyDefinitionInput,
 } from "../../../src";
@@ -9,32 +8,24 @@ import {
   EdcConnectorClientErrorType,
 } from "../../../src/error";
 
-describe("ManagementController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
+describe("PolicyDefinitionController", () => {
+  const edcClient = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build();
 
-  const edcClient = new EdcConnectorClient();
+  const policyDefinitions = edcClient.management.policyDefinitions;
 
-  describe("edcClient.management.policyDefinitions.create", () => {
+  describe("create", () => {
     it("succesfully creates a new policy", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
 
       // when
-      const idResponse = await edcClient.management.policyDefinitions.create(
-        context,
-        policyInput,
-      );
+      const idResponse = await policyDefinitions.create(policyInput);
 
       // then
       expect(idResponse).toHaveProperty("createdAt");
@@ -43,16 +34,14 @@ describe("ManagementController", () => {
 
     it("fails creating two policies with the same id", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
 
       // when
-      await edcClient.management.policyDefinitions.create(context, policyInput);
+      await policyDefinitions.create(policyInput);
       const maybeCreateResult = edcClient.management.policyDefinitions.create(
-        context,
         policyInput,
       );
 
@@ -71,20 +60,17 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.policyDefinitions.queryAll", () => {
+  describe("queryAll", () => {
     it("succesfully retuns a list of assets", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.policyDefinitions.create(context, policyInput);
+      await policyDefinitions.create(policyInput);
 
       // when
-      const policies = await edcClient.management.policyDefinitions.queryAll(
-        context,
-      );
+      const policies = await policyDefinitions.queryAll();
 
       // then
       expect(policies.length).toBeGreaterThan(0);
@@ -94,22 +80,19 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.policyDefinitions.get", () => {
+  describe("get", () => {
     it("succesfully retuns a target policy", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      const idResponse = await edcClient.management.policyDefinitions.create(
-        context,
+      const idResponse = await policyDefinitions.create(
         policyInput,
       );
 
       // when
-      const policy = await edcClient.management.policyDefinitions.get(
-        context,
+      const policy = await policyDefinitions.get(
         idResponse.id,
       );
 
@@ -119,11 +102,9 @@ describe("ManagementController", () => {
 
     it("fails to fetch an not existant policy", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybePolicy = edcClient.management.policyDefinitions.get(
-        context,
         crypto.randomUUID(),
       );
 
@@ -140,19 +121,17 @@ describe("ManagementController", () => {
     });
   });
 
-  describe("edcClient.management.policyDefinitions.delete", () => {
+  describe("delete", () => {
     it("deletes a target policy", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
         policy: {},
       };
-      await edcClient.management.policyDefinitions.create(context, policyInput);
+      await policyDefinitions.create(policyInput);
 
       // when
-      const policy = await edcClient.management.policyDefinitions.delete(
-        context,
+      const policy = await policyDefinitions.delete(
         policyInput["@id"]!,
       );
 
@@ -162,11 +141,9 @@ describe("ManagementController", () => {
 
     it("fails to delete an not existant policy", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
 
       // when
       const maybeAsset = edcClient.management.policyDefinitions.delete(
-        context,
         crypto.randomUUID(),
       );
 

@@ -11,23 +11,27 @@ import { Inner } from "../../inner";
 
 export class AssetController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async create(
-    context: EdcConnectorClientContext,
     input: AssetInput,
+    context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v3/assets",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           ...input,
           "@context": this.defaultContextValues,
@@ -37,35 +41,41 @@ export class AssetController {
   }
 
   async delete(
-    context: EdcConnectorClientContext,
     assetId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v3/assets/${assetId}`,
       method: "DELETE",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async get(
-    context: EdcConnectorClientContext,
     assetId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<AssetResponse> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: `/v3/assets/${assetId}`,
       method: "GET",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
     });
   }
 
   async update(
-    context: EdcConnectorClientContext,
     input: AssetInput,
+    context?: EdcConnectorClientContext,
   ): Promise<void> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: "/v3/assets",
       method: "PUT",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
       body: {
         ...input,
         "@context": this.defaultContextValues,
@@ -74,13 +84,15 @@ export class AssetController {
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<AssetResponse[]> {
-    return this.#inner.request(context.management, {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
       path: "/v3/assets/request",
       method: "POST",
-      apiToken: context.apiToken,
+      apiToken: actualContext.apiToken,
       body:
         Object.keys(query).length === 0
           ? null

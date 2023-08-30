@@ -1,5 +1,4 @@
 import {
-  Addresses,
   EdcConnectorClient,
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
@@ -7,21 +6,17 @@ import {
 import { createContractAgreement, createReceiverServer } from "../test-utils";
 
 describe("PublicController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
-  const provider: Addresses = {
-    default: "http://localhost:29191/api",
-    management: "http://localhost:29193/management",
-    protocol: "http://provider-connector:9194/protocol",
-    public: "http://localhost:29291/public",
-    control: "http://localhost:29292/control",
-  };
+  const consumer = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build();
+
+  const provider = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:29193/management")
+    .publicUrl("http://localhost:29291/public")
+    .protocolUrl("http://provider-connector:9194/protocol")
+    .build();
 
   const receiverServer = createReceiverServer();
 
@@ -35,12 +30,8 @@ describe("PublicController", () => {
 
   describe("edcClient.public.getTransferredData", () => {
     it("fails to return an object in response", async () => {
-      // given
-      const edcClient = new EdcConnectorClient();
-      const context = edcClient.createContext(apiToken, consumer);
-
       // when
-      const maybeData = edcClient.public.getTransferredData(context, {});
+      const maybeData = provider.public.getTransferredData({});
 
       // then
       await expect(maybeData).rejects.toThrowError("request was malformed");
@@ -56,10 +47,6 @@ describe("PublicController", () => {
 
     it("initiate the transfer process", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
-
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
       const dataplaneInput = {
         id: "provider-dataplane",
         url: "http://provider-connector:9192/control/transfer",
@@ -70,23 +57,17 @@ describe("PublicController", () => {
         },
       };
 
-      await edcClient.management.dataplanes.register(
-        providerContext,
-        dataplaneInput,
-      );
+      await provider.management.dataplanes.register(dataplaneInput);
 
       const { assetId, contractAgreement } = await createContractAgreement(
-        edcClient,
-        providerContext,
-        consumerContext,
+        provider, consumer
       );
 
-      const idResponse = await edcClient.management.transferProcesses.initiate(
-        consumerContext,
+      const idResponse = await consumer.management.transferProcesses.initiate(
         {
           assetId,
           connectorId: "provider",
-          connectorAddress: providerContext.protocol,
+          connectorAddress: provider.addresses.protocol!,
           contractId: contractAgreement.id,
           managedResources: false,
           dataDestination: { type: "HttpProxy" },
@@ -98,7 +79,7 @@ describe("PublicController", () => {
       );
 
       // when
-      const data = await edcClient.public.getTransferredData(consumerContext, {
+      const data = await provider.public.getTransferredData({
         [transferProcessResponse.authKey]: transferProcessResponse.authCode,
       });
 

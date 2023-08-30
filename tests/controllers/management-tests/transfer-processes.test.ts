@@ -1,5 +1,4 @@
 import {
-  Addresses,
   EDC_NAMESPACE,
   EdcConnectorClient,
   TransferProcessStates,
@@ -9,24 +8,18 @@ import {
   createReceiverServer,
 } from "../../test-utils";
 
-describe("ManagementController", () => {
-  const apiToken = "123456";
-  const consumer: Addresses = {
-    default: "http://localhost:19191/api",
-    management: "http://localhost:19193/management",
-    protocol: "http://consumer-connector:9194/protocol",
-    public: "http://localhost:19291/public",
-    control: "http://localhost:19292/control",
-  };
-  const provider: Addresses = {
-    default: "http://localhost:29191/api",
-    management: "http://localhost:29193/management",
-    protocol: "http://provider-connector:9194/protocol",
-    public: "http://localhost:29291/public",
-    control: "http://localhost:29292/control",
-  };
+describe("TransferProcessController", () => {
+  const consumer = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .protocolUrl("http://consumer-connector:9194/protocol")
+    .build();
 
-  const edcClient = new EdcConnectorClient();
+  const provider = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:29193/management")
+    .protocolUrl("http://provider-connector:9194/protocol")
+    .build();
 
   describe("with receiver server", () => {
     const receiverServer = createReceiverServer();
@@ -39,11 +32,9 @@ describe("ManagementController", () => {
       await receiverServer.shutdown();
     });
 
-    describe("edcClient.management.transferProcesses.queryAll", () => {
+    describe("queryAll", () => {
       it("retrieves all tranfer processes", async () => {
         // given
-        const consumerContext = edcClient.createContext(apiToken, consumer);
-        const providerContext = edcClient.createContext(apiToken, provider);
         const dataplaneInput = {
           id: "provider-dataplane",
           url: "http://provider-connector:9192/control/transfer",
@@ -54,24 +45,17 @@ describe("ManagementController", () => {
           },
         };
 
-        await edcClient.management.dataplanes.register(
-          providerContext,
-          dataplaneInput,
-        );
+        await provider.management.dataplanes.register(dataplaneInput);
 
         const { assetId, contractAgreement } = await createContractAgreement(
-          edcClient,
-          providerContext,
-          consumerContext,
-        );
+          provider, consumer);
 
         const idResponse =
-          await edcClient.management.transferProcesses.initiate(
-            consumerContext,
+          await consumer.management.transferProcesses.initiate(
             {
               assetId,
               connectorId: "provider",
-              connectorAddress: providerContext.protocol,
+              connectorAddress: provider.addresses.protocol!,
               contractId: contractAgreement.id,
               managedResources: false,
               dataDestination: { type: "HttpProxy" },
@@ -80,9 +64,7 @@ describe("ManagementController", () => {
 
         // when
         const transferProcesses =
-          await edcClient.management.transferProcesses.queryAll(
-            consumerContext,
-          );
+          await consumer.management.transferProcesses.queryAll();
 
         // then
         expect(transferProcesses.length).toBeGreaterThan(0);
@@ -95,10 +77,53 @@ describe("ManagementController", () => {
     });
   });
 
+  describe("getState", () => {
+    it("successfully gets a transfer process state", async () => {
+      // given
+      const dataplaneInput = {
+        id: "provider-dataplane",
+        url: "http://provider-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://provider-connector:9291/public/",
+        },
+      };
+
+      await provider.management.dataplanes.register(
+        dataplaneInput,
+      );
+
+      const { assetId, contractAgreement } = await createContractAgreement(
+        provider, consumer);
+
+      const idResponse = await consumer.management.transferProcesses.initiate(
+        {
+          assetId,
+          connectorId: "provider",
+          connectorAddress: provider.addresses.protocol!,
+          contractId: contractAgreement.id,
+          managedResources: false,
+          dataDestination: { type: "HttpProxy" },
+        },
+      );
+
+      // when
+      const transferProcessState =
+        await consumer.management.transferProcesses.getState(
+          idResponse["@id"],
+        );
+
+      // then
+      expect(Object.values(TransferProcessStates)).toContain(
+        transferProcessState[`${EDC_NAMESPACE}:state`],
+      );
+    });
+  });
+
   describe("edcClient.management.dataplanes.register", () => {
     it("succesfully register a dataplane", async () => {
       // given
-      const context = edcClient.createContext(apiToken, consumer);
       const dataplaneInput = {
         id: "consumer-dataplane",
         url: "http://consumer-connector:9192/control/transfer",
@@ -110,8 +135,7 @@ describe("ManagementController", () => {
       };
 
       // when
-      const registration = await edcClient.management.dataplanes.register(
-        context,
+      const registration = await consumer.management.dataplanes.register(
         dataplaneInput,
       );
 
@@ -122,7 +146,6 @@ describe("ManagementController", () => {
 
   describe("edcClient.management.dataplanes.list", () => {
     it("succesfully list available dataplanes", async () => {
-      const context = edcClient.createContext(apiToken, consumer);
       const input = {
         url: "http://consumer-connector:9192/control/transfer",
         allowedSourceTypes: ["HttpData"],
@@ -131,9 +154,9 @@ describe("ManagementController", () => {
           publicApiUrl: "http://consumer-connector:9291/public/",
         },
       };
-      await edcClient.management.dataplanes.register(context, input);
+      await consumer.management.dataplanes.register(input);
 
-      const dataplanes = await edcClient.management.dataplanes.list(context);
+      const dataplanes = await consumer.management.dataplanes.list();
 
       expect(dataplanes.length).toBeGreaterThan(0);
       dataplanes.forEach((dataplane) => {
@@ -152,58 +175,6 @@ describe("ManagementController", () => {
           "http://consumer-connector:9291/public/",
         );
       });
-    });
-  });
-
-  describe("edcClient.management.transferProcesses.getState", () => {
-    it("successfully gets a transfer process state", async () => {
-      // given
-      const consumerContext = edcClient.createContext(apiToken, consumer);
-      const providerContext = edcClient.createContext(apiToken, provider);
-      const dataplaneInput = {
-        id: "provider-dataplane",
-        url: "http://provider-connector:9192/control/transfer",
-        allowedSourceTypes: ["HttpData"],
-        allowedDestTypes: ["HttpProxy", "HttpData"],
-        properties: {
-          publicApiUrl: "http://provider-connector:9291/public/",
-        },
-      };
-
-      await edcClient.management.dataplanes.register(
-        providerContext,
-        dataplaneInput,
-      );
-
-      const { assetId, contractAgreement } = await createContractAgreement(
-        edcClient,
-        providerContext,
-        consumerContext,
-      );
-
-      const idResponse = await edcClient.management.transferProcesses.initiate(
-        consumerContext,
-        {
-          assetId,
-          connectorId: "provider",
-          connectorAddress: providerContext.protocol,
-          contractId: contractAgreement.id,
-          managedResources: false,
-          dataDestination: { type: "HttpProxy" },
-        },
-      );
-
-      // when
-      const transferProcessState =
-        await edcClient.management.transferProcesses.getState(
-          consumerContext,
-          idResponse["@id"],
-        );
-
-      // then
-      expect(Object.values(TransferProcessStates)).toContain(
-        transferProcessState[`${EDC_NAMESPACE}:state`],
-      );
     });
   });
 });

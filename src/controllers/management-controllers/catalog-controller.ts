@@ -4,24 +4,28 @@ import { Inner } from "../../inner";
 
 export class CatalogController {
   #inner: Inner;
+  #context: EdcConnectorClientContext | undefined;
   protocol: String = "dataspace-protocol-http";
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
-  async queryAll(
-    context: EdcConnectorClientContext,
+  async request(
     input: CatalogRequest,
+    context?: EdcConnectorClientContext,
   ): Promise<Catalog> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/catalog/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body: {
           "@context": this.defaultContextValues,
           protocol: this.protocol,
@@ -29,5 +33,15 @@ export class CatalogController {
         },
       })
       .then((body) => expand(body, () => new Catalog()));
+  }
+
+  /**
+   * @deprecated please use `request` instead
+   */
+  async queryAll(
+    input: CatalogRequest,
+    context?: EdcConnectorClientContext,
+  ): Promise<Catalog> {
+    return this.request(input, context);
   }
 }

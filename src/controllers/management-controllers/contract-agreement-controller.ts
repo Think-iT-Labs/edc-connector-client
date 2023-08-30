@@ -10,23 +10,27 @@ import { Inner } from "../../inner";
 
 export class ContractAgreementController {
   #inner: Inner;
+  #context?: EdcConnectorClientContext;
   defaultContextValues = {
     edc: EDC_CONTEXT,
   };
 
-  constructor(inner: Inner) {
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
+    this.#context = context;
   }
 
   async queryAll(
-    context: EdcConnectorClientContext,
     query: QuerySpec = {},
+    context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement[]> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: "/v2/contractagreements/request",
         method: "POST",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
@@ -39,14 +43,16 @@ export class ContractAgreementController {
   }
 
   async get(
-    context: EdcConnectorClientContext,
     agreementId: string,
+    context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement> {
+    const actualContext = context || this.#context!;
+
     return this.#inner
-      .request(context.management, {
+      .request(actualContext.management, {
         path: `/v2/contractagreements/${agreementId}`,
         method: "GET",
-        apiToken: context.apiToken,
+        apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new ContractAgreement()));
   }
