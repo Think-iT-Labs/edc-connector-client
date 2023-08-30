@@ -55,7 +55,7 @@ const client = new EdcConnectorClient.Builder()
 
 At this point the calls can be made against the specified connector:
 ```ts
-const result = await client.management.createAsset({
+const result = await client.management.assets.create({
   asset: {
     properties: {
       "asset:prop:id": "a-http-asset-id",
@@ -100,7 +100,7 @@ const context = client.createContext("123456", {
 
 And the context can be passed to every call as latest argument:
 ```ts
-const result = await client.management.createAsset(context, {
+const result = await client.management.assets.create(context, {
   asset: {
     properties: {
       "asset:prop:id": "a-http-asset-id",
