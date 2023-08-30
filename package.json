@@ -1,6 +1,6 @@
 {
   "name": "@think-it-labs/edc-connector-client",
-  "version": "0.2.0-beta-2",
+  "version": "0.2.0-beta-3",
   "description": "EDC Connector HTTP client",
   "private": false,
   "homepage": "https://github.com/Think-iT-Labs/edc-connector-client",
