@@ -19,25 +19,6 @@ export interface HttpDataAddress extends BaseDataAddress {
   contentType?: string;
 }
 
-export interface S3StorageDataAddress extends BaseDataAddress {
-  type: "AmazonS3";
-  name?: string;
-  bucketName?: string;
-  accessKeyId?: string;
-  secretAccessKey?: string;
-}
-
-export interface AzureStorageDataAddress extends BaseDataAddress {
-  type: "AzureStorage";
-  container?: string;
-  account?: string;
-  blobname?: string;
-}
-
 export type DataAddress =
   | BaseDataAddress
-  | HttpDataAddress
-  | S3StorageDataAddress
-  | AzureStorageDataAddress;
-
-export type DataAddressProperties = Partial<DataAddress>;
+  | HttpDataAddress;

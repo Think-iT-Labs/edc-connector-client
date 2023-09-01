@@ -47,15 +47,8 @@ export interface TransferProcessInput {
   connectorId: string;
   contractId: string;
   dataDestination: DataAddress;
-  transferType?: TransferType;
   id?: string;
   properties?: Record<string, string>;
-  managedResources: boolean;
-}
-
-export interface TransferType {
-  contentType?: string;
-  isFinite?: boolean;
 }
 
 export interface TransferProcessResponse {

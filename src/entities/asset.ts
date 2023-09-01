@@ -1,26 +1,28 @@
-import { EDC_NAMESPACE } from ".";
 import { DataAddress } from "./data-address";
-import { ContextProperties } from "./context";
-import { IdResponse } from "./id-response";
-export interface Asset {
+import { JsonLdId, JsonLdObject } from "./jsonld";
+
+export class Asset extends JsonLdId {
+
+  get properties(): JsonLdObject {
+    return this.nested('edc', 'properties');
+  }
+
+  get privateProperties(): JsonLdObject {
+    return this.nested('edc', 'privateProperties');
+  }
+
+  get dataAddress(): JsonLdObject {
+    return this.nested('edc', 'dataAddress');
+  }
+}
+
+export interface AssetInput {
+  "@id"?: string;
   properties: AssetProperties;
-  createdAt: string;
-  "@id": string;
+  privateProperties?: AssetProperties;
+  dataAddress: DataAddress
 }
 
 interface AssetProperties {
   [key: string]: string | undefined | any;
-  name?: string;
-  description?: string;
-  contenttype?: string;
 }
-
-export interface AssetInput extends Partial<Asset> {
-  dataAddress: Partial<DataAddress> & { properties?: Partial<DataAddress> };
-}
-
-export type AssetResponse = {
-  [K in keyof AssetProperties as `${typeof EDC_NAMESPACE}:${string &
-    K}`]: AssetProperties[K];
-} & ContextProperties &
-  IdResponse;
