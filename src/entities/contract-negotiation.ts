@@ -17,11 +17,14 @@ export class ContractNegotiation extends JsonLdId {
   counterPartyAddress?: string;
   errorDetail?: string;
   protocol?: string;
-  state?: string;
   type?: "CONSUMER" | "PROVIDER";
 
   get contractAgreementId(): string {
     return this.mandatoryValue('edc', 'contractAgreementId');
+  }
+
+  get state(): string {
+    return this.mandatoryValue('edc', 'state');
   }
 }
 

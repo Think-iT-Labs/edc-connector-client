@@ -17,7 +17,7 @@ export class Dataplane extends JsonLdId {
   }
 
   get properties(): JsonLdObject {
-    return this.mandatoryValue('edc', 'properties');
+    return this.nested('edc', 'properties');
   }
 
 }

@@ -23,15 +23,9 @@ describe("ContractNegotiationController", () => {
     .protocolUrl("http://provider-connector:9194/protocol")
     .build();
 
-  describe("inititate", () => {
-    /**
-    TODO
-    Automated "decline" test case
-    - provider creates asset, ...
-    - when consumer starts needs to specify the whole policy
-    - if consumer changes the policy (e.g. remove permission)
-      - provider will decline
-    */
+  const negotiations = consumer.management.contractNegotiations;
+
+  describe("initiate", () => {
 
     it("kickstart a contract negotiation", async () => {
       // when
@@ -49,14 +43,13 @@ describe("ContractNegotiationController", () => {
       const { idResponse } = await createContractNegotiation(provider, consumer);
 
       // when
-      const contractNegotiations =
-        await consumer.management.contractNegotiations.queryAll();
+      const contractNegotiations = await negotiations.queryAll();
 
       // then
       expect(contractNegotiations.length).toBeGreaterThan(0);
       expect(
         contractNegotiations.find(
-          (contractNegotiation) => contractNegotiation["@id"] === idResponse.id,
+          (contractNegotiation) => contractNegotiation.id === idResponse.id,
         ),
       ).toBeTruthy();
     });
@@ -67,13 +60,13 @@ describe("ContractNegotiationController", () => {
 
       // when
       const [providerNegotiation] =
-        await consumer.management.contractNegotiations.queryAll(
+        await negotiations.queryAll(
           {
             filterExpression: [
               {
                 operandLeft: "contractAgreement.assetId",
-                operandRight: assetId,
                 operator: "=",
+                operandRight: assetId,
               },
             ],
           },
@@ -90,23 +83,20 @@ describe("ContractNegotiationController", () => {
       const { idResponse } = await createContractNegotiation(provider, consumer);
 
       // when
-      const contractNegotiation =
-        await consumer.management.contractNegotiations.get(idResponse.id);
+      const contractNegotiation = await negotiations.get(idResponse.id);
 
       // then
-      expect(contractNegotiation).toHaveProperty("@id", idResponse.id);
+      expect(contractNegotiation.id).toEqual(idResponse.id);
     });
 
     it("fails to fetch an not existant contract negotiation", async () => {
       // when
-      const maybeAsset = consumer.management.contractNegotiations.get(
-        crypto.randomUUID(),
-      );
+      const maybeNegotiation = negotiations.get(crypto.randomUUID(),);
 
       // then
-      await expect(maybeAsset).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
 
-      maybeAsset.catch((error) => {
+      maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
@@ -122,8 +112,7 @@ describe("ContractNegotiationController", () => {
       const { idResponse } = await createContractNegotiation(provider, consumer);
 
       // when
-      const contractNegotiationState =
-        await consumer.management.contractNegotiations.getState(idResponse.id);
+      const contractNegotiationState = await negotiations.getState(idResponse.id);
 
       // then
       expect(contractNegotiationState).toHaveProperty("state");
@@ -131,14 +120,12 @@ describe("ContractNegotiationController", () => {
 
     it("fails to fetch an not existant contract negotiation's state", async () => {
       // when
-      const maybeAsset = consumer.management.contractNegotiations.getState(
-        crypto.randomUUID(),
-      );
+      const maybeNegotiation = negotiations.getState(crypto.randomUUID(),);
 
       // then
-      await expect(maybeAsset).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
 
-      maybeAsset.catch((error) => {
+      maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
@@ -152,25 +139,18 @@ describe("ContractNegotiationController", () => {
     it("terminate the requested target negotiation", async () => {
       // given
       const { idResponse } = await createContractNegotiation(provider, consumer);
-
       const negotiationId = idResponse.id;
 
       // when
       const cancelledNegotiation =
-        await consumer.management.contractNegotiations.terminate(
-          negotiationId,
-          "a reason to terminate",
-        );
+        await negotiations.terminate(negotiationId, "a reason to terminate");
       await waitForNegotiationState(
         consumer,
         negotiationId,
         "TERMINATED",
       );
 
-      const negotiationState =
-        await consumer.management.contractNegotiations.getState(
-          negotiationId,
-        );
+      const negotiationState = await negotiations.getState(negotiationId);
 
       // then
       expect(cancelledNegotiation).toBeUndefined();
@@ -179,15 +159,15 @@ describe("ContractNegotiationController", () => {
 
     it("fails to cancel an not existent contract negotiation", async () => {
       // when
-      const maybeAsset = consumer.management.contractNegotiations.terminate(
+      const maybeNegotiation = negotiations.terminate(
         crypto.randomUUID(),
         "a reason to terminate",
       );
 
       // then
-      await expect(maybeAsset).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
 
-      maybeAsset.catch((error) => {
+      maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
@@ -211,10 +191,7 @@ describe("ContractNegotiationController", () => {
       );
 
       // when
-      const contractAgreement =
-        await consumer.management.contractNegotiations.getAgreement(
-          negotiationId,
-        );
+      const contractAgreement = await negotiations.getAgreement(negotiationId);
 
       // then
       expect(contractAgreement).toHaveProperty("assetId", assetId);
