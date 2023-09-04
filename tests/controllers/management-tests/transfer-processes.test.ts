@@ -57,7 +57,6 @@ describe("TransferProcessController", () => {
               connectorId: "provider",
               connectorAddress: provider.addresses.protocol!,
               contractId: contractAgreement.id,
-              managedResources: false,
               dataDestination: { type: "HttpProxy" },
             },
           );
@@ -103,7 +102,6 @@ describe("TransferProcessController", () => {
           connectorId: "provider",
           connectorAddress: provider.addresses.protocol!,
           contractId: contractAgreement.id,
-          managedResources: false,
           dataDestination: { type: "HttpProxy" },
         },
       );

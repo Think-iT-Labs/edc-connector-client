@@ -1,7 +1,6 @@
 import * as crypto from "node:crypto";
 import {
   AssetInput,
-  EDC_NAMESPACE,
   EdcConnectorClient,
 } from "../../../src";
 import {
@@ -19,31 +18,26 @@ describe("AssetController", () => {
 
   describe("create", () => {
     it("succesfully creates an asset", async () => {
-      // given
+      const id = crypto.randomUUID()
       const assetInput: AssetInput = {
-        "@id": crypto.randomUUID(),
+        "@id": id,
         properties: {
           name: "product description",
           contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
-          properties: {
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
-        },
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        }
       };
 
-      // when
       const idResponse = await assets.create(assetInput);
 
-      // then
-      expect(idResponse).toHaveProperty("createdAt");
-      expect(idResponse).toHaveProperty("id");
+      expect(idResponse.id).toBe(id);
+      expect(idResponse.createdAt).toBeGreaterThan(0);
     });
 
     it("fails creating two assets with the same id", async () => {
-      // given
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -52,21 +46,15 @@ describe("AssetController", () => {
         },
         dataAddress: {
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
-        },
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        }
       };
 
-      // when
       await assets.create(assetInput);
       const maybeCreateResult = assets.create(assetInput);
 
-      // then
-      await expect(maybeCreateResult).rejects.toThrowError(
-        "duplicated resource",
-      );
+      await expect(maybeCreateResult).rejects.toThrowError("duplicated resource");
 
       maybeCreateResult.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -80,7 +68,6 @@ describe("AssetController", () => {
 
   describe("delete", () => {
     it("deletes a target asset", async () => {
-      // given
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -89,26 +76,20 @@ describe("AssetController", () => {
         },
         dataAddress: {
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
-        },
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        }
       };
       await assets.create(assetInput);
 
-      // when
       const asset = await assets.delete(assetInput["@id"] as string);
 
-      // then
       expect(asset).toBeUndefined();
     });
 
-    it("fails to delete an not existant asset", async () => {
-      // when
+    it("fails to delete an not existent asset", async () => {
       const maybeAsset = assets.delete(crypto.randomUUID());
 
-      // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
@@ -125,36 +106,34 @@ describe("AssetController", () => {
 
   describe("get", () => {
     it("returns a target asset", async () => {
-      // given
       const assetInput: AssetInput = {
-        "@id": crypto.randomUUID(),
         properties: {
           name: "product description",
           contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
         },
+        privateProperties: {
+          privateKey: "private-value"
+        }
       };
-      await assets.create(assetInput);
+      const idResponse = await assets.create(assetInput);
 
-      // when
-      const asset = await assets.get(assetInput["@id"] as string);
+      const asset = await assets.get(idResponse.id);
 
-      // then
-      expect(asset).toHaveProperty("@context");
-      expect(asset).toHaveProperty("@id", assetInput["@id"]);
+      expect(asset.id).toBe(idResponse.id)
+      expect(asset.properties.mandatoryValue('edc', 'name'))
+        .toBe("product description")
+      expect(asset.privateProperties.mandatoryValue('edc', 'privateKey'))
+        .toBe("private-value")
     });
 
-    it("fails to fetch an not existant asset", async () => {
-      // when
+    it("fails to fetch an not existent asset", async () => {
       const maybeAsset = assets.get(crypto.randomUUID());
 
-      // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
@@ -169,7 +148,6 @@ describe("AssetController", () => {
 
   describe("queryAll", () => {
     it("succesfully retuns a list of assets", async () => {
-      // given
       const assetInput: AssetInput = {
         "@id": crypto.randomUUID(),
         properties: {
@@ -180,91 +158,67 @@ describe("AssetController", () => {
           name: "Test asset",
           baseUrl: "https://jsonplaceholder.typicode.com/users",
           type: "HttpData",
-        },
+        }
       };
       await assets.create(assetInput);
 
-      // when
       const result = await assets.queryAll();
 
-      // then
       expect(result.length).toBeGreaterThan(0);
       expect(
-        result.find((asset) => asset?.["@id"] === assetInput["@id"]),
+        result.find((asset) => asset.id === assetInput["@id"]),
       ).toBeTruthy();
     });
   });
 
   describe("update", () => {
     it("updates a target asset", async () => {
-      // given
+      const id = crypto.randomUUID();
       const assetInput = {
-        "@id": crypto.randomUUID(),
+        "@id": id,
         properties: {
           name: "product description",
           contenttype: "application/json",
         },
         dataAddress: {
           type: "HttpData",
-          properties: {
-            name: "Test asset",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
+          name: "test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
         },
+        privateProperties: {
+          privateKey: "private-value"
+        }
       };
       await assets.create(assetInput);
+
       const updateAssetInput = {
         "@id": assetInput["@id"],
         properties: { name: "updated test asset", contenttype: "text/plain" },
-        dataAddress: {
-          type: "s3",
-        },
+        dataAddress: { type: "s3" },
+        privateProperties: { }
       };
-
-      // when
       await assets.update(updateAssetInput);
 
-      const updatedAsset = await assets.get(
-        assetInput["@id"],
-      );
+      const updatedAsset = await assets.get(id);
 
-      // then
-      expect(updatedAsset).toHaveProperty("@type");
-      expect(updatedAsset).toEqual(
-        expect.objectContaining({
-          [`${EDC_NAMESPACE}:properties`]: {
-            [`${EDC_NAMESPACE}:name`]: updateAssetInput.properties.name,
-            [`${EDC_NAMESPACE}:id`]: updateAssetInput["@id"],
-            [`${EDC_NAMESPACE}:contenttype`]:
-              updateAssetInput.properties.contenttype,
-          },
-          [`${EDC_NAMESPACE}:dataAddress`]: {
-            [`${EDC_NAMESPACE}:type`]: updateAssetInput.dataAddress.type,
-            "@type": "edc:DataAddress",
-          },
-        }),
-      );
+      expect(updatedAsset.properties.mandatoryValue('edc', 'name'))
+        .toBe("updated test asset");
+      expect(updatedAsset.properties.mandatoryValue('edc', 'contenttype'))
+        .toBe("text/plain");
+      expect(updatedAsset.dataAddress.mandatoryValue('edc', 'type')).toBe("s3");
+      expect(Object.keys(updatedAsset.privateProperties).length).toBe(0);
     });
 
-    it("fails to update an inexistant asset", async () => {
-      // given
+    it("fails to update a not-existent asset", async () => {
       const updateAssetInput = {
         "@id": crypto.randomUUID(),
         properties: { name: "updated test asset", contenttype: "text/plain" },
-        dataAddress: {
-          type: "s3",
-        },
+        dataAddress: { type: "s3" }
       };
 
-      // when
-      const maybeUpdatedAsset = assets.update(
-        updateAssetInput,
-      );
+      const maybeUpdatedAsset = assets.update(updateAssetInput);
 
-      // then
-      await expect(maybeUpdatedAsset).rejects.toThrowError(
-        "resource not found",
-      );
+      await expect(maybeUpdatedAsset).rejects.toThrowError("resource not found");
 
       maybeUpdatedAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);

@@ -1,7 +1,8 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
-  AssetResponse,
+  expandArray,
+  Asset,
   AssetInput,
   IdResponse,
   QuerySpec,
@@ -56,14 +57,16 @@ export class AssetController {
   async get(
     assetId: string,
     context?: EdcConnectorClientContext,
-  ): Promise<AssetResponse> {
+  ): Promise<Asset> {
     const actualContext = context || this.#context!;
 
-    return this.#inner.request(actualContext.management, {
-      path: `/v3/assets/${assetId}`,
-      method: "GET",
-      apiToken: actualContext.apiToken,
-    });
+    return this.#inner
+      .request(actualContext.management, {
+        path: `/v3/assets/${assetId}`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new Asset()));
   }
 
   async update(
@@ -86,20 +89,22 @@ export class AssetController {
   async queryAll(
     query: QuerySpec = {},
     context?: EdcConnectorClientContext,
-  ): Promise<AssetResponse[]> {
+  ): Promise<Asset[]> {
     const actualContext = context || this.#context!;
 
-    return this.#inner.request(actualContext.management, {
-      path: "/v3/assets/request",
-      method: "POST",
-      apiToken: actualContext.apiToken,
-      body:
-        Object.keys(query).length === 0
-          ? null
-          : {
-              ...query,
-              "@context": this.defaultContextValues,
-            },
-    });
+    return this.#inner
+      .request(actualContext.management, {
+        path: "/v3/assets/request",
+        method: "POST",
+        apiToken: actualContext.apiToken,
+        body:
+          Object.keys(query).length === 0
+            ? null
+            : {
+                ...query,
+                "@context": this.defaultContextValues,
+              },
+      })
+      .then((body) => expandArray(body, () => new Asset()));
   }
 }
