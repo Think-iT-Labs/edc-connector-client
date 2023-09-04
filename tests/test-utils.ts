@@ -85,7 +85,7 @@ export async function createContractNegotiation(
     "@id": policyId,
     policy: {
       "@context": "http://www.w3.org/ns/odrl.jsonld",
-      permissions: [],
+      permission: [],
     },
   };
   await provider.management.policyDefinitions.create(policyInput);

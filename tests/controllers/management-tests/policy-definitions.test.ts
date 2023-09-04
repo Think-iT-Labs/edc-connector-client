@@ -19,17 +19,18 @@ describe("PolicyDefinitionController", () => {
   describe("create", () => {
     it("succesfully creates a new policy", async () => {
       // given
+      const id = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: {},
+        "@id": id,
+        policy: { },
       };
 
       // when
       const idResponse = await policyDefinitions.create(policyInput);
 
       // then
-      expect(idResponse).toHaveProperty("createdAt");
-      expect(idResponse).toHaveProperty("id");
+      expect(idResponse.id).toBe(id);
+      expect(idResponse.createdAt).toBeGreaterThan(0);
     });
 
     it("fails creating two policies with the same id", async () => {
@@ -41,9 +42,7 @@ describe("PolicyDefinitionController", () => {
 
       // when
       await policyDefinitions.create(policyInput);
-      const maybeCreateResult = edcClient.management.policyDefinitions.create(
-        policyInput,
-      );
+      const maybeCreateResult = policyDefinitions.create(policyInput);
 
       // then
       await expect(maybeCreateResult).rejects.toThrowError(
@@ -61,7 +60,7 @@ describe("PolicyDefinitionController", () => {
   });
 
   describe("queryAll", () => {
-    it("succesfully retuns a list of assets", async () => {
+    it("succesfully retuns a list of policy definitions", async () => {
       // given
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
@@ -81,30 +80,56 @@ describe("PolicyDefinitionController", () => {
   });
 
   describe("get", () => {
-    it("succesfully retuns a target policy", async () => {
+    it("succesfully return a policy definition", async () => {
       // given
       const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: {},
+        policy: {
+          "@type": "set",
+          "@context": "http://www.w3.org/ns/odrl.jsonld",
+          permission: [
+            {
+              action: "use",
+              constraint: [
+                {
+                  leftOperand: "field",
+                  operator: "eq",
+                  rightOperand: "value"
+                },
+                {
+                  "and": [{
+                      leftOperand: "field2",
+                      operator: "eq",
+                      rightOperand: "value"
+                    },
+                    {
+                      leftOperand: "field3",
+                      operator: "eq",
+                      rightOperand: "value"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
       };
-      const idResponse = await policyDefinitions.create(
-        policyInput,
-      );
+      const idResponse = await policyDefinitions.create(policyInput);
 
       // when
-      const policy = await policyDefinitions.get(
-        idResponse.id,
-      );
+      const policyDefinition = await policyDefinitions.get(idResponse.id);
 
       // then
-      expect(policy["@id"]).toBe(idResponse.id);
+      expect(policyDefinition.id).toBe(idResponse.id);
+      expect(policyDefinition.policy.permissions).toHaveLength(1);
+      const constraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
+      expect(constraints).toHaveLength(2);
+      expect(constraints[0].mandatoryValue("odrl", "leftOperand")).toBe("https://w3id.org/edc/v0.0.1/ns/field");
+      expect(constraints[1].array("odrl", "and")).toHaveLength(2);
     });
 
     it("fails to fetch an not existant policy", async () => {
-      // given
-
       // when
-      const maybePolicy = edcClient.management.policyDefinitions.get(
+      const maybePolicy = policyDefinitions.get(
         crypto.randomUUID(),
       );
 
@@ -140,10 +165,8 @@ describe("PolicyDefinitionController", () => {
     });
 
     it("fails to delete an not existant policy", async () => {
-      // given
-
       // when
-      const maybeAsset = edcClient.management.policyDefinitions.delete(
+      const maybeAsset = policyDefinitions.delete(
         crypto.randomUUID(),
       );
 
@@ -158,7 +181,5 @@ describe("PolicyDefinitionController", () => {
         );
       });
     });
-
-    it.todo("fails to delete a policy that is part of an agreed contract");
   });
 });

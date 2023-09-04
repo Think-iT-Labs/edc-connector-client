@@ -120,7 +120,6 @@ describe("AssetController", () => {
       });
     });
 
-    it.todo("fails to delete an asset that is part of an agreed contract");
   });
 
   describe("get", () => {
