@@ -42,12 +42,9 @@ describe("CatalogController", () => {
         id: policyId,
         policy: {
           uid: "231802-bb34-11ec-8422-0242ac120002",
-          permissions: [
+          permission: [
             {
-              action: {
-                type: "USE",
-              },
-              edctype: "dataspaceconnector:permission",
+              action: "use"
             },
           ],
         },

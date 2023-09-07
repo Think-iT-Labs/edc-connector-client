@@ -1,36 +1,30 @@
 import { Duty } from "./duty";
 import { Permission } from "./permission";
 import { Prohibition } from "./prohibition";
-import { JsonLdId } from "./jsonld";
+import { JsonLdObject } from "../jsonld";
 
 export type PolicyType =
   | "set"
   | "offer"
   | "contract";
 
-export interface Policy {
+export interface PolicyInput {
   uid?: string;
   "@context"?: string;
-  "@type"?: {
-    "@policytype": PolicyType;
-  };
+  "@type"?: PolicyType;
   assignee?: string;
   assigner?: string;
   extensibleProperties?: object;
   inheritsFrom?: string;
   obligations?: Duty[];
-  permissions?: Permission[];
+  permission?: Permission[];
   prohibitions?: Prohibition[];
   target?: string;
 }
 
-export class PolicyDefinition extends JsonLdId {
-  createdAt?: number;
-  policy?: Policy;
-}
+export class Policy extends JsonLdObject {
 
-export interface PolicyDefinitionInput {
-  '@id'?: string;
-  id?: string;
-  policy: Policy;
+  get permissions(): JsonLdObject[] {
+    return this.arrayOf(() => new JsonLdObject(), "odrl", "permission");
+  }
 }

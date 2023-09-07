@@ -8,7 +8,7 @@ export interface Duty {
   consequence?: Duty;
   target?: string;
   uid?: string;
-  constraints?: Constraint[];
+  constraint?: Constraint[];
   parentPermission?: Permission;
-  action?: Action;
+  action: Action | string;
 }

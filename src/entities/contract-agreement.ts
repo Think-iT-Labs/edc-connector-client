@@ -3,7 +3,9 @@ import { JsonLdId } from "./jsonld"
 
 export class ContractAgreement extends JsonLdId {
 
-  policy?: Policy;
+  get policy(): Policy {
+    return Object.assign(new Policy(), this.nested('edc', 'policy'));
+  };
 
   get assetId(): string {
     return this.mandatoryValue('edc', 'assetId');
