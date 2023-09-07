@@ -13,6 +13,7 @@ export * from "./dataplane";
 export * from "./id-response";
 export * from "./jsonld";
 export * from "./health";
+export * from "./policy";
 export * from "./policydefinition";
 export * from "./transfer-process";
 
