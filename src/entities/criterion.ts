@@ -11,7 +11,11 @@ export class Criterion extends JsonLdObject {
       return this.mandatoryValue('edc', 'operandLeft');
     }
 
-    get opearator(): string {
+    get operator(): string {
       return this.mandatoryValue('edc', 'operator')
+    }
+
+    get operandRight(): string {
+      return this.mandatoryValue('edc', 'operandRight');
     }
 }
