@@ -1,4 +1,4 @@
-import { Criterion } from "./criterion";
+import { CriterionInput } from "./criterion";
 
 export * from "./addresses";
 export * from "./asset";
@@ -26,7 +26,7 @@ export interface ApiErrorDetail {
 }
 
 export interface QuerySpec {
-  filterExpression?: Criterion[];
+  filterExpression?: CriterionInput[];
   limit?: number;
   offset?: number;
   sortField?: string;

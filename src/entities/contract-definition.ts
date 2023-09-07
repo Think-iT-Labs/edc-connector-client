@@ -1,4 +1,4 @@
-import { Criterion } from "./criterion";
+import { Criterion, CriterionInput } from "./criterion";
 import { JsonLdId } from "./jsonld";
 
 export class ContractDefinition extends JsonLdId {
@@ -9,10 +9,15 @@ export class ContractDefinition extends JsonLdId {
   get contractPolicyId(): string {
     return this.mandatoryValue('edc', 'contractPolicyId');
   }
+
+  get assetsSelector(): Criterion[] {
+    return this.arrayOf(() => new Criterion(), 'edc', 'assetsSelector')
+  }
 }
 
-export interface ContractDefinitionInput extends Partial<ContractDefinition> {
+export interface ContractDefinitionInput {
+  "@id"?: string,
   accessPolicyId: string;
   contractPolicyId: string;
-  assetsSelector: Criterion[];
+  assetsSelector: CriterionInput[];
 }

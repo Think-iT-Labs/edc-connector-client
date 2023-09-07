@@ -64,7 +64,8 @@ export class ContractDefinitionController {
       path: `/v2/contractdefinitions/${contractDefinitionId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
-    });
+    })
+    .then((body) => expand(body, () => new ContractDefinition()));
   }
 
   async queryAll(
