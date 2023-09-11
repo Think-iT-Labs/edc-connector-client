@@ -3,6 +3,7 @@ import {
   expand,
   expandArray,
   ContractAgreement,
+  ContractNegotiation,
   QuerySpec,
   EDC_CONTEXT,
 } from "../../entities";
@@ -55,5 +56,20 @@ export class ContractAgreementController {
         apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new ContractAgreement()));
+  }
+
+  async getNegotiation(
+    agreementId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<ContractNegotiation> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner
+      .request(actualContext.management, {
+        path: `/v2/contractagreements/${agreementId}/negotiation`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new ContractNegotiation()));
   }
 }
