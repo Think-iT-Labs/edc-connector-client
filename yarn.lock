@@ -2255,9 +2255,9 @@ jsonfile@^6.0.1:
     graceful-fs "^4.1.6"
 
 jsonld@^8.2.1:
-  version "8.2.1"
-  resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-8.2.1.tgz#e55141e3011cdda468211581c845455ac0b5f0be"
-  integrity sha512-hCnY98LwTp0gJ0oEp41wytYYbU96ZX6SR3QwE8A+1V9dKVCSXrOR1WXF21Vq/Bgx46l2baPRvJ5cix5Gd4EX5A==
+  version "8.3.1"
+  resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-8.3.1.tgz#45a05767904bcfc498779df082ef4ad046f637ac"
+  integrity sha512-tYfKpWL56meSJCHS91Ph0+EUThHZOZ8bKuboME4998SF+Kkukp2PhCPdRCvA7tsGUKr9FvSoyIRqJPuImBcBuA==
   dependencies:
     "@digitalbazaar/http-client" "^3.4.1"
     canonicalize "^1.0.1"
