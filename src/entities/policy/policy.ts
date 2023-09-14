@@ -16,9 +16,9 @@ export interface PolicyInput {
   assigner?: string;
   extensibleProperties?: object;
   inheritsFrom?: string;
-  obligations?: Duty[];
+  obligation?: Duty[];
   permission?: Permission[];
-  prohibitions?: Prohibition[];
+  prohibition?: Prohibition[];
   target?: string;
 }
 
@@ -26,5 +26,13 @@ export class Policy extends JsonLdObject {
 
   get permissions(): JsonLdObject[] {
     return this.arrayOf(() => new JsonLdObject(), "odrl", "permission");
+  }
+
+  get prohibitions(): JsonLdObject[] {
+    return this.arrayOf(() => new JsonLdObject(), "odrl", "prohibition");
+  }
+
+  get obligations(): JsonLdObject[] {
+    return this.arrayOf(() => new JsonLdObject(), "odrl", "obligation");
   }
 }
