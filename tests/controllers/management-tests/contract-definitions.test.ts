@@ -18,7 +18,6 @@ describe("ContractDefinitionController", () => {
 
   describe("create", () => {
     it("succesfully creates a new contract definition", async () => {
-      // given
       const id = crypto.randomUUID();
       const input: ContractDefinitionInput = {
         "@id": id,
@@ -27,16 +26,13 @@ describe("ContractDefinitionController", () => {
         assetsSelector: [],
       };
 
-      // when
       const idResponse = await contractDefinitions.create(input);
 
-      // then
       expect(idResponse.id).toBe(id);
       expect(idResponse.createdAt).toBeGreaterThan(0);
     });
 
     it("fails creating two contract definitions with the same id", async () => {
-      // given
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -44,13 +40,11 @@ describe("ContractDefinitionController", () => {
         assetsSelector: [],
       };
 
-      // when
       await contractDefinitions.create(contractDefinitionInput);
       const maybeCreateResult = contractDefinitions.create(
         contractDefinitionInput,
       );
 
-      // then
       await expect(maybeCreateResult).rejects.toThrowError(
         "duplicated resource",
       );
@@ -67,7 +61,6 @@ describe("ContractDefinitionController", () => {
 
   describe("queryAll", () => {
     it("succesfully retuns a list of contract definitions", async () => {
-      // given
       const contractDefinitionInput: ContractDefinitionInput = {
         "@id": "definition-" + crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
@@ -78,15 +71,13 @@ describe("ContractDefinitionController", () => {
         contractDefinitionInput,
       );
 
-      // when
       const result = await contractDefinitions.queryAll();
 
-      // then
       expect(result.length).toBeGreaterThan(0);
       expect(
         result.find(
           (contractDefinition) =>
-            contractDefinition["@id"] === contractDefinitionInput["@id"],
+            contractDefinition.id === contractDefinitionInput["@id"],
         ),
       ).toBeTruthy();
     });
@@ -94,26 +85,33 @@ describe("ContractDefinitionController", () => {
 
   describe("get", () => {
     it("succesfully retuns a target contract definition", async () => {
-      // given
+      const accessPolicyId = crypto.randomUUID();
+      const contractPolicyId = crypto.randomUUID();
       const input: ContractDefinitionInput = {
-        accessPolicyId: crypto.randomUUID(),
-        contractPolicyId: crypto.randomUUID(),
-        assetsSelector: [],
+        accessPolicyId,
+        contractPolicyId,
+        assetsSelector: [{
+          operandLeft: "foo",
+          operator: "=",
+          operandRight: "bar"
+        }],
       };
       const idResponse = await contractDefinitions.create(input);
 
-      // when
       const contractDefinition = await contractDefinitions.get(idResponse.id);
 
-      // then
       expect(contractDefinition.id).toBe(idResponse.id);
+      expect(contractDefinition.accessPolicyId).toBe(accessPolicyId);
+      expect(contractDefinition.contractPolicyId).toBe(contractPolicyId);
+      expect(contractDefinition.assetsSelector.length).toBe(1);
+      expect(contractDefinition.assetsSelector[0].operandLeft).toBe("foo");
+      expect(contractDefinition.assetsSelector[0].operator).toBe("=");
+      expect(contractDefinition.assetsSelector[0].operandRight).toBe("bar");
     });
 
     it("fails to fetch an not existant contract definition", async () => {
-      // when
       const maybePolicy = contractDefinitions.get(crypto.randomUUID());
 
-      // then
       await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
@@ -128,30 +126,23 @@ describe("ContractDefinitionController", () => {
 
   describe("delete", () => {
     it("deletes a target contract definition", async () => {
-      // given
-      const contractDefinitionInput: ContractDefinitionInput = {
+      const input: ContractDefinitionInput = {
         "@id": crypto.randomUUID(),
         accessPolicyId: crypto.randomUUID(),
         contractPolicyId: crypto.randomUUID(),
         assetsSelector: [],
       };
-      const idResponse = await contractDefinitions.create(
-        contractDefinitionInput,
-      );
+      const idResponse = await contractDefinitions.create(input);
 
-      // when
       const contractDefinition = await contractDefinitions.delete(idResponse.id);
 
-      // then
       expect(contractDefinition).toBeUndefined();
     });
 
     it("fails to delete an not existant contract definition", async () => {
-      // when
       const maybeContractDefinition =
         contractDefinitions.delete(crypto.randomUUID());
 
-      // then
       await expect(maybeContractDefinition).rejects.toThrowError(
         "resource not found",
       );
@@ -165,9 +156,8 @@ describe("ContractDefinitionController", () => {
       });
     });
 
-    describe("edcClient.management.updateContractDefinition", () => {
+    describe("update", () => {
       it("updates a target contract definition", async () => {
-        // given
         const contractDefinitionInput: ContractDefinitionInput = {
           "@id": crypto.randomUUID(),
           accessPolicyId: crypto.randomUUID(),
@@ -185,17 +175,13 @@ describe("ContractDefinitionController", () => {
           assetsSelector: [],
         };
 
-        // when
         await contractDefinitions.update(
           updateContractDefinitionInput,
         );
 
         const updatedContractDefinition =
-          await contractDefinitions.get(
-            updateContractDefinitionInput["@id"] as string,
-          );
+          await contractDefinitions.get(updateContractDefinitionInput["@id"]!);
 
-        // then
         expect(updatedContractDefinition).toHaveProperty("@type");
         expect(
           updatedContractDefinition.accessPolicyId,
@@ -209,7 +195,6 @@ describe("ContractDefinitionController", () => {
       });
 
       it("fails to update an inexistant contract definition", async () => {
-        // given
         const updateContractDefinitionInput = {
           "@id": crypto.randomUUID(),
           accessPolicyId: crypto.randomUUID(),
@@ -217,13 +202,11 @@ describe("ContractDefinitionController", () => {
           assetsSelector: [],
         };
 
-        // when
         const maybeUpdatedContractDefinition =
           contractDefinitions.update(
             updateContractDefinitionInput,
           );
 
-        // then
         await expect(maybeUpdatedContractDefinition).rejects.toThrowError(
           "resource not found",
         );
