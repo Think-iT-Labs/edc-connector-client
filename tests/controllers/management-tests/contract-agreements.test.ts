@@ -24,49 +24,34 @@ describe("ContractAgreementController", () => {
     .protocolUrl("http://provider-connector:9194/protocol")
     .build();
 
+  const contractAgreements = consumer.management.contractAgreements;
+
   describe("queryAll", () => {
     it("retrieves all contract agreements", async () => {
-      // given
       const { idResponse } = await createContractNegotiation(provider, consumer);
       await waitForNegotiationState(consumer, idResponse.id, "FINALIZED");
-      const contractNegotiation =
-        await consumer.management.contractNegotiations.get(idResponse.id,);
+      const negotiation =
+        await consumer.management.contractNegotiations.get(idResponse.id);
 
-      // when
-      const contractAgreements =
-        await consumer.management.contractAgreements.queryAll();
+      const result = await contractAgreements.queryAll();
 
-      // then
-      expect(contractAgreements.length).toBeGreaterThan(0);
-      expect(
-        contractAgreements.find(
-          (agreement) =>
-            agreement.id === contractNegotiation.contractAgreementId,
-        ),
-      ).toBeTruthy();
+      expect(result.length).toBeGreaterThan(0);
+      expect(result.find(a => a.id === negotiation.contractAgreementId))
+        .toBeTruthy();
     });
   });
 
   describe("getAgreement", () => {
     it("retrieves target contract agreement", async () => {
-      // when
       const { contractNegotiation, contractAgreement } =
         await createContractAgreement(provider, consumer);
 
-      // then
-      expect(contractAgreement).toHaveProperty(
-        "id",
-        contractNegotiation.contractAgreementId,
-      );
+      expect(contractAgreement.id).toBe(contractNegotiation.contractAgreementId);
     });
 
-    it("fails to fetch an not existent contract negotiation", async () => {
-      // when
-      const maybeAsset = consumer.management.contractAgreements.get(
-        crypto.randomUUID(),
-      );
+    it("fails to fetch an not existent contract agreement", async () => {
+      const maybeAsset = contractAgreements.get(crypto.randomUUID());
 
-      // then
       await expect(maybeAsset).rejects.toThrowError("resource not found");
 
       maybeAsset.catch((error) => {
@@ -76,6 +61,16 @@ describe("ContractAgreementController", () => {
           EdcConnectorClientErrorType.NotFound,
         );
       });
+    });
+  });
+
+  describe("getNegotiation", () => {
+    it("retrieves negotiation from agreement", async () => {
+      const { contractAgreement, contractNegotiation } = await createContractAgreement(provider, consumer);
+
+      const negotiation = await contractAgreements.getNegotiation(contractAgreement.id);
+
+      expect(negotiation.id).toBe(contractNegotiation.id);
     });
   });
 });
