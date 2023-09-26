@@ -1,3 +1,4 @@
+import * as crypto from "node:crypto";
 import { EdcConnectorClient } from "../../../src";
 
 describe("DataplaneController", () => {
@@ -12,8 +13,9 @@ describe("DataplaneController", () => {
 
   describe("register", () => {
     it("succesfully register a dataplane", async () => {
+      const id = crypto.randomUUID();
       const input = {
-        id: "consumer-dataplane",
+        "@id": id,
         url: "http://provider-connector:9192/control/transfer",
         allowedSourceTypes: ["HttpData"],
         allowedDestTypes: ["HttpProxy", "HttpData"],
@@ -22,9 +24,10 @@ describe("DataplaneController", () => {
         },
       };
 
-      const registration = await dataplanes.register(input);
+      const idResponse = await dataplanes.register(input);
 
-      expect(registration).toBeUndefined();
+      expect(idResponse.id).toBe(id);
+      expect(idResponse.createdAt).toBeGreaterThan(0);
     });
   });
 
