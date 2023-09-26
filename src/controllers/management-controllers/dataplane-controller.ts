@@ -1,8 +1,10 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
+  expand,
   expandArray,
   Dataplane,
   DataplaneInput,
+  IdResponse,
   EDC_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
@@ -22,7 +24,7 @@ export class DataplaneController {
   async register(
     input: DataplaneInput,
     context?: EdcConnectorClientContext,
-  ): Promise<void> {
+  ): Promise<IdResponse> {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
@@ -33,12 +35,13 @@ export class DataplaneController {
         ...input,
         "@context": this.defaultContextValues,
       },
-    });
+    })
+    .then((body) => expand(body, () => new IdResponse()));
   }
 
   async list(context?: EdcConnectorClientContext): Promise<Dataplane[]> {
     const actualContext = context || this.#context!;
-    
+
     return this.#inner
       .request(actualContext.management, {
         path: "/v2/dataplanes",
