@@ -41,7 +41,7 @@ jobs:
             type=raw,value=${{ env.CONNECTOR_TAG }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: connector
           push: true
