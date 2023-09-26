@@ -10,6 +10,7 @@ repositories {
 
 dependencies {
     implementation(libs.edc.runtime.metamodel)
+    implementation(libs.edc.control.plane.api.client)
     implementation(libs.edc.control.plane.core)
     implementation(libs.edc.dsp)
     implementation(libs.edc.configuration.filesystem)
