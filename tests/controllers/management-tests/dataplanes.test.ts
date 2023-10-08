@@ -63,4 +63,32 @@ describe("DataplaneController", () => {
       });
     });
   });
+
+  describe("select", () => {
+    it("succesfully select one dataplane", async () => {
+      const input = {
+        url: "http://provider-connector:9192/control/transfer",
+        allowedSourceTypes: ["HttpData"],
+        allowedDestTypes: ["HttpProxy", "HttpData"],
+        properties: {
+          publicApiUrl: "http://provider-connector:9291/public/",
+        },
+      };
+      await dataplanes.register(input);
+
+      const result = await dataplanes.select({
+        source: {
+          type: "HttpData",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+        destination: {
+          type: "HttpData",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        }
+      });
+
+      expect(result).toBeDefined();
+      expect(result).toHaveProperty("@id");
+      });
+  });
 });

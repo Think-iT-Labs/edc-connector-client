@@ -4,6 +4,7 @@ import {
   expandArray,
   Dataplane,
   DataplaneInput,
+  DataplaceSelectInput,
   IdResponse,
   EDC_CONTEXT,
 } from "../../entities";
@@ -50,4 +51,23 @@ export class DataplaneController {
       })
       .then((body) => expandArray(body, () => new Dataplane()));
   }
+
+  async select(
+    input: DataplaceSelectInput,
+    context?: EdcConnectorClientContext,
+  ): Promise<Dataplane> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
+      path: "/v2/dataplanes/select",
+      method: "POST",
+      apiToken: actualContext.apiToken,
+      body: {
+        ...input,
+        "@context": this.defaultContextValues,
+      },
+    })
+    .then((body) => expand(body, () => new Dataplane()));
+  }
+
 }
