@@ -6,6 +6,12 @@ export interface CatalogRequest {
   querySpec?: QuerySpec;
 }
 
+export interface DatasetRequest {
+  "@id": string,
+  counterPartyAddress: string;
+  querySpec?: QuerySpec;
+}
+
 export class Catalog extends JsonLdId {
 
   get datasets(): Dataset[] {
