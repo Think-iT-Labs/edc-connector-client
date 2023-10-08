@@ -14,7 +14,7 @@ export * from "./id-response";
 export * from "./jsonld";
 export * from "./health";
 export * from "./policy";
-export * from "./policydefinition";
+export * from "./policy-definition";
 export * from "./transfer-process";
 
 export const EDC_NAMESPACE = "edc";

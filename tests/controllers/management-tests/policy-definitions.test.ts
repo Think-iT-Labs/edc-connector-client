@@ -2,6 +2,7 @@ import * as crypto from "node:crypto";
 import {
   EdcConnectorClient,
   PolicyDefinitionInput,
+  PolicyType
 } from "../../../src";
 import {
   EdcConnectorClientError,
@@ -176,6 +177,51 @@ describe("PolicyDefinitionController", () => {
     });
   });
 
+  describe("update", () => {
+    it("updates a target policy", async () => {
+      // given
+      const policyInput: PolicyDefinitionInput = {
+        "@id": crypto.randomUUID(),
+        policy: {},
+      };
+      await policyDefinitions.create(policyInput);
+      const updatedPolicyDefinitionInput = {
+        "@id": policyInput["@id"]!,
+        policy: {
+          "@type": "set" as PolicyType,
+        },
+      }
+
+      // when
+      const policy = await policyDefinitions.update(policyInput["@id"]!,updatedPolicyDefinitionInput);
+
+      // then
+      expect(policy).toBeUndefined();
+    });
+
+    it("fails to update an not existant policy", async () => {
+      // when
+      const maybePolicy = policyDefinitions.update(
+        crypto.randomUUID(),
+        {
+          "@id": crypto.randomUUID(),
+          policy: {},
+        }
+      );
+
+      // then
+      await expect(maybePolicy).rejects.toThrowError("resource not found");
+
+      maybePolicy.catch((error) => {
+        expect(error).toBeInstanceOf(EdcConnectorClientError);
+        expect(error as EdcConnectorClientError).toHaveProperty(
+          "type",
+          EdcConnectorClientErrorType.NotFound,
+        );
+      });
+    });
+  });
+
   describe("delete", () => {
     it("deletes a target policy", async () => {
       // given
@@ -196,14 +242,14 @@ describe("PolicyDefinitionController", () => {
 
     it("fails to delete an not existant policy", async () => {
       // when
-      const maybeAsset = policyDefinitions.delete(
+      const maybePolicy = policyDefinitions.delete(
         crypto.randomUUID(),
       );
 
       // then
-      await expect(maybeAsset).rejects.toThrowError("resource not found");
+      await expect(maybePolicy).rejects.toThrowError("resource not found");
 
-      maybeAsset.catch((error) => {
+      maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
         expect(error as EdcConnectorClientError).toHaveProperty(
           "type",
