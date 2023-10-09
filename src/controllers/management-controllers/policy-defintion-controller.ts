@@ -41,6 +41,25 @@ export class PolicyDefinitionController {
       .then((body) => expand(body, () => new IdResponse()));
   }
 
+  async update(
+    policyId: string,
+    input: PolicyDefinitionInput,
+    context?: EdcConnectorClientContext,
+  ): Promise<IdResponse> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner
+      .request(actualContext.management, {
+        path: `/v2/policydefinitions/${policyId}`,
+        method: "PUT",
+        apiToken: actualContext.apiToken,
+        body: {
+          ...input,
+          "@context": this.defaultContextValues,
+        },
+      })
+  }
+
   async delete(
     policyId: string,
     context?: EdcConnectorClientContext,

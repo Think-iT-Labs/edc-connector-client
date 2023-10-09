@@ -1,5 +1,5 @@
 import { EdcConnectorClientContext } from "../../context";
-import { EDC_CONTEXT, CatalogRequest, Catalog, expand } from "../../entities";
+import { EDC_CONTEXT, CatalogRequest, Catalog, expand, Dataset, DatasetRequest } from "../../entities";
 import { Inner } from "../../inner";
 
 export class CatalogController {
@@ -33,6 +33,26 @@ export class CatalogController {
         },
       })
       .then((body) => expand(body, () => new Catalog()));
+  }
+
+  async requestDataset(
+    input: DatasetRequest,
+    context?: EdcConnectorClientContext,
+  ): Promise<Dataset> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner
+      .request(actualContext.management, {
+        path: "/v2/catalog/dataset/request",
+        method: "POST",
+        apiToken: actualContext.apiToken,
+        body: {
+          "@context": this.defaultContextValues,
+          protocol: this.protocol,
+          ...input,
+        },
+      })
+      .then((body) => expand(body, () => new Dataset()));
   }
 
   /**
