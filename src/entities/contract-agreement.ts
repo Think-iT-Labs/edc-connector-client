@@ -16,11 +16,11 @@ export class ContractAgreement extends JsonLdId {
   }
 
   get consumerId(): string {
-    return this.mandatoryValue('edc', 'providerId');
+    return this.mandatoryValue('edc', 'consumerId');
   }
 
   get contractSigningDate(): number {
-    return this.mandatoryValue('edc', 'providerId');
+    return this.mandatoryValue('edc', 'contractSigningDate');
   }
 
 }
