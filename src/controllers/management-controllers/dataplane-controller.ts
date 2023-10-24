@@ -6,16 +6,13 @@ import {
   DataplaneInput,
   DataplaceSelectInput,
   IdResponse,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class DataplaneController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -34,7 +31,7 @@ export class DataplaneController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     })
     .then((body) => expand(body, () => new IdResponse()));
@@ -64,7 +61,7 @@ export class DataplaneController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     })
     .then((body) => expand(body, () => new Dataplane()));

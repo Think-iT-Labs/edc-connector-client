@@ -6,7 +6,7 @@ import {
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
   TransferProcessState,
 } from "../../entities";
 import { Inner } from "../../inner";
@@ -16,9 +16,6 @@ export class TransferProcessController {
   #context?: EdcConnectorClientContext;
   #basePath = '/v2/transferprocesses';
   protocol: String = "dataspace-protocol-http";
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -37,7 +34,7 @@ export class TransferProcessController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
           protocol: this.protocol,
           ...input,
         },
@@ -73,7 +70,7 @@ export class TransferProcessController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new TransferProcess()));
@@ -106,7 +103,7 @@ export class TransferProcessController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
         reason: reason
       },
     });
@@ -124,7 +121,7 @@ export class TransferProcessController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": this.defaultContextValues
+        "@context": JSON_LD_DEFAULT_CONTEXT
       },
     });
   }

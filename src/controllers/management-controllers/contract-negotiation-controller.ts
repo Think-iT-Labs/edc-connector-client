@@ -8,7 +8,7 @@ import {
   ContractNegotiationState,
   IdResponse,
   QuerySpec,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
@@ -16,9 +16,6 @@ export class ContractNegotiationController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
   protocol: String = "dataspace-protocol-http";
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -38,7 +35,7 @@ export class ContractNegotiationController {
         apiToken: actualContext.apiToken,
         body: {
           protocol: this.protocol,
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
           ...input,
         },
       })
@@ -61,7 +58,7 @@ export class ContractNegotiationController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new ContractNegotiation()));
@@ -111,7 +108,7 @@ export class ContractNegotiationController {
       body: {
         reason: reason,
         "@id": negotiationId,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     });
   }
@@ -121,7 +118,7 @@ export class ContractNegotiationController {
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement> {
     const actualContext = context || this.#context!;
-    
+
     return this.#inner
       .request(actualContext.management, {
         path: `/v2/contractnegotiations/${negotiationId}/agreement`,

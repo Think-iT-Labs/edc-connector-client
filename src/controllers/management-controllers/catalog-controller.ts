@@ -1,14 +1,13 @@
 import { EdcConnectorClientContext } from "../../context";
-import { EDC_CONTEXT, CatalogRequest, Catalog, expand, Dataset, DatasetRequest } from "../../entities";
+import {
+  JSON_LD_DEFAULT_CONTEXT, CatalogRequest, Catalog, expand, Dataset, DatasetRequest
+} from "../../entities";
 import { Inner } from "../../inner";
 
 export class CatalogController {
   #inner: Inner;
   #context: EdcConnectorClientContext | undefined;
   protocol: String = "dataspace-protocol-http";
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -27,7 +26,7 @@ export class CatalogController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
           protocol: this.protocol,
           ...input,
         },
@@ -47,7 +46,7 @@ export class CatalogController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
           protocol: this.protocol,
           ...input,
         },

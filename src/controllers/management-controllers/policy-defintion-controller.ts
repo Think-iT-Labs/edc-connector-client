@@ -6,16 +6,13 @@ import {
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class PolicyDefinitionController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -35,7 +32,7 @@ export class PolicyDefinitionController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -55,7 +52,7 @@ export class PolicyDefinitionController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
         },
       })
   }
@@ -104,7 +101,7 @@ export class PolicyDefinitionController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new PolicyDefinition()));

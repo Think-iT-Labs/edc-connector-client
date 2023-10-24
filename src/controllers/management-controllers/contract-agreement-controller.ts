@@ -5,16 +5,13 @@ import {
   ContractAgreement,
   ContractNegotiation,
   QuerySpec,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class ContractAgreementController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -37,7 +34,7 @@ export class ContractAgreementController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new ContractAgreement()));
