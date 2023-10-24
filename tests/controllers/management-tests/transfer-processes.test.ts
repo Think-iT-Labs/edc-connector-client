@@ -1,12 +1,9 @@
 import {
-  EDC_NAMESPACE,
   EdcConnectorClient,
+  IdResponse,
   TransferProcessStates,
 } from "../../../src";
-import {
-  createContractAgreement,
-  createReceiverServer,
-} from "../../test-utils";
+import { createContractAgreement, waitForTransferState } from "../../test-utils";
 
 describe("TransferProcessController", () => {
   const consumer = new EdcConnectorClient.Builder()
@@ -21,102 +18,95 @@ describe("TransferProcessController", () => {
     .protocolUrl("http://provider-connector:9194/protocol")
     .build();
 
-  describe("with receiver server", () => {
-    const receiverServer = createReceiverServer();
 
-    beforeAll(async () => {
-      await receiverServer.listen();
+  describe("queryAll", () => {
+    it("retrieves all tranfer processes", async () => {
+      const idResponse = await initiate();
+
+      const transferProcesses =
+        await consumer.management.transferProcesses.queryAll();
+
+      expect(transferProcesses.length).toBeGreaterThan(0);
+      expect(
+        transferProcesses.find(
+          (transferProcess) => idResponse.id === transferProcess.id,
+        ),
+      ).toBeTruthy();
     });
+  });
 
-    afterAll(async () => {
-      await receiverServer.shutdown();
-    });
+  describe("get", () => {
+    it("successfully gets a transfer process", async () => {
+      const idResponse = await initiate();
 
-    describe("queryAll", () => {
-      it("retrieves all tranfer processes", async () => {
-        // given
-        const dataplaneInput = {
-          id: "provider-dataplane",
-          url: "http://provider-connector:9192/control/transfer",
-          allowedSourceTypes: ["HttpData"],
-          allowedDestTypes: ["HttpProxy", "HttpData"],
-          properties: {
-            publicApiUrl: "http://provider-connector:9291/public/",
-          },
-        };
+      const transferProcess =
+        await consumer.management.transferProcesses.get(idResponse.id);
 
-        await provider.management.dataplanes.register(dataplaneInput);
-
-        const { assetId, contractAgreement } = await createContractAgreement(
-          provider, consumer);
-
-        const idResponse =
-          await consumer.management.transferProcesses.initiate(
-            {
-              assetId,
-              connectorId: "provider",
-              connectorAddress: provider.addresses.protocol!,
-              contractId: contractAgreement.id,
-              dataDestination: { type: "HttpProxy" },
-            },
-          );
-
-        // when
-        const transferProcesses =
-          await consumer.management.transferProcesses.queryAll();
-
-        // then
-        expect(transferProcesses.length).toBeGreaterThan(0);
-        expect(
-          transferProcesses.find(
-            (transferProcess) => idResponse.id === transferProcess.id,
-          ),
-        ).toBeTruthy();
-      });
+      expect(transferProcess.id).toEqual(idResponse.id);
     });
   });
 
   describe("getState", () => {
     it("successfully gets a transfer process state", async () => {
-      // given
-      const dataplaneInput = {
-        id: "provider-dataplane",
-        url: "http://provider-connector:9192/control/transfer",
-        allowedSourceTypes: ["HttpData"],
-        allowedDestTypes: ["HttpProxy", "HttpData"],
-        properties: {
-          publicApiUrl: "http://provider-connector:9291/public/",
-        },
-      };
+      const idResponse = await initiate();
 
-      await provider.management.dataplanes.register(
-        dataplaneInput,
-      );
-
-      const { assetId, contractAgreement } = await createContractAgreement(
-        provider, consumer);
-
-      const idResponse = await consumer.management.transferProcesses.initiate(
-        {
-          assetId,
-          connectorId: "provider",
-          connectorAddress: provider.addresses.protocol!,
-          contractId: contractAgreement.id,
-          dataDestination: { type: "HttpProxy" },
-        },
-      );
-
-      // when
       const transferProcessState =
-        await consumer.management.transferProcesses.getState(
-          idResponse["@id"],
-        );
+        await consumer.management.transferProcesses.getState(idResponse.id);
 
-      // then
       expect(Object.values(TransferProcessStates)).toContain(
-        transferProcessState[`${EDC_NAMESPACE}:state`],
+        transferProcessState.state,
       );
     });
   });
+
+  describe("terminate", () => {
+    it("successfully terminates a transfer process", async () => {
+      const idResponse = await initiate();
+
+      await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
+
+      await waitForTransferState(consumer, idResponse.id, "TERMINATED");
+    });
+  });
+
+  describe("deprovision", () => {
+    it("successfully deprovision a transfer process", async () => {
+      const idResponse = await initiate();
+
+      await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
+      await waitForTransferState(consumer, idResponse.id, "TERMINATED");
+
+      await consumer.management.transferProcesses.deprovision(idResponse.id);
+
+      await waitForTransferState(consumer, idResponse.id, "DEPROVISIONED");
+    });
+  });
+
+  async function initiate(): Promise<IdResponse> {
+    const dataplaneInput = {
+      id: "provider-dataplane",
+      url: "http://provider-connector:9192/control/transfer",
+      allowedSourceTypes: ["HttpData"],
+      allowedDestTypes: ["HttpProxy", "HttpData"],
+      properties: {
+        publicApiUrl: "http://provider-connector:9291/public/",
+      },
+    };
+
+    await provider.management.dataplanes.register(dataplaneInput);
+
+    const { assetId, contractAgreement } = await createContractAgreement(
+      provider, consumer);
+
+    return await consumer.management.transferProcesses.initiate(
+      {
+        assetId,
+        connectorId: "provider",
+        connectorAddress: provider.addresses.protocol!,
+        contractId: contractAgreement.id,
+        dataDestination: { type: "HttpProxy" },
+      },
+    );
+  }
 
 });

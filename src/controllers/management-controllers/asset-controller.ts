@@ -6,16 +6,13 @@ import {
   AssetInput,
   IdResponse,
   QuerySpec,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class AssetController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -35,7 +32,7 @@ export class AssetController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -81,7 +78,7 @@ export class AssetController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     });
   }
@@ -102,7 +99,7 @@ export class AssetController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new Asset()));

@@ -6,16 +6,13 @@ import {
   ContractDefinitionInput,
   IdResponse,
   QuerySpec,
-  EDC_CONTEXT,
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class ContractDefinitionController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  defaultContextValues = {
-    edc: EDC_CONTEXT,
-  };
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -35,7 +32,7 @@ export class ContractDefinitionController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": this.defaultContextValues,
+          "@context": JSON_LD_DEFAULT_CONTEXT,
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -84,7 +81,7 @@ export class ContractDefinitionController {
             ? null
             : {
                 ...query,
-                "@context": this.defaultContextValues,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
       .then((body) => expandArray(body, () => new ContractDefinition()));
@@ -102,7 +99,7 @@ export class ContractDefinitionController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": this.defaultContextValues,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     });
   }

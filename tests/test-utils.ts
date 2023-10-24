@@ -9,7 +9,7 @@ import {
   EdcConnectorClient,
   IdResponse,
   PolicyDefinitionInput,
-  TransferProcessResponse,
+  EndpointDataReference,
 } from "../src";
 
 interface ContractNegotiationMetadata {
@@ -157,11 +157,35 @@ export async function waitForNegotiationState(
   expect(actualState).toBe(targetState);
 }
 
+export async function waitForTransferState(
+  client: EdcConnectorClient,
+  id: string,
+  targetState: string,
+  interval = 500,
+  times = 10,
+): Promise<void> {
+  let waiting = true;
+  let actualState: string;
+
+  do {
+    times--;
+    await new Promise((resolve) => setTimeout(resolve, interval));
+
+    const response = await client.management.transferProcesses.getState(id);
+
+    actualState = response.state;
+
+    waiting = actualState !== targetState;
+  } while (waiting && times > 0);
+
+  expect(actualState).toBe(targetState);
+}
+
 export function createReceiverServer() {
   const emitter = new events.EventEmitter();
 
   const server = http.createServer(async (req, res) => {
-    const body = await new Promise<TransferProcessResponse>(
+    const body = await new Promise<EndpointDataReference>(
       (resolve, reject) => {
         let chunks: any[] = [];
 
@@ -183,7 +207,7 @@ export function createReceiverServer() {
   });
 
   return {
-    waitForEvent(id: string): Promise<TransferProcessResponse> {
+    waitForEvent(id: string): Promise<EndpointDataReference> {
       return new Promise((resolve) => {
         emitter.on(id, resolve);
       });
