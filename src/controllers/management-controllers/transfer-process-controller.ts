@@ -14,6 +14,7 @@ import { Inner } from "../../inner";
 export class TransferProcessController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = '/v2/transferprocesses';
   protocol: String = "dataspace-protocol-http";
   defaultContextValues = {
     edc: EDC_CONTEXT,
@@ -32,7 +33,7 @@ export class TransferProcessController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/transferprocesses",
+        path: `${this.#basePath}`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -44,6 +45,18 @@ export class TransferProcessController {
       .then((body) => expand(body, () => new IdResponse()));
   }
 
+  async get(id: string, context?: EdcConnectorClientContext): Promise<TransferProcess> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner
+      .request(actualContext.management, {
+        path: `${this.#basePath}/${id}`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new TransferProcess()));
+  }
+
   async queryAll(
     query: QuerySpec = {},
     context?: EdcConnectorClientContext,
@@ -52,7 +65,7 @@ export class TransferProcessController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/transferprocesses/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -71,11 +84,48 @@ export class TransferProcessController {
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcessState> {
     const actualContext = context || this.#context!;
-    
+
     return this.#inner.request(actualContext.management, {
-      path: `/v2/transferprocesses/${transferProcessId}/state`,
+      path: `${this.#basePath}/${transferProcessId}/state`,
       method: "GET",
       apiToken: actualContext.apiToken,
+    })
+    .then((body) => expand(body, () => new TransferProcessState()));
+  }
+
+  async terminate(
+    id: string,
+    reason: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
+      path: `${this.#basePath}/${id}/terminate`,
+      method: "POST",
+      apiToken: actualContext.apiToken,
+      body: {
+        "@id": id,
+        "@context": this.defaultContextValues,
+        reason: reason
+      },
+    });
+  }
+
+  async deprovision(
+    id: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = context || this.#context!;
+
+    return this.#inner.request(actualContext.management, {
+      path: `${this.#basePath}/${id}/deprovision`,
+      method: "POST",
+      apiToken: actualContext.apiToken,
+      body: {
+        "@id": id,
+        "@context": this.defaultContextValues
+      },
     });
   }
 }

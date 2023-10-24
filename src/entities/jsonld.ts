@@ -27,11 +27,16 @@ export class JsonLdObject {
       ?.at(0)?.value;
   }
 
-  nested(prefix: string, name: string): JsonLdObject {
+  nestedOf<T extends Object>(newInstance: (() => T), prefix: string, name: string): T | undefined {
     var namespace = this.getNamespaceUrl(prefix);
     return (this[`${namespace}${name}`] as JsonLdObject[])
-      ?.map(it => Object.assign(new JsonLdObject(), it))
+      ?.map(it => Object.assign(newInstance(), it))
       ?.at(0)
+      ?? undefined;
+  }
+
+  nested(prefix: string, name: string): JsonLdObject {
+    return this.nestedOf(() => new JsonLdObject(), prefix, name)
       ?? new JsonLdObject();
   }
 
