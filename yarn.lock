@@ -929,9 +929,9 @@
     pretty-format "^28.0.0"
 
 "@types/jsonld@^1.5.8":
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/@types/jsonld/-/jsonld-1.5.10.tgz#f01cd5d5bc62dba508438b2f8ae7c9f35f0d8cd1"
-  integrity sha512-fEXxh7TnXYTPcbHb/p3bJ2V5CGpzwv7wCwQ4GsvyvbSufn8mVrCXNuw/L1WVFkBC9qUl4UgDA4LRV6B8SmAiEw==
+  version "1.5.11"
+  resolved "https://registry.yarnpkg.com/@types/jsonld/-/jsonld-1.5.11.tgz#71b4122f307ecc35bc8e4fa21405cbd6ebc972c8"
+  integrity sha512-/B5yjthc6MEJMR4+TUtaj5LgE3bByVSNIXvPcUxiecj5F7GZKQJS5oery5rbOni7T9QBpjDF0RufCcVVlCe4hw==
 
 "@types/minimist@^1.2.0":
   version "1.2.2"
