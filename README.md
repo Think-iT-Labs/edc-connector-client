@@ -21,8 +21,8 @@ This project aims to increase the level of abstraction, bringing the _low-level_
 developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
 
 > Similarly to the **EDC Connector**, this library is at its early stage.
-> It aims to maintain compatibility with the latest version of the _Connector_, currently `0.2.1`.
-> The compatibility is reflected in the library's versioning.
+> It aims to maintain compatibility with the latest version of the _Connector_.
+> API specification can be found on [SwaggerHub](https://app.swaggerhub.com/apis/eclipse-edc-bot/management-api)
 
 ## Usage
 
@@ -56,21 +56,17 @@ const client = new EdcConnectorClient.Builder()
 At this point the calls can be made against the specified connector:
 ```ts
 const result = await client.management.assets.create({
-  asset: {
-    properties: {
-      "asset:prop:id": "a-http-asset-id",
-      "asset:prop:name": "A HTTP asset",
-    }
+  properties: {
+      "name": "asset name",
+      "key": "any value"
   },
   dataAddress: {
-    properties: {
-      name: "An HTTP address",
-      baseUrl: "https://example.com/",
-      type: "HttpData",
-      path: "/some-data",
-      contentType: "application/json",
-      method: "GET",
-    },
+    name: "An HTTP address",
+    baseUrl: "https://example.com/",
+    type: "HttpData",
+    path: "/some-data",
+    contentType: "application/json",
+    method: "GET",
   },
 });
 ```
@@ -103,12 +99,10 @@ And the context can be passed to every call as latest argument:
 const result = await client.management.assets.create(context, {
   asset: {
     properties: {
-      "asset:prop:id": "a-http-asset-id",
-      "asset:prop:name": "A HTTP asset",
-    }
-  },
-  dataAddress: {
-    properties: {
+      "name": "asset name",
+      "key": "any value"
+    },
+    dataAddress: {
       name: "An HTTP address",
       baseUrl: "https://example.com/",
       type: "HttpData",
@@ -116,7 +110,7 @@ const result = await client.management.assets.create(context, {
       contentType: "application/json",
       method: "GET",
     },
-  },
+  }
 });
 ```
 
