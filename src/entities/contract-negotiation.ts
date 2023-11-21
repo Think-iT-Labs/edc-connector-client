@@ -1,14 +1,9 @@
 import { JsonLdId, JsonLdObject } from "./jsonld";
 
 export interface ContractNegotiationRequest {
-  connectorAddress: string;
-  connectorId: string;
+  counterPartyAddress: string;
   providerId: string;
-  offer: {
-    offerId: string;
-    assetId: string;
-    policy: any;
-  };
+  policy: any;
 }
 
 export class ContractNegotiation extends JsonLdId {

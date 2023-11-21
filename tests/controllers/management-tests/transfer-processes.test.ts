@@ -102,7 +102,7 @@ describe("TransferProcessController", () => {
       {
         assetId,
         connectorId: "provider",
-        connectorAddress: provider.addresses.protocol!,
+        counterPartyAddress: provider.addresses.protocol!,
         contractId: contractAgreement.id,
         dataDestination: { type: "HttpProxy" },
       },

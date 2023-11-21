@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.3.1"
+edc = "0.4.1"
 shadow = "8.1.1"
 
 [libraries]

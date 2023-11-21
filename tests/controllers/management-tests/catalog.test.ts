@@ -65,7 +65,7 @@ describe("CatalogController", () => {
       // when
       const catalog = await consumerManagement.catalog.request(
         {
-          providerUrl: providerProtocolUrl,
+          counterPartyAddress: providerProtocolUrl,
         },
       );
 
@@ -119,7 +119,7 @@ describe("CatalogController", () => {
       );
       const catalog = await consumerManagement.catalog.request(
         {
-          providerUrl: providerProtocolUrl,
+          counterPartyAddress: providerProtocolUrl,
         },
       );
 

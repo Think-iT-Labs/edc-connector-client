@@ -73,7 +73,7 @@ export enum TransferProcessStates {
 
 export interface TransferProcessInput {
   assetId: string;
-  connectorAddress: string;
+  counterPartyAddress: string;
   connectorId: string;
   contractId: string;
   dataDestination: DataAddress;
