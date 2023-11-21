@@ -102,7 +102,7 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await consumer.management.catalog.request({
-    providerUrl: provider.addresses.protocol!,
+    counterPartyAddress: provider.addresses.protocol!,
   });
 
   const offer = catalog.datasets
@@ -112,14 +112,9 @@ export async function createContractNegotiation(
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate(
     {
-      connectorAddress: provider.addresses.protocol!,
-      connectorId: "provider",
+      counterPartyAddress: provider.addresses.protocol!,
       providerId: "provider",
-      offer: {
-        offerId: offer.id,
-        assetId: assetId,
-        policy: offer,
-      },
+      policy: offer
     },
   );
 

@@ -70,41 +70,37 @@ export class Inner {
         return response;
       }
 
+      const errorMessage = await response.text();
+
       switch (response.status) {
         case 400: {
           const error = new EdcConnectorClientError(
             EdcConnectorClientErrorType.BadRequest,
-            "request was malformed",
+            "request was malformed: " + errorMessage,
           );
-
-          error.body = await response.text();
 
           throw error;
         }
         case 404: {
           const error = new EdcConnectorClientError(
             EdcConnectorClientErrorType.NotFound,
-            "resource not found",
+            "resource not found: " + errorMessage,
           );
-
-          error.body = await response.text();
 
           throw error;
         }
         case 409: {
           const error = new EdcConnectorClientError(
             EdcConnectorClientErrorType.Duplicate,
-            "duplicated resource",
+            "duplicated resource: " + errorMessage,
           );
-
-          error.body = await response.text();
 
           throw error;
         }
         default: {
           throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.Unknown,
-            await response.text(),
+            errorMessage,
           );
         }
       }

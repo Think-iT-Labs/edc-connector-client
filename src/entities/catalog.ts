@@ -2,7 +2,7 @@ import { QuerySpec } from ".";
 import { JsonLdId } from "./jsonld";
 
 export interface CatalogRequest {
-  providerUrl: string;
+  counterPartyAddress: string;
   querySpec?: QuerySpec;
 }
 
@@ -33,6 +33,7 @@ export class Offer extends JsonLdId {
   }
 
   get target(): string {
-    return this.mandatoryValue('odrl', 'target');
+    const target = this.nestedOf(() => new JsonLdId(), 'odrl', 'target');
+    return target?.id!!;
   }
 }
