@@ -106,8 +106,8 @@ export async function createContractNegotiation(
   });
 
   const offer = catalog.datasets
-    .flatMap((it) => it.offers)
-    .find((offer) => offer.assetId === assetId)!;
+    .filter(dataset => dataset.id === assetId)
+    .flatMap((it) => it.offers)[0];
 
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate(
