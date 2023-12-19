@@ -28,12 +28,4 @@ export class Dataset extends JsonLdId {
 
 export class Offer extends JsonLdId {
 
-  get assetId(): string {
-    return this.target;
-  }
-
-  get target(): string {
-    const target = this.nestedOf(() => new JsonLdId(), 'odrl', 'target');
-    return target?.id!!;
-  }
 }
