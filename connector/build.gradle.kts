@@ -20,12 +20,13 @@ dependencies {
     implementation(libs.edc.api.observability)
     implementation(libs.edc.transfer.data.plane)
     implementation(libs.edc.transfer.pull.http.receiver)
+    implementation(libs.edc.validator.data.address.http.data)
 
     implementation(libs.edc.data.plane.selector.api)
     implementation(libs.edc.data.plane.selector.core)
-    implementation(libs.edc.data.plane.selector.client)
 
-    implementation(libs.edc.data.plane.api)
+    implementation(libs.edc.data.plane.control.api)
+    implementation(libs.edc.data.plane.public.api)
     implementation(libs.edc.data.plane.core)
     implementation(libs.edc.data.plane.http)
 }

@@ -62,6 +62,7 @@ describe("TransferProcessController", () => {
   describe("terminate", () => {
     it("successfully terminates a transfer process", async () => {
       const idResponse = await initiate();
+      await waitForTransferState(consumer, idResponse.id, "STARTED");
 
       await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
 
@@ -72,6 +73,7 @@ describe("TransferProcessController", () => {
   describe("deprovision", () => {
     it("successfully deprovision a transfer process", async () => {
       const idResponse = await initiate();
+      await waitForTransferState(consumer, idResponse.id, "STARTED");
 
       await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
       await waitForTransferState(consumer, idResponse.id, "TERMINATED");
