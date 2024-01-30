@@ -34,7 +34,7 @@
     "@types/jsonld": "^1.5.8",
     "@types/node": "^20.4.7",
     "commitlint": "^18.0.0",
-    "husky": "^8.0.1",
+    "husky": "^9.0.7",
     "jest": "^28.1.3",
     "lint-staged": "^15.0.2",
     "prettier": "^3.0.1",
