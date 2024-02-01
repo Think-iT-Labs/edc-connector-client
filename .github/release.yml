@@ -1,0 +1,26 @@
+# This file determines how the auto-generated Release Notes in GitHub releases are structured.
+
+changelog:
+  exclude:
+    labels:
+      - no-changelog
+
+  categories:
+    - title: Breaking changes
+      labels:
+        - breaking-change
+    - title: Bugfixes
+      labels:
+        - bug
+    - title: New Features & Improvements
+      labels:
+        - enhancement
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - "*"
