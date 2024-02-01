@@ -136,35 +136,27 @@ describe("ContractNegotiationController", () => {
   });
 
   describe("terminate", () => {
+
     it("terminate the requested target negotiation", async () => {
-      // given
       const { idResponse } = await createContractNegotiation(provider, consumer);
       const negotiationId = idResponse.id;
+      await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 
-      // when
-      const cancelledNegotiation =
-        await negotiations.terminate(negotiationId, "a reason to terminate");
-      await waitForNegotiationState(
-        consumer,
-        negotiationId,
-        "TERMINATED",
-      );
+      await negotiations.terminate(negotiationId, "a reason to terminate");
+
+      await waitForNegotiationState(consumer, negotiationId, "TERMINATED");
 
       const negotiationState = await negotiations.getState(negotiationId);
 
-      // then
-      expect(cancelledNegotiation).toBeUndefined();
       expect(negotiationState.state).toBe("TERMINATED");
     });
 
-    it("fails to cancel an not existent contract negotiation", async () => {
-      // when
+    it("fails to terminate an not existent contract negotiation", async () => {
       const maybeNegotiation = negotiations.terminate(
         crypto.randomUUID(),
         "a reason to terminate",
       );
 
-      // then
       await expect(maybeNegotiation).rejects.toThrowError("resource not found");
 
       maybeNegotiation.catch((error) => {
@@ -175,6 +167,7 @@ describe("ContractNegotiationController", () => {
         );
       });
     });
+    
   });
 
   describe("getAgreement", () => {

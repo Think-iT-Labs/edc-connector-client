@@ -55,7 +55,7 @@ export class JsonLdObject {
     switch (prefix) {
       case 'edc': return EDC_CONTEXT;
       case 'odrl': return 'http://www.w3.org/ns/odrl/2/';
-      case 'dcat': return 'https://www.w3.org/ns/dcat/';
+      case 'dcat': return 'http://www.w3.org/ns/dcat#';
       default: throw new Error(`JSON-LD context ${prefix} not supported`);
     }
   }

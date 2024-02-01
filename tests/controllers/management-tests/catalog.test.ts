@@ -71,7 +71,7 @@ describe("CatalogController", () => {
 
       // then
       expect(catalog).toHaveProperty("@type", [
-        "https://www.w3.org/ns/dcat/Catalog",
+        "http://www.w3.org/ns/dcat#Catalog",
       ]);
       expect(catalog).toHaveProperty("datasets");
     });
@@ -133,7 +133,7 @@ describe("CatalogController", () => {
 
       // then
       expect(catalogDataset).toHaveProperty("@type", [
-        "https://www.w3.org/ns/dcat/Dataset",
+        "http://www.w3.org/ns/dcat#Dataset",
       ]);
     });
   });
