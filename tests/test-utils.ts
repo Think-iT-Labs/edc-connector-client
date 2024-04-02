@@ -8,6 +8,7 @@ import {
   ContractNegotiation,
   EdcConnectorClient,
   IdResponse,
+  PolicyBuilder,
   PolicyDefinitionInput,
   EndpointDataReference,
 } from "../src";
@@ -83,10 +84,9 @@ export async function createContractNegotiation(
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
     "@id": policyId,
-    policy: {
-      "@context": "http://www.w3.org/ns/odrl.jsonld",
-      permission: [],
-    },
+    policy: new PolicyBuilder()
+      .type("Set")
+      .build()
   };
   await provider.management.policyDefinitions.create(policyInput);
 
@@ -109,12 +109,19 @@ export async function createContractNegotiation(
     .filter(dataset => dataset.id === assetId)
     .flatMap((it) => it.offers)[0];
 
+  const contractOffer = new PolicyBuilder()
+    .raw({
+      ...offer,
+      assigner: "provider",
+      target: assetId
+    })
+    .build();
+
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate(
     {
       counterPartyAddress: provider.addresses.protocol!,
-      providerId: "provider",
-      policy: offer
+      policy: contractOffer
     },
   );
 

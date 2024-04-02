@@ -66,7 +66,7 @@ describe("PublicController", () => {
       const idResponse = await consumer.management.transferProcesses.initiate(
         {
           assetId,
-          connectorId: "provider",
+          transferType: "HttpData-PULL",
           counterPartyAddress: provider.addresses.protocol!,
           contractId: contractAgreement.id,
           dataDestination: { type: "HttpProxy" },

@@ -25,15 +25,17 @@ export class PolicyDefinitionController {
   ): Promise<IdResponse> {
     const actualContext = context || this.#context!;
 
+    const body = {
+      ...input,
+      "@context": JSON_LD_DEFAULT_CONTEXT,
+    };
+
     return this.#inner
       .request(actualContext.management, {
         path: "/v2/policydefinitions",
         method: "POST",
         apiToken: actualContext.apiToken,
-        body: {
-          ...input,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
-        },
+        body: body,
       })
       .then((body) => expand(body, () => new IdResponse()));
   }

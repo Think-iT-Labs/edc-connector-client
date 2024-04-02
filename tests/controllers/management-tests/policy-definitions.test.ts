@@ -1,8 +1,8 @@
 import * as crypto from "node:crypto";
 import {
   EdcConnectorClient,
-  PolicyDefinitionInput,
-  PolicyType
+  PolicyBuilder,
+  PolicyDefinitionInput
 } from "../../../src";
 import {
   EdcConnectorClientError,
@@ -19,33 +19,33 @@ describe("PolicyDefinitionController", () => {
 
   describe("create", () => {
     it("succesfully creates a new policy", async () => {
-      // given
       const id = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
         "@id": id,
-        policy: { },
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       };
 
-      // when
+      ;
+
       const idResponse = await policyDefinitions.create(policyInput);
 
-      // then
       expect(idResponse.id).toBe(id);
       expect(idResponse.createdAt).toBeGreaterThan(0);
     });
 
     it("fails creating two policies with the same id", async () => {
-      // given
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: {},
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       };
 
-      // when
       await policyDefinitions.create(policyInput);
       const maybeCreateResult = policyDefinitions.create(policyInput);
 
-      // then
       await expect(maybeCreateResult).rejects.toThrowError(
         "duplicated resource",
       );
@@ -62,17 +62,16 @@ describe("PolicyDefinitionController", () => {
 
   describe("queryAll", () => {
     it("succesfully retuns a list of policy definitions", async () => {
-      // given
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: {},
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       };
       await policyDefinitions.create(policyInput);
 
-      // when
       const policies = await policyDefinitions.queryAll();
 
-      // then
       expect(policies.length).toBeGreaterThan(0);
       expect(
         policies.find((policy) => policy["@id"] === policyInput["@id"]),
@@ -82,68 +81,67 @@ describe("PolicyDefinitionController", () => {
 
   describe("get", () => {
     it("succesfully return a policy definition", async () => {
-      // given
       const policyInput: PolicyDefinitionInput = {
-        policy: {
-          "@type": "set",
-          "@context": "http://www.w3.org/ns/odrl.jsonld",
-          permission: [
-            {
-              action: "use",
-              constraint: [
-                {
-                  leftOperand: "field",
-                  operator: "eq",
-                  rightOperand: "value"
-                },
-                {
-                  "and": [{
-                      leftOperand: "field2",
-                      operator: "eq",
-                      rightOperand: "value"
-                    },
-                    {
-                      leftOperand: "field3",
-                      operator: "eq",
-                      rightOperand: "value"
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          prohibition: [
-            {
-              action: "use",
-              constraint: [
-                {
-                  leftOperand: "field",
-                  operator: "eq",
-                  rightOperand: "value"
-                }
-              ]
-            }
-          ],
-          obligation: [
-            {
-              action: "use",
-              constraint: [
-                {
-                  leftOperand: "field",
-                  operator: "eq",
-                  rightOperand: "value"
-                }
-              ]
-            }
-          ]
-        },
+        policy: new PolicyBuilder()
+          .type("Set")
+          .raw({
+            permission: [
+              {
+                action: "use",
+                constraint: [
+                  {
+                    leftOperand: "field",
+                    operator: "eq",
+                    rightOperand: "value"
+                  },
+                  {
+                    "@type": "LogicalConstraint",
+                    "and": [{
+                        leftOperand: "field2",
+                        operator: "eq",
+                        rightOperand: "value"
+                      },
+                      {
+                        leftOperand: "field3",
+                        operator: "eq",
+                        rightOperand: "value"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            prohibition: [
+              {
+                action: "use",
+                constraint: [
+                  {
+                    leftOperand: "field",
+                    operator: "eq",
+                    rightOperand: "value"
+                  }
+                ]
+              }
+            ],
+            obligation: [
+              {
+                action: "use",
+                constraint: [
+                  {
+                    leftOperand: "field",
+                    operator: "eq",
+                    rightOperand: "value"
+                  }
+                ]
+              }
+            ]
+          })
+          .build(),
       };
       const idResponse = await policyDefinitions.create(policyInput);
 
-      // when
       const policyDefinition = await policyDefinitions.get(idResponse.id);
 
-      // then
       expect(policyDefinition.id).toBe(idResponse.id);
       expect(policyDefinition.policy.permissions).toHaveLength(1);
       const permissionConstraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
@@ -159,12 +157,10 @@ describe("PolicyDefinitionController", () => {
     });
 
     it("fails to fetch an not existant policy", async () => {
-      // when
       const maybePolicy = policyDefinitions.get(
         crypto.randomUUID(),
       );
 
-      // then
       await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
@@ -179,37 +175,36 @@ describe("PolicyDefinitionController", () => {
 
   describe("update", () => {
     it("updates a target policy", async () => {
-      // given
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: {},
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       };
       await policyDefinitions.create(policyInput);
       const updatedPolicyDefinitionInput = {
         "@id": policyInput["@id"]!,
-        policy: {
-          "@type": "set" as PolicyType,
-        },
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       }
 
-      // when
       const policy = await policyDefinitions.update(policyInput["@id"]!,updatedPolicyDefinitionInput);
 
-      // then
       expect(policy).toBeUndefined();
     });
 
     it("fails to update an not existant policy", async () => {
-      // when
       const maybePolicy = policyDefinitions.update(
         crypto.randomUUID(),
         {
           "@id": crypto.randomUUID(),
-          policy: {},
+          policy: new PolicyBuilder()
+            .type("Set")
+            .build(),
         }
       );
 
-      // then
       await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
@@ -224,29 +219,26 @@ describe("PolicyDefinitionController", () => {
 
   describe("delete", () => {
     it("deletes a target policy", async () => {
-      // given
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: {},
+        policy: new PolicyBuilder()
+          .type("Set")
+          .build(),
       };
       await policyDefinitions.create(policyInput);
 
-      // when
       const policy = await policyDefinitions.delete(
         policyInput["@id"]!,
       );
 
-      // then
       expect(policy).toBeUndefined();
     });
 
     it("fails to delete an not existant policy", async () => {
-      // when
       const maybePolicy = policyDefinitions.delete(
         crypto.randomUUID(),
       );
 
-      // then
       await expect(maybePolicy).rejects.toThrowError("resource not found");
 
       maybePolicy.catch((error) => {
