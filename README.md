@@ -24,6 +24,14 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 > It aims to maintain compatibility with the latest version of the _Connector_.
 > API specification can be found on [SwaggerHub](https://app.swaggerhub.com/apis/eclipse-edc-bot/management-api)
 
+## Compatibility matrix
+|Client  |EDC    |
+|--------|-------|
+|0.4.0   |0.6.0  |
+|0.3.0   |0.5.0  |
+|0.2.1   |0.4.1  |
+|0.2.0   |0.2.0  |
+
 ## Usage
 
 Install via `npm` or `yarn`
