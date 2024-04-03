@@ -22,6 +22,7 @@ describe("TransferProcessController", () => {
   describe("queryAll", () => {
     it("retrieves all tranfer processes", async () => {
       const idResponse = await initiate();
+      await waitForTransferState(consumer, idResponse.id, "STARTED");
 
       const transferProcesses =
         await consumer.management.transferProcesses.queryAll();
@@ -38,6 +39,7 @@ describe("TransferProcessController", () => {
   describe("get", () => {
     it("successfully gets a transfer process", async () => {
       const idResponse = await initiate();
+      await waitForTransferState(consumer, idResponse.id, "STARTED");
 
       const transferProcess =
         await consumer.management.transferProcesses.get(idResponse.id);
@@ -103,9 +105,9 @@ describe("TransferProcessController", () => {
     return await consumer.management.transferProcesses.initiate(
       {
         assetId,
-        connectorId: "provider",
         counterPartyAddress: provider.addresses.protocol!,
         contractId: contractAgreement.id,
+        transferType: "HttpData-PULL",
         dataDestination: { type: "HttpProxy" },
       },
     );

@@ -3,6 +3,7 @@ import {
   AssetInput,
   ContractDefinitionInput,
   EdcConnectorClient,
+  PolicyBuilder,
   PolicyDefinitionInput,
 } from "../../../src";
 
@@ -40,14 +41,14 @@ describe("CatalogController", () => {
       const policyId = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
         id: policyId,
-        policy: {
-          uid: "231802-bb34-11ec-8422-0242ac120002",
-          permission: [
-            {
+        policy: new PolicyBuilder()
+          .type("Set")
+          .raw({
+            permission: {
               action: "use"
-            },
-          ],
-        },
+            }
+          })
+          .build()
       };
       await providerManagement.policyDefinitions.create(policyInput);
 
@@ -96,14 +97,14 @@ describe("CatalogController", () => {
       const policyId = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
         id: policyId,
-        policy: {
-          uid: "231802-bb34-11ec-8422-0242ac120002",
-          permission: [
-            {
+        policy: new PolicyBuilder()
+          .type("Set")
+          .raw({
+            permission: {
               action: "use"
-            },
-          ],
-        },
+            }
+          })
+          .build(),
       };
       await providerManagement.policyDefinitions.create(policyInput);
 

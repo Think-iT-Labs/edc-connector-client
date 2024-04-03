@@ -1,5 +1,5 @@
 import { JsonLdId } from "./jsonld";
-import { Policy, PolicyInput } from "./policy";
+import { Policy } from "./policy";
 
 export class PolicyDefinition extends JsonLdId {
 
@@ -17,5 +17,5 @@ export class PolicyDefinition extends JsonLdId {
 export interface PolicyDefinitionInput {
   '@id'?: string;
   id?: string;
-  policy: PolicyInput;
+  policy: Policy;
 }
