@@ -11,6 +11,7 @@
   "main": "dist/src/index.js",
   "typings": "dist/src/index.d.ts",
   "scripts": {
+    "postinstall": "node postinstall/edc-openapi.js",
     "transpile": "tsc",
     "test": "jest --forceExit"
   },

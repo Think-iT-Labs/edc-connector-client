@@ -7,7 +7,7 @@ describe("edrs", () => {
 
   beforeAll(async () => {
     startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
-      .withCopyFilesToContainer([{ source: "tests/management-api.yaml", target: "/management-api.yml" }])
+      .withCopyFilesToContainer([{ source: "node_modules/management-api.yml", target: "/management-api.yml" }])
       .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
       .withExposedPorts(4010)
       .start();
