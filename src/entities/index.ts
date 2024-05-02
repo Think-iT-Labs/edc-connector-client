@@ -2,19 +2,20 @@ import { CriterionInput } from "./criterion";
 
 export * from "./addresses";
 export * from "./asset";
-export * from "./context";
 export * from "./catalog";
+export * from "./context";
 export * from "./contract-agreement";
 export * from "./contract-definition";
 export * from "./contract-negotiation";
 export * from "./criterion";
 export * from "./data-address";
 export * from "./dataplane";
+export * from "./edr";
+export * from "./health";
 export * from "./id-response";
 export * from "./jsonld";
-export * from "./health";
-export * from "./policy";
 export * from "./policy-definition";
+export * from "./policy";
 export * from "./transfer-process";
 
 export const EDC_NAMESPACE = "edc";

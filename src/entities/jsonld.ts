@@ -51,6 +51,10 @@ export class JsonLdObject {
     return this.arrayOf(() => new JsonLdObject(), prefix, name);
   }
 
+  types(): string[] {
+    return this["@type"] as string[];
+  }
+
   private getNamespaceUrl(prefix: string): string {
     switch (prefix) {
       case 'edc': return EDC_CONTEXT;

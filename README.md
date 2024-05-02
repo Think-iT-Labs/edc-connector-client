@@ -27,7 +27,7 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 ## Compatibility matrix
 |Client  |EDC    |
 |--------|-------|
-|0.4.0   |0.6.x  |
+|0.4.x   |0.6.x  |
 |0.3.0   |0.5.0  |
 |0.2.1   |0.4.1  |
 |0.2.0   |0.2.0  |
