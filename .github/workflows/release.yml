@@ -36,6 +36,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           makeLatest: true
           removeArtifacts: true
-
-      - name: publish
-        uses: ./.github/actions/npm-publish
+  publish:
+    needs: prepare-release
+    uses: ./.github/workflows/publish-npm.yml
+    secrets: inherit

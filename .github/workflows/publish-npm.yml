@@ -2,11 +2,38 @@ name: publish npm
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
-      - uses: ./.github/actions/npm-publish
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        registry-url: 'https://registry.npmjs.org'
+
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          */*/node_modules
+        key: yarn-deps-${{ hashFiles('**/yarn.lock') }}
+
+    - name: Install dependencies
+      shell: bash
+      run: yarn
+
+    - name: Transpile to JavaScript
+      shell: bash
+      run: yarn transpile
+
+    - run: npm publish --access=public
+      shell: bash
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
