@@ -298,7 +298,7 @@
 
 "@commitlint/cli@^19.3.0":
   version "19.3.0"
-  resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-19.3.0.tgz#44e6da9823a01f0cdcc43054bbefdd2c6c5ddf39"
+  resolved "https://registry.npmjs.org/@commitlint/cli/-/cli-19.3.0.tgz"
   integrity sha512-LgYWOwuDR7BSTQ9OLZ12m7F/qhNY+NpAyPBgo4YNMkACE7lGuUnuQq1yi9hz1KA4+3VqpOYl8H1rY/LYK43v7g==
   dependencies:
     "@commitlint/format" "^19.3.0"
@@ -311,7 +311,7 @@
 
 "@commitlint/config-conventional@^19.0.3":
   version "19.2.2"
-  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-19.2.2.tgz#1f4e6975d428985deacf2b3ff6547e02c9302054"
+  resolved "https://registry.npmjs.org/@commitlint/config-conventional/-/config-conventional-19.2.2.tgz"
   integrity sha512-mLXjsxUVLYEGgzbxbxicGPggDuyWNkf25Ht23owXIH+zV2pv1eJuzLK3t1gDY5Gp6pxdE60jZnWUY5cvgL3ufw==
   dependencies:
     "@commitlint/types" "^19.0.3"
@@ -344,7 +344,7 @@
 
 "@commitlint/format@^19.3.0":
   version "19.3.0"
-  resolved "https://registry.yarnpkg.com/@commitlint/format/-/format-19.3.0.tgz#48dd9e6930d41eb0ca19f36159ee940c5b25d857"
+  resolved "https://registry.npmjs.org/@commitlint/format/-/format-19.3.0.tgz"
   integrity sha512-luguk5/aF68HiF4H23ACAfk8qS8AHxl4LLN5oxPc24H+2+JRPsNr1OS3Gaea0CrH7PKhArBMKBz5RX9sA5NtTg==
   dependencies:
     "@commitlint/types" "^19.0.3"
@@ -352,7 +352,7 @@
 
 "@commitlint/is-ignored@^19.2.2":
   version "19.2.2"
-  resolved "https://registry.yarnpkg.com/@commitlint/is-ignored/-/is-ignored-19.2.2.tgz#503ddcf908ac6b2bc4586a49cb53893a1856f5b2"
+  resolved "https://registry.npmjs.org/@commitlint/is-ignored/-/is-ignored-19.2.2.tgz"
   integrity sha512-eNX54oXMVxncORywF4ZPFtJoBm3Tvp111tg1xf4zWXGfhBPKpfKG6R+G3G4v5CPlRROXpAOpQ3HMhA9n1Tck1g==
   dependencies:
     "@commitlint/types" "^19.0.3"
@@ -360,7 +360,7 @@
 
 "@commitlint/lint@^19.2.2":
   version "19.2.2"
-  resolved "https://registry.yarnpkg.com/@commitlint/lint/-/lint-19.2.2.tgz#57f69e24bd832a7dcce8ebf82d11e3bf03ccc2a9"
+  resolved "https://registry.npmjs.org/@commitlint/lint/-/lint-19.2.2.tgz"
   integrity sha512-xrzMmz4JqwGyKQKTpFzlN0dx0TAiT7Ran1fqEBgEmEj+PU98crOFtysJgY+QdeSagx6EDRigQIXJVnfrI0ratA==
   dependencies:
     "@commitlint/is-ignored" "^19.2.2"
@@ -864,7 +864,7 @@
 
 "@types/node@*", "@types/node@^20.4.7":
   version "20.12.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.7.tgz#04080362fa3dd6c5822061aa3124f5c152cff384"
+  resolved "https://registry.npmjs.org/@types/node/-/node-20.12.7.tgz"
   integrity sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==
   dependencies:
     undici-types "~5.26.4"
@@ -1428,7 +1428,7 @@ commander@11.1.0:
 
 commitlint@^19.0.3:
   version "19.3.0"
-  resolved "https://registry.yarnpkg.com/commitlint/-/commitlint-19.3.0.tgz#c3e5132b8c8e2d3ecba8f5e1754f753285c8cf64"
+  resolved "https://registry.npmjs.org/commitlint/-/commitlint-19.3.0.tgz"
   integrity sha512-B8eUVQCjz+1ZAjR3LC3+vzKg7c4/qN4QhSxkjp0u0v7Pi79t9CsnGAluvveKmFh56e885zgToPL5ax+l8BHTPg==
   dependencies:
     "@commitlint/cli" "^19.3.0"
@@ -3448,7 +3448,7 @@ test-exclude@^6.0.0:
 
 testcontainers@^10.9.0:
   version "10.9.0"
-  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-10.9.0.tgz#9d5b2ef189ed32a0be376d013017ba8593a09e93"
+  resolved "https://registry.npmjs.org/testcontainers/-/testcontainers-10.9.0.tgz"
   integrity sha512-LN+cKAOd61Up9SVMJW+3VFVGeVQG8JBqZhEQo2U0HBfIsAynyAXcsLBSo+KZrOfy9SBz7pGHctWN/KabLDbNFA==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
@@ -3554,7 +3554,7 @@ type-fest@^0.21.3:
 
 typescript@^5.1.6:
   version "5.4.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-5.4.5.tgz"
   integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
 undici-types@~5.26.4:
