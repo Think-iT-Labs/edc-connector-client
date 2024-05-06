@@ -1,0 +1,41 @@
+name: release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'SemVer that will be used for publishing (e.g. "0.0.1")'
+        required: true
+        type: string
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare ${{ inputs.version }} release
+        run: |
+          git config user.name "think-it-account"
+          git config user.email "technical@think-it.io"
+
+          sed -i 's/"version":.*/"version": "${{ inputs.version }}",/g' package.json
+          git add .
+          git commit -m "Prepare release ${{ inputs.version }}"
+          git push origin main
+
+          git tag --force v${{ inputs.version }}
+          git push --force origin v${{ inputs.version }}
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          generateReleaseNotes: true
+          tag: ${{ inputs.version }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          makeLatest: true
+          removeArtifacts: true
+
+      - name: publish
+        uses: ./.github/actions/npm-publish
