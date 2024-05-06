@@ -15,7 +15,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Prepare ${{ inputs.version }} release
+      - name: prepare ${{ inputs.version }} release
         run: |
           git config user.name "think-it-account"
           git config user.email "technical@think-it.io"
@@ -28,7 +28,7 @@ jobs:
           git tag --force v${{ inputs.version }}
           git push --force origin v${{ inputs.version }}
 
-      - name: Create GitHub Release
+      - name: github release
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
