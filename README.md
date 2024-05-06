@@ -168,6 +168,9 @@ connectors with capabilities described in the
 Please, adhere to the [CONTRIBUTING](CONTRIBUTING.md) guidelines when suggesting
 changes in this repository.
 
+### Release
+The `release` github action workflow takes care of release.
+
 ## License
 
 Copyright 2022-2023 Think.iT GmbH.
