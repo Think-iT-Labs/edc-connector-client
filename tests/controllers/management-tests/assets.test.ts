@@ -2,7 +2,7 @@ import { GenericContainer, StartedTestContainer } from "testcontainers";
 import { AssetInput, EdcConnectorClient } from "../../../src";
 import { AssetController } from "../../../src/controllers";
 
-describe("assets", () => {
+describe("AssetController", () => {
   let startedContainer: StartedTestContainer;
   let assets: AssetController;
 

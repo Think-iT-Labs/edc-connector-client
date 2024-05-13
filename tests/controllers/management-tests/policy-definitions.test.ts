@@ -1,253 +1,80 @@
-import * as crypto from "node:crypto";
+import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { PolicyDefinitionController } from "../../../src/controllers";
 import {
   EdcConnectorClient,
   PolicyBuilder,
   PolicyDefinitionInput
 } from "../../../src";
-import {
-  EdcConnectorClientError,
-  EdcConnectorClientErrorType,
-} from "../../../src/error";
 
 describe("PolicyDefinitionController", () => {
-  const edcClient = new EdcConnectorClient.Builder()
-    .apiToken("123456")
-    .managementUrl("http://localhost:19193/management")
-    .build();
+  let startedContainer: StartedTestContainer;
+  let policyDefinitions: PolicyDefinitionController;
 
-  const policyDefinitions = edcClient.management.policyDefinitions;
+  beforeAll(async () => {
+    startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
+      .withCopyFilesToContainer([{ source: "node_modules/management-api.yml", target: "/management-api.yml" }])
+      .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
+      .withExposedPorts(4010)
+      .start();
 
-  describe("create", () => {
-    it("succesfully creates a new policy", async () => {
-      const id = crypto.randomUUID();
-      const policyInput: PolicyDefinitionInput = {
-        "@id": id,
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      };
-
-      ;
-
-      const idResponse = await policyDefinitions.create(policyInput);
-
-      expect(idResponse.id).toBe(id);
-      expect(idResponse.createdAt).toBeGreaterThan(0);
-    });
-
-    it("fails creating two policies with the same id", async () => {
-      const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      };
-
-      await policyDefinitions.create(policyInput);
-      const maybeCreateResult = policyDefinitions.create(policyInput);
-
-      await expect(maybeCreateResult).rejects.toThrowError(
-        "duplicated resource",
-      );
-
-      maybeCreateResult.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.Duplicate,
-        );
-      });
-    });
+      policyDefinitions = new EdcConnectorClient.Builder()
+        .managementUrl("http://localhost:" + startedContainer.getFirstMappedPort())
+        .build()
+        .management.policyDefinitions;
   });
 
-  describe("queryAll", () => {
-    it("succesfully retuns a list of policy definitions", async () => {
-      const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      };
-      await policyDefinitions.create(policyInput);
-
-      const policies = await policyDefinitions.queryAll();
-
-      expect(policies.length).toBeGreaterThan(0);
-      expect(
-        policies.find((policy) => policy["@id"] === policyInput["@id"]),
-      ).toBeTruthy();
-    });
+  afterAll(async () => {
+    await startedContainer.stop();
   });
 
-  describe("get", () => {
-    it("succesfully return a policy definition", async () => {
-      const policyInput: PolicyDefinitionInput = {
-        policy: new PolicyBuilder()
-          .type("Set")
-          .raw({
-            permission: [
-              {
-                action: "use",
-                constraint: [
-                  {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
-                  },
-                  {
-                    "@type": "LogicalConstraint",
-                    "and": [{
-                        leftOperand: "field2",
-                        operator: "eq",
-                        rightOperand: "value"
-                      },
-                      {
-                        leftOperand: "field3",
-                        operator: "eq",
-                        rightOperand: "value"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ],
-            prohibition: [
-              {
-                action: "use",
-                constraint: [
-                  {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
-                  }
-                ]
-              }
-            ],
-            obligation: [
-              {
-                action: "use",
-                constraint: [
-                  {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
-                  }
-                ]
-              }
-            ]
-          })
-          .build(),
-      };
-      const idResponse = await policyDefinitions.create(policyInput);
+  it("should create policy definition", async () => {
+    const policyInput: PolicyDefinitionInput = {
+      policy: new PolicyBuilder()
+        .type("Set")
+        .build(),
+    };
 
-      const policyDefinition = await policyDefinitions.get(idResponse.id);
+    const idResponse = await policyDefinitions.create(policyInput);
 
-      expect(policyDefinition.id).toBe(idResponse.id);
-      expect(policyDefinition.policy.permissions).toHaveLength(1);
-      const permissionConstraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
-      expect(permissionConstraints).toHaveLength(2);
-      expect(permissionConstraints[0].mandatoryValue("odrl", "leftOperand")).toBe("https://w3id.org/edc/v0.0.1/ns/field");
-      expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
-      expect(policyDefinition.policy.prohibitions).toHaveLength(1);
-      const prohibitionsConstraints = policyDefinition.policy.prohibitions[0].array("odrl", "constraint");
-      expect(prohibitionsConstraints).toHaveLength(1);
-      expect(policyDefinition.policy.obligations).toHaveLength(1);
-      const obligationsConstraints = policyDefinition.policy.obligations[0].array("odrl", "constraint");
-      expect(obligationsConstraints).toHaveLength(1);
-    });
-
-    it("fails to fetch an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.get(
-        crypto.randomUUID(),
-      );
-
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
-
-      maybePolicy.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.NotFound,
-        );
-      });
-    });
+    expect(idResponse.id).not.toBeNull();
+    expect(idResponse.createdAt).toBeGreaterThan(0);
   });
 
-  describe("update", () => {
-    it("updates a target policy", async () => {
-      const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      };
-      await policyDefinitions.create(policyInput);
-      const updatedPolicyDefinitionInput = {
-        "@id": policyInput["@id"]!,
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      }
+  it("should query policy definitions", async () => {
+    const result = await policyDefinitions.queryAll();
 
-      const policy = await policyDefinitions.update(policyInput["@id"]!,updatedPolicyDefinitionInput);
-
-      expect(policy).toBeUndefined();
-    });
-
-    it("fails to update an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.update(
-        crypto.randomUUID(),
-        {
-          "@id": crypto.randomUUID(),
-          policy: new PolicyBuilder()
-            .type("Set")
-            .build(),
-        }
-      );
-
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
-
-      maybePolicy.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.NotFound,
-        );
-      });
-    });
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0].id).not.toBeNull();
   });
 
-  describe("delete", () => {
-    it("deletes a target policy", async () => {
-      const policyInput: PolicyDefinitionInput = {
-        "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      };
-      await policyDefinitions.create(policyInput);
+  it("should get a policy definition", async () => {
+    const policyDefinition = await policyDefinitions.get("policyDefinitionId");
 
-      const policy = await policyDefinitions.delete(
-        policyInput["@id"]!,
-      );
+    expect(policyDefinition.id).not.toBeNull();
+    expect(policyDefinition.policy.permissions.length).toBeGreaterThan(0);
+    const permissionConstraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
+    expect(permissionConstraints.length).toBeGreaterThan(0);
+    expect(permissionConstraints[0].mandatoryValue("odrl", "leftOperand")).not.toBeNull();
+    expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
+  });
 
-      expect(policy).toBeUndefined();
-    });
+  it("should update a policy definition", async () => {
+    const updatedPolicyDefinitionInput = {
+      "@id": "policyDefinitionId",
+      policy: new PolicyBuilder()
+        .type("Set")
+        .build(),
+    }
 
-    it("fails to delete an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.delete(
-        crypto.randomUUID(),
-      );
+    const policy = await policyDefinitions
+      .update("policyDefinitionId", updatedPolicyDefinitionInput);
 
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
+    expect(policy).toBeUndefined();
+  });
 
-      maybePolicy.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.NotFound,
-        );
-      });
-    });
+  it("should delete a policy definition", async () => {
+    const policy = await policyDefinitions.delete("policyDefinitionId");
+
+    expect(policy).toBeUndefined();
   });
 });

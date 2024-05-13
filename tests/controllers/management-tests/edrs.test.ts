@@ -1,7 +1,7 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
 
-describe("edrs", () => {
+describe("EdrController", () => {
   let startedContainer: StartedTestContainer;
   let edcClient: EdcConnectorClient;
 
