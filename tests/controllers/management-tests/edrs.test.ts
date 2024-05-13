@@ -40,8 +40,6 @@ describe("edrs", () => {
   it("should get data address", async () => {
     const dataAddress = await edcClient.management.edrs.dataAddress("edrId");
 
-    console.log(dataAddress)
-
     expect(dataAddress.types().length).toBeGreaterThan(0);
   });
 
