@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.0.3",
-    "@types/jest": "^28.1.6",
+    "@types/jest": "^29.5.12",
     "@types/jsonld": "^1.5.8",
     "@types/node": "^20.4.7",
     "commitlint": "^19.0.3",
