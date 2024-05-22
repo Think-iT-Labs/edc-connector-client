@@ -16,6 +16,7 @@ export * from "./id-response";
 export * from "./jsonld";
 export * from "./policy-definition";
 export * from "./policy";
+export * from "./secret";
 export * from "./transfer-process";
 
 export const EDC_NAMESPACE = "edc";

@@ -9,6 +9,7 @@ import {
   DataplaneController,
   EdrController,
   PolicyDefinitionController,
+  SecretController,
   TransferProcessController,
 } from "../controllers/management-controllers";
 
@@ -36,11 +37,14 @@ export class ManagementController {
   get contractNegotiations() {
     return new ContractNegotiationController(this.#inner, this.#context);
   }
+  get dataplanes() {
+    return new DataplaneController(this.#inner, this.#context);
+  }
   get edrs(): EdrController {
     return new EdrController(this.#inner, this.#context);
   }
-  get dataplanes() {
-    return new DataplaneController(this.#inner, this.#context);
+  get secrets(): SecretController {
+    return new SecretController(this.#inner, this.#context);
   }
   get policyDefinitions() {
     return new PolicyDefinitionController(this.#inner, this.#context);
