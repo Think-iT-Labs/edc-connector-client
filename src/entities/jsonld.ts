@@ -1,6 +1,10 @@
 import { EDC_CONTEXT } from "./context";
 import jsonld from "jsonld";
 
+export async function compact(body: any): Promise<jsonld.NodeObject> {
+  return await jsonld.compact(body, CONTEXT);
+}
+
 export async function expand<T extends JsonLdObject>(body: any, newInstance: (() => T)): Promise<T> {
   const expanded = await jsonld.expand(body);
   return Object.assign(newInstance(), expanded[0]);
@@ -46,13 +50,19 @@ export class JsonLdObject {
       .map(element => Object.assign(newInstance(), element));
   }
 
-
   array(prefix: string, name: string): JsonLdObject[] {
     return this.arrayOf(() => new JsonLdObject(), prefix, name);
   }
 
   types(): string[] {
     return this["@type"] as string[];
+  }
+
+  setValue<T>(prefix: string, name: string, value: T) {
+    const namespace = this.getNamespaceUrl(prefix);
+    const valueObject = new JsonLdValue();
+    valueObject.value = value
+    this[`${namespace}${name}`] = [valueObject]
   }
 
   private getNamespaceUrl(prefix: string): string {
@@ -63,6 +73,13 @@ export class JsonLdObject {
       default: throw new Error(`JSON-LD context ${prefix} not supported`);
     }
   }
+}
+
+const CONTEXT = {
+  "@vocab": EDC_CONTEXT,
+  // "edc": EDC_CONTEXT,
+  // "odrl": "http://www.w3.org/ns/odrl/2/",
+  // "dcat": "http://www.w3.org/ns/dcat#"
 }
 
 export class JsonLdId extends JsonLdObject {
@@ -83,5 +100,9 @@ export class JsonLdValue<T> {
 
   get value(): T {
     return this['@value'];
+  }
+
+  set value(value: T) {
+    this['@value'] = value;
   }
 }

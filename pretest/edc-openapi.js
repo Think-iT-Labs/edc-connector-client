@@ -18,7 +18,9 @@ fs.readFile("connector/gradle/libs.versions.toml")
         }
         return response.text()
       })
-      .then(text => text.replaceAll("example: null", ""))
+      .then(text => text
+        .replaceAll("example: null", "")
+        .replaceAll("https://w3id.org/edc/v0.0.1/ns/value", "value")) // to make "secrets" test working, will be fixed in the future
       .then(text => fs.writeFile(`${folder}/${context}.yml`, text));
   })
   .catch(error => {
