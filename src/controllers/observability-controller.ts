@@ -1,20 +1,14 @@
 import { EdcConnectorClientContext } from "../context";
 import { HealthStatus } from "../entities";
-import { Inner } from "../inner";
+import { EdcController } from "../edc-controller";
 
-export class ObservabilityController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
+export class ObservabilityController extends EdcController {
+  async checkHealth(
+    context?: EdcConnectorClientContext,
+  ): Promise<HealthStatus> {
+    const actualContext = context || this.context!;
 
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
-  }
-
-  async checkHealth(context?: EdcConnectorClientContext): Promise<HealthStatus> {
-    const actualContext = context || this.#context!;
-
-    return this.#inner.request(actualContext.default, {
+    return this.inner.request(actualContext.default, {
       path: "/check/health",
       method: "GET",
       apiToken: actualContext.apiToken,
@@ -24,9 +18,9 @@ export class ObservabilityController {
   async checkLiveness(
     context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    const actualContext = context || this.#context!;
+    const actualContext = context || this.context!;
 
-    return this.#inner.request(actualContext.default, {
+    return this.inner.request(actualContext.default, {
       path: "/check/liveness",
       method: "GET",
       apiToken: actualContext.apiToken,
@@ -36,9 +30,9 @@ export class ObservabilityController {
   async checkReadiness(
     context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    const actualContext = context || this.#context!;
+    const actualContext = context || this.context!;
 
-    return this.#inner.request(actualContext.default, {
+    return this.inner.request(actualContext.default, {
       path: "/check/readiness",
       method: "GET",
       apiToken: actualContext.apiToken,
@@ -48,9 +42,9 @@ export class ObservabilityController {
   async checkStartup(
     context?: EdcConnectorClientContext,
   ): Promise<HealthStatus> {
-    const actualContext = context || this.#context!;
-    
-    return this.#inner.request(actualContext.default, {
+    const actualContext = context || this.context!;
+
+    return this.inner.request(actualContext.default, {
       path: "/check/startup",
       method: "GET",
       apiToken: actualContext.apiToken,
