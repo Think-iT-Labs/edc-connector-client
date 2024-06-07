@@ -15,6 +15,11 @@ export class EdcController {
   }
 }
 
+export type EdcControllerClass = {
+  prototype: Pick<EdcController, keyof EdcController>;
+  new (inner: Inner, context?: EdcConnectorClientContext): EdcController;
+};
+
 export class ResourcesCountController extends EdcController {
   async active(): Promise<ActiveResponse> {
     return {

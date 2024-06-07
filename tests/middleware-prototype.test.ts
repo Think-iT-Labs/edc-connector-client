@@ -11,89 +11,6 @@ const INNER_SYMBOL = Symbol.for("#inner");
 const API_TOKEN_SYMBOL = Symbol.for("#apiToken");
 const ADDRESSES_SYMBOL = Symbol.for("#addresses");
 
-class EdcConnectorClientBuilder<T extends Record<string, EdcController> = {}> {
-  #instance = new EdcConnectorClient();
-
-  apiToken(apiToken: string): this {
-    this.#instance[API_TOKEN_SYMBOL] = apiToken;
-    return this;
-  }
-
-  managementUrl(managementUrl: string): this {
-    this.#instance[ADDRESSES_SYMBOL].management = managementUrl;
-    return this;
-  }
-
-  defaultUrl(defaultUrl: string): this {
-    this.#instance[ADDRESSES_SYMBOL].default = defaultUrl;
-    return this;
-  }
-
-  protocolUrl(protocolUrl: string): this {
-    this.#instance[ADDRESSES_SYMBOL].protocol = protocolUrl;
-    return this;
-  }
-
-  publicUrl(publicUrl: string): this {
-    this.#instance[ADDRESSES_SYMBOL].public = publicUrl;
-    return this;
-  }
-
-  controlUrl(controlUrl: string): this {
-    this.#instance[ADDRESSES_SYMBOL].control = controlUrl;
-    return this;
-  }
-
-  use<K extends string, D extends EdcController>(
-    property: K,
-    Domain: Class<D, [Inner, EdcConnectorClientContext]>,
-  ): EdcConnectorClientBuilder<T & Record<K, D>> {
-    const ThisClassProto = Object.getPrototypeOf(this.#instance);
-
-    class DomainClass extends EdcConnectorClient {
-      get [property]() {
-        const context = new EdcConnectorClientContext(
-          this[API_TOKEN_SYMBOL],
-          this[ADDRESSES_SYMBOL],
-        );
-        return new Domain(this[INNER_SYMBOL], context);
-      }
-    }
-
-    const domain = new DomainClass();
-    const DomainClassProto = Object.getPrototypeOf(domain);
-
-    class EdcConnectorClientExtended {
-      constructor() {
-        Object.defineProperties(
-          Object.getPrototypeOf(this),
-          Object.entries(Object.getOwnPropertyDescriptors(ThisClassProto))
-            .concat(
-              Object.entries(
-                Object.getOwnPropertyDescriptors(DomainClassProto),
-              ),
-            )
-            .filter(([property, _]) => property !== "constructor")
-            .reduce(
-              (result, [property, value]) => ({ ...result, [property]: value }),
-              {},
-            ),
-        );
-      }
-    }
-
-    const extended = new EdcConnectorClientExtended();
-
-    this.#instance = Object.assign(extended, this.#instance, domain);
-
-    return this as any;
-  }
-
-  build(): EdcConnectorClient & T {
-    return this.#instance as any;
-  }
-}
-
 class EdcConnectorClient {
   [ADDRESSES_SYMBOL]: Addresses = {};
 
@@ -111,7 +28,64 @@ class EdcConnectorClient {
     return new EdcConnectorClientContext(token, addresses);
   }
 
-  static Builder = EdcConnectorClientBuilder;
+  static Builder = class EdcConnectorClientBuilder<
+    T extends Record<string, EdcController> = {},
+  > {
+    #instance = new EdcConnectorClient();
+
+    apiToken(apiToken: string): this {
+      this.#instance[API_TOKEN_SYMBOL] = apiToken;
+      return this;
+    }
+
+    managementUrl(managementUrl: string): this {
+      this.#instance[ADDRESSES_SYMBOL].management = managementUrl;
+      return this;
+    }
+
+    defaultUrl(defaultUrl: string): this {
+      this.#instance[ADDRESSES_SYMBOL].default = defaultUrl;
+      return this;
+    }
+
+    protocolUrl(protocolUrl: string): this {
+      this.#instance[ADDRESSES_SYMBOL].protocol = protocolUrl;
+      return this;
+    }
+
+    publicUrl(publicUrl: string): this {
+      this.#instance[ADDRESSES_SYMBOL].public = publicUrl;
+      return this;
+    }
+
+    controlUrl(controlUrl: string): this {
+      this.#instance[ADDRESSES_SYMBOL].control = controlUrl;
+      return this;
+    }
+
+    use<K extends string, D extends EdcController>(
+      property: K,
+      Controller: Class<D, [Inner, EdcConnectorClientContext]>,
+    ): EdcConnectorClientBuilder<T & Record<K, D>> {
+      Object.defineProperty(this.#instance, property, {
+        get: () =>
+          new Controller(
+            this.#instance[INNER_SYMBOL],
+            this.#instance.createContext(
+              this.#instance[API_TOKEN_SYMBOL]!,
+              this.#instance[ADDRESSES_SYMBOL],
+            ),
+          ),
+        enumerable: true,
+        configurable: false,
+      });
+      return this as any;
+    }
+
+    build(): EdcConnectorClient & T {
+      return this.#instance as any;
+    }
+  };
 }
 
 describe("EdcConnectorClient#use", () => {
