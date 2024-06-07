@@ -1,4 +1,8 @@
-import { EdcConnectorClient, EdcConnectorClientContext } from "../src";
+import {
+  EdcConnectorClient,
+  EdcConnectorClientContext,
+  EdcController,
+} from "../src";
 import { Addresses } from "../src";
 
 describe("EdcConnectorClient", () => {
@@ -37,6 +41,43 @@ describe("EdcConnectorClient", () => {
       expect(context.protocol).toBe(addresses.protocol);
       expect(context.public).toBe(addresses.public);
       expect(context.control).toBe(addresses.control);
+    });
+  });
+
+  describe("edcClient.Builder.use", () => {
+    interface ActiveResponse {
+      active: boolean;
+    }
+
+    class FooController extends EdcController {
+      async testFoo(): Promise<ActiveResponse> {
+        return {
+          active: true,
+        };
+      }
+    }
+
+    class BarController extends EdcController {
+      async testBar(): Promise<ActiveResponse> {
+        return {
+          active: false,
+        };
+      }
+    }
+
+    it("allows to extend the clients through middlewares", async () => {
+      const client = new EdcConnectorClient.Builder()
+        .use("foo", FooController)
+        .use("bar", BarController)
+        .build();
+
+      await expect(client.foo.testFoo()).resolves.toEqual({
+        active: true,
+      });
+
+      await expect(client.bar.testBar()).resolves.toEqual({
+        active: false,
+      });
     });
   });
 });

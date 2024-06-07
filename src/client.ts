@@ -7,11 +7,6 @@ import { Addresses } from "./entities";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
 
-type EdcControllerClass = Class<
-  EdcController,
-  [Inner, EdcConnectorClientContext]
->;
-
 export type EdcConnectorClientType<
   T extends Record<string, EdcController>,
 > = EdcConnectorClient & T;
@@ -63,11 +58,10 @@ export class EdcConnectorClient {
   static Builder = class Builder<
     Controllers extends Record<
       string,
-      EdcControllerClass
+      EdcController
     > = {},
   > {
     #instance = new EdcConnectorClient();
-    #controllers: Partial<Controllers> = {};
 
     apiToken(apiToken: string): this {
       this.#instance.#apiToken = apiToken;
@@ -101,43 +95,32 @@ export class EdcConnectorClient {
 
     use<K extends string, C extends EdcController>(
       key: K,
-      controller: EdcControllerClass,
+      Controller: Class<C>,
     ): Builder<Controllers & Record<K, C>> {
-      const b = new Builder<Controllers & Record<K, C>>();
-      b.#instance = this.#instance;
+      Object.defineProperty(this.#instance, key, {
+        get() {
+          return new Controller(
+            this.#inner,
+            this.createContext(
+              this.#apiToken!,
+              this.#addresses,
+            ),
+          );
+        },
+        enumerable: true,
+        configurable: false,
+      });
 
-      b.#controllers = {
-        ...this.#controllers,
-        [key]: controller,
-      } as Controllers & Record<K, C>;
-
-      return b;
+      // SAFETY: we use `Object.defineProperty` above to extend the `EdcConnectorClient` instance.
+      return this as any;
     }
 
-    build<K extends keyof Controllers>(): EdcConnectorClientType<
-      Record<K, InstanceType<Controllers[K]>>
+    build(): EdcConnectorClientType<
+      Controllers
     > {
-      for (const key in this.#controllers) {
-        if (this.#controllers.hasOwnProperty(key)) {
-          const Controller = this.#controllers[key]!;
-          Object.defineProperty(this.#instance, key, {
-            get: () =>
-              new Controller(
-                this.#instance.#inner,
-                this.#instance.createContext(
-                  this.#instance.#apiToken!,
-                  this.#instance.#addresses,
-                ),
-              ),
-            enumerable: true,
-            configurable: false,
-          });
-        }
-      }
-
       return this.#instance as
         & EdcConnectorClient
-        & { [K in keyof Controllers]: InstanceType<Controllers[K]> };
+        & Controllers;
     }
   };
 }
