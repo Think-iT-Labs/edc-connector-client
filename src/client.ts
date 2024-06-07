@@ -1,10 +1,20 @@
+import { Class } from "type-fest";
+import { version } from "../package.json";
 import { EdcConnectorClientContext } from "./context";
 import { ObservabilityController, PublicController } from "./controllers";
+import { EdcController } from "./edc-controller";
 import { Addresses } from "./entities";
+import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
 
-import { version } from "../package.json";
-import { ManagementController } from "./facades/management";
+type EdcControllerClass = Class<
+  EdcController,
+  [Inner, EdcConnectorClientContext]
+>;
+
+export type EdcConnectorClientType<
+  T extends Record<string, EdcController>,
+> = EdcConnectorClient & T;
 
 export class EdcConnectorClient {
   #apiToken: string | undefined;
@@ -50,41 +60,84 @@ export class EdcConnectorClient {
     return version;
   }
 
-  static Builder = class Builder {
+  static Builder = class Builder<
+    Controllers extends Record<
+      string,
+      EdcControllerClass
+    > = {},
+  > {
     #instance = new EdcConnectorClient();
+    #controllers: Partial<Controllers> = {};
 
-    apiToken(apiToken: string): Builder {
+    apiToken(apiToken: string): this {
       this.#instance.#apiToken = apiToken;
       return this;
     }
 
-    managementUrl(managementUrl: string): Builder {
+    managementUrl(managementUrl: string): this {
       this.#instance.#addresses.management = managementUrl;
       return this;
     }
 
-    defaultUrl(defaultUrl: string): Builder {
+    defaultUrl(defaultUrl: string): this {
       this.#instance.#addresses.default = defaultUrl;
       return this;
     }
 
-    protocolUrl(protocolUrl: string): Builder {
+    protocolUrl(protocolUrl: string): this {
       this.#instance.#addresses.protocol = protocolUrl;
       return this;
     }
 
-    publicUrl(publicUrl: string): Builder {
+    publicUrl(publicUrl: string): this {
       this.#instance.#addresses.public = publicUrl;
       return this;
     }
 
-    controlUrl(controlUrl: string): Builder {
+    controlUrl(controlUrl: string): this {
       this.#instance.#addresses.control = controlUrl;
       return this;
     }
 
-    build(): EdcConnectorClient {
-      return this.#instance;
+    use<K extends string, C extends EdcController>(
+      key: K,
+      controller: EdcControllerClass,
+    ): Builder<Controllers & Record<K, C>> {
+      const b = new Builder<Controllers & Record<K, C>>();
+      b.#instance = this.#instance;
+
+      b.#controllers = {
+        ...this.#controllers,
+        [key]: controller,
+      } as Controllers & Record<K, C>;
+
+      return b;
+    }
+
+    build<K extends keyof Controllers>(): EdcConnectorClientType<
+      Record<K, InstanceType<Controllers[K]>>
+    > {
+      for (const key in this.#controllers) {
+        if (this.#controllers.hasOwnProperty(key)) {
+          const Controller = this.#controllers[key]!;
+          Object.defineProperty(this.#instance, key, {
+            get: () =>
+              new Controller(
+                this.#instance.#inner,
+                this.#instance.createContext(
+                  this.#instance.#apiToken!,
+                  this.#instance.#addresses,
+                ),
+              ),
+            enumerable: true,
+            configurable: false,
+          });
+        }
+      }
+
+      return this.#instance as
+        & EdcConnectorClient
+        & { [K in keyof Controllers]: InstanceType<Controllers[K]> };
     }
   };
 }
