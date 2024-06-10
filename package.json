@@ -27,7 +27,8 @@
   "license": "MIT",
   "dependencies": {
     "@think-it-labs/typed-error": "^0.3.0",
-    "jsonld": "^8.2.1"
+    "jsonld": "^8.2.1",
+    "type-fest": "^4.20.0"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^19.0.3",

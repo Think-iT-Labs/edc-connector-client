@@ -1,5 +1,8 @@
 .idea/
 connector/.gradle
+connector/.settings
+connector/.classpath
+connector/.project
 connector/build
 coverage/
 dist/

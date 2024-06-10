@@ -1,22 +1,14 @@
 import { EdcConnectorClientContext } from "../context";
-import { Inner } from "../inner";
+import { EdcController } from "../edc-controller";
 
-export class PublicController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
-  }
-
+export class PublicController extends EdcController {
   async getTransferredData(
     headers: Record<string, string | undefined>,
     context?: EdcConnectorClientContext,
   ): Promise<Response> {
-    const actualContext = context || this.#context!;
+    const actualContext = context || this.context!;
 
-    return this.#inner.stream(actualContext.public, {
+    return this.inner.stream(actualContext.public, {
       path: "/",
       method: "GET",
       headers,
