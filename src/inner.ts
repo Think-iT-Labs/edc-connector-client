@@ -45,13 +45,14 @@ export class Inner {
   }
 
   async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {
-    const url = new URL(`${baseUrl}${innerRequest.path}`);
-
+    const searchParams = new URLSearchParams();
     if (innerRequest.query) {
       Object.entries(innerRequest.query).forEach(([key, value]) => {
-        url.searchParams.append(key, value);
+        searchParams.append(key, value);
       });
     }
+
+    const url = `${baseUrl}${innerRequest.path}?${searchParams.toString()}`;
 
     const method = innerRequest.method;
     const request = new Request(url, {
