@@ -80,4 +80,17 @@ describe("EdcConnectorClient", () => {
       });
     });
   });
+
+  describe("edcClient.inner.#fetch", () => {
+    it("accepts relative urls", async () => {
+      const edcClient = new EdcConnectorClient.Builder()
+        .apiToken("123456")
+        .defaultUrl("/defaultUrl")
+        .build();
+
+      await expect(edcClient.observability.checkHealth()).rejects.not.toThrow(
+        "Invalid URL",
+      );
+    });
+  });
 });

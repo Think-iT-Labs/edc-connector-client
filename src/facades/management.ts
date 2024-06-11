@@ -32,10 +32,10 @@ export class ManagementController extends EdcController {
     return new DataplaneController(this.inner, this.context);
   }
   get edrs(): EdrController {
-    return new EdrController(this.#inner, this.#context);
+    return new EdrController(this.inner, this.context);
   }
   get secrets(): SecretController {
-    return new SecretController(this.#inner, this.#context);
+    return new SecretController(this.inner, this.context);
   }
   get policyDefinitions() {
     return new PolicyDefinitionController(this.inner, this.context);
