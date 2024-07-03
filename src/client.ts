@@ -6,10 +6,10 @@ import { EdcController } from "./edc-controller";
 import { Addresses } from "./entities";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
+import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 
-export type EdcConnectorClientType<
-  T extends Record<string, EdcController>,
-> = EdcConnectorClient & T;
+export type EdcConnectorClientType<T extends Record<string, EdcController>> =
+  EdcConnectorClient & T;
 
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
@@ -48,6 +48,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
+  federatedCatalogUrl(federatedCatalogUrl: string): this {
+    this.#instance[addressesSymbol].federatedCatalogUrl = federatedCatalogUrl;
+    return this;
+  }
+
   use<K extends string, C extends EdcController>(
     key: K,
     Controller: Class<C>,
@@ -56,10 +61,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
       get() {
         return new Controller(
           this.inner,
-          this.createContext(
-            this.apiToken!,
-            this.addresses,
-          ),
+          this.createContext(this.apiToken!, this.addresses),
         );
       },
       enumerable: true,
@@ -70,12 +72,8 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this as any;
   }
 
-  build(): EdcConnectorClientType<
-    T
-  > {
-    return this.#instance as
-      & EdcConnectorClient
-      & T;
+  build(): EdcConnectorClientType<T> {
+    return this.#instance as EdcConnectorClient & T;
   }
 }
 
@@ -106,6 +104,14 @@ export class EdcConnectorClient {
       this[addressesSymbol],
     );
     return new PublicController(this[innerSymbol], context);
+  }
+
+  get federatedCatalog() {
+    const context = new EdcConnectorClientContext(
+      this[apiTokenSymbol],
+      this[addressesSymbol],
+    );
+    return new FederatedCatalogController(this[innerSymbol], context);
   }
 
   get addresses() {

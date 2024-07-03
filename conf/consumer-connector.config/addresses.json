@@ -6,6 +6,7 @@
     "management": "http://localhost:19193/management",
     "protocol": "http://consumer-connector:9194/protocol",
     "public": "http://localhost:19291/public",
-    "control": "http://localhost:19292/control"
+    "control": "http://localhost:19292/control",
+    "catalog": "http://localhost:19393/catalog"
   }
 }

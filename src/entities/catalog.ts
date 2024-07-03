@@ -1,5 +1,9 @@
-import { QuerySpec } from ".";
+import { CriterionInput, QuerySpec } from ".";
 import { JsonLdId } from "./jsonld";
+
+export interface FederatedCatalogCacheQuery {
+  criteria?: CriterionInput[];
+}
 
 export interface CatalogRequest {
   counterPartyAddress: string;
@@ -13,6 +17,10 @@ export interface DatasetRequest {
 }
 
 export class Catalog extends JsonLdId {
+
+  get participantId(): string {
+    return this.mandatoryValue('edc', 'participantId');
+  }
 
   get datasets(): Dataset[] {
     return this.arrayOf(() => new Dataset(), 'dcat', 'dataset');

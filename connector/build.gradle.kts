@@ -35,6 +35,9 @@ dependencies {
     implementation(libs.edc.data.plane.public.api.v2)
     implementation(libs.edc.data.plane.core)
     implementation(libs.edc.data.plane.http)
+
+    implementation(libs.edc.federatedcatalog.core)
+    implementation(libs.edc.federatedcatalog.api)
 }
 
 application {
