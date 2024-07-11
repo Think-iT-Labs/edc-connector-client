@@ -1,5 +1,5 @@
 import { EdcConnectorClient } from "../../src";
-import { createContractAgreement, waitForTransferState, waitFor } from "../test-utils";
+import { createContractAgreement, waitForTransferState } from "../test-utils";
 
 describe("PublicController", () => {
   const consumer = new EdcConnectorClient.Builder()
