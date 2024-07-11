@@ -1,4 +1,3 @@
-import { DataAddress } from "./data-address";
 import { JsonLdId, JsonLdObject, JsonLdValue } from "./jsonld";
 
 export class Dataplane extends JsonLdId {
@@ -17,15 +16,13 @@ export class Dataplane extends JsonLdId {
       .map(it => it.value);
   }
 
+  get allowedTransferTypes(): String[] {
+    return this.arrayOf(() => new JsonLdValue<string>(), 'edc', 'allowedTransferTypes')
+      .map(it => it.value);
+  }
+
   get properties(): JsonLdObject {
     return this.nested('edc', 'properties');
   }
 
-}
-
-export type DataplaneInput = Omit<Dataplane, "lastActive" | "turnCount">;
-export interface DataplaceSelectInput {
-  source: DataAddress,
-  destination: DataAddress,
-  strategy?: string
 }
