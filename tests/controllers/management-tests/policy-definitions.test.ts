@@ -146,7 +146,7 @@ describe("PolicyDefinitionController", () => {
       expect(policyDefinition.policy.permissions).toHaveLength(1);
       const permissionConstraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
       expect(permissionConstraints).toHaveLength(2);
-      expect(permissionConstraints[0].mandatoryValue("odrl", "leftOperand")).toBe("https://w3id.org/edc/v0.0.1/ns/field");
+      expect(permissionConstraints[0].array("odrl", "leftOperand")[0]['@id']).toBe("https://w3id.org/edc/v0.0.1/ns/field");
       expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
       expect(policyDefinition.policy.prohibitions).toHaveLength(1);
       const prohibitionsConstraints = policyDefinition.policy.prohibitions[0].array("odrl", "constraint");

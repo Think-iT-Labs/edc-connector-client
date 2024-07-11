@@ -183,6 +183,35 @@ export async function waitForTransferState(
   expect(actualState).toBe(targetState);
 }
 
+export async function waitFor<T>(
+  operation: () => Promise<T>,
+  interval = 500,
+  times = 10
+): Promise<T> {
+  let waiting = true;
+  var result = null;
+  var error = null;
+
+  do {
+    times--;
+    await new Promise((resolve) => setTimeout(resolve, interval));
+
+    try {
+      result = await operation();
+    } catch (err) {
+      error = err;
+    }
+
+    waiting = result == null;
+  } while (waiting && times > 0);
+
+  if (result != null) {
+    return result;
+  } else {
+    throw error
+  }
+}
+
 export function createReceiverServer() {
   const emitter = new events.EventEmitter();
 

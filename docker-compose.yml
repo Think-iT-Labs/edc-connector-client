@@ -11,9 +11,6 @@ services:
       - "19194:9194" # connector protocol
       - "19291:9291" # data-plane public
     environment:
-      EDC_VAULT: /config/vault.properties
-      EDC_KEYSTORE: /config/vault-keys.p12
-      EDC_KEYSTORE_PASSWORD: 123456
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:
       - ./conf/consumer-connector.config:/config
@@ -30,9 +27,6 @@ services:
       - "29194:9194" # connector protocol
       - "29291:9291" # data-plane public
     environment:
-      EDC_VAULT: /config/vault.properties
-      EDC_KEYSTORE: /config/vault-keys.p12
-      EDC_KEYSTORE_PASSWORD: 123456
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:
       - ./conf/provider-connector.config:/config

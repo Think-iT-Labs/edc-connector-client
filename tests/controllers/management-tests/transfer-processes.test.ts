@@ -87,18 +87,6 @@ describe("TransferProcessController", () => {
   });
 
   async function initiate(): Promise<IdResponse> {
-    const dataplaneInput = {
-      id: "provider-dataplane",
-      url: "http://provider-connector:9192/control/transfer",
-      allowedSourceTypes: ["HttpData"],
-      allowedDestTypes: ["HttpProxy", "HttpData"],
-      properties: {
-        publicApiUrl: "http://provider-connector:9291/public/",
-      },
-    };
-
-    await provider.management.dataplanes.register(dataplaneInput);
-
     const { assetId, contractAgreement } = await createContractAgreement(
       provider, consumer);
 
@@ -107,8 +95,7 @@ describe("TransferProcessController", () => {
         assetId,
         counterPartyAddress: provider.addresses.protocol!,
         contractId: contractAgreement.id,
-        transferType: "HttpData-PULL",
-        dataDestination: { type: "HttpProxy" },
+        transferType: "HttpData-PULL"
       },
     );
   }

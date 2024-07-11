@@ -75,7 +75,7 @@ export interface TransferProcessInput {
   assetId: string;
   counterPartyAddress: string;
   contractId: string;
-  dataDestination: DataAddress;
+  dataDestination?: DataAddress;
   transferType: string;
   id?: string;
   privateProperties?: Record<string, string>;

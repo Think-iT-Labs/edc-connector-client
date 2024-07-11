@@ -1,9 +1,5 @@
-import {
-  EdcConnectorClient,
-  EdcConnectorClientError,
-  EdcConnectorClientErrorType,
-} from "../../src";
-import { createContractAgreement, createReceiverServer } from "../test-utils";
+import { EdcConnectorClient } from "../../src";
+import { createContractAgreement, waitForTransferState, waitFor } from "../test-utils";
 
 describe("PublicController", () => {
   const consumer = new EdcConnectorClient.Builder()
@@ -18,47 +14,9 @@ describe("PublicController", () => {
     .protocolUrl("http://provider-connector:9194/protocol")
     .build();
 
-  const receiverServer = createReceiverServer();
-
-  beforeAll(async () => {
-    await receiverServer.listen();
-  });
-
-  afterAll(async () => {
-    await receiverServer.shutdown();
-  });
-
   describe("edcClient.public.getTransferredData", () => {
-    it("fails to return an object in response", async () => {
-      // when
-      const maybeData = provider.public.getTransferredData({});
-
-      // then
-      await expect(maybeData).rejects.toThrowError("request was malformed");
-
-      maybeData.catch((error) => {
-        expect(error).toBeInstanceOf(EdcConnectorClientError);
-        expect(error as EdcConnectorClientError).toHaveProperty(
-          "type",
-          EdcConnectorClientErrorType.BadRequest,
-        );
-      });
-    });
 
     it("initiate the transfer process", async () => {
-      // given
-      const dataplaneInput = {
-        id: "provider-dataplane",
-        url: "http://provider-connector:9192/control/transfer",
-        allowedSourceTypes: ["HttpData"],
-        allowedDestTypes: ["HttpProxy", "HttpData"],
-        properties: {
-          publicApiUrl: "http://provider-connector:9291/public/",
-        },
-      };
-
-      await provider.management.dataplanes.register(dataplaneInput);
-
       const { assetId, contractAgreement } = await createContractAgreement(
         provider, consumer
       );
@@ -68,21 +26,18 @@ describe("PublicController", () => {
           assetId,
           transferType: "HttpData-PULL",
           counterPartyAddress: provider.addresses.protocol!,
-          contractId: contractAgreement.id,
-          dataDestination: { type: "HttpProxy" },
+          contractId: contractAgreement.id
         },
       );
 
-      const transferProcessResponse = await receiverServer.waitForEvent(
-        idResponse.id,
-      );
+      await waitForTransferState(consumer, idResponse.id, "STARTED");
 
-      // when
+      const edr = await consumer.management.edrs.dataAddress(idResponse.id);
+
       const data = await provider.public.getTransferredData({
-        [transferProcessResponse.authKey]: transferProcessResponse.authCode,
+        ['Authorization']: edr.mandatoryValue('edc', 'authorization'),
       });
 
-      // then
       expect(data.body).toBeTruthy();
 
       const reader = data.body!.getReader();
