@@ -14,19 +14,18 @@
 
 The [**EDC Connector**](https://github.com/eclipse-edc/Connector) is a framework for a sovereign, inter-organizational
 data exchange. It provides _low-level_ primitives to allow network participants to expose and consume offers.
-The _Connector_ does so by providing an extensive HTTP API documented via
-[OpenAPI specification](https://github.com/eclipse-edc/Connector/blob/a6fdb2a0b4360629ec562e11ae19d077162200b7/resources/openapi/openapi.yaml).
 
 This project aims to increase the level of abstraction, bringing the _low-level_ HTTP API to _mid-level_
 developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
 
 > Similarly to the **EDC Connector**, this library is at its early stage.
 > It aims to maintain compatibility with the latest version of the _Connector_.
-> API specification can be found on [SwaggerHub](https://app.swaggerhub.com/apis/eclipse-edc-bot/management-api)
+> API specification can be found on [Management Api Openapi UI](https://eclipse-edc.github.io/Connector/openapi/management-api/)
 
 ## Compatibility matrix
 |Client  |EDC    |
 |--------|-------|
+|0.5.x   |0.7.x  |
 |0.4.x   |0.6.x  |
 |0.3.0   |0.5.0  |
 |0.2.1   |0.4.1  |
