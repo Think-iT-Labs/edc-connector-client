@@ -23,13 +23,13 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 > API specification can be found on [Management Api Openapi UI](https://eclipse-edc.github.io/Connector/openapi/management-api/)
 
 ## Compatibility matrix
-|Client  |EDC    |
-|--------|-------|
-|0.5.x   |0.7.x  |
-|0.4.x   |0.6.x  |
-|0.3.0   |0.5.0  |
-|0.2.1   |0.4.1  |
-|0.2.0   |0.2.0  |
+|Client        | EDC   |
+|--------------|-------|
+|0.6.x         |0.7.x  |
+|0.4.x / 0.5.x |0.6.x  |
+|0.3.0         |0.5.0  |
+|0.2.1         |0.4.1  |
+|0.2.0         |0.2.0  |
 
 ## Usage
 
