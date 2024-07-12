@@ -13,6 +13,7 @@ import { Inner } from "../../inner";
 export class PolicyDefinitionController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/policydefinitions";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -32,7 +33,7 @@ export class PolicyDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/policydefinitions",
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: body,
@@ -49,7 +50,7 @@ export class PolicyDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/policydefinitions/${policyId}`,
+        path: `${this.#basePath}/${policyId}`,
         method: "PUT",
         apiToken: actualContext.apiToken,
         body: {
@@ -66,7 +67,7 @@ export class PolicyDefinitionController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: `/v2/policydefinitions/${policyId}`,
+      path: `${this.#basePath}/${policyId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -80,7 +81,7 @@ export class PolicyDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/policydefinitions/${policyId}`,
+        path: `${this.#basePath}/${policyId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -95,7 +96,7 @@ export class PolicyDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/policydefinitions/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:

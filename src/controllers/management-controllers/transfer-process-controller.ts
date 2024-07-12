@@ -14,7 +14,7 @@ import { Inner } from "../../inner";
 export class TransferProcessController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  #basePath = '/v2/transferprocesses';
+  #basePath = '/v3/transferprocesses';
   protocol: String = "dataspace-protocol-http";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
@@ -30,7 +30,7 @@ export class TransferProcessController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `${this.#basePath}`,
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {

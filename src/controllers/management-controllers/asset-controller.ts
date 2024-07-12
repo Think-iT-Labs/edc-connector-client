@@ -13,6 +13,7 @@ import { Inner } from "../../inner";
 export class AssetController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/assets";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -27,7 +28,7 @@ export class AssetController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v3/assets",
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -45,7 +46,7 @@ export class AssetController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: `/v3/assets/${assetId}`,
+      path: `${this.#basePath}/${assetId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -59,7 +60,7 @@ export class AssetController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v3/assets/${assetId}`,
+        path: `${this.#basePath}/${assetId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -73,7 +74,7 @@ export class AssetController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: "/v3/assets",
+      path: this.#basePath,
       method: "PUT",
       apiToken: actualContext.apiToken,
       body: {
@@ -91,7 +92,7 @@ export class AssetController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v3/assets/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:

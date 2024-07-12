@@ -8,6 +8,7 @@ import { Inner } from "../../inner";
 export class DataplaneController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/dataplanes"
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -19,7 +20,7 @@ export class DataplaneController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/dataplanes",
+        path: this.#basePath,
         method: "GET",
         apiToken: actualContext.apiToken,
       })

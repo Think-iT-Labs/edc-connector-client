@@ -15,6 +15,7 @@ import { Inner } from "../../inner";
 export class ContractNegotiationController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/contractnegotiations";
   protocol: String = "dataspace-protocol-http";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
@@ -30,7 +31,7 @@ export class ContractNegotiationController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/contractnegotiations",
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -50,7 +51,7 @@ export class ContractNegotiationController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/contractnegotiations/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -72,7 +73,7 @@ export class ContractNegotiationController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/contractnegotiations/${negotiationId}`,
+        path: `${this.#basePath}/${negotiationId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -87,7 +88,7 @@ export class ContractNegotiationController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/contractnegotiations/${negotiationId}/state`,
+        path: `${this.#basePath}/${negotiationId}/state`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -102,7 +103,7 @@ export class ContractNegotiationController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: `/v2/contractnegotiations/${negotiationId}/terminate`,
+      path: `${this.#basePath}/${negotiationId}/terminate`,
       method: "POST",
       apiToken: actualContext.apiToken,
       body: {
@@ -121,7 +122,7 @@ export class ContractNegotiationController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/contractnegotiations/${negotiationId}/agreement`,
+        path: `${this.#basePath}/${negotiationId}/agreement`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
