@@ -11,6 +11,7 @@ import { Inner } from "../../inner";
 export class SecretController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/secrets";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -26,7 +27,7 @@ export class SecretController {
     });
 
     return this.#inner.request(actualContext.management, {
-        path: `/v1/secrets`,
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body
@@ -41,7 +42,7 @@ export class SecretController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v1/secrets/${id}`,
+        path: `${this.#basePath}/${id}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -57,7 +58,7 @@ export class SecretController {
     });
 
     return this.#inner.request(actualContext.management, {
-      path: "/v1/secrets",
+      path: this.#basePath,
       method: "PUT",
       apiToken: actualContext.apiToken,
       body,
@@ -68,7 +69,7 @@ export class SecretController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-        path: `/v1/secrets/${id}`,
+        path: `${this.#basePath}/${id}`,
         method: "DELETE",
         apiToken: actualContext.apiToken,
       });

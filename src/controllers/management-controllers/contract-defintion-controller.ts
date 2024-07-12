@@ -13,6 +13,7 @@ import { Inner } from "../../inner";
 export class ContractDefinitionController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/contractdefinitions";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -27,7 +28,7 @@ export class ContractDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/contractdefinitions",
+        path: this.#basePath,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -45,7 +46,7 @@ export class ContractDefinitionController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: `/v2/contractdefinitions/${contractDefinitionId}`,
+      path: `${this.#basePath}/${contractDefinitionId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -58,7 +59,7 @@ export class ContractDefinitionController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: `/v2/contractdefinitions/${contractDefinitionId}`,
+      path: `${this.#basePath}/${contractDefinitionId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     })
@@ -73,7 +74,7 @@ export class ContractDefinitionController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/contractdefinitions/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -94,7 +95,7 @@ export class ContractDefinitionController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-      path: "/v2/contractdefinitions",
+      path: this.#basePath,
       method: "PUT",
       apiToken: actualContext.apiToken,
       body: {

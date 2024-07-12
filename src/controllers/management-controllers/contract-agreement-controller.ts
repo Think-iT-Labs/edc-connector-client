@@ -12,6 +12,7 @@ import { Inner } from "../../inner";
 export class ContractAgreementController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/contractagreements";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -26,7 +27,7 @@ export class ContractAgreementController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/contractagreements/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -48,7 +49,7 @@ export class ContractAgreementController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/contractagreements/${agreementId}`,
+        path: `${this.#basePath}/${agreementId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -63,7 +64,7 @@ export class ContractAgreementController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: `/v2/contractagreements/${agreementId}/negotiation`,
+        path: `${this.#basePath}/${agreementId}/negotiation`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })

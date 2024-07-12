@@ -12,6 +12,7 @@ import { Inner } from "../../inner";
 export class EdrController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #basePath = "/v3/edrs";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -23,7 +24,7 @@ export class EdrController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v1/edrs/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -41,7 +42,7 @@ export class EdrController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-        path: `/v1/edrs/${edrId}`,
+        path: `${this.#basePath}/${edrId}`,
         method: "DELETE",
         apiToken: actualContext.apiToken,
       });
@@ -51,7 +52,7 @@ export class EdrController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-        path: `/v1/edrs/${edrId}/dataaddress`,
+        path: `${this.#basePath}/${edrId}/dataaddress`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })

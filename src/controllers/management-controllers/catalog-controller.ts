@@ -7,6 +7,7 @@ import { Inner } from "../../inner";
 export class CatalogController {
   #inner: Inner;
   #context: EdcConnectorClientContext | undefined;
+  #basePath = "/v3/catalog";
   protocol: String = "dataspace-protocol-http";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
@@ -22,7 +23,7 @@ export class CatalogController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/catalog/request",
+        path: `${this.#basePath}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -42,7 +43,7 @@ export class CatalogController {
 
     return this.#inner
       .request(actualContext.management, {
-        path: "/v2/catalog/dataset/request",
+        path: `${this.#basePath}/dataset/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
