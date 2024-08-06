@@ -33,20 +33,16 @@ export async function createContractAgreement(
   consumer: EdcConnectorClient,
 ): Promise<ContractAgreementMetadata> {
   const { idResponse, ...rest } = await createContractNegotiation(
-    provider, consumer
+    provider,
+    consumer,
   );
 
   const negotiationId = idResponse.id;
 
-  await waitForNegotiationState(
-    consumer,
-    negotiationId,
-    "FINALIZED",
-  );
+  await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 
-  const contractNegotiation = await consumer.management.contractNegotiations.get(
-    negotiationId,
-  );
+  const contractNegotiation =
+    await consumer.management.contractNegotiations.get(negotiationId);
 
   const contractAgreement = await consumer.management.contractAgreements.get(
     contractNegotiation.contractAgreementId,
@@ -84,9 +80,7 @@ export async function createContractNegotiation(
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
     "@id": policyId,
-    policy: new PolicyBuilder()
-      .type("Set")
-      .build()
+    policy: new PolicyBuilder().type("Set").build(),
   };
   await provider.management.policyDefinitions.create(policyInput);
 
@@ -106,24 +100,22 @@ export async function createContractNegotiation(
   });
 
   const offer = catalog.datasets
-    .filter(dataset => dataset.id === assetId)
+    .filter((dataset) => dataset.id === assetId)
     .flatMap((it) => it.offers)[0];
 
   const contractOffer = new PolicyBuilder()
     .raw({
       ...offer,
       assigner: "provider",
-      target: assetId
+      target: assetId,
     })
     .build();
 
   // Initiate contract negotiation on the consumer's side
-  const idResponse = await consumer.management.contractNegotiations.initiate(
-    {
-      counterPartyAddress: provider.addresses.protocol!,
-      policy: contractOffer
-    },
-  );
+  const idResponse = await consumer.management.contractNegotiations.initiate({
+    counterPartyAddress: provider.addresses.protocol!,
+    policy: contractOffer,
+  });
 
   return {
     assetId,
@@ -147,9 +139,8 @@ export async function waitForNegotiationState(
     times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const response = await client.management.contractNegotiations.getState(
-      negotiationId,
-    );
+    const response =
+      await client.management.contractNegotiations.getState(negotiationId);
 
     actualState = response.state;
 
@@ -183,22 +174,43 @@ export async function waitForTransferState(
   expect(actualState).toBe(targetState);
 }
 
+export async function waitForFederatedCatalog(
+  client: EdcConnectorClient,
+  targetNumberParticipants: number,
+  interval = 500,
+  times = 10,
+): Promise<void> {
+  let waiting = true;
+  let actualNumberParticipants = 0;
+
+  do {
+    times--;
+    await new Promise((resolve) => setTimeout(resolve, interval));
+
+    const response = await client.federatedCatalog.queryAll({ limit: 50 });
+
+    actualNumberParticipants = response.length;
+
+    waiting = actualNumberParticipants !== targetNumberParticipants;
+  } while (waiting && times > 0);
+
+  expect(actualNumberParticipants).toBe(targetNumberParticipants);
+}
+
 export function createReceiverServer() {
   const emitter = new events.EventEmitter();
 
   const server = http.createServer(async (req, res) => {
-    const body = await new Promise<EndpointDataReference>(
-      (resolve, reject) => {
-        let chunks: any[] = [];
+    const body = await new Promise<EndpointDataReference>((resolve, reject) => {
+      let chunks: any[] = [];
 
-        req
-          .on("data", (chunk) => chunks.push(chunk))
-          .on("error", (error) => reject(error))
-          .on("end", () => {
-            resolve(JSON.parse(Buffer.concat(chunks).toString()));
-          });
-      },
-    );
+      req
+        .on("data", (chunk) => chunks.push(chunk))
+        .on("error", (error) => reject(error))
+        .on("end", () => {
+          resolve(JSON.parse(Buffer.concat(chunks).toString()));
+        });
+    });
 
     if (body.id) {
       emitter.emit(body.id, body);

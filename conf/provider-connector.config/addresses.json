@@ -6,6 +6,7 @@
     "management": "http://localhost:29193/management",
     "protocol": "http://provider-connector:9194/protocol",
     "public": "http://localhost:29291/public",
-    "control": "http://localhost:29292/control"
+    "control": "http://localhost:29292/control",
+    "catalog": "http://localhost:29393/catalog"
   }
 }

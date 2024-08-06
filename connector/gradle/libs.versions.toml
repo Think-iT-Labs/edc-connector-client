@@ -29,6 +29,8 @@ edc-data-plane-control-api = { module = "org.eclipse.edc:data-plane-control-api"
 edc-data-plane-public-api-v2 = { module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc" }
 edc-data-plane-core = { module = "org.eclipse.edc:data-plane-core", version.ref = "edc" }
 edc-data-plane-http = { module = "org.eclipse.edc:data-plane-http", version.ref = "edc" }
+edc-federatedcatalog-core = { module = "org.eclipse.edc:federated-catalog-core", version.ref = "edc" }
+edc-federatedcatalog-api = { module = "org.eclipse.edc:federated-catalog-api", version.ref = "edc" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

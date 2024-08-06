@@ -4,4 +4,5 @@ export interface Addresses {
   protocol?: string;
   public?: string;
   control?: string;
+  federatedCatalogUrl?: string;
 }
