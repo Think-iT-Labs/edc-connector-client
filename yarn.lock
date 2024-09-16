@@ -840,10 +840,10 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@mswjs/interceptors@^0.34.3":
-  version "0.34.3"
-  resolved "https://registry.yarnpkg.com/@mswjs/interceptors/-/interceptors-0.34.3.tgz#7b36062120e1b2ef31c38f531541af3960f15afc"
-  integrity sha512-UPi1V51c4+PVVG1lhVK2i29aOyBqXvBF8WBvlXIp2Q0vTVKrm20x2voLfunVC3N5wzocxEoHJyOwAXNdoMqy3Q==
+"@mswjs/interceptors@^0.35.0":
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/@mswjs/interceptors/-/interceptors-0.35.0.tgz#ccdabb668833b97d3c5f26e761f5ea665629dd5f"
+  integrity sha512-f5cHyIvm4m4g1I5x9EH1etGx0puaU0OaX2szqGRVBVgUC6aMASlOI5hbpe7tJ9l4/VWjCUu5OMraCazLZGI24A==
   dependencies:
     "@open-draft/deferred-promise" "^2.2.0"
     "@open-draft/logger" "^0.3.0"
@@ -3027,11 +3027,11 @@ natural-compare@^1.4.0:
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
 nock@^14.0.0-beta.6:
-  version "14.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-14.0.0-beta.11.tgz#cec62932161ff4cf1a20844d98b440c3c99747ce"
-  integrity sha512-tmImk6btCUcCFHXkhqZnuSe4e/4M/YYs8qYaQGdjZSBloTXgQyuPrgjzn45zmFWpK2bDSEtIcF8olFdFxRaA1g==
+  version "14.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-14.0.0-beta.12.tgz#54b22543c8f1927932aeeb9aa6d3fc7875344888"
+  integrity sha512-O0rwesoqOBhCG/5A1ytWJKLGhmqWeOs7xJYsTVqePqywUdSYsOZ7dY4l0lN6w7dfvg2C11sqMuNKmRi8ktLs7A==
   dependencies:
-    "@mswjs/interceptors" "^0.34.3"
+    "@mswjs/interceptors" "^0.35.0"
     json-stringify-safe "^5.0.1"
     propagate "^2.0.0"
 
