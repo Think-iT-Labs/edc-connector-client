@@ -19,7 +19,7 @@ export interface DatasetRequest {
 export class Catalog extends JsonLdId {
 
   get participantId(): string {
-    return this.mandatoryValue('edc', 'participantId');
+    return this.mandatoryValue('dspace', 'participantId');
   }
 
   get datasets(): Dataset[] {
