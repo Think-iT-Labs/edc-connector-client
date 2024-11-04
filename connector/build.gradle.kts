@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.edc.iam.mock)
     implementation(libs.edc.management.api)
     implementation(libs.edc.api.observability)
+    implementation(libs.edc.token.core)
     implementation(libs.edc.transfer.data.plane.signaling)
     implementation(libs.edc.transfer.pull.http.receiver)
     implementation(libs.edc.validator.data.address.http.data)
