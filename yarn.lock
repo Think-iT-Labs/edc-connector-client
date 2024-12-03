@@ -3021,9 +3021,9 @@ natural-compare@^1.4.0:
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
 nock@^14.0.0-beta.6:
-  version "14.0.0-beta.16"
-  resolved "https://registry.yarnpkg.com/nock/-/nock-14.0.0-beta.16.tgz#69fac0b8261ea7bdb18c5680dbf34889a16fcd6a"
-  integrity sha512-H6ZyT+Naz9wfy0gNrhD0m+VIkCq9li/eaNQPEUEjXg06gsLR3/jDctROt44Z+iT3gFnkTQ0wXtwKJPdvbueBbg==
+  version "14.0.0-beta.18"
+  resolved "https://registry.yarnpkg.com/nock/-/nock-14.0.0-beta.18.tgz#7245e63c19811f45cb5067587c6345f47dfb300c"
+  integrity sha512-pG+QkbovRb8XMdSTnV/GgFWdwWAv2y7bWMzdCQnk2gQ3JjrpHgBAd0V8IIIhSBLJVvrOAqhSBsZrxSntISvXjA==
   dependencies:
     "@mswjs/interceptors" "^0.36.6"
     json-stringify-safe "^5.0.1"
