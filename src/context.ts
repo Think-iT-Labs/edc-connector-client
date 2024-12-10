@@ -13,6 +13,10 @@ export class EdcConnectorClientContext implements Addresses {
     return this.getOrError(this.#addresses.default, "default address");
   }
 
+  get identity(): string {
+    return this.getOrError(this.#addresses.identity, "identity hub address");
+  }
+
   get protocol(): string {
     return this.getOrError(this.#addresses.protocol, "protocol address");
   }
