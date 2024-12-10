@@ -5,4 +5,5 @@ export interface Addresses {
   public?: string;
   control?: string;
   federatedCatalogUrl?: string;
+  identity?: string;
 }
