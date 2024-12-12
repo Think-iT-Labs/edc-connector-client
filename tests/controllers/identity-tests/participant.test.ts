@@ -1,7 +1,7 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
-import { ParticipantInput } from "../../../src/entities/identity-hub";
-import { ParticipantController } from "../../../src/controllers/identity-hub-controllers/participant-controller";
+import { ParticipantInput } from "../../../src/entities/participant";
+import { ParticipantController } from "../../../src/controllers/identity-controllers/participant-controller";
 
 describe("Paricipant", () => {
   let startedContainer: StartedTestContainer;
@@ -11,19 +11,18 @@ describe("Paricipant", () => {
     startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
       .withCopyFilesToContainer([
         {
-          source: "node_modules/identity-hub-api.yml",
-          target: "/identity-hub-api.yml",
+          source: "node_modules/identity-api.yml",
+          target: "/identity-api.yml",
         },
       ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/identity-hub-api.yml"])
+      .withCommand(["mock", "-h", "0.0.0.0", "/identity-api.yml"])
       .withExposedPorts(4010)
       .start();
 
-    const identity = new EdcConnectorClient.Builder()
+    participant = new EdcConnectorClient.Builder()
       .identityUrl("http://localhost:" + startedContainer.getFirstMappedPort())
-      .build().identity;
-
-    participant = await identity.participants.get(1);
+      .build()
+      .identity.participant("1");
   });
 
   afterAll(async () => {

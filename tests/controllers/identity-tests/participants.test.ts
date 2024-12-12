@@ -1,27 +1,26 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
-import { ParticipantsController } from "../../../src/controllers/identity-hub-controllers/participants-controller";
-import { ParticipantController } from "../../../src/controllers/identity-hub-controllers/participant-controller";
+import { ParticipantsController } from "../../../src/controllers/identity-controllers/participants-controller";
 
 describe("Participants", () => {
   let startedContainer: StartedTestContainer;
-  let identity: { participants: ParticipantsController };
+  let participants: ParticipantsController;
 
   beforeAll(async () => {
     startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
       .withCopyFilesToContainer([
         {
-          source: "node_modules/identity-hub-api.yml",
-          target: "/identity-hub-api.yml",
+          source: "node_modules/identity-api.yml",
+          target: "/identity-api.yml",
         },
       ])
       .withCommand(["mock", "-h", "0.0.0.0", "/identity-hub-api.yml"])
       .withExposedPorts(4010)
       .start();
 
-    identity = new EdcConnectorClient.Builder()
+    participants = new EdcConnectorClient.Builder()
       .identityUrl("http://localhost:" + startedContainer.getFirstMappedPort())
-      .build().identity;
+      .build().identity.participants;
   });
 
   afterAll(async () => {
@@ -29,14 +28,14 @@ describe("Participants", () => {
   });
 
   it("should query all participants", async () => {
-    const participants = await identity.participants.queryAll({});
+    const participantsList = await participants.queryAll({});
 
-    expect(participants.length).toBeGreaterThan(0);
-    expect(participants[0]).not.toBeNull();
+    expect(participantsList.length).toBeGreaterThan(0);
+    expect(participantsList[0]).not.toBeNull();
   });
 
   it("should create a new participant", async () => {
-    const participant = await identity.participants.create({
+    const participant = await participants.create({
       active: true,
       additionalProperties: {
         additionalProp1: {},
@@ -80,10 +79,15 @@ describe("Participants", () => {
   });
 
   it("should get a participant by Id", async () => {
-    const participant = await identity.participants.get(1);
+    const participant = await participants.get(1);
 
-    expect(participant).toBeInstanceOf(ParticipantController);
-    // prisms cannot return the same Id As the one we request
-    expect(participant.participantId).not.toBeNull();
+    expect(participant).not.toBeNull();
+    expect(participant).toHaveProperty("participantId");
+    expect(participant).toHaveProperty("apiTokenAlias");
+    expect(participant).toHaveProperty("did");
+    expect(participant).toHaveProperty("roles");
+    expect(participant).toHaveProperty("state");
+    expect(participant).toHaveProperty("createdAt");
+    expect(participant).toHaveProperty("lastModified");
   });
 });

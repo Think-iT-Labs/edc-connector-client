@@ -8,7 +8,7 @@ const CONTEXTS = [
     resourceUrl: "https://eclipse-edc.github.io/Connector/openapi/management-api/management-api.yaml"
   },
   {
-    name: "identity-hub-api",
+    name: "identity-api",
     resourceUrl: "https://eclipse-edc.github.io/IdentityHub/openapi/identity-api/identity-api.yaml"
   }
 ]
@@ -21,9 +21,6 @@ Promise.all(CONTEXTS.map((context) =>
       }
       return response.text()
     })
-    .then(text => text
-      .replaceAll("example: null", "")
-      .replaceAll("https://w3id.org/edc/v0.0.1/ns/value", "value")) // to make "secrets" test working, will be fixed in the future
     .then(text => fs.writeFile(`${folder}/${context.name}.yml`, text))
     .catch(error => {
       console.error(`Error downloading openapi specs for ${context.name}:`, error);

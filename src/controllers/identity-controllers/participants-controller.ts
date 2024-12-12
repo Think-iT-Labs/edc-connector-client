@@ -1,7 +1,6 @@
 import { EdcConnectorClientContext } from "../../context";
-import { Participant, ParticipantInput } from "../../entities/identity-hub";
+import { Participant, ParticipantInput } from "../../entities/participant";
 import { Inner } from "../../inner";
-import { ParticipantController } from "./participant-controller";
 
 export class ParticipantsController {
   #inner: Inner;
@@ -44,19 +43,10 @@ export class ParticipantsController {
   async get(participantId: number, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
-    const participant = await this.#inner.request<Participant>(
-      actualContext.identity,
-      {
-        path: `/v1alpha/participants/${participantId}`,
-        method: "GET",
-        apiToken: actualContext.apiToken,
-      },
-    );
-
-    return new ParticipantController(
-      this.#inner,
-      participant.participantId,
-      this.#context,
-    );
+    return this.#inner.request<Participant>(actualContext.identity, {
+      path: `/v1alpha/participants/${participantId}`,
+      method: "GET",
+      apiToken: actualContext.apiToken,
+    });
   }
 }
