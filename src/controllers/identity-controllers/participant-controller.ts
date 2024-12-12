@@ -2,7 +2,7 @@ import { EdcConnectorClientContext } from "../../context";
 import {
   ParticipantInput,
   ParticipantRoleResponse,
-} from "../../entities/identity-hub";
+} from "../../entities/participant";
 import { Inner } from "../../inner";
 
 export class ParticipantController {

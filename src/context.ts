@@ -14,7 +14,7 @@ export class EdcConnectorClientContext implements Addresses {
   }
 
   get identity(): string {
-    return this.getOrError(this.#addresses.identity, "identity hub address");
+    return this.getOrError(this.#addresses.identity, "identity address");
   }
 
   get protocol(): string {

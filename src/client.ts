@@ -7,7 +7,7 @@ import { Addresses } from "./entities";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
 import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
-import { ParticipantsController } from "./controllers/identity-hub-controllers/participants-controller";
+import { IdentityController } from "./facades/identity";
 
 export type EdcConnectorClientType<T extends Record<string, EdcController>> =
   EdcConnectorClient & T;
@@ -101,9 +101,7 @@ export class EdcConnectorClient {
       this[apiTokenSymbol],
       this[addressesSymbol],
     );
-    return {
-      participants: new ParticipantsController(this[innerSymbol], context),
-    };
+    return new IdentityController(this[innerSymbol], context);
   }
 
   get observability() {
