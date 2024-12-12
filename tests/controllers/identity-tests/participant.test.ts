@@ -78,4 +78,47 @@ describe("Paricipant", () => {
 
     expect(result).not.toBeNull();
   });
+
+  it("should regenerate token", async () => {
+    const body: ParticipantInput = {
+      active: true,
+      additionalProperties: {
+        additionalProp1: {},
+        additionalProp2: {},
+        additionalProp3: {},
+      },
+      did: "string",
+      key: {
+        active: true,
+        keyGeneratorParams: {
+          additionalProp1: {},
+          additionalProp2: {},
+          additionalProp3: {},
+        },
+        keyId: "string",
+        privateKeyAlias: "string",
+        publicKeyJwk: {
+          additionalProp1: {},
+          additionalProp2: {},
+          additionalProp3: {},
+        },
+        publicKeyPem: "string",
+        resourceId: "string",
+        type: "string",
+      },
+      participantId: "string",
+      roles: ["string"],
+      serviceEndpoints: [
+        {
+          id: "string",
+          serviceEndpoint: "string",
+          type: "string",
+        },
+      ],
+    };
+
+    const result = participant.regenerateToken(body);
+
+    expect(result).not.toBeNull();
+  });
 });
