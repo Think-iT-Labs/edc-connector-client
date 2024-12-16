@@ -14,7 +14,7 @@ describe("Participants", () => {
           target: "/identity-api.yml",
         },
       ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/identity-hub-api.yml"])
+      .withCommand(["mock", "-h", "0.0.0.0", "/identity-api.yml"])
       .withExposedPorts(4010)
       .start();
 
