@@ -1,9 +1,10 @@
-import { EdcConnectorClientContext } from "../../context";
+import { EdcConnectorClientContext } from "../../../context";
 import {
   ParticipantInput,
   ParticipantRoleResponse,
-} from "../../entities/participant";
-import { Inner } from "../../inner";
+} from "../../../entities/participant";
+import { Inner } from "../../../inner";
+import { ParticipantKeyPairContoller } from "./participant-keypairs-controller";
 
 export class ParticipantController {
   #inner: Inner;
@@ -82,5 +83,13 @@ export class ParticipantController {
       body,
       apiToken: actualContext.apiToken,
     });
+  }
+
+  get keypairs() {
+    return new ParticipantKeyPairContoller(
+      this.#inner,
+      this.participantId,
+      this.#context,
+    );
   }
 }
