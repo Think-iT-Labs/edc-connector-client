@@ -2,7 +2,7 @@ import { EdcConnectorClientError, EdcConnectorClientErrorType } from "./error";
 
 interface InnerRequest {
   path: string;
-  method: "DELETE" | "GET" | "POST" | "PUT";
+  method: "DELETE" | "GET" | "POST" | "PUT" | "PATCH";
   query?: Record<string, string>;
   body?: unknown;
   apiToken?: string;
@@ -28,10 +28,7 @@ export class Inner {
     return response.json();
   }
 
-  async stream(
-    baseUrl: string,
-    innerRequest: InnerStream,
-  ): Promise<Response> {
+  async stream(baseUrl: string, innerRequest: InnerStream): Promise<Response> {
     const response = await this.#fetch(baseUrl, innerRequest);
 
     if (response.status === 204 || !response.body) {
