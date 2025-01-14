@@ -4,6 +4,7 @@ import {
   ParticipantRoleResponse,
 } from "../../../entities/participant";
 import { Inner } from "../../../inner";
+import { ParticipantDIDsController } from "./participant-dids-controller";
 import { ParticipantKeyPairContoller } from "./participant-keypairs-controller";
 
 export class ParticipantController {
@@ -87,6 +88,14 @@ export class ParticipantController {
 
   get keypairs() {
     return new ParticipantKeyPairContoller(
+      this.#inner,
+      this.participantId,
+      this.#context,
+    );
+  }
+
+  get dids() {
+    return new ParticipantDIDsController(
       this.#inner,
       this.participantId,
       this.#context,

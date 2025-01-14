@@ -1,3 +1,4 @@
+import { DIDsController } from "../controllers/identity-controllers/dids-controller";
 import { KeyPairsController } from "../controllers/identity-controllers/keypairs-controller";
 import { ParticipantController } from "../controllers/identity-controllers/participant-controllers/participant-controller";
 import { ParticipantsController } from "../controllers/identity-controllers/participants-controller";
@@ -14,5 +15,9 @@ export class IdentityController extends EdcController {
 
   get keyPairs() {
     return new KeyPairsController(this.inner, this.context);
+  }
+
+  get DIDs() {
+    return new DIDsController(this.inner, this.context);
   }
 }
