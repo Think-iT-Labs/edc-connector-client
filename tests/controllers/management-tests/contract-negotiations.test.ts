@@ -140,6 +140,7 @@ describe("ContractNegotiationController", () => {
     it("terminate the requested target negotiation", async () => {
       const { idResponse } = await createContractNegotiation(provider, consumer);
       const negotiationId = idResponse.id;
+      await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 
       await negotiations.terminate(negotiationId, "a reason to terminate");
 
@@ -166,7 +167,7 @@ describe("ContractNegotiationController", () => {
         );
       });
     });
-    
+
   });
 
   describe("getAgreement", () => {

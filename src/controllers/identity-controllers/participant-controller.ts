@@ -8,6 +8,7 @@ import { Inner } from "../../inner";
 export class ParticipantController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  static readonly BASE_PATH = "/v1alpha/participants";
 
   constructor(
     inner: Inner,
@@ -22,19 +23,19 @@ export class ParticipantController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<string>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}`,
+      path: `${ParticipantController.BASE_PATH}/${this.participantId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
   }
 
-  updateroles(roles: string[], context?: EdcConnectorClientContext) {
+  updateRoles(roles: string[], context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<ParticipantRoleResponse[]>(
       actualContext.identity,
       {
-        path: `/v1alpha/participants/${this.participantId}/roles`,
+        path: `${ParticipantController.BASE_PATH}/${this.participantId}/roles`,
         method: "PUT",
         body: roles,
         apiToken: actualContext.apiToken,
@@ -55,7 +56,7 @@ export class ParticipantController {
     };
 
     return this.#inner.request<string>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/state`,
+      path: `${ParticipantController.BASE_PATH}/${this.participantId}/state`,
       method: "POST",
       query: { isActive: String(isActive) },
       body,
@@ -76,7 +77,7 @@ export class ParticipantController {
     };
 
     return this.#inner.request<string>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/token`,
+      path: `${ParticipantController.BASE_PATH}/${this.participantId}/token`,
       method: "POST",
       body,
       apiToken: actualContext.apiToken,
