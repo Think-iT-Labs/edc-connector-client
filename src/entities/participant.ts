@@ -3,7 +3,7 @@ export interface Participant {
   createdAt: number;
   did: string;
   lastModified: number;
-  participantId: string;
+  participantContextId: string;
   roles: string[];
   state: number;
 }

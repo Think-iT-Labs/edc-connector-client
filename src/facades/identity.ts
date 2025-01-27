@@ -7,8 +7,7 @@ export class IdentityController extends EdcController {
     return new ParticipantsController(this.inner, this.context);
   }
 
-  get participant() {
-    return (participantId: string) =>
-      new ParticipantController(this.inner, participantId, this.context);
+  participant(participantId: string) {
+    return new ParticipantController(this.inner, participantId, this.context);
   }
 }
