@@ -166,7 +166,7 @@ describe("ContractNegotiationController", () => {
         );
       });
     });
-    
+
   });
 
   describe("getAgreement", () => {
