@@ -78,7 +78,7 @@ describe("Participants", () => {
     expect(participant).toHaveProperty("clientSecret");
   });
 
-  it.only("should get a participant by Id", async () => {
+  it("should get a participant by Id", async () => {
     const participant = await participants.get(1);
 
     expect(participant).not.toBeNull();

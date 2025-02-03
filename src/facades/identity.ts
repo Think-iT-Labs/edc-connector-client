@@ -1,4 +1,5 @@
-import { ParticipantController } from "../controllers/identity-controllers/participant-controller";
+import { KeyPairsController } from "../controllers/identity-controllers/keypairs-controller";
+import { ParticipantController } from "../controllers/identity-controllers/participant-controllers/participant-controller";
 import { ParticipantsController } from "../controllers/identity-controllers/participants-controller";
 import { EdcController } from "../edc-controller";
 
@@ -9,5 +10,9 @@ export class IdentityController extends EdcController {
 
   participant(participantId: string) {
     return new ParticipantController(this.inner, participantId, this.context);
+  }
+
+  get keyPairs() {
+    return new KeyPairsController(this.inner, this.context);
   }
 }
