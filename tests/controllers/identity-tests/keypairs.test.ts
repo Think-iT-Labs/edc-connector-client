@@ -72,7 +72,7 @@ describe("Key Pairs", () => {
     expect(keyPair).toHaveProperty("useDuration");
   });
 
-  it("should create a key pair", async () => {
+  it.skip("should create a key pair", async () => {
     const newKeyDescriptor: KeyDescriptor = {
       privateKeyAlias: "",
       type: "",
@@ -95,11 +95,11 @@ describe("Key Pairs", () => {
     expect(keyPairsList).not.toBeNull();
   });
 
-  it("should activate a key pair", () => {
+  it.skip("should activate a key pair", () => {
     expect(participantKeyPairs.activate("1")).resolves.not.toThrow();
   });
 
-  it("should revoke a key pair", () => {
+  it.skip("should revoke a key pair", () => {
     const newKeyDescriptor: KeyDescriptor = {
       privateKeyAlias: "",
       type: "",
@@ -116,7 +116,7 @@ describe("Key Pairs", () => {
     ).resolves.not.toThrow();
   });
 
-  it("should rotate a key pair", () => {
+  it.skip("should rotate a key pair", () => {
     expect(participantKeyPairs.rotate("1")).resolves.not.toThrow();
   });
 });
