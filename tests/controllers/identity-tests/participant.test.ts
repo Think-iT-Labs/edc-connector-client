@@ -11,7 +11,7 @@ describe("Paricipant", () => {
     startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
       .withCopyFilesToContainer([
         {
-          source: "node_modules/identity.yml",
+          source: "node_modules/identity-api.yml",
           target: "/identity-api.yml",
         },
       ])
@@ -35,8 +35,9 @@ describe("Paricipant", () => {
     expect(result).not.toBeNull();
   });
 
-  // should fix the yaml first
-  it.skip("should update roles", async () => {});
+  it("should update roles", async () => {
+    expect(participant.updateRoles(["role"])).resolves.not.toThrow();
+  });
 
   it("should update state", async () => {
     const body: ParticipantInput = {

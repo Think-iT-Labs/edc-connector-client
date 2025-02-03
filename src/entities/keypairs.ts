@@ -4,7 +4,7 @@ export interface KeyPair {
   id: string;
   keyContext: string;
   keyId: string;
-  participantId: string;
+  participantContextId: string;
   privateKeyAlias: string;
   rotationDuration: number;
   serializedPublicKey: string;

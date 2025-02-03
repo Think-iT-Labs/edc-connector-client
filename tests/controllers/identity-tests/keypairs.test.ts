@@ -45,7 +45,7 @@ describe("Key Pairs", () => {
     expect(keyPairs[0]).toHaveProperty("id");
     expect(keyPairs[0]).toHaveProperty("keyContext");
     expect(keyPairs[0]).toHaveProperty("keyId");
-    expect(keyPairs[0]).toHaveProperty("participantId");
+    expect(keyPairs[0]).toHaveProperty("participantContextId");
     expect(keyPairs[0]).toHaveProperty("privateKeyAlias");
     expect(keyPairs[0]).toHaveProperty("rotationDuration");
     expect(keyPairs[0]).toHaveProperty("serializedPublicKey");
@@ -63,7 +63,7 @@ describe("Key Pairs", () => {
     expect(keyPair).toHaveProperty("id");
     expect(keyPair).toHaveProperty("keyContext");
     expect(keyPair).toHaveProperty("keyId");
-    expect(keyPair).toHaveProperty("participantId");
+    expect(keyPair).toHaveProperty("participantContextId");
     expect(keyPair).toHaveProperty("privateKeyAlias");
     expect(keyPair).toHaveProperty("rotationDuration");
     expect(keyPair).toHaveProperty("serializedPublicKey");

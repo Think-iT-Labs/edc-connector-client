@@ -5,6 +5,7 @@ import { Inner } from "../../../inner";
 export class ParticipantKeyPairContoller {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  static readonly BASE_PATH = "/v1alpha/participants";
 
   constructor(
     inner: Inner,
@@ -19,7 +20,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<KeyPair>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs/${keyPairId}`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });
@@ -29,7 +30,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<KeyPair[]>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });
@@ -43,7 +44,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs`,
       method: "PUT",
       body: keyDescriptor,
       query: {
@@ -57,7 +58,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs/${keyPairId}/activate`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/activate`,
       method: "POST",
       apiToken: actualContext.apiToken,
     });
@@ -71,7 +72,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs/${keyPairId}/revoke`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/revoke`,
       method: "POST",
       body: newKeyDescriptor,
       apiToken: actualContext.apiToken,
@@ -87,7 +88,7 @@ export class ParticipantKeyPairContoller {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/keypairs/${keyPairId}/rotate`,
+      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/rotate`,
       method: "POST",
       body: newKeyDescriptor,
       query: {
