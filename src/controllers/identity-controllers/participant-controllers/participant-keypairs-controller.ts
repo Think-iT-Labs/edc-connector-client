@@ -54,7 +54,7 @@ export class ParticipantKeyPairContoller {
     });
   }
 
-  activate(keyPairId: string, context?: EdcConnectorClientContext) {
+  activateKeyPair(keyPairId: string, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<void>(actualContext.identity, {
@@ -64,7 +64,7 @@ export class ParticipantKeyPairContoller {
     });
   }
 
-  revoke(
+  revokeKeyPair(
     keyPairId: string,
     newKeyDescriptor: KeyDescriptor,
     context?: EdcConnectorClientContext,
@@ -79,7 +79,7 @@ export class ParticipantKeyPairContoller {
     });
   }
 
-  rotate(
+  rotateKeyPair(
     keyPairId: string,
     duration?: number,
     newKeyDescriptor?: KeyDescriptor,

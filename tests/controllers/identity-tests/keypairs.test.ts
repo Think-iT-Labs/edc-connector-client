@@ -96,7 +96,7 @@ describe("Key Pairs", () => {
   });
 
   it.skip("should activate a key pair", () => {
-    expect(participantKeyPairs.activate("1")).resolves.not.toThrow();
+    expect(participantKeyPairs.activateKeyPair("1")).resolves.not.toThrow();
   });
 
   it.skip("should revoke a key pair", () => {
@@ -112,11 +112,11 @@ describe("Key Pairs", () => {
     };
 
     expect(
-      participantKeyPairs.revoke("1", newKeyDescriptor),
+      participantKeyPairs.revokeKeyPair("1", newKeyDescriptor),
     ).resolves.not.toThrow();
   });
 
   it.skip("should rotate a key pair", () => {
-    expect(participantKeyPairs.rotate("1")).resolves.not.toThrow();
+    expect(participantKeyPairs.rotateKeyPair("1")).resolves.not.toThrow();
   });
 });
