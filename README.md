@@ -37,7 +37,7 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 
 ## Usage
 
-Install via `npm` or `yarn`
+Install via `npm` or `yarn`.
 
 ```sh
 npm install @think-it-labs/edc-connector-client
