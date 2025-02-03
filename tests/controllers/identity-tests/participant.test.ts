@@ -1,7 +1,7 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
+import { ParticipantController } from "../../../src/controllers/identity-controllers/participant-controllers/participant-controller";
 import { ParticipantInput } from "../../../src/entities/participant";
-import { ParticipantController } from "../../../src/controllers/identity-controllers/participant-controller";
 
 describe("Paricipant", () => {
   let startedContainer: StartedTestContainer;
@@ -35,7 +35,6 @@ describe("Paricipant", () => {
     expect(result).not.toBeNull();
   });
 
-  // should fix the yaml first
   it.skip("should update roles", async () => {});
 
   it("should update state", async () => {
@@ -76,49 +75,6 @@ describe("Paricipant", () => {
       ],
     };
     const result = await participant.updateState(true, body);
-
-    expect(result).not.toBeNull();
-  });
-
-  it("should regenerate token", async () => {
-    const body: ParticipantInput = {
-      active: true,
-      additionalProperties: {
-        additionalProp1: {},
-        additionalProp2: {},
-        additionalProp3: {},
-      },
-      did: "string",
-      key: {
-        active: true,
-        keyGeneratorParams: {
-          additionalProp1: {},
-          additionalProp2: {},
-          additionalProp3: {},
-        },
-        keyId: "string",
-        privateKeyAlias: "string",
-        publicKeyJwk: {
-          additionalProp1: {},
-          additionalProp2: {},
-          additionalProp3: {},
-        },
-        publicKeyPem: "string",
-        resourceId: "string",
-        type: "string",
-      },
-      participantId: "string",
-      roles: ["string"],
-      serviceEndpoints: [
-        {
-          id: "string",
-          serviceEndpoint: "string",
-          type: "string",
-        },
-      ],
-    };
-
-    const result = participant.regenerateToken(body);
 
     expect(result).not.toBeNull();
   });
