@@ -6,6 +6,7 @@ import { Inner } from "../../../inner";
 export class ParticipantDIDsController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  static readonly BASE_PATH = "/v1alpha/participants";
 
   constructor(
     inner: Inner,
@@ -16,47 +17,47 @@ export class ParticipantDIDsController {
     this.#context = context;
   }
 
-  publish(did: string, context?: EdcConnectorClientContext) {
+  publishDID(did: string, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     // NOTE: fix in docs
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/publish`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/publish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
     });
   }
 
-  get(query: QuerySpec, context?: EdcConnectorClientContext) {
+  getDIDs(query: QuerySpec, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<DIDDocument[]>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/query`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/query`,
       method: "POST",
       body: query,
       apiToken: actualContext.apiToken,
     });
   }
 
-  state(did: string, context?: EdcConnectorClientContext) {
+  getDIDstate(did: string, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     //NOTE: Check for doc error
     return this.#inner.request<string>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/state`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/state`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
     });
   }
 
-  unpublish(did: string, context?: EdcConnectorClientContext) {
+  unpublishDID(did: string, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!;
 
     // NOTE: fix in docs
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/unpublish`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/unpublish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -73,7 +74,7 @@ export class ParticipantDIDsController {
 
     // NOTE: fix in docs
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/${did}/endpoints`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
       method: "POST",
       query: {
         autoPublish: String(autoPublish),
@@ -101,7 +102,7 @@ export class ParticipantDIDsController {
 
     // NOTE: fix in docs
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/${did}/endpoints`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
       method: "DELETE",
       query,
       apiToken: actualContext.apiToken,
@@ -117,7 +118,7 @@ export class ParticipantDIDsController {
 
     // NOTE: fix in docs
     return this.#inner.request<void>(actualContext.identity, {
-      path: `/v1alpha/participants/${this.participantId}/dids/${did}/endpoints`,
+      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
       method: "PATCH",
       query: {
         autoPublish: String(autoPublish),
