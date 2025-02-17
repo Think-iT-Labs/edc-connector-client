@@ -11,7 +11,7 @@ describe("Paricipant", () => {
     startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
       .withCopyFilesToContainer([
         {
-          source: "node_modules/identity.yml",
+          source: "node_modules/identity-api.yml",
           target: "/identity-api.yml",
         },
       ])

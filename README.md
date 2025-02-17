@@ -2,7 +2,7 @@
   <h1>EDC Connector Client 👩‍🚀</h1>
   <p>
     <b>
-      A HTTP client to communicate with the<a href="https://github.com/eclipse-edc/Connector">EDC Connector</a> for Node.js and the browser.
+      A HTTP client to communicate with the <a href="https://github.com/eclipse-edc/Connector">EDC Connector</a> for Node.js and the browser.
     </b>
   </p>
   <sub>
