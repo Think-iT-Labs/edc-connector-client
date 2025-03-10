@@ -1,3 +1,4 @@
+import { VerifiableCredentialsController } from "../controllers/identity-controllers/verifiable-credentials-controller";
 import { DIDsController } from "../controllers/identity-controllers/dids-controller";
 import { KeyPairsController } from "../controllers/identity-controllers/keypairs-controller";
 import { ParticipantController } from "../controllers/identity-controllers/participant-controllers/participant-controller";
@@ -19,5 +20,9 @@ export class IdentityController extends EdcController {
 
   get DIDs() {
     return new DIDsController(this.inner, this.context);
+  }
+
+  get VerifiableCredentials() {
+    return new VerifiableCredentialsController(this.inner, this.context);
   }
 }

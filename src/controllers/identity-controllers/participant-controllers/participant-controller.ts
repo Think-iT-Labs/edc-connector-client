@@ -6,6 +6,7 @@ import {
 import { Inner } from "../../../inner";
 import { ParticipantDIDsController } from "./participant-dids-controller";
 import { ParticipantKeyPairContoller } from "./participant-keypairs-controller";
+import { ParticipantVerifiableCredentialsController } from "./participant-verifiable-credentials-controller";
 
 export class ParticipantController {
   #inner: Inner;
@@ -96,6 +97,14 @@ export class ParticipantController {
 
   get dids() {
     return new ParticipantDIDsController(
+      this.#inner,
+      this.participantId,
+      this.#context,
+    );
+  }
+
+  get verifiableCredentials() {
+    return new ParticipantVerifiableCredentialsController(
       this.#inner,
       this.participantId,
       this.#context,
