@@ -3,10 +3,7 @@ import { Permission } from "./permission";
 import { Prohibition } from "./prohibition";
 import { JsonLdObject } from "../jsonld";
 
-export type PolicyType =
-  | "Set"
-  | "Offer"
-  | "Contract";
+export type PolicyType = "Set" | "Offer" | "Contract";
 
 export interface PolicyInput {
   uid?: string;
@@ -20,10 +17,10 @@ export interface PolicyInput {
   permission?: Permission[];
   prohibition?: Prohibition[];
   target?: string;
+  profiles: string[];
 }
 
 export class Policy extends JsonLdObject {
-
   get permissions(): JsonLdObject[] {
     return this.arrayOf(() => new JsonLdObject(), "odrl", "permission");
   }
@@ -35,11 +32,9 @@ export class Policy extends JsonLdObject {
   get obligations(): JsonLdObject[] {
     return this.arrayOf(() => new JsonLdObject(), "odrl", "obligation");
   }
-
 }
 
 export class PolicyBuilder {
-
   instance: Policy = new Policy();
 
   constructor() {
