@@ -1,4 +1,4 @@
-import { PolicyInput } from "./policy";
+import { Action, PolicyInput } from "./policy";
 
 export interface VerifiableCredentialsResource {
   holderId: string;
@@ -62,11 +62,57 @@ interface Issuer {
   };
 }
 
+interface Policy {
+  "@type"?: "SET" | "OFFER" | "CONTRACT";
+  assignee?: string;
+  assigner?: string;
+  extensibleProperties?: object;
+  inheritsFrom?: string;
+  obligations?: {
+    action?: {
+      includedIn?: string;
+      type?: string;
+      constraint?: {
+        edctype: string;
+      };
+    };
+    constraints?: {
+      edctype: string;
+    }[];
+  }[];
+  permissions?: {
+    action?: Action;
+    constraints?: {
+      edctype: string;
+    }[];
+    duties?: {
+      action?: Action;
+      constraints?: {
+        edctype: string;
+      }[];
+    }[];
+  }[];
+  profiles?: string[];
+  prohibitions?: {
+    action?: Action;
+    constraints?: {
+      edctype: string;
+    }[];
+    remedies?: {
+      action?: Action;
+      constraints?: {
+        edctype: string;
+      }[];
+    }[];
+  }[];
+  target?: string;
+}
+
 export interface VerifiableCredentialManifest {
   id: string;
-  issuancePolicy: PolicyInput;
+  issuancePolicy: Policy;
   participantContextId: string;
-  reissuancePolicy: PolicyInput;
+  reissuancePolicy: Policy;
   verifiableCredentialContainer: VerifiableCredentialContainer;
 }
 

@@ -7,7 +7,7 @@ import { VerifiableCredentialManifest } from "../../../src/entities/verifiable-c
 const input: VerifiableCredentialManifest = {
   id: "string",
   issuancePolicy: {
-    "@type": "Set",
+    "@type": "SET",
     assignee: "string",
     assigner: "string",
     extensibleProperties: {
@@ -16,7 +16,7 @@ const input: VerifiableCredentialManifest = {
       additionalProp3: {},
     },
     inheritsFrom: "string",
-    obligation: [
+    obligations: [
       {
         action: {
           constraint: {
@@ -25,14 +25,14 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
           },
         ],
       },
     ],
-    permission: [
+    permissions: [
       {
         action: {
           constraint: {
@@ -41,7 +41,7 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
           },
@@ -55,7 +55,7 @@ const input: VerifiableCredentialManifest = {
               includedIn: "string",
               type: "string",
             },
-            constraint: [
+            constraints: [
               {
                 edctype: "string",
               },
@@ -64,7 +64,8 @@ const input: VerifiableCredentialManifest = {
         ],
       },
     ],
-    prohibition: [
+    profiles: ["string"],
+    prohibitions: [
       {
         action: {
           constraint: {
@@ -73,9 +74,25 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
+          },
+        ],
+        remedies: [
+          {
+            action: {
+              constraint: {
+                edctype: "string",
+              },
+              includedIn: "string",
+              type: "string",
+            },
+            constraints: [
+              {
+                edctype: "string",
+              },
+            ],
           },
         ],
       },
@@ -84,7 +101,7 @@ const input: VerifiableCredentialManifest = {
   },
   participantContextId: "string",
   reissuancePolicy: {
-    "@type": "Set",
+    "@type": "SET",
     assignee: "string",
     assigner: "string",
     extensibleProperties: {
@@ -93,7 +110,7 @@ const input: VerifiableCredentialManifest = {
       additionalProp3: {},
     },
     inheritsFrom: "string",
-    obligation: [
+    obligations: [
       {
         action: {
           constraint: {
@@ -102,14 +119,14 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
           },
         ],
       },
     ],
-    permission: [
+    permissions: [
       {
         action: {
           constraint: {
@@ -118,7 +135,7 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
           },
@@ -132,7 +149,7 @@ const input: VerifiableCredentialManifest = {
               includedIn: "string",
               type: "string",
             },
-            constraint: [
+            constraints: [
               {
                 edctype: "string",
               },
@@ -141,7 +158,8 @@ const input: VerifiableCredentialManifest = {
         ],
       },
     ],
-    prohibition: [
+    profiles: ["string"],
+    prohibitions: [
       {
         action: {
           constraint: {
@@ -150,9 +168,25 @@ const input: VerifiableCredentialManifest = {
           includedIn: "string",
           type: "string",
         },
-        constraint: [
+        constraints: [
           {
             edctype: "string",
+          },
+        ],
+        remedies: [
+          {
+            action: {
+              constraint: {
+                edctype: "string",
+              },
+              includedIn: "string",
+              type: "string",
+            },
+            constraints: [
+              {
+                edctype: "string",
+              },
+            ],
           },
         ],
       },
@@ -185,9 +219,9 @@ const input: VerifiableCredentialManifest = {
       ],
       dataModelVersion: "V_1_1",
       description: "string",
-      expirationDate: "2025-03-10T12:50:02.008Z",
+      expirationDate: "2025-03-17T10:22:47.600Z",
       id: "string",
-      issuanceDate: "2025-03-10T12:50:02.008Z",
+      issuanceDate: "2025-03-17T10:22:47.600Z",
       issuer: {
         additionalProperties: {
           additionalProp1: {},
@@ -203,7 +237,6 @@ const input: VerifiableCredentialManifest = {
     rawVc: "string",
   },
 };
-
 describe("Verifiable Credentials", () => {
   let startedContainer: StartedTestContainer;
   let verifiableCredentials: VerifiableCredentialsController;
