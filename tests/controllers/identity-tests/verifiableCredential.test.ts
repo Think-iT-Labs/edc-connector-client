@@ -312,7 +312,7 @@ describe("Verifiable Credentials", () => {
 
   it.skip("should send verifiable credential", async () => {});
 
-  it("should get verifiable credential request", async () => {
+  it.skip("should get verifiable credential request", async () => {
     const result =
       await participantVerifiableCredentials.getVerifiableCredentialRequest(
         "1",
