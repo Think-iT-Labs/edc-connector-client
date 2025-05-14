@@ -10,6 +10,10 @@ const CONTEXTS = [
   {
     name: "identity-api",
     resourceUrl: "https://eclipse-edc.github.io/IdentityHub/openapi/identity-api/identity-api.yaml"
+  },
+  {
+    name: "presentation-api",
+    resourceUrl: "https://eclipse-edc.github.io/IdentityHub/openapi/presentation-api/presentation-api.yaml"
   }
 ]
 

@@ -17,6 +17,10 @@ export class EdcConnectorClientContext implements Addresses {
     return this.getOrError(this.#addresses.identity, "identity address");
   }
 
+  get presentation(): string {
+    return this.getOrError(this.#addresses.presentation, "presentation address")
+  }
+
   get protocol(): string {
     return this.getOrError(this.#addresses.protocol, "protocol address");
   }

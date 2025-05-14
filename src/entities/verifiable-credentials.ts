@@ -16,13 +16,13 @@ export interface VerifiableCredentialsResource {
 interface VerifiableCredentialContainer {
   credential: VerifiableCredential;
   format:
-    | "JSON_LD"
-    | "JWT"
-    | "VC1_0_LD"
-    | "VC1_0_JWT"
-    | "VC2_0_JOSE"
-    | "VC2_0_SD_JWT"
-    | "VC2_0_COSE";
+  | "JSON_LD"
+  | "JWT"
+  | "VC1_0_LD"
+  | "VC1_0_JWT"
+  | "VC2_0_JOSE"
+  | "VC2_0_SD_JWT"
+  | "VC2_0_COSE";
   rawVc: string;
 }
 

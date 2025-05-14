@@ -8,6 +8,7 @@ import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
 import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 import { IdentityController } from "./facades/identity";
+import { PresentationController } from "./controllers/presentation-controller";
 
 export type EdcConnectorClientType<T extends Record<string, EdcController>> =
   EdcConnectorClient & T;
@@ -32,6 +33,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
   identityUrl(identityUrl: string): this {
     this.#instance[addressesSymbol].identity = identityUrl;
     return this;
+  }
+
+  presentationUrl(presentationUrl: string): this {
+    this.#instance[addressesSymbol].presentation = presentationUrl;
+    return this
   }
 
   defaultUrl(defaultUrl: string): this {
@@ -102,6 +108,14 @@ export class EdcConnectorClient {
       this[addressesSymbol],
     );
     return new IdentityController(this[innerSymbol], context);
+  }
+
+  get presentation() {
+    const context = new EdcConnectorClientContext(
+      this[apiTokenSymbol],
+      this[addressesSymbol]
+    )
+    return new PresentationController(this[innerSymbol], context)
   }
 
   get observability() {
