@@ -6,4 +6,5 @@ export interface Addresses {
   control?: string;
   federatedCatalogUrl?: string;
   identity?: string;
+  presentation?: string
 }

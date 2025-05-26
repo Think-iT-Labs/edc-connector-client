@@ -308,9 +308,9 @@ describe("Verifiable Credentials", () => {
     expect(result).toBeUndefined();
   });
 
-  it.skip("should create verifiable credential", async () => {});
+  it.skip("should create verifiable credential", async () => { });
 
-  it.skip("should send verifiable credential", async () => {});
+  it.skip("should send verifiable credential", async () => { });
 
   it.skip("should get verifiable credential request", async () => {
     const result =
