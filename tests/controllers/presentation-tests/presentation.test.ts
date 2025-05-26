@@ -29,12 +29,10 @@ describe("Presentation", () => {
             "1",
             "auth-token",
             {
-                "@context": [
-                    "https://w3id.org/tractusx-trust/v0.8",
-                    "https://identity.foundation/presentation-exchange/submission/v1"
-                ],
+                "@context": {
+                    "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+                },
                 "@type": "PresentationQueryMessage",
-                "presentationDefinition": null,
                 "scope": [
                     "org.eclipse.edc.vc.type:SomeCredential_0.3.5:write",
                     "org.eclipse.edc.vc.type:SomeOtherCredential:read",

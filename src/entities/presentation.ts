@@ -1,5 +1,5 @@
 export type PresentationQueryMessage = {
-  "@context": {}
+  "@context": { [key: string]: unknown }
   "@type": string
   presentationDefinition?: { [key: string]: unknown } | null
   scope?: string[]

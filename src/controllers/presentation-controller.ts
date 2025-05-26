@@ -19,12 +19,11 @@ export class PresentationController {
   queryAll(participantId: string, auth: string, queryMessage: PresentationQueryMessage, context?: EdcConnectorClientContext) {
     const actualContext = context || this.#context!
 
-    console.log(actualContext.presentation + `${PresentationController.BASE_PATH}/${participantId}/presentations/query`)
     return this.#inner.request<PresentationResponseMessage>(actualContext?.presentation, {
       method: "POST",
       path: `${PresentationController.BASE_PATH}/${participantId}/presentations/query`,
       headers: {
-        Authorization: auth // this is not in the open api doc
+        Authorization: auth
       },
       body: queryMessage
     })
