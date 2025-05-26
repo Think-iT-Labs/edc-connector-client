@@ -3889,9 +3889,9 @@ test-exclude@^6.0.0:
     minimatch "^3.0.4"
 
 testcontainers@^10.9.0:
-  version "10.25.0"
-  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-10.25.0.tgz#03eef06b696c0b71a23891c6a966fe57b9229bd7"
-  integrity sha512-X3x6cjorEMgei1vVx3M7dnTMzWoWOTi4krpUf3C2iOvOcwsaMUHbca9J4yzpN65ieiWhcK2dA5dxpZyUonwC2Q==
+  version "10.28.0"
+  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-10.28.0.tgz#73d3757fcd60405c20dd55599ca89e44cadc8ccf"
+  integrity sha512-1fKrRRCsgAQNkarjHCMKzBKXSJFmzNTiTbhb5E/j5hflRXChEtHvkefjaHlgkNUjfw92/Dq8LTgwQn6RDBFbMg==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     "@types/dockerode" "^3.3.35"
@@ -3907,7 +3907,7 @@ testcontainers@^10.9.0:
     ssh-remote-port-forward "^1.0.4"
     tar-fs "^3.0.7"
     tmp "^0.2.3"
-    undici "^5.28.5"
+    undici "^5.29.0"
 
 text-decoder@^1.1.0:
   version "1.2.3"
@@ -4022,7 +4022,7 @@ undici-types@~6.21.0:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.21.0.tgz#691d00af3909be93a7faa13be61b3a5b50ef12cb"
   integrity sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==
 
-undici@^5.21.2, undici@^5.28.5:
+undici@^5.21.2, undici@^5.29.0:
   version "5.29.0"
   resolved "https://registry.yarnpkg.com/undici/-/undici-5.29.0.tgz#419595449ae3f2cdcba3580a2e8903399bd1f5a3"
   integrity sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==
