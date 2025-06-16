@@ -125,6 +125,59 @@ const result = await client.management.assets.create(context, {
 });
 ```
 
+### Extending the Client with Custom Controllers
+
+The client can be extended with custom controllers using the `use` method. This feature allows you to add your own functionality while maintaining type safety through the `EdcController` base class. The extension system is designed to be middleware-like, where each controller is lazily instantiated when accessed.
+
+Here's how to use it:
+
+```ts
+import { EdcConnectorClient, EdcController } from "@think-it-labs/edc-connector-client"
+
+// Define your custom controller by extending EdcController
+class CustomController extends EdcController {
+  constructor(inner: any, context: any) {
+    super(inner, context);
+  }
+
+  async customMethod() {
+    // Your custom implementation
+    // You have access to this.inner and this.context
+  }
+}
+
+// Extend the client with your custom controller
+const client = new EdcConnectorClient.Builder()
+  .apiToken("123456")
+  .managementUrl("https://edc.think-it.io/management")
+  .use("custom", CustomController)  // Add your custom controller
+  .build();
+
+// Use your custom controller
+await client.custom.customMethod();
+```
+
+The `use` method takes two parameters:
+1. A string property name that will be used to access your controller
+2. A class that extends `EdcController`
+
+The `EdcController` base class provides:
+- A standardized way to construct controllers
+- Access to the client's `inner` functionality
+- Access to the client's `context` for making API calls
+
+TypeScript will properly type your custom controller and its methods, ensuring type safety throughout your application. You can also explicitly type your extended client:
+
+```ts
+type MyExtendedClient = EdcConnectorClientType<{
+  custom: CustomController;
+}>;
+
+const client: MyExtendedClient = new EdcConnectorClient.Builder()
+  .use("custom", CustomController)
+  .build();
+```
+
 ## Error handling
 
 All API methods are _type, and error-safe_, which means arguments are fully typed
