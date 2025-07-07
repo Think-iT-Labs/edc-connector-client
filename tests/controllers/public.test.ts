@@ -17,13 +17,12 @@ describe("PublicController", () => {
   describe("edcClient.public.getTransferredData", () => {
 
     it("initiate the transfer process", async () => {
-      const { assetId, contractAgreement } = await createContractAgreement(
+      const { contractAgreement } = await createContractAgreement(
         provider, consumer
       );
 
       const idResponse = await consumer.management.transferProcesses.initiate(
         {
-          assetId,
           transferType: "HttpData-PULL",
           counterPartyAddress: provider.addresses.protocol!,
           contractId: contractAgreement.id

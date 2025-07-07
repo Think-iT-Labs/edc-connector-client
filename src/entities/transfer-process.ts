@@ -72,7 +72,8 @@ export enum TransferProcessStates {
 }
 
 export interface TransferProcessInput {
-  assetId: string;
+  /** @deprecated not required by the APIs anymore */
+  assetId?: string;
   counterPartyAddress: string;
   contractId: string;
   dataDestination?: DataAddress;
