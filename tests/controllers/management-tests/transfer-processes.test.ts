@@ -87,12 +87,11 @@ describe("TransferProcessController", () => {
   });
 
   async function initiate(): Promise<IdResponse> {
-    const { assetId, contractAgreement } = await createContractAgreement(
+    const { contractAgreement } = await createContractAgreement(
       provider, consumer);
 
     return await consumer.management.transferProcesses.initiate(
       {
-        assetId,
         counterPartyAddress: provider.addresses.protocol!,
         contractId: contractAgreement.id,
         transferType: "HttpData-PULL"
