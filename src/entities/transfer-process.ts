@@ -72,7 +72,7 @@ export enum TransferProcessStates {
 }
 
 export interface TransferProcessInput {
-  /** @deprecated not required by the APIs anymore */
+  /** @deprecated since 0.8.0: not required by the APIs anymore */
   assetId?: string;
   counterPartyAddress: string;
   contractId: string;
