@@ -38,4 +38,8 @@ public class DemoTargetNodeDirectory implements TargetNodeDirectory {
     private TargetNode toTargetNode(String id) {
         return new TargetNode(id, id, DSP_URL_PATTERN.formatted(id), List.of("dataspace-protocol-http"));
     }
+
+    public TargetNode remove(String id) {
+        throw new UnsupportedOperationException();
+    }
 }
