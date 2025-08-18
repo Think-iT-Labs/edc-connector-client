@@ -95,6 +95,16 @@ export class Inner {
 
           throw error;
         }
+
+        case 502: {
+          const error = new EdcConnectorClientError(
+            EdcConnectorClientErrorType.BadGateway,
+            "Bad Gateway: " + errorMessage,
+          );
+
+          throw error;
+        }
+
         default: {
           throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.Unknown,

@@ -7,6 +7,7 @@ export enum EdcConnectorClientErrorType {
   NotFound = "NotFound",
   BadRequest = "BadRequest",
   Unreachable = "Unreachable",
+  BadGateway = "BadGateway",
 }
 
 export class EdcConnectorClientError
