@@ -32,7 +32,7 @@ edc-management-api = { module = "org.eclipse.edc:management-api", version.ref = 
 edc-runtime-metamodel = { module = "org.eclipse.edc:runtime-metamodel", version.ref = "edc" }
 edc-token-core = { module = "org.eclipse.edc:token-core", version.ref = "edc" }
 edc-transfer-data-plane-signaling = { module = "org.eclipse.edc:transfer-data-plane-signaling", version.ref = "edc" }
-edc-transfer-pull-http-dynamic-receiver = {module = "org.eclipse.edc:transfer-pull-http-dynamic-receiver", version = "0.11.0"}
+edc-transfer-pull-http-receiver = { module = "org.eclipse.edc:transfer-pull-http-receiver", version = "0.11.0" }
 edc-validator-data-address-http-data = { module = "org.eclipse.edc:validator-data-address-http-data", version.ref = "edc" }
 
 [plugins]
