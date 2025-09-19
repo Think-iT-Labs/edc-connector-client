@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.11.0"
+edc = "0.13.0"
 shadow = "8.1.1"
 
 [libraries]
@@ -32,8 +32,12 @@ edc-management-api = { module = "org.eclipse.edc:management-api", version.ref = 
 edc-runtime-metamodel = { module = "org.eclipse.edc:runtime-metamodel", version.ref = "edc" }
 edc-token-core = { module = "org.eclipse.edc:token-core", version.ref = "edc" }
 edc-transfer-data-plane-signaling = { module = "org.eclipse.edc:transfer-data-plane-signaling", version.ref = "edc" }
-edc-transfer-pull-http-receiver = { module = "org.eclipse.edc:transfer-pull-http-receiver", version.ref = "edc" }
 edc-validator-data-address-http-data = { module = "org.eclipse.edc:validator-data-address-http-data", version.ref = "edc" }
+edc-dataplane-base-bom = { module = "org.eclipse.edc:dataplane-base-bom", version.ref = "edc" }
+edc-controlplane-base-bom = { module = "org.eclipse.edc:controlplane-base-bom", version.ref = "edc" }
+edc-federatedcatalog-bom = {module = "org.eclipse.edc:federatedcatalog-base-bom", version.ref = "edc"}
+edc-crawler-spi = {module = "org.eclipse.edc:crawler-spi", version.ref = "edc"}
+edc-dataplane-public-api-v2 = {module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc"}
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }
