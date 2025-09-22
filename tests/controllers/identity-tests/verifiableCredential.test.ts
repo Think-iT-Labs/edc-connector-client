@@ -233,7 +233,7 @@ const input: VerifiableCredentialManifest = {
       name: "string",
       type: ["string"],
     },
-    format: "JSON_LD",
+    format: "VC1_0_LD",
     rawVc: "string",
   },
 };
