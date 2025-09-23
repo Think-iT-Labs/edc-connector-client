@@ -2,13 +2,13 @@ import { Class } from "type-fest";
 import { version } from "../package.json";
 import { EdcConnectorClientContext } from "./context";
 import { ObservabilityController, PublicController } from "./controllers";
+import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
+import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
 import { Addresses } from "./entities";
+import { IdentityController } from "./facades/identity";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
-import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
-import { IdentityController } from "./facades/identity";
-import { PresentationController } from "./controllers/presentation-controller";
 
 export type EdcConnectorClientType<T extends Record<string, EdcController>> =
   EdcConnectorClient & T;
@@ -72,8 +72,8 @@ class Builder<T extends Record<string, EdcController> = {}> {
     Object.defineProperty(this.#instance, key, {
       get() {
         return new Controller(
-          this.inner,
-          this.createContext(this.apiToken!, this.addresses),
+          this[innerSymbol],
+          this.createContext(this[apiTokenSymbol], this[addressesSymbol]),
         );
       },
       enumerable: true,
