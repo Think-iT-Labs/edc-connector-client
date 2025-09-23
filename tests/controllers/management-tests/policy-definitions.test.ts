@@ -46,7 +46,7 @@ describe("PolicyDefinitionController", () => {
       await policyDefinitions.create(policyInput);
       const maybeCreateResult = policyDefinitions.create(policyInput);
 
-      await expect(maybeCreateResult).rejects.toThrowError(
+      await expect(maybeCreateResult).rejects.toThrow(
         "duplicated resource",
       );
 
@@ -161,7 +161,7 @@ describe("PolicyDefinitionController", () => {
         crypto.randomUUID(),
       );
 
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
+      await expect(maybePolicy).rejects.toThrow("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -205,7 +205,7 @@ describe("PolicyDefinitionController", () => {
         }
       );
 
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
+      await expect(maybePolicy).rejects.toThrow("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -239,7 +239,7 @@ describe("PolicyDefinitionController", () => {
         crypto.randomUUID(),
       );
 
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
+      await expect(maybePolicy).rejects.toThrow("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);

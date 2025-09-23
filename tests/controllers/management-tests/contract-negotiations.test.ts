@@ -94,7 +94,7 @@ describe("ContractNegotiationController", () => {
       const maybeNegotiation = negotiations.get(crypto.randomUUID(),);
 
       // then
-      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
       maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -123,7 +123,7 @@ describe("ContractNegotiationController", () => {
       const maybeNegotiation = negotiations.getState(crypto.randomUUID(),);
 
       // then
-      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
       maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -156,7 +156,7 @@ describe("ContractNegotiationController", () => {
         "a reason to terminate",
       );
 
-      await expect(maybeNegotiation).rejects.toThrowError("resource not found");
+      await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
       maybeNegotiation.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);

@@ -34,7 +34,7 @@ describe("edrs", () => {
 
   it("should delete edrs", async () => {
     await expect(edcClient.management.edrs.delete("edrId")).resolves
-      .not.toThrowError();
+      .not.toThrow();
   });
 
   it("should get data address", async () => {

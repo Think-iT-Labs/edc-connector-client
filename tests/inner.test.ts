@@ -14,7 +14,7 @@ describe("Inner", () => {
       method: "POST"
     })
 
-    await expect(response).rejects.toThrowError("resource not found");
+    await expect(response).rejects.toThrow("resource not found");
 
     response.catch((error) => {
       expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -33,7 +33,7 @@ describe("Inner", () => {
       method: "POST"
     })
 
-    await expect(response).rejects.toThrowError("duplicated resource");
+    await expect(response).rejects.toThrow("duplicated resource");
 
     response.catch((error) => {
       expect(error).toBeInstanceOf(EdcConnectorClientError);
