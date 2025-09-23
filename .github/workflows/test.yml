@@ -28,7 +28,7 @@ jobs:
 
       - name: Run Docker environment
         run: |
-          docker compose up -d
+          docker compose up --wait
           docker compose logs -f > logs &
 
       - name: Use Node.js 20.x
