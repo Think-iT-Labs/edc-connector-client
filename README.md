@@ -23,17 +23,18 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 > API specification can be found on [Management Api Openapi UI](https://eclipse-edc.github.io/Connector/openapi/management-api/)
 
 ## Compatibility matrix
-|Client        | API                                       |
-|--------------|-------------------------------------------|
-|0.8.x<br>0.7.x| **Management** v3<br>**Catalog** v1-alpha |
+| Client         | API                                                                    |
+|----------------|------------------------------------------------------------------------|
+| 0.9.x          | **Management** v3<br>**Catalog** v1-alpha<br>**Identity Hub** v1-alpha |
+| 0.8.x<br>0.7.x | **Management** v3<br>**Catalog** v1-alpha                              |
 
-|Client        | EDC              |
-|--------------|------------------|
-|0.6.x         |0.7.x             |
-|0.5.x<br>0.4.x|0.6.x             |
-|0.3.0         |0.5.0             |
-|0.2.1         |0.4.1             |
-|0.2.0         |0.2.0             |
+| Client         | EDC   |
+|----------------|-------|
+| 0.6.x          | 0.7.x |
+| 0.5.x<br>0.4.x | 0.6.x |
+| 0.3.0          | 0.5.0 |
+| 0.2.1          | 0.4.1 |
+| 0.2.0          | 0.2.0 |
 
 ## Usage
 
@@ -225,11 +226,11 @@ Please, adhere to the [CONTRIBUTING](CONTRIBUTING.md) guidelines when suggesting
 changes in this repository.
 
 ### Release
-The `release` github action workflow takes care of release.
+The [`release`](./.github/workflows/release.yml) GitHub action workflow takes care of release.
 
 ## License
 
-Copyright 2022-2023 Think.iT GmbH.
+Copyright 2022-2025 Think.iT GmbH.
 
 Licensed under the [Apache License, Version 2.0](LICENSE). Files in the project
 may not be copied, modified, or distributed except according to those terms.

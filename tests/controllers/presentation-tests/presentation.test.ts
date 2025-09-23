@@ -7,7 +7,7 @@ describe("Presentation", () => {
     let presentation: PresentationController
 
     beforeAll(async () => {
-        startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
+        startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
             .withCopyFilesToContainer([
                 {
                     source: "node_modules/presentation-api.yml",
