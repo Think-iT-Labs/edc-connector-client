@@ -45,7 +45,7 @@ describe("ContractDefinitionController", () => {
         contractDefinitionInput,
       );
 
-      await expect(maybeCreateResult).rejects.toThrowError(
+      await expect(maybeCreateResult).rejects.toThrow(
         "duplicated resource",
       );
 
@@ -112,7 +112,7 @@ describe("ContractDefinitionController", () => {
     it("fails to fetch an not existant contract definition", async () => {
       const maybePolicy = contractDefinitions.get(crypto.randomUUID());
 
-      await expect(maybePolicy).rejects.toThrowError("resource not found");
+      await expect(maybePolicy).rejects.toThrow("resource not found");
 
       maybePolicy.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -143,7 +143,7 @@ describe("ContractDefinitionController", () => {
       const maybeContractDefinition =
         contractDefinitions.delete(crypto.randomUUID());
 
-      await expect(maybeContractDefinition).rejects.toThrowError(
+      await expect(maybeContractDefinition).rejects.toThrow(
         "resource not found",
       );
 
@@ -207,7 +207,7 @@ describe("ContractDefinitionController", () => {
             updateContractDefinitionInput,
           );
 
-        await expect(maybeUpdatedContractDefinition).rejects.toThrowError(
+        await expect(maybeUpdatedContractDefinition).rejects.toThrow(
           "resource not found",
         );
 

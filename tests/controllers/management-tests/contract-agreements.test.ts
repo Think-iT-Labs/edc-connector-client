@@ -52,7 +52,7 @@ describe("ContractAgreementController", () => {
     it("fails to fetch an not existent contract agreement", async () => {
       const maybeAsset = contractAgreements.get(crypto.randomUUID());
 
-      await expect(maybeAsset).rejects.toThrowError("resource not found");
+      await expect(maybeAsset).rejects.toThrow("resource not found");
 
       maybeAsset.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
