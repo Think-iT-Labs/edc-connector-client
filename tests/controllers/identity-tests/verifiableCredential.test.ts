@@ -243,7 +243,7 @@ describe("Verifiable Credentials", () => {
   let participantVerifiableCredentials: ParticipantVerifiableCredentialsController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.8.1")
+    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
       .withCopyFilesToContainer([
         {
           source: "node_modules/identity-api.yml",
