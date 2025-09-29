@@ -31,7 +31,7 @@
     "type-fest": "^4.20.0"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^19.0.3",
+    "@commitlint/config-conventional": "^20.0.0",
     "@types/jest": "^30.0.0",
     "@types/jsonld": "^1.5.8",
     "@types/node": "^24.5.2",
