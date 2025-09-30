@@ -4,6 +4,7 @@ import {
   EdcController,
 } from "../src";
 import { Addresses } from "../src";
+import { Inner } from "../src/inner";
 
 describe("EdcConnectorClient", () => {
   it("instantiate a new class", async () => {
@@ -55,6 +56,14 @@ describe("EdcConnectorClient", () => {
           active: true,
         };
       }
+
+      getInner() {
+        return this.inner;
+      }
+
+      getContext() {
+        return this.context;
+      }
     }
 
     class BarController extends EdcController {
@@ -78,6 +87,27 @@ describe("EdcConnectorClient", () => {
       await expect(client.bar.testBar()).resolves.toEqual({
         active: false,
       });
+    });
+
+    it("exposes the custom controller on the client and wires internals", () => {
+      const token = "test-token-123";
+      const managementUrl = "https://example.com/management";
+
+      const client = new EdcConnectorClient.Builder()
+        .apiToken(token)
+        .managementUrl(managementUrl)
+        .use("foo", FooController)
+        .build();
+
+      const inner = client.foo.getInner();
+      expect(inner).toBeInstanceOf(Inner);
+
+      const context = client.foo.getContext();
+      expect(context).toBeInstanceOf(EdcConnectorClientContext);
+
+      expect(context?.apiToken).toBe(token);
+
+      expect(context?.management).toBe(managementUrl);
     });
   });
 
