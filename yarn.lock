@@ -1088,7 +1088,7 @@
     "@types/node" "*"
     "@types/ssh2" "*"
 
-"@types/dockerode@^3.3.43":
+"@types/dockerode@^3.3.44":
   version "3.3.44"
   resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.44.tgz#1e6d5b291646820e9daabfa132cdb33c9d535b56"
   integrity sha512-fUpIHlsbYpxAJb285xx3vp7q5wf5mjqSn3cYwl/MhiM+DB99OdO5sOCPlO0PjO+TyOtphPs7tMVLU/RtOo/JjA==
@@ -3746,7 +3746,7 @@ synckit@^0.11.8:
   dependencies:
     "@pkgr/core" "^0.2.9"
 
-tar-fs@^3.1.0:
+tar-fs@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/tar-fs/-/tar-fs-3.1.1.tgz#4f164e59fb60f103d472360731e8c6bb4a7fe9ef"
   integrity sha512-LZA0oaPOc2fVo82Txf3gw+AkEd38szODlptMYejQUhndHMLQ9M059uXR+AfS7DNo0NpINvSqDsvyaCrBVkptWg==
@@ -3797,12 +3797,12 @@ test-exclude@^6.0.0:
     minimatch "^3.0.4"
 
 testcontainers@^11.6.0:
-  version "11.6.0"
-  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-11.6.0.tgz#28d295f420e582cf2ea2941374905ecf0dd1544f"
-  integrity sha512-2kXdhZ4mvvPP4xEY1yxhLSrFt/TXokClOtppA4bt/5FJJwZrnUkyCo3TVfhHx3Ynlq1N00qjoQuxpnwFqU9a7g==
+  version "11.7.1"
+  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-11.7.1.tgz#4ee8595f02b594012fae10433e059608a4aaa565"
+  integrity sha512-fjut+07G4Avp6Lly/6hQePpUpQFv9ZyQd+7JC5iCDKg+dWa2Sw7fXD3pBrkzslYFfKqGx9M6kyIaLpg9VeMsjw==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
-    "@types/dockerode" "^3.3.43"
+    "@types/dockerode" "^3.3.44"
     archiver "^7.0.1"
     async-lock "^1.4.1"
     byline "^5.0.0"
@@ -3813,7 +3813,7 @@ testcontainers@^11.6.0:
     proper-lockfile "^4.1.2"
     properties-reader "^2.3.0"
     ssh-remote-port-forward "^1.0.4"
-    tar-fs "^3.1.0"
+    tar-fs "^3.1.1"
     tmp "^0.2.5"
     undici "^7.16.0"
 
