@@ -1,6 +1,11 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  JSON_LD_DEFAULT_CONTEXT, CatalogRequest, Catalog, expand, Dataset, DatasetRequest
+  JSON_LD_DEFAULT_CONTEXT,
+  CatalogRequest,
+  Catalog,
+  expand,
+  Dataset,
+  DatasetRequest,
 } from "../../entities";
 import { Inner } from "../../inner";
 
@@ -8,7 +13,7 @@ export class CatalogController {
   #inner: Inner;
   #context: EdcConnectorClientContext | undefined;
   #basePath = "/v3/catalog";
-  protocol: String = "dataspace-protocol-http";
+  protocol: String = "dataspace-protocol-http:2025-1";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;

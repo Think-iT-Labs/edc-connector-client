@@ -16,7 +16,7 @@ export class ContractNegotiationController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
   #basePath = "/v3/contractnegotiations";
-  protocol: String = "dataspace-protocol-http";
+  protocol: String = "dataspace-protocol-http:2025-1";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;

@@ -3,10 +3,10 @@ import {
   expand,
   expandArray,
   IdResponse,
+  JSON_LD_DEFAULT_CONTEXT,
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
-  JSON_LD_DEFAULT_CONTEXT,
   TransferProcessState,
 } from "../../entities";
 import { Inner } from "../../inner";
@@ -15,7 +15,7 @@ export class TransferProcessController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
   #basePath = '/v3/transferprocesses';
-  protocol: String = "dataspace-protocol-http";
+  protocol: String = "dataspace-protocol-http:2025-1";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
