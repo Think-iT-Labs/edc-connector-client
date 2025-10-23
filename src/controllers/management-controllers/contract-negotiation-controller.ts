@@ -16,7 +16,6 @@ export class ContractNegotiationController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
   #basePath = "/v3/contractnegotiations";
-  protocol: String = "dataspace-protocol-http:2025-1";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -35,7 +34,7 @@ export class ContractNegotiationController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          protocol: this.protocol,
+          protocol: actualContext.protocol,
           "@context": JSON_LD_DEFAULT_CONTEXT,
           ...input,
         },

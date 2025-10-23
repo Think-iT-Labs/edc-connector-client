@@ -16,6 +16,7 @@ export type EdcConnectorClientType<T extends Record<string, EdcController>> =
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
+const protocolSymbol = Symbol("[#protocol]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
@@ -37,7 +38,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
 
   presentationUrl(presentationUrl: string): this {
     this.#instance[addressesSymbol].presentation = presentationUrl;
-    return this
+    return this;
   }
 
   defaultUrl(defaultUrl: string): this {
@@ -62,6 +63,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
 
   federatedCatalogUrl(federatedCatalogUrl: string): this {
     this.#instance[addressesSymbol].federatedCatalogUrl = federatedCatalogUrl;
+    return this;
+  }
+
+  protocol(dataspaceProtocol: string): this {
+    this.#instance[protocolSymbol] = dataspaceProtocol;
     return this;
   }
 
@@ -93,6 +99,7 @@ export class EdcConnectorClient {
   [apiTokenSymbol]: string | undefined;
   [addressesSymbol]: Addresses = {};
   [innerSymbol] = new Inner();
+  [protocolSymbol] = "dataspace-protocol-http:2025-1";
 
   get management() {
     const context = new EdcConnectorClientContext(
@@ -113,9 +120,9 @@ export class EdcConnectorClient {
   get presentation() {
     const context = new EdcConnectorClientContext(
       this[apiTokenSymbol],
-      this[addressesSymbol]
-    )
-    return new PresentationController(this[innerSymbol], context)
+      this[addressesSymbol],
+    );
+    return new PresentationController(this[innerSymbol], context);
   }
 
   get observability() {
@@ -146,11 +153,16 @@ export class EdcConnectorClient {
     return { ...this[addressesSymbol] };
   }
 
+  get protocol() {
+    return this[protocolSymbol];
+  }
+
   createContext(
     token: string,
     addresses: Addresses,
+    protocol?: string,
   ): EdcConnectorClientContext {
-    return new EdcConnectorClientContext(token, addresses);
+    return new EdcConnectorClientContext(token, addresses, protocol);
   }
 
   static version(): string {

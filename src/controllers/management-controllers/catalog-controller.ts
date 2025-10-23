@@ -13,7 +13,6 @@ export class CatalogController {
   #inner: Inner;
   #context: EdcConnectorClientContext | undefined;
   #basePath = "/v3/catalog";
-  protocol: String = "dataspace-protocol-http:2025-1";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
@@ -33,7 +32,7 @@ export class CatalogController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: this.protocol,
+          protocol: actualContext.protocol,
           ...input,
         },
       })
@@ -53,7 +52,7 @@ export class CatalogController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: this.protocol,
+          protocol: actualContext.protocol,
           ...input,
         },
       })

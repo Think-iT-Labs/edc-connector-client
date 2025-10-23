@@ -16,6 +16,7 @@ describe("EdcConnectorClient", () => {
     expect(edcClient).toHaveProperty("management");
     expect(edcClient).toHaveProperty("observability");
     expect(edcClient).toHaveProperty("public");
+    expect(edcClient).toHaveProperty("protocol");
   });
 
   describe("edcClient.createContext", () => {
@@ -30,9 +31,10 @@ describe("EdcConnectorClient", () => {
         public: "http://localhost:19291",
         control: "http://localhost:19292",
       };
+      const protocol = "protocol";
 
       // when
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, addresses, protocol);
 
       // then
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
@@ -42,6 +44,7 @@ describe("EdcConnectorClient", () => {
       expect(context.protocol).toBe(addresses.protocol);
       expect(context.public).toBe(addresses.public);
       expect(context.control).toBe(addresses.control);
+      expect(context.dataspaceProtocol).toBe(protocol);
     });
   });
 

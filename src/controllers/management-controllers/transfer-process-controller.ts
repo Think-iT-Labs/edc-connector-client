@@ -14,9 +14,7 @@ import { Inner } from "../../inner";
 export class TransferProcessController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  #basePath = '/v3/transferprocesses';
-  protocol: String = "dataspace-protocol-http:2025-1";
-
+  #basePath = "/v3/transferprocesses";
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
     this.#context = context;
@@ -35,14 +33,17 @@ export class TransferProcessController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: this.protocol,
+          protocol: actualContext.protocol,
           ...input,
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
   }
 
-  async get(id: string, context?: EdcConnectorClientContext): Promise<TransferProcess> {
+  async get(
+    id: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<TransferProcess> {
     const actualContext = context || this.#context!;
 
     return this.#inner
@@ -82,12 +83,13 @@ export class TransferProcessController {
   ): Promise<TransferProcessState> {
     const actualContext = context || this.#context!;
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${transferProcessId}/state`,
-      method: "GET",
-      apiToken: actualContext.apiToken,
-    })
-    .then((body) => expand(body, () => new TransferProcessState()));
+    return this.#inner
+      .request(actualContext.management, {
+        path: `${this.#basePath}/${transferProcessId}/state`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new TransferProcessState()));
   }
 
   async terminate(
@@ -104,7 +106,7 @@ export class TransferProcessController {
       body: {
         "@id": id,
         "@context": JSON_LD_DEFAULT_CONTEXT,
-        reason: reason
+        reason: reason,
       },
     });
   }
@@ -121,7 +123,7 @@ export class TransferProcessController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT
+        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     });
   }
