@@ -32,7 +32,7 @@ export class CatalogController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: actualContext.protocol,
+          protocol: actualContext.protocolVersion,
           ...input,
         },
       })
@@ -52,7 +52,7 @@ export class CatalogController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: actualContext.protocol,
+          protocol: actualContext.protocolVersion,
           ...input,
         },
       })

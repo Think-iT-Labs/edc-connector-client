@@ -3,16 +3,16 @@ import { Addresses } from "./entities";
 export class EdcConnectorClientContext implements Addresses {
   #apiToken: string | undefined;
   #addresses: Addresses;
-  #protocol: string | undefined;
+  #protocolVersion: string | undefined;
 
   constructor(
     apiToken: string | undefined,
     addresses: Addresses,
-    protocol?: string,
+    protocolVersion?: string,
   ) {
     this.#apiToken = apiToken;
     this.#addresses = addresses;
-    this.#protocol = protocol;
+    this.#protocolVersion = protocolVersion;
   }
 
   get default(): string {
@@ -46,8 +46,8 @@ export class EdcConnectorClientContext implements Addresses {
     return this.getOrError(this.#addresses.public, "public address");
   }
 
-  get dataspaceProtocol(): string | undefined {
-    return this.#protocol;
+  get protocolVersion(): string | undefined {
+    return this.#protocolVersion;
   }
 
   get federatedCatalog(): string {

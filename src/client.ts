@@ -16,7 +16,7 @@ export type EdcConnectorClientType<T extends Record<string, EdcController>> =
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
-const protocolSymbol = Symbol("[#protocol]");
+const protocolVersionSymbol = Symbol("[#protocolVersion]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
@@ -66,8 +66,8 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
-  protocol(dataspaceProtocol: string): this {
-    this.#instance[protocolSymbol] = dataspaceProtocol;
+  protocolVersion(dataspaceProtocol: string): this {
+    this.#instance[protocolVersionSymbol] = dataspaceProtocol;
     return this;
   }
 
@@ -99,70 +99,51 @@ export class EdcConnectorClient {
   [apiTokenSymbol]: string | undefined;
   [addressesSymbol]: Addresses = {};
   [innerSymbol] = new Inner();
-  [protocolSymbol] = "dataspace-protocol-http:2025-1";
+  [protocolVersionSymbol] = "dataspace-protocol-http:2025-1";
+  context: EdcConnectorClientContext;
 
-  get management() {
-    const context = new EdcConnectorClientContext(
+  constructor() {
+    this.context = new EdcConnectorClientContext(
       this[apiTokenSymbol],
       this[addressesSymbol],
+      this[protocolVersionSymbol],
     );
-    return new ManagementController(this[innerSymbol], context);
+  }
+
+  get management() {
+    return new ManagementController(this[innerSymbol], this.context);
   }
 
   get identity() {
-    const context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-    );
-    return new IdentityController(this[innerSymbol], context);
+    return new IdentityController(this[innerSymbol], this.context);
   }
 
   get presentation() {
-    const context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-    );
-    return new PresentationController(this[innerSymbol], context);
+    return new PresentationController(this[innerSymbol], this.context);
   }
 
   get observability() {
-    const context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-    );
-    return new ObservabilityController(this[innerSymbol], context);
+    return new ObservabilityController(this[innerSymbol], this.context);
   }
 
   get public() {
-    const context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-    );
-    return new PublicController(this[innerSymbol], context);
+    return new PublicController(this[innerSymbol], this.context);
   }
 
   get federatedCatalog() {
-    const context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-    );
-    return new FederatedCatalogController(this[innerSymbol], context);
+    return new FederatedCatalogController(this[innerSymbol], this.context);
   }
 
   get addresses() {
     return { ...this[addressesSymbol] };
   }
 
-  get protocol() {
-    return this[protocolSymbol];
-  }
-
   createContext(
     token: string,
     addresses: Addresses,
-    protocol?: string,
+    protocolVersion?: string,
   ): EdcConnectorClientContext {
-    return new EdcConnectorClientContext(token, addresses, protocol);
+    return new EdcConnectorClientContext(token, addresses, protocolVersion);
   }
 
   static version(): string {

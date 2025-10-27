@@ -34,7 +34,7 @@ export class ContractNegotiationController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          protocol: actualContext.protocol,
+          protocol: actualContext.protocolVersion,
           "@context": JSON_LD_DEFAULT_CONTEXT,
           ...input,
         },

@@ -33,7 +33,7 @@ export class TransferProcessController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": JSON_LD_DEFAULT_CONTEXT,
-          protocol: actualContext.protocol,
+          protocol: actualContext.protocolVersion,
           ...input,
         },
       })
