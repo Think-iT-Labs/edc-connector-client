@@ -9,13 +9,13 @@ describe("TransferProcessController", () => {
   const consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
-    .protocolUrl("http://consumer-connector:9194/protocol")
+    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const provider = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
-    .protocolUrl("http://provider-connector:9194/protocol")
+    .protocolUrl("http://provider-connector:9194/protocol/2025-1")
     .build();
 
 
