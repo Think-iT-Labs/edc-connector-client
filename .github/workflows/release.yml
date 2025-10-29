@@ -4,17 +4,37 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'SemVer that will be used for publishing (e.g. "0.0.1")'
+        description: 'SemVer that will be used for publishing (e.g. "0.0.1" or "0.0.1-beta.1")'
         required: true
         type: string
+      prerelease:
+        description: 'Is this a pre-release? (beta/canary)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   prepare-release:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      is-prerelease: ${{ steps.check-prerelease.outputs.is-prerelease }}
     steps:
       - uses: actions/checkout@v5
+
+      - name: Check if version is pre-release
+        id: check-prerelease
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ "$VERSION" =~ -beta\.|rc\.|alpha\.|canary\. ]] || [[ "${{ inputs.prerelease }}" == "true" ]]; then
+            echo "is-prerelease=true" >> $GITHUB_OUTPUT
+            echo "This is a pre-release version"
+          else
+            echo "is-prerelease=false" >> $GITHUB_OUTPUT
+            echo "This is a stable release version"
+          fi
+
       - name: prepare ${{ inputs.version }} release
         run: |
           git config user.name "think-it-account"
@@ -34,9 +54,13 @@ jobs:
           generateReleaseNotes: true
           tag: v${{ inputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          makeLatest: true
+          makeLatest: ${{ steps.check-prerelease.outputs.is-prerelease == 'false' }}
+          prerelease: ${{ steps.check-prerelease.outputs.is-prerelease == 'true' }}
           removeArtifacts: true
+
   publish:
     needs: prepare-release
     uses: ./.github/workflows/publish-npm.yml
+    with:
+      is-prerelease: ${{ needs.prepare-release.outputs.is-prerelease == 'true' }}
     secrets: inherit

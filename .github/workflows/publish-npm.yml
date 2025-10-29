@@ -2,7 +2,19 @@ name: publish npm
 
 on:
   workflow_dispatch:
+    inputs:
+      is-prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      is-prerelease:
+        description: 'Is this a pre-release?'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   publish:
@@ -35,7 +47,15 @@ jobs:
       shell: bash
       run: yarn transpile
 
-    - run: npm publish --access=public
+    - name: Publish to npm
       shell: bash
+      run: |
+        if [ "${{ inputs.is-prerelease }}" == "true" ]; then
+          echo "Publishing as beta (pre-release)"
+          npm publish --access=public --tag beta
+        else
+          echo "Publishing as latest (stable release)"
+          npm publish --access=public --tag latest
+        fi
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
