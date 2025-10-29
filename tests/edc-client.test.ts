@@ -30,9 +30,10 @@ describe("EdcConnectorClient", () => {
         public: "http://localhost:19291",
         control: "http://localhost:19292",
       };
+      const protocol = "protocol";
 
       // when
-      const context = edcClient.createContext(apiToken, addresses);
+      const context = edcClient.createContext(apiToken, addresses, protocol);
 
       // then
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
@@ -42,6 +43,7 @@ describe("EdcConnectorClient", () => {
       expect(context.protocol).toBe(addresses.protocol);
       expect(context.public).toBe(addresses.public);
       expect(context.control).toBe(addresses.control);
+      expect(context.protocolVersion).toBe(protocol);
     });
   });
 

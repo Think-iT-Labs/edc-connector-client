@@ -8,7 +8,7 @@ import {
 } from "../../../src";
 
 describe("CatalogController", () => {
-  const providerProtocolUrl = "http://provider-connector:9194/protocol";
+  const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
 
   const consumerManagement = new EdcConnectorClient.Builder()
     .apiToken("123456")
