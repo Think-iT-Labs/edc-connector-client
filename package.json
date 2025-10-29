@@ -13,7 +13,7 @@
   "scripts": {
     "transpile": "tsc",
     "pretest": "node pretest/edc-openapi.js",
-    "test": "jest --forceExit"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --forceExit"
   },
   "engines": {
     "node": ">=20"
