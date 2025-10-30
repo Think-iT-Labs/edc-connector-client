@@ -7,11 +7,6 @@ on:
         description: 'SemVer that will be used for publishing (e.g. "0.0.1" or "0.0.1-beta.1")'
         required: true
         type: string
-      prerelease:
-        description: 'Is this a pre-release? (beta/canary)'
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   prepare-release:
@@ -27,7 +22,7 @@ jobs:
         id: check-prerelease
         run: |
           VERSION="${{ inputs.version }}"
-          if [[ "$VERSION" =~ -beta\.|rc\.|alpha\.|canary\. ]] || [[ "${{ inputs.prerelease }}" == "true" ]]; then
+          if [[ "$VERSION" =~ -beta\.|rc\.|alpha\.|canary\. ]]; then
             echo "is-prerelease=true" >> $GITHUB_OUTPUT
             echo "This is a pre-release version"
           else
@@ -62,5 +57,5 @@ jobs:
     needs: prepare-release
     uses: ./.github/workflows/publish-npm.yml
     with:
-      is-prerelease: ${{ needs.prepare-release.outputs.is-prerelease == 'true' }}
+      prerelease: ${{ needs.prepare-release.outputs.is-prerelease == 'true' }}
     secrets: inherit
