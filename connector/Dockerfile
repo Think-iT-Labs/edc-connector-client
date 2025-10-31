@@ -1,8 +1,11 @@
-FROM gradle:8.8-jdk17 AS build
+FROM gradle:9-jdk21 AS build
 
-COPY --chown=gradle:gradle . /home/gradle/project/
 WORKDIR /home/gradle/project/
-RUN gradle build --no-daemon
+
+COPY --chown=gradle:gradle . ./
+
+RUN --mount=type=cache,target=/home/gradle/.gradle/caches \
+    gradle build --no-daemon
 
 FROM eclipse-temurin:21
 

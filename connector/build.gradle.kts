@@ -23,8 +23,9 @@ application {
     mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+tasks.shadowJar {
     dependsOn("distTar", "distZip")
     mergeServiceFiles()
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     archiveFileName.set("connector.jar")
 }
