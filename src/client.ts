@@ -97,11 +97,13 @@ class Builder<T extends Record<string, EdcController> = {}> {
   }
 
   build(): EdcConnectorClientType<T> {
-    return this.#instance.addContext({
+    this.#instance.context = EdcConnectorClient.createContext({
       token: this[apiTokenSymbol],
       addresses: this[addressesSymbol],
       protocolVersion: this[protocolVersionSymbol],
-    }) as EdcConnectorClient & T;
+    });
+
+    return this.#instance as EdcConnectorClient & T;
   }
 }
 
@@ -110,10 +112,7 @@ export class EdcConnectorClient {
   context: EdcConnectorClientContext;
 
   constructor(input: ContextInput = { addresses: {} }) {
-    this.context = EdcConnectorClient.createContext({
-      protocolVersion: "dataspace-protocol-http:2025-1",
-      ...input,
-    });
+    this.context = EdcConnectorClient.createContext(input);
   }
 
   get management() {
@@ -141,34 +140,18 @@ export class EdcConnectorClient {
   }
 
   get addresses(): Addresses {
-    return {
-      public: this.context.public,
-      control: this.context.control,
-      default: this.context.default,
-      federatedCatalogUrl: this.context.federatedCatalog,
-      identity: this.context.identity,
-      management: this.context.management,
-      presentation: this.context.presentation,
-      protocol: this.context.protocol,
-    };
+    return this.context.addresses;
   }
 
-  addContext(
-    { token, addresses, protocolVersion }: ContextInput = { addresses: {} },
-  ) {
-    token = this.context.apiToken || token;
-    addresses = {
-      ...this.addresses,
-      ...addresses,
-    };
-    protocolVersion = this.context.protocolVersion;
-
-    this.context = new EdcConnectorClientContext(
-      token,
-      addresses,
-      protocolVersion,
-    );
-    return this;
+  /**
+   * @deprecated
+   */
+  createContext(
+    token: string,
+    addresses: Addresses,
+    protocolVersion?: string,
+  ): EdcConnectorClientContext {
+    return new EdcConnectorClientContext(token, addresses, protocolVersion);
   }
 
   static createContext(
