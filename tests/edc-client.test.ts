@@ -21,7 +21,6 @@ describe("EdcConnectorClient", () => {
   describe("edcClient.createContext", () => {
     it("creates a new EdcConnectorClientContext", async () => {
       // given
-      const edcClient = new EdcConnectorClient();
       const apiToken = "123456";
       const addresses: Addresses = {
         default: "http://localhost:19191",
@@ -33,7 +32,11 @@ describe("EdcConnectorClient", () => {
       const protocol = "protocol";
 
       // when
-      const context = edcClient.createContext(apiToken, addresses, protocol);
+      const context = EdcConnectorClient.createContext({
+        token: apiToken,
+        addresses,
+        protocolVersion: protocol,
+      });
 
       // then
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
@@ -44,6 +47,32 @@ describe("EdcConnectorClient", () => {
       expect(context.public).toBe(addresses.public);
       expect(context.control).toBe(addresses.control);
       expect(context.protocolVersion).toBe(protocol);
+    });
+
+    it("creates contex correctly with builder.build", () => {
+      const apiToken = "123456";
+      const defaultUrl = "http://localhost:19191";
+      const managementUrl = "http://localhost:19193";
+      const protocolUrl = "http://localhost:19194";
+      const publicUrl = "http://localhost:19291";
+      const protocol = "protocol";
+
+      const client = new EdcConnectorClient.Builder()
+        .apiToken(apiToken)
+        .managementUrl(managementUrl)
+        .defaultUrl(defaultUrl)
+        .protocolUrl(protocolUrl)
+        .publicUrl(publicUrl)
+        .protocolVersion(protocol)
+        .build();
+
+      expect(client.context).toBeInstanceOf(EdcConnectorClientContext);
+      expect(client.context.apiToken).toBe(apiToken);
+      expect(client.context.default).toBe(defaultUrl);
+      expect(client.context.management).toBe(managementUrl);
+      expect(client.context.protocol).toBe(protocolUrl);
+      expect(client.context.public).toBe(publicUrl);
+      expect(client.context.protocolVersion).toBe(protocol);
     });
   });
 
