@@ -13,6 +13,12 @@ import { Inner } from "./inner";
 export type EdcConnectorClientType<T extends Record<string, EdcController>> =
   EdcConnectorClient & T;
 
+export type ContextInput = {
+  token?: string;
+  addresses: Addresses;
+  protocolVersion?: string;
+};
+
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
@@ -20,54 +26,57 @@ const protocolVersionSymbol = Symbol("[#protocolVersion]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
+  [apiTokenSymbol]?: string;
+  [addressesSymbol]: Addresses = {};
+  [protocolVersionSymbol]?: string;
 
   apiToken(apiToken: string): this {
-    this.#instance[apiTokenSymbol] = apiToken;
+    this[apiTokenSymbol] = apiToken;
     return this;
   }
 
   managementUrl(managementUrl: string): this {
-    this.#instance[addressesSymbol].management = managementUrl;
+    this[addressesSymbol].management = managementUrl;
     return this;
   }
 
   identityUrl(identityUrl: string): this {
-    this.#instance[addressesSymbol].identity = identityUrl;
+    this[addressesSymbol].identity = identityUrl;
     return this;
   }
 
   presentationUrl(presentationUrl: string): this {
-    this.#instance[addressesSymbol].presentation = presentationUrl;
+    this[addressesSymbol].presentation = presentationUrl;
     return this;
   }
 
   defaultUrl(defaultUrl: string): this {
-    this.#instance[addressesSymbol].default = defaultUrl;
+    this[addressesSymbol].default = defaultUrl;
     return this;
   }
 
   protocolUrl(protocolUrl: string): this {
-    this.#instance[addressesSymbol].protocol = protocolUrl;
+    this[addressesSymbol].protocol = protocolUrl;
     return this;
   }
 
   publicUrl(publicUrl: string): this {
-    this.#instance[addressesSymbol].public = publicUrl;
+    this[addressesSymbol].public = publicUrl;
     return this;
   }
 
   controlUrl(controlUrl: string): this {
-    this.#instance[addressesSymbol].control = controlUrl;
+    this[addressesSymbol].control = controlUrl;
     return this;
   }
 
   federatedCatalogUrl(federatedCatalogUrl: string): this {
-    this.#instance[addressesSymbol].federatedCatalogUrl = federatedCatalogUrl;
+    this[addressesSymbol].federatedCatalogUrl = federatedCatalogUrl;
     return this;
   }
 
   protocolVersion(dataspaceProtocol: string): this {
-    this.#instance[protocolVersionSymbol] = dataspaceProtocol;
+    this[protocolVersionSymbol] = dataspaceProtocol;
     return this;
   }
 
@@ -77,10 +86,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
   ): Builder<T & Record<K, C>> {
     Object.defineProperty(this.#instance, key, {
       get() {
-        return new Controller(
-          this[innerSymbol],
-          this.createContext(this[apiTokenSymbol], this[addressesSymbol]),
-        );
+        return new Controller(this[innerSymbol], this.context);
       },
       enumerable: true,
       configurable: false,
@@ -91,23 +97,22 @@ class Builder<T extends Record<string, EdcController> = {}> {
   }
 
   build(): EdcConnectorClientType<T> {
+    this.#instance.context = EdcConnectorClient.createContext({
+      token: this[apiTokenSymbol],
+      addresses: this[addressesSymbol],
+      protocolVersion: this[protocolVersionSymbol],
+    });
+
     return this.#instance as EdcConnectorClient & T;
   }
 }
 
 export class EdcConnectorClient {
-  [apiTokenSymbol]: string | undefined;
-  [addressesSymbol]: Addresses = {};
   [innerSymbol] = new Inner();
-  [protocolVersionSymbol] = "dataspace-protocol-http:2025-1";
   context: EdcConnectorClientContext;
 
-  constructor() {
-    this.context = new EdcConnectorClientContext(
-      this[apiTokenSymbol],
-      this[addressesSymbol],
-      this[protocolVersionSymbol],
-    );
+  constructor(input: ContextInput = { addresses: {} }) {
+    this.context = EdcConnectorClient.createContext(input);
   }
 
   get management() {
@@ -134,14 +139,23 @@ export class EdcConnectorClient {
     return new FederatedCatalogController(this[innerSymbol], this.context);
   }
 
-  get addresses() {
-    return { ...this[addressesSymbol] };
+  get addresses(): Addresses {
+    return this.context.addresses;
   }
 
+  /**
+   * @deprecated
+   */
   createContext(
     token: string,
     addresses: Addresses,
     protocolVersion?: string,
+  ): EdcConnectorClientContext {
+    return new EdcConnectorClientContext(token, addresses, protocolVersion);
+  }
+
+  static createContext(
+    { token, addresses, protocolVersion }: ContextInput = { addresses: {} },
   ): EdcConnectorClientContext {
     return new EdcConnectorClientContext(token, addresses, protocolVersion);
   }

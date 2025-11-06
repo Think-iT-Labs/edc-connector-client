@@ -3,12 +3,12 @@ import { Addresses } from "./entities";
 export class EdcConnectorClientContext implements Addresses {
   #apiToken: string | undefined;
   #addresses: Addresses;
-  #protocolVersion: string | undefined;
+  #protocolVersion: string;
 
   constructor(
     apiToken: string | undefined,
     addresses: Addresses,
-    protocolVersion?: string,
+    protocolVersion = "dataspace-protocol-http:2025-1",
   ) {
     this.#apiToken = apiToken;
     this.#addresses = addresses;
@@ -59,6 +59,10 @@ export class EdcConnectorClientContext implements Addresses {
 
   get apiToken(): string | undefined {
     return this.#apiToken;
+  }
+
+  get addresses() {
+    return { ...this.#addresses };
   }
 
   private getOrError(
