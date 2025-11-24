@@ -16,7 +16,7 @@ jobs:
     outputs:
       is-prerelease: ${{ steps.check-prerelease.outputs.is-prerelease }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Check if version is pre-release
         id: check-prerelease
