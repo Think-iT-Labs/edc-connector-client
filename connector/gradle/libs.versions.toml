@@ -3,7 +3,7 @@ format.version = "1.1"
 
 [versions]
 edc = "0.14.1"
-shadow = "9.2.2"
+shadow = "9.3.0"
 
 [libraries]
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
