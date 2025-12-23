@@ -17,7 +17,7 @@ export interface PolicyInput {
   permission?: Permission[];
   prohibition?: Prohibition[];
   target?: string;
-  profiles: string[];
+  profiles?: string[];
 }
 
 export class Policy extends JsonLdObject {
