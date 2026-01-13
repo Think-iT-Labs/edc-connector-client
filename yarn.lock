@@ -1100,10 +1100,10 @@
     "@types/node" "*"
     "@types/ssh2" "*"
 
-"@types/dockerode@^3.3.44":
-  version "3.3.45"
-  resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.45.tgz#1b5f19301563acf811adc13a6b2b3e0981998a5e"
-  integrity sha512-iYpZF+xr5QLpIICejLdUF2r5gh8IXY1Gw3WLmt41dUbS3Vn/3hVgL+6lJBVbmrhYBWfbWPPstdr6+A0s95DTWA==
+"@types/dockerode@^3.3.47":
+  version "3.3.47"
+  resolved "https://registry.yarnpkg.com/@types/dockerode/-/dockerode-3.3.47.tgz#cf8c6b4efcd0bb28b0e6009e613e7faab1b96e75"
+  integrity sha512-ShM1mz7rCjdssXt7Xz0u1/R2BJC7piWa3SJpUBiVjCf2A3XNn4cP6pUVaD8bLanpPVVn4IKzJuw3dOvkJ8IbYw==
   dependencies:
     "@types/docker-modem" "*"
     "@types/node" "*"
@@ -3884,12 +3884,12 @@ test-exclude@^6.0.0:
     minimatch "^3.0.4"
 
 testcontainers@^11.6.0:
-  version "11.7.2"
-  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-11.7.2.tgz#4b3b0c4ebaf0dcb7a53312314107d623fc0c97ca"
-  integrity sha512-jeFzeyzLhIouRAbLnQNapJ2esBs/mvXkkYvO1/vSZehT3/7+Q557qaNxwKwMqAbfxfSh7gcx1OLlMsQUZ9JLdA==
+  version "11.11.0"
+  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-11.11.0.tgz#0f397cd3d2a71fc5e1573d36d78149ddb2e0ab3b"
+  integrity sha512-nKTJn3n/gkyGg/3SVkOwX+isPOGSHlfI+CWMobSmvQrsj7YW01aWvl2pYIfV4LMd+C8or783yYrzKSK2JlP+Qw==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
-    "@types/dockerode" "^3.3.44"
+    "@types/dockerode" "^3.3.47"
     archiver "^7.0.1"
     async-lock "^1.4.1"
     byline "^5.0.0"
