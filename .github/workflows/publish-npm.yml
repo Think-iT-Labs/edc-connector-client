@@ -56,8 +56,8 @@ jobs:
         run: |
           if [ "${{ inputs.prerelease }}" == "true" ]; then
             echo "Publishing as beta (pre-release)"
-            npm publish --access=public --tag beta
+            npm publish --access=public --tag beta --provenance
           else
             echo "Publishing as latest (stable release)"
-            npm publish --access=public --tag latest
+            npm publish --access=public --tag latest --provenance
           fi
