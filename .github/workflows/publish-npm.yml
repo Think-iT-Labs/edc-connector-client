@@ -33,9 +33,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: "20.x"
-
-      - name: Configure npm registry
-        run: npm config set registry https://registry.npmjs.org/
+          registry-url: "https://registry.npmjs.org"
 
       - name: Cache dependencies
         uses: actions/cache@v5
