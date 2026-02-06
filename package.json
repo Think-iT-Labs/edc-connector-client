@@ -1,6 +1,6 @@
 {
   "name": "@think-it-labs/edc-connector-client",
-  "version": "0.9.1",
+  "version": "0.9.0",
   "description": "EDC Connector HTTP client",
   "private": false,
   "homepage": "https://github.com/Think-iT-Labs/edc-connector-client",
@@ -16,7 +16,7 @@
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --forceExit"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=24"
   },
   "keywords": [
     "eclipse-edc",
