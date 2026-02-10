@@ -97,6 +97,7 @@ export async function createContractNegotiation(
   // Retrieve catalog and select contract offer
   const catalog = await consumer.management.catalog.request({
     counterPartyAddress: provider.addresses.protocol!,
+    counterPartyId: "provider"
   });
 
   const offer = catalog.datasets
@@ -114,6 +115,7 @@ export async function createContractNegotiation(
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate({
     counterPartyAddress: provider.addresses.protocol!,
+    counterPartyId: "provider",
     policy: contractOffer,
   });
 

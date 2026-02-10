@@ -75,6 +75,7 @@ export interface TransferProcessInput {
   /** @deprecated since 0.8.0: not required by the APIs anymore */
   assetId?: string;
   counterPartyAddress: string;
+  counterPartyId: string;
   contractId: string;
   dataDestination?: DataAddress;
   transferType: string;
