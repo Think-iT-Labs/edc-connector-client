@@ -25,6 +25,7 @@ describe("PublicController", () => {
         {
           transferType: "HttpData-PULL",
           counterPartyAddress: provider.addresses.protocol!,
+          counterPartyId: "provider",
           contractId: contractAgreement.id
         },
       );

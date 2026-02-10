@@ -67,6 +67,7 @@ describe("CatalogController", () => {
       const catalog = await consumerManagement.catalog.request(
         {
           counterPartyAddress: providerProtocolUrl,
+          counterPartyId: "provider"
         },
       );
 
@@ -121,6 +122,7 @@ describe("CatalogController", () => {
       const catalog = await consumerManagement.catalog.request(
         {
           counterPartyAddress: providerProtocolUrl,
+          counterPartyId: "provider"
         },
       );
 
@@ -128,6 +130,7 @@ describe("CatalogController", () => {
       const catalogDataset = await consumerManagement.catalog.requestDataset(
         {
           counterPartyAddress: providerProtocolUrl,
+          counterPartyId: "provider",
           "@id": catalog.datasets[0]["@id"]
         },
       );

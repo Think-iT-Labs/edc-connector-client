@@ -93,6 +93,7 @@ describe("TransferProcessController", () => {
     return await consumer.management.transferProcesses.initiate(
       {
         counterPartyAddress: provider.addresses.protocol!,
+        counterPartyId: "provider",
         contractId: contractAgreement.id,
         transferType: "HttpData-PULL"
       },
