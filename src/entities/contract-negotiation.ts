@@ -3,6 +3,7 @@ import { Policy } from "./policy";
 
 export interface ContractNegotiationRequest {
   counterPartyAddress: string;
+  counterPartyId: string;
   policy: Policy;
 }
 

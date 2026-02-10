@@ -7,6 +7,7 @@ export interface FederatedCatalogCacheQuery {
 
 export interface CatalogRequest {
   counterPartyAddress: string;
+  counterPartyId: string;
   querySpec?: QuerySpec;
 }
 
