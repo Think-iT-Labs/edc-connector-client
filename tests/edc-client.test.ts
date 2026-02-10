@@ -49,7 +49,7 @@ describe("EdcConnectorClient", () => {
       expect(context.protocolVersion).toBe(protocol);
     });
 
-    it("creates contex correctly with builder.build", () => {
+    it("creates context correctly with builder.build", () => {
       const apiToken = "123456";
       const defaultUrl = "http://localhost:19191";
       const managementUrl = "http://localhost:19193";

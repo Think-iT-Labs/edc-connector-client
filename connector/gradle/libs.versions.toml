@@ -2,7 +2,7 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.14.1"
+edc = "0.15.1"
 shadow = "9.3.1"
 
 [libraries]
@@ -37,7 +37,6 @@ edc-dataplane-base-bom = { module = "org.eclipse.edc:dataplane-base-bom", versio
 edc-controlplane-base-bom = { module = "org.eclipse.edc:controlplane-base-bom", version.ref = "edc" }
 edc-federatedcatalog-bom = {module = "org.eclipse.edc:federatedcatalog-base-bom", version.ref = "edc"}
 edc-crawler-spi = {module = "org.eclipse.edc:crawler-spi", version.ref = "edc"}
-edc-dataplane-public-api-v2 = {module = "org.eclipse.edc:data-plane-public-api-v2", version.ref = "edc"}
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }

@@ -16,7 +16,6 @@ dependencies {
     runtimeOnly(libs.edc.federatedcatalog.bom)
     implementation(libs.edc.crawler.spi)
     runtimeOnly(libs.edc.iam.mock)
-    runtimeOnly(libs.edc.dataplane.public.api.v2)
 }
 
 application {
