@@ -21,7 +21,7 @@ import java.util.List;
 
 public class DemoTargetNodeDirectory implements TargetNodeDirectory {
 
-    private static final String DSP_URL_PATTERN = "http://%s-connector:9194/protocol";
+    private static final String DSP_URL_PATTERN = "http://%s-connector:9194/protocol/2025-1";
 
     private static final List<String> PARTICIPANT_LIST = List.of("consumer", "provider");
 
@@ -36,7 +36,7 @@ public class DemoTargetNodeDirectory implements TargetNodeDirectory {
     }
 
     private TargetNode toTargetNode(String id) {
-        return new TargetNode(id, id, DSP_URL_PATTERN.formatted(id), List.of("dataspace-protocol-http"));
+        return new TargetNode(id, id, DSP_URL_PATTERN.formatted(id), List.of("dataspace-protocol-http:2025-1"));
     }
 
     public TargetNode remove(String id) {

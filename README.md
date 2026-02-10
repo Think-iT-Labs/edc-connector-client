@@ -61,7 +61,6 @@ import { EdcConnectorClient } from "@think-it-labs/edc-connector-client"
 const client = new EdcConnectorClient.Builder()
   .apiToken("123456")
   .managementUrl("https://edc.think-it.io/management")
-  .publicUrl("https://edc.think-it.io/public")
   .build();
 ```
 
@@ -101,7 +100,6 @@ const context = client.createContext("123456", {
   default: "https://edc.think-it.io/api",
   management: "https://edc.think-it.io/management",
   protocol: "https://edc.think-it.io/protocol",
-  public: "https://edc.think-it.io/public",
   control: "https://edc.think-it.io/control",
 });
 ```
