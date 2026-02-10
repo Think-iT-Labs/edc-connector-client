@@ -1,2 +1,3 @@
-io.thinkit.client.extension.SeedVaultExtension
+io.thinkit.client.extension.EndpointGeneratorFunctionExtension
 io.thinkit.client.extension.ParticipantsResolverExtension
+io.thinkit.client.extension.SeedVaultExtension

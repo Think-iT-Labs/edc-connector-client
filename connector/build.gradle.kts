@@ -10,10 +10,9 @@ repositories {
 
 dependencies {
     runtimeOnly(libs.edc.controlplane.base.bom)
-    runtimeOnly(libs.edc.dataplane.base.bom) {
-        exclude(group = "org.eclipse.edc", module = "data-plane-selector-client")
-    }
+    runtimeOnly(libs.edc.dataplane.base.bom)
     runtimeOnly(libs.edc.federatedcatalog.bom)
+    implementation(libs.edc.data.plane.spi)
     implementation(libs.edc.crawler.spi)
     runtimeOnly(libs.edc.iam.mock)
 }

@@ -92,7 +92,7 @@ export class JsonLdObject {
       case "dcat":
         return "http://www.w3.org/ns/dcat#";
       case "dspace":
-        return "https://w3id.org/dspace/v0.8/";
+        return "https://w3id.org/dspace/2025/1/";
       default:
         throw new Error(`JSON-LD context ${prefix} not supported`);
     }

@@ -15,7 +15,6 @@ describe("EdcConnectorClient", () => {
     expect(edcClient).toBeInstanceOf(EdcConnectorClient);
     expect(edcClient).toHaveProperty("management");
     expect(edcClient).toHaveProperty("observability");
-    expect(edcClient).toHaveProperty("public");
   });
 
   describe("edcClient.createContext", () => {
@@ -26,7 +25,6 @@ describe("EdcConnectorClient", () => {
         default: "http://localhost:19191",
         management: "http://localhost:19193",
         protocol: "http://localhost:19194",
-        public: "http://localhost:19291",
         control: "http://localhost:19292",
       };
       const protocol = "protocol";
@@ -44,7 +42,6 @@ describe("EdcConnectorClient", () => {
       expect(context.default).toBe(addresses.default);
       expect(context.management).toBe(addresses.management);
       expect(context.protocol).toBe(addresses.protocol);
-      expect(context.public).toBe(addresses.public);
       expect(context.control).toBe(addresses.control);
       expect(context.protocolVersion).toBe(protocol);
     });
@@ -54,7 +51,6 @@ describe("EdcConnectorClient", () => {
       const defaultUrl = "http://localhost:19191";
       const managementUrl = "http://localhost:19193";
       const protocolUrl = "http://localhost:19194";
-      const publicUrl = "http://localhost:19291";
       const protocol = "protocol";
 
       const client = new EdcConnectorClient.Builder()
@@ -62,7 +58,6 @@ describe("EdcConnectorClient", () => {
         .managementUrl(managementUrl)
         .defaultUrl(defaultUrl)
         .protocolUrl(protocolUrl)
-        .publicUrl(publicUrl)
         .protocolVersion(protocol)
         .build();
 
@@ -71,7 +66,6 @@ describe("EdcConnectorClient", () => {
       expect(client.context.default).toBe(defaultUrl);
       expect(client.context.management).toBe(managementUrl);
       expect(client.context.protocol).toBe(protocolUrl);
-      expect(client.context.public).toBe(publicUrl);
       expect(client.context.protocolVersion).toBe(protocol);
     });
   });

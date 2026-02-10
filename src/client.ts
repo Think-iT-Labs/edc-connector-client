@@ -1,7 +1,7 @@
 import { Class } from "type-fest";
 import { version } from "../package.json";
 import { EdcConnectorClientContext } from "./context";
-import { ObservabilityController, PublicController } from "./controllers";
+import { ObservabilityController } from "./controllers";
 import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
@@ -57,11 +57,6 @@ class Builder<T extends Record<string, EdcController> = {}> {
 
   protocolUrl(protocolUrl: string): this {
     this[addressesSymbol].protocol = protocolUrl;
-    return this;
-  }
-
-  publicUrl(publicUrl: string): this {
-    this[addressesSymbol].public = publicUrl;
     return this;
   }
 
@@ -129,10 +124,6 @@ export class EdcConnectorClient {
 
   get observability() {
     return new ObservabilityController(this[innerSymbol], this.context);
-  }
-
-  get public() {
-    return new PublicController(this[innerSymbol], this.context);
   }
 
   get federatedCatalog() {

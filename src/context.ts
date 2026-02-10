@@ -42,10 +42,6 @@ export class EdcConnectorClientContext implements Addresses {
     return this.getOrError(this.#addresses.control, "control address");
   }
 
-  get public(): string {
-    return this.getOrError(this.#addresses.public, "public address");
-  }
-
   get protocolVersion(): string | undefined {
     return this.#protocolVersion;
   }

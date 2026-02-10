@@ -21,7 +21,7 @@ export interface DatasetRequest {
 export class Catalog extends JsonLdId {
 
   get participantId(): string {
-    return this.mandatoryValue('dspace', 'participantId');
+    return this.nestedOf(() => new JsonLdId(), 'dspace', 'participantId')?.id!!;
   }
 
   get datasets(): Dataset[] {
