@@ -1,23 +1,25 @@
 import { EDC_CONTEXT } from "./context";
+import { documentLoader } from "./custom-loader";
 import jsonld from "jsonld";
 
 export async function compact(body: any): Promise<jsonld.NodeObject> {
-  return await jsonld.compact(body, CONTEXT);
+  return await jsonld.compact(body, CONTEXT, { documentLoader });
 }
 
-export async function expand<T extends JsonLdObject>(
+export async function expand<T extends object>(
   body: any,
   newInstance: () => T,
 ): Promise<T> {
-  const expanded = await jsonld.expand(body);
+  const expanded = await jsonld.expand(body, { documentLoader });
   return Object.assign(newInstance(), expanded[0]);
 }
-
 export async function expandArray<T extends JsonLdObject>(
   body: any,
   newInstance: () => T,
 ): Promise<T[]> {
-  const expanded = await jsonld.expand(body);
+  const expanded = await jsonld.expand(body, { documentLoader } as Parameters<
+    typeof jsonld.expand
+  >[1]);
   return (expanded as Array<any>).map((element) =>
     Object.assign(newInstance(), element),
   );
