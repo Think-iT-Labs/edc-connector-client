@@ -8,3 +8,5 @@ coverage/
 dist/
 node_modules/
 .DS_Store
+# this folder testing-scripts is used to test the behaviour of features while developing
+testing-scripts/ 
