@@ -1,4 +1,4 @@
-import { EDC_CONTEXT } from "./context";
+import { EDC_CONTEXT } from "../context";
 import { documentLoader } from "./custom-loader";
 import jsonld from "jsonld";
 
