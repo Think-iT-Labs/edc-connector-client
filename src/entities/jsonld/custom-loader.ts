@@ -1,10 +1,11 @@
 import jsonld from "jsonld";
-import dspaceData from "./files/dspace.json";
+import dspace2025Data from "./files/dspace-2025.json";
+import edcDspaceData from "./files/edc-dspace.json";
 import odrlProfileData from "./files/odrl-profile.json";
 
 const JSONLD_CONTEXTS: Record<string, object> = {
-  "https://w3id.org/edc/dspace/v0.0.1": dspaceData,
-  "https://w3id.org/dspace/2025/1/context.jsonld": dspaceData,
+  "https://w3id.org/edc/dspace/v0.0.1": edcDspaceData,
+  "https://w3id.org/dspace/2025/1/context.jsonld": dspace2025Data,
   "https://w3id.org/dspace/2025/1/odrl-profile.jsonld": odrlProfileData,
 };
 
