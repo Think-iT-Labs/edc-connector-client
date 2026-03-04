@@ -6,20 +6,19 @@ export async function compact(body: any): Promise<jsonld.NodeObject> {
   return await jsonld.compact(body, CONTEXT, { documentLoader });
 }
 
-export async function expand<T extends object>(
+export async function expand<T extends JsonLdObject>(
   body: any,
   newInstance: () => T,
 ): Promise<T> {
   const expanded = await jsonld.expand(body, { documentLoader });
   return Object.assign(newInstance(), expanded[0]);
 }
+
 export async function expandArray<T extends JsonLdObject>(
   body: any,
   newInstance: () => T,
 ): Promise<T[]> {
-  const expanded = await jsonld.expand(body, { documentLoader } as Parameters<
-    typeof jsonld.expand
-  >[1]);
+  const expanded = await jsonld.expand(body, { documentLoader });
   return (expanded as Array<any>).map((element) =>
     Object.assign(newInstance(), element),
   );
