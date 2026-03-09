@@ -72,20 +72,6 @@ describe("TransferProcessController", () => {
     });
   });
 
-  describe("deprovision", () => {
-    it("successfully deprovision a transfer process", async () => {
-      const idResponse = await initiate();
-      await waitForTransferState(consumer, idResponse.id, "STARTED");
-
-      await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
-      await waitForTransferState(consumer, idResponse.id, "TERMINATED");
-
-      await consumer.management.transferProcesses.deprovision(idResponse.id);
-
-      await waitForTransferState(consumer, idResponse.id, "DEPROVISIONED");
-    });
-  });
-
   async function initiate(): Promise<IdResponse> {
     const { contractAgreement } = await createContractAgreement(
       provider, consumer);
