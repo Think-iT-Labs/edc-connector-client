@@ -4,61 +4,62 @@ import {
   expand,
   IdResponse,
   Secret,
-  JSON_LD_DEFAULT_CONTEXT
+  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class SecretController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/secrets";
+export class SecretController extends ManagementBaseController {
+  protected readonly resourcePath = "secrets";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super(inner, context);
   }
 
-  async create(input: Secret, context?: EdcConnectorClientContext): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+  async create(
+    input: Secret,
+    context?: EdcConnectorClientContext,
+  ): Promise<IdResponse> {
+    const actualContext = this.getActualContext(context);
 
     const body = await compact({
       ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT
+      "@context": JSON_LD_DEFAULT_CONTEXT,
     });
 
-    return this.#inner.request(actualContext.management, {
-        path: this.#basePath,
-        method: "POST",
-        apiToken: actualContext.apiToken,
-        body
-      });
+    return this.inner.request(actualContext.management, {
+      path: this.getBasePath(actualContext),
+      method: "POST",
+      apiToken: actualContext.apiToken,
+      body,
+    });
   }
 
-  async get(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<Secret> {
-    const actualContext = context || this.#context!;
+  async get(id: string, context?: EdcConnectorClientContext): Promise<Secret> {
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${id}`,
+        path: `${this.getBasePath(actualContext)}/${id}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new Secret()));
   }
 
-  async update(input: Secret, context?: EdcConnectorClientContext): Promise<void> {
-    const actualContext = context || this.#context!;
+  async update(
+    input: Secret,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.getActualContext(context);
 
     const body = await compact({
       ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT
+      "@context": JSON_LD_DEFAULT_CONTEXT,
     });
 
-    return this.#inner.request(actualContext.management, {
-      path: this.#basePath,
+    return this.inner.request(actualContext.management, {
+      path: this.getBasePath(actualContext),
       method: "PUT",
       apiToken: actualContext.apiToken,
       body,
@@ -66,13 +67,12 @@ export class SecretController {
   }
 
   async delete(id: string, context?: EdcConnectorClientContext): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-        path: `${this.#basePath}/${id}`,
-        method: "DELETE",
-        apiToken: actualContext.apiToken,
-      });
+    return this.inner.request(actualContext.management, {
+      path: `${this.getBasePath(actualContext)}/${id}`,
+      method: "DELETE",
+      apiToken: actualContext.apiToken,
+    });
   }
-
 }

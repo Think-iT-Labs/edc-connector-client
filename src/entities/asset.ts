@@ -20,7 +20,7 @@ export interface AssetInput {
   "@id"?: string;
   properties: AssetProperties;
   privateProperties?: AssetProperties;
-  dataAddress: DataAddress
+  dataAddress: DataAddress;
 }
 
 interface AssetProperties {

@@ -14,8 +14,8 @@ export * from "./edr";
 export * from "./health";
 export * from "./id-response";
 export * from "./jsonld";
-export * from "./policy-definition";
 export * from "./policy";
+export * from "./policy-definition";
 export * from "./secret";
 export * from "./transfer-process";
 
@@ -35,3 +35,12 @@ export interface QuerySpec {
   sortField?: string;
   sortOrder?: "ASC" | "DESC";
 }
+
+export const MANAGEMENT_API_VERSIONS = ["v3", "v4beta"] as const;
+export type ManagementApiVersion = typeof MANAGEMENT_API_VERSIONS[number];
+export const DEFAULT_MANAGEMENT_API_VERSION: ManagementApiVersion = "v3";
+export const MANAGEMENT_API_VERSION_PATHS: Record<ManagementApiVersion, string> =
+{
+  v3: "/v3",
+  v4beta: "/v4beta",
+};

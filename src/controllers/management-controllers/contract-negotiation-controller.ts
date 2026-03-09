@@ -11,26 +11,24 @@ import {
   JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class ContractNegotiationController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/contractnegotiations";
+export class ContractNegotiationController extends ManagementBaseController {
+  protected readonly resourcePath = "contractnegotiations";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super(inner, context);
   }
 
   async initiate(
     input: ContractNegotiationRequest,
     context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.getBasePath(actualContext),
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
@@ -46,11 +44,11 @@ export class ContractNegotiationController {
     query: QuerySpec = {},
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -68,11 +66,11 @@ export class ContractNegotiationController {
     negotiationId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${negotiationId}`,
+        path: `${this.getBasePath(actualContext)}/${negotiationId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -83,11 +81,11 @@ export class ContractNegotiationController {
     negotiationId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiationState> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${negotiationId}/state`,
+        path: `${this.getBasePath(actualContext)}/${negotiationId}/state`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -99,10 +97,10 @@ export class ContractNegotiationController {
     reason: string,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${negotiationId}/terminate`,
+    return this.inner.request(actualContext.management, {
+      path: `${this.getBasePath(actualContext)}/${negotiationId}/terminate`,
       method: "POST",
       apiToken: actualContext.apiToken,
       body: {
@@ -117,11 +115,11 @@ export class ContractNegotiationController {
     negotiationId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${negotiationId}/agreement`,
+        path: `${this.getBasePath(actualContext)}/${negotiationId}/agreement`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
