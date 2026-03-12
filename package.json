@@ -28,7 +28,6 @@
   "dependencies": {
     "@think-it-labs/typed-error": "^0.3.0",
     "jsonld": "^9.0.0",
-    "jsonld-document-loader": "^2.3.0",
     "type-fest": "^5.4.1"
   },
   "devDependencies": {
