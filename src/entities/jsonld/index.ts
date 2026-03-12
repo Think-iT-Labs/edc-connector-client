@@ -64,7 +64,7 @@ export class JsonLdObject {
     name: string,
   ): T[] {
     var namespace = this.getNamespaceUrl(prefix);
-    return (this[`${namespace}${name}`] as T[]).map((element) =>
+    return ((this[`${namespace}${name}`] as T[]) ?? []).map((element) =>
       Object.assign(newInstance(), element),
     );
   }
