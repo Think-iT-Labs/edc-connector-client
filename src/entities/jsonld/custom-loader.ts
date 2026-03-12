@@ -1,13 +1,20 @@
-import { JsonLdDocumentLoader } from "jsonld-document-loader";
+import jsonld from "jsonld";
 import dspace2025Data from "./contexts/dspace-2025.json";
 import edcDspaceData from "./contexts/edc-dspace.json";
 import odrlProfileData from "./contexts/odrl-profile.json";
 
-const loader = new JsonLdDocumentLoader();
+const JSONLD_CONTEXTS: Record<string, object> = {
+  "https://w3id.org/edc/dspace/v0.0.1": edcDspaceData,
+  "https://w3id.org/dspace/2025/1/context.jsonld": dspace2025Data,
+  "https://w3id.org/dspace/2025/1/odrl-profile.jsonld": odrlProfileData,
+};
 
-loader.addStatic("https://w3id.org/edc/dspace/v0.0.1", edcDspaceData);
-loader.addStatic("https://w3id.org/dspace/2025/1/context.jsonld", dspace2025Data);
-loader.addStatic("https://w3id.org/dspace/2025/1/odrl-profile.jsonld", odrlProfileData);
 
-// .build() returns a function compatible with jsonld's documentLoader option
-export const documentLoader = loader.build();
+export const documentLoader = async (url: string, options: any) => {
+  const defaultLoader = (jsonld as any).documentLoaders.node();
+  if (JSONLD_CONTEXTS[url]) {
+    const doc = JSONLD_CONTEXTS[url];
+    return { contextUrl: null, documentUrl: url, document: doc };
+  }
+  return defaultLoader(url, options);
+};
