@@ -27,7 +27,6 @@
   "license": "MIT",
   "dependencies": {
     "@think-it-labs/typed-error": "^0.3.0",
-    "@transmute/jsonld-document-loader": "^0.7.0-unstable.82",
     "jsonld": "^9.0.0",
     "type-fest": "^5.4.1"
   },
