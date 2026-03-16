@@ -10,15 +10,14 @@ const JSONLD_CONTEXTS: Record<string, object> = {
 };
 
 export const documentLoader = async (url: string, options: any) => {
-    if (JSONLD_CONTEXTS[url]) {
-        const doc = JSONLD_CONTEXTS[url];
-        return { contextUrl: null, documentUrl: url, document: doc };
-    }
+  if (JSONLD_CONTEXTS[url]) {
+    const doc = JSONLD_CONTEXTS[url];
+    return { contextUrl: null, documentUrl: url, document: doc };
+  }
 
-    const defaultLoader =
-    typeof window === "undefined"
-        ? (jsonld as any).documentLoaders.node()
-        : (jsonld as any).documentLoaders.xhr();
+  const loaders = (jsonld as any).documentLoaders;
+  const defaultLoader =
+    typeof window === "undefined" ? loaders.node() : loaders.xhr();
 
   return defaultLoader(url, options);
 };
