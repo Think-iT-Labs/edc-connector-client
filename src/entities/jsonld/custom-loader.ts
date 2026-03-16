@@ -9,12 +9,15 @@ const JSONLD_CONTEXTS: Record<string, object> = {
   "https://w3id.org/dspace/2025/1/odrl-profile.jsonld": odrlProfileData,
 };
 
-const defaultLoader = (jsonld as any).documentLoaders.node();
-
 export const documentLoader = async (url: string, options: any) => {
   if (JSONLD_CONTEXTS[url]) {
     const doc = JSONLD_CONTEXTS[url];
     return { contextUrl: null, documentUrl: url, document: doc };
   }
+
+  const loaders = (jsonld as any).documentLoaders;
+  const defaultLoader =
+    typeof window === "undefined" ? loaders.node() : loaders.xhr();
+
   return defaultLoader(url, options);
 };
