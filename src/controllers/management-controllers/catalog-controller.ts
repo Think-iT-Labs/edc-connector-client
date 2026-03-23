@@ -1,11 +1,10 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  JSON_LD_DEFAULT_CONTEXT,
-  CatalogRequest,
   Catalog,
-  expand,
+  CatalogRequest,
   Dataset,
   DatasetRequest,
+  expand
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -29,7 +28,7 @@ export class CatalogController extends ManagementBaseController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -49,7 +48,7 @@ export class CatalogController extends ManagementBaseController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
           protocol: actualContext.protocolVersion,
           ...input,
         },

@@ -5,8 +5,7 @@ import {
   IdResponse,
   PolicyDefinition,
   PolicyDefinitionInput,
-  QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
+  QuerySpec
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -26,7 +25,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
 
     const body = {
       ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT,
+      "@context": this.getContextUrl(actualContext),
     };
 
     return this.inner
@@ -52,7 +51,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }
@@ -86,7 +85,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition[]> {
     const actualContext = this.getActualContext(context);
@@ -100,9 +99,9 @@ export class PolicyDefinitionController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new PolicyDefinition()));
   }

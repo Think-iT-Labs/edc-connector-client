@@ -6,36 +6,34 @@ export interface FederatedCatalogCacheQuery {
 }
 
 export interface CatalogRequest {
+  "@type": "CatalogRequest";
   counterPartyAddress: string;
   counterPartyId: string;
   querySpec?: QuerySpec;
 }
 
 export interface DatasetRequest {
-  "@id": string,
+  "@id": string;
+  "@type": "DatasetRequest";
   counterPartyAddress: string;
   counterPartyId: string;
   querySpec?: QuerySpec;
 }
 
 export class Catalog extends JsonLdId {
-
   get participantId(): string {
-    return this.nestedOf(() => new JsonLdId(), 'dspace', 'participantId')?.id!!;
+    return this.nestedOf(() => new JsonLdId(), "dspace", "participantId")?.id!!;
   }
 
   get datasets(): Dataset[] {
-    return this.arrayOf(() => new Dataset(), 'dcat', 'dataset');
+    return this.arrayOf(() => new Dataset(), "dcat", "dataset");
   }
 }
 
 export class Dataset extends JsonLdId {
-
   get offers(): Offer[] {
-    return this.arrayOf(() => new Offer(), 'odrl', 'hasPolicy');
+    return this.arrayOf(() => new Offer(), "odrl", "hasPolicy");
   }
 }
 
-export class Offer extends JsonLdId {
-
-}
+export class Offer extends JsonLdId { }

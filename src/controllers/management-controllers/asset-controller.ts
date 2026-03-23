@@ -1,12 +1,11 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   Asset,
   AssetInput,
+  expand,
+  expandArray,
   IdResponse,
-  QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
+  QuerySpec
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -31,7 +30,7 @@ export class AssetController extends ManagementBaseController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -77,13 +76,13 @@ export class AssetController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<Asset[]> {
     const actualContext = this.getActualContext(context);
@@ -98,7 +97,7 @@ export class AssetController extends ManagementBaseController {
             ? null
             : {
               ...query,
-              "@context": JSON_LD_DEFAULT_CONTEXT,
+              "@context": this.getContextUrl(actualContext),
             },
       })
       .then((body) => expandArray(body, () => new Asset()));

@@ -27,6 +27,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
         const id = crypto.randomUUID();
         const policyInput: PolicyDefinitionInput = {
           "@id": id,
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
 
@@ -39,6 +40,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("fails creating two policies with the same id", async () => {
         const policyInput: PolicyDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
 
@@ -61,6 +63,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("succesfully retuns a list of policy definitions", async () => {
         const policyInput: PolicyDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
         await policyDefinitions.create(policyInput);
@@ -77,6 +80,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("get", () => {
       it("succesfully return a policy definition", async () => {
         const policyInput: PolicyDefinitionInput = {
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder()
             .type("Set")
             .raw({
@@ -140,14 +144,16 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
 
         expect(policyDefinition.id).toBe(idResponse.id);
         expect(policyDefinition.policy.permissions).toHaveLength(1);
-        const permissionConstraints = policyDefinition.policy.permissions[0].array(
-          "odrl",
-          "constraint",
-        );
+        const permissionConstraints =
+          policyDefinition.policy.permissions[0].array("odrl", "constraint");
         expect(permissionConstraints).toHaveLength(2);
         expect(
-          permissionConstraints[0].array("odrl", "leftOperand")[0]["@id"],
-        ).toBe("https://w3id.org/edc/v0.0.1/ns/field");
+          (
+            permissionConstraints[0].array("odrl", "leftOperand")[0][
+            "@id"
+            ] as string
+          ).replace(/^https:\/\/w3id.org\/edc\/v0.0.1\/ns\//, ""),
+        ).toBe("field");
         expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
         expect(policyDefinition.policy.prohibitions).toHaveLength(1);
         const prohibitionsConstraints =
@@ -178,11 +184,13 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("updates a target policy", async () => {
         const policyInput: PolicyDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
         await policyDefinitions.create(policyInput);
-        const updatedPolicyDefinitionInput = {
+        const updatedPolicyDefinitionInput: PolicyDefinitionInput = {
           "@id": policyInput["@id"]!,
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
 
@@ -197,6 +205,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("fails to update an not existant policy", async () => {
         const maybePolicy = policyDefinitions.update(crypto.randomUUID(), {
           "@id": crypto.randomUUID(),
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         });
 
@@ -216,6 +225,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("deletes a target policy", async () => {
         const policyInput: PolicyDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "PolicyDefinition",
           policy: new PolicyBuilder().type("Set").build(),
         };
         await policyDefinitions.create(policyInput);

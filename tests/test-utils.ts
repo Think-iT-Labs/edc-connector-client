@@ -11,6 +11,7 @@ import {
   PolicyBuilder,
   PolicyDefinitionInput,
   EndpointDataReference,
+  ManagementApiVersion,
 } from "../src";
 
 interface ContractNegotiationMetadata {
@@ -29,10 +30,12 @@ interface ContractAgreementMetadata {
 }
 
 export async function createContractAgreement(
+  version: ManagementApiVersion,
   provider: EdcConnectorClient,
   consumer: EdcConnectorClient,
 ): Promise<ContractAgreementMetadata> {
   const { idResponse, ...rest } = await createContractNegotiation(
+    version,
     provider,
     consumer,
   );
@@ -56,30 +59,55 @@ export async function createContractAgreement(
 }
 
 export async function createContractNegotiation(
+  apiVersion: ManagementApiVersion,
   provider: EdcConnectorClient,
   consumer: EdcConnectorClient,
 ): Promise<ContractNegotiationMetadata> {
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
-  const assetInput: AssetInput = {
-    "@id": assetId,
-    properties: {
-      "asset:prop:id": assetId,
-      "asset:prop:name": "product description",
-      "asset:prop:contenttype": "application/json",
-    },
-    dataAddress: {
-      name: "Test asset",
-      baseUrl: "https://jsonplaceholder.typicode.com/users",
-      type: "HttpData",
-    },
-  };
+  let assetInput: AssetInput;
+  if (apiVersion === "v3") {
+    assetInput = {
+      version: "v3",
+      "@id": assetId,
+      properties: {
+        "asset:prop:id": assetId,
+        "asset:prop:name": "product description",
+        "asset:prop:contenttype": "application/json",
+      },
+      dataAddress: {
+        name: "Test asset",
+        baseUrl: "https://jsonplaceholder.typicode.com/users",
+        type: "HttpData",
+      },
+    };
+  } else {
+    assetInput = {
+      version: "v4",
+      "@id": assetId,
+      "@type": "Asset",
+      properties: {
+        "asset:prop:id": assetId,
+        "asset:prop:name": "product description",
+        "asset:prop:contenttype": "application/json",
+      },
+      dataplaneMetadata: {
+        "@type": "@type",
+        properties: {
+          name: "Test asset",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+          type: "HttpData",
+        },
+      },
+    };
+  }
   await provider.management.assets.create(assetInput);
 
   // Crate policy on the provider's side
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
     "@id": policyId,
+    "@type": "PolicyDefinition",
     policy: new PolicyBuilder().type("Set").build(),
   };
   await provider.management.policyDefinitions.create(policyInput);
@@ -88,6 +116,7 @@ export async function createContractNegotiation(
   // Crate contract definition on the provider's side
   const contractDefinitionInput: ContractDefinitionInput = {
     "@id": contractDefinitionId,
+    "@type": "ContractDefinition",
     accessPolicyId: policyId,
     contractPolicyId: policyId,
     assetsSelector: [],
@@ -96,8 +125,9 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await consumer.management.catalog.request({
+    "@type": "CatalogRequest",
     counterPartyAddress: provider.addresses.protocol!,
-    counterPartyId: "provider"
+    counterPartyId: "provider",
   });
 
   const offer = catalog.datasets
@@ -114,6 +144,7 @@ export async function createContractNegotiation(
 
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate({
+    "@type": "ContractRequest",
     counterPartyAddress: provider.addresses.protocol!,
     counterPartyId: "provider",
     policy: contractOffer,
@@ -189,7 +220,10 @@ export async function waitForFederatedCatalog(
     times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const response = await client.federatedCatalog.queryAll({ limit: 50 });
+    const response = await client.federatedCatalog.queryAll({
+      "@type": "QuerySpec",
+      limit: 50,
+    });
 
     actualNumberParticipants = response.length;
 

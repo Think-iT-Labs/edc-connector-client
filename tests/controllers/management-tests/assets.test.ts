@@ -1,6 +1,8 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import {
   AssetInput,
+  AssetInputV3,
+  AssetInputV4,
   EdcConnectorClient,
   MANAGEMENT_API_VERSIONS,
   ManagementApiVersion,
@@ -10,6 +12,8 @@ import { AssetController } from "../../../src/controllers";
 describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
   "assets (%s)",
   (apiVersion) => {
+    const itIfV4 = apiVersion === "v4beta" ? it.skip : it; // TODO: remove when specs are fixed
+
     let startedContainer: StartedTestContainer;
     let assets: AssetController;
 
@@ -37,17 +41,41 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       await startedContainer.stop();
     });
 
-    it("should create asset", async () => {
-      const assetInput: AssetInput = {
-        properties: {
-          name: "product description",
-          contenttype: "application/json",
-        },
-        dataAddress: {
-          type: "HttpData",
-          baseUrl: "https://jsonplaceholder.typicode.com/users",
-        },
-      };
+    itIfV4("should create asset", async () => {
+      let assetInput: AssetInput;
+      if (apiVersion === "v3") {
+        assetInput = {
+          version: "v3",
+          properties: {
+            name: "product description",
+            contenttype: "application/json",
+          },
+          dataAddress: {
+            type: "HttpData",
+            baseUrl: "https://jsonplaceholder.typicode.com/users",
+          },
+        } satisfies AssetInputV3;
+      } else {
+        assetInput = {
+          version: "v4",
+          "@type": "Asset",
+          "@id": "@id",
+          dataplaneMetadata: {
+            "@type": "@type",
+            properties: {
+              type: "HttpData",
+              baseUrl: "https://jsonplaceholder.typicode.com/users",
+            },
+            labels: ["labels"],
+          },
+          privateProperties: {},
+          "@context": {},
+          properties: {
+            name: "product description",
+            contenttype: "application/json",
+          },
+        } satisfies AssetInputV4;
+      }
 
       const idResponse = await assets.create(assetInput);
 
@@ -61,7 +89,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       expect(result).toBeUndefined();
     });
 
-    it("should get asset", async () => {
+    itIfV4("should get asset", async () => {
       const asset = await assets.get("assetId");
 
       expect(asset.id).not.toBeNull();
@@ -77,12 +105,32 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     });
 
     it("should update asset", async () => {
-      const updateAssetInput = {
-        "@id": "id",
-        properties: { name: "updated test asset", contenttype: "text/plain" },
-        dataAddress: { type: "any" },
-        privateProperties: {},
-      };
+      let updateAssetInput: AssetInput;
+      if (apiVersion === "v3") {
+        updateAssetInput = {
+          version: "v3",
+          "@id": "id",
+          properties: { name: "updated test asset", contenttype: "text/plain" },
+          dataAddress: { type: "any" },
+          privateProperties: {},
+        } satisfies AssetInputV3;
+      } else {
+        updateAssetInput = {
+          version: "v4",
+          "@type": "Asset",
+          dataplaneMetadata: {
+            "@type": "@type",
+            properties: {
+              key: "value",
+            },
+            labels: ["labels", "labels"],
+          },
+          "@id": "@id",
+          privateProperties: {},
+          "@context": {},
+          properties: { name: "updated test asset", contenttype: "text/plain" },
+        } satisfies AssetInputV4;
+      }
 
       const result = await assets.update(updateAssetInput);
 

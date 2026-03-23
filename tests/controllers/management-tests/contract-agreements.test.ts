@@ -36,6 +36,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("queryAll", () => {
       it("retrieves all contract agreements", async () => {
         const { idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );
@@ -56,7 +57,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("getAgreement", () => {
       it("retrieves target contract agreement", async () => {
         const { contractNegotiation, contractAgreement } =
-          await createContractAgreement(provider, consumer);
+          await createContractAgreement(apiVersion, provider, consumer);
 
         expect(contractAgreement.id).toBe(
           contractNegotiation.contractAgreementId,
@@ -81,7 +82,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("getNegotiation", () => {
       it("retrieves negotiation from agreement", async () => {
         const { contractAgreement, contractNegotiation } =
-          await createContractAgreement(provider, consumer);
+          await createContractAgreement(apiVersion, provider, consumer);
 
         const negotiation = await contractAgreements.getNegotiation(
           contractAgreement.id,

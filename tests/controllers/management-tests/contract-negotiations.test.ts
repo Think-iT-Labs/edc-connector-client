@@ -36,6 +36,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("initiate", () => {
       it("kickstart a contract negotiation", async () => {
         const { idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );
@@ -48,6 +49,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("queryAll", () => {
       it("retrieves all contract negotiations", async () => {
         const { idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );
@@ -63,9 +65,14 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       });
 
       it("filters negotiations on the provider side based on agreements' assed ID", async () => {
-        const { assetId } = await createContractAgreement(provider, consumer);
+        const { assetId } = await createContractAgreement(
+          apiVersion,
+          provider,
+          consumer,
+        );
 
         const [providerNegotiation] = await negotiations.queryAll({
+          "@type": "QuerySpec",
           filterExpression: [
             {
               operandLeft: "contractAgreement.assetId",
@@ -82,6 +89,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("get", () => {
       it("retrieves target contract negotiation", async () => {
         const { idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );
@@ -109,6 +117,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("getState", () => {
       it("returns the state of a target negotiation", async () => {
         const { idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );
@@ -157,6 +166,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     describe("getAgreement", () => {
       it("returns the a agreement for a target negotiation", async () => {
         const { assetId, idResponse } = await createContractNegotiation(
+          apiVersion,
           provider,
           consumer,
         );

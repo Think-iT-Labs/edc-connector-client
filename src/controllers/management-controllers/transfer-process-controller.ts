@@ -3,11 +3,10 @@ import {
   expand,
   expandArray,
   IdResponse,
-  JSON_LD_DEFAULT_CONTEXT,
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
-  TransferProcessState,
+  TransferProcessState
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -31,7 +30,7 @@ export class TransferProcessController extends ManagementBaseController {
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -55,7 +54,7 @@ export class TransferProcessController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcess[]> {
     const actualContext = this.getActualContext(context);
@@ -69,9 +68,9 @@ export class TransferProcessController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new TransferProcess()));
   }
@@ -104,7 +103,7 @@ export class TransferProcessController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
         reason: reason,
       },
     });
@@ -123,16 +122,13 @@ export class TransferProcessController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
         reason: reason,
       },
     });
   }
 
-  async resume(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<void> {
+  async resume(id: string, context?: EdcConnectorClientContext): Promise<void> {
     const actualContext = this.getActualContext(context);
 
     return this.inner.request(actualContext.management, {
@@ -141,7 +137,7 @@ export class TransferProcessController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }
@@ -158,7 +154,7 @@ export class TransferProcessController extends ManagementBaseController {
     if (actualContext.managementApiVersion === "v4beta") {
       console.warn(
         "Warning: deprovision() is only available in v3 API. " +
-          "This endpoint does not exist in v4beta and the request will fail.",
+        "This endpoint does not exist in v4beta and the request will fail.",
       );
     }
 
@@ -168,7 +164,7 @@ export class TransferProcessController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }

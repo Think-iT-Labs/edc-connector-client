@@ -1,14 +1,13 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractAgreement,
   ContractNegotiation,
   ContractNegotiationRequest,
   ContractNegotiationState,
+  expand,
+  expandArray,
   IdResponse,
-  QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
+  QuerySpec
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -33,7 +32,7 @@ export class ContractNegotiationController extends ManagementBaseController {
         apiToken: actualContext.apiToken,
         body: {
           protocol: actualContext.protocolVersion,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
           ...input,
         },
       })
@@ -41,7 +40,7 @@ export class ContractNegotiationController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation[]> {
     const actualContext = this.getActualContext(context);
@@ -55,9 +54,9 @@ export class ContractNegotiationController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new ContractNegotiation()));
   }
@@ -104,9 +103,10 @@ export class ContractNegotiationController extends ManagementBaseController {
       method: "POST",
       apiToken: actualContext.apiToken,
       body: {
+        "@type": "TerminateNegotiation",
         reason: reason,
         "@id": negotiationId,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }

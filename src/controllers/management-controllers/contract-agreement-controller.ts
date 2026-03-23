@@ -1,11 +1,10 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractAgreement,
   ContractNegotiation,
-  QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
+  expand,
+  expandArray,
+  QuerySpec
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -18,7 +17,7 @@ export class ContractAgreementController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement[]> {
     const actualContext = this.getActualContext(context);
@@ -32,9 +31,9 @@ export class ContractAgreementController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new ContractAgreement()));
   }

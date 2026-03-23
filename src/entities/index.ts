@@ -29,6 +29,7 @@ export interface ApiErrorDetail {
 }
 
 export interface QuerySpec {
+  "@type": "QuerySpec";
   filterExpression?: CriterionInput[];
   limit?: number;
   offset?: number;
@@ -37,10 +38,12 @@ export interface QuerySpec {
 }
 
 export const MANAGEMENT_API_VERSIONS = ["v3", "v4beta"] as const;
-export type ManagementApiVersion = typeof MANAGEMENT_API_VERSIONS[number];
+export type ManagementApiVersion = (typeof MANAGEMENT_API_VERSIONS)[number];
 export const DEFAULT_MANAGEMENT_API_VERSION: ManagementApiVersion = "v3";
-export const MANAGEMENT_API_VERSION_PATHS: Record<ManagementApiVersion, string> =
-{
+export const MANAGEMENT_API_VERSION_PATHS: Record<
+  ManagementApiVersion,
+  string
+> = {
   v3: "/v3",
   v4beta: "/v4beta",
 };

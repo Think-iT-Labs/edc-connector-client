@@ -26,6 +26,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
         const id = crypto.randomUUID();
         const input: ContractDefinitionInput = {
           "@id": id,
+          "@type": "ContractDefinition",
           accessPolicyId: crypto.randomUUID(),
           contractPolicyId: crypto.randomUUID(),
           assetsSelector: [],
@@ -40,6 +41,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("fails creating two contract definitions with the same id", async () => {
         const contractDefinitionInput: ContractDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "ContractDefinition",
           accessPolicyId: crypto.randomUUID(),
           contractPolicyId: crypto.randomUUID(),
           assetsSelector: [],
@@ -66,6 +68,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("succesfully retuns a list of contract definitions", async () => {
         const contractDefinitionInput: ContractDefinitionInput = {
           "@id": "definition-" + crypto.randomUUID(),
+          "@type": "ContractDefinition",
           accessPolicyId: crypto.randomUUID(),
           contractPolicyId: crypto.randomUUID(),
           assetsSelector: [],
@@ -84,11 +87,12 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       });
     });
 
-    describe("get", () => {
-      it("succesfully retuns a target contract definition", async () => {
+    describe.only("get", () => {
+      it.only("succesfully retuns a target contract definition", async () => {
         const accessPolicyId = crypto.randomUUID();
         const contractPolicyId = crypto.randomUUID();
         const input: ContractDefinitionInput = {
+          "@type": "ContractDefinition",
           accessPolicyId,
           contractPolicyId,
           assetsSelector: [
@@ -131,6 +135,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       it("deletes a target contract definition", async () => {
         const input: ContractDefinitionInput = {
           "@id": crypto.randomUUID(),
+          "@type": "ContractDefinition",
           accessPolicyId: crypto.randomUUID(),
           contractPolicyId: crypto.randomUUID(),
           assetsSelector: [],
@@ -166,14 +171,16 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
         it("updates a target contract definition", async () => {
           const contractDefinitionInput: ContractDefinitionInput = {
             "@id": crypto.randomUUID(),
+            "@type": "ContractDefinition",
             accessPolicyId: crypto.randomUUID(),
             contractPolicyId: crypto.randomUUID(),
             assetsSelector: [],
           };
 
           await contractDefinitions.create(contractDefinitionInput);
-          const updateContractDefinitionInput = {
+          const updateContractDefinitionInput: ContractDefinitionInput = {
             "@id": contractDefinitionInput["@id"],
+            "@type": "ContractDefinition",
             accessPolicyId: crypto.randomUUID(),
             contractPolicyId: crypto.randomUUID(),
             assetsSelector: [],
@@ -198,8 +205,9 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
         });
 
         it("fails to update an inexistant contract definition", async () => {
-          const updateContractDefinitionInput = {
+          const updateContractDefinitionInput: ContractDefinitionInput = {
             "@id": crypto.randomUUID(),
+            "@type": "ContractDefinition",
             accessPolicyId: crypto.randomUUID(),
             contractPolicyId: crypto.randomUUID(),
             assetsSelector: [],

@@ -1,12 +1,11 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractDefinition,
   ContractDefinitionInput,
+  expand,
+  expandArray,
   IdResponse,
   QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -24,6 +23,11 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.getActualContext(context);
 
+    console.log({
+      ...input,
+      "@context": this.getContextUrl(actualContext),
+    });
+
     return this.inner
       .request(actualContext.management, {
         path: this.getBasePath(actualContext),
@@ -31,7 +35,7 @@ export class ContractDefinitionController extends ManagementBaseController {
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -66,7 +70,7 @@ export class ContractDefinitionController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition[]> {
     const actualContext = this.getActualContext(context);
@@ -80,9 +84,9 @@ export class ContractDefinitionController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new ContractDefinition()));
   }
@@ -99,7 +103,7 @@ export class ContractDefinitionController extends ManagementBaseController {
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }
