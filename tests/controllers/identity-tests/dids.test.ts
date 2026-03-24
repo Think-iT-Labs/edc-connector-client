@@ -51,7 +51,7 @@ describe("DIDs", () => {
   });
 
   it("should get participant DIDs", async () => {
-    const dids = await participantDIDs.getDIDs({});
+    const dids = await participantDIDs.getDIDs();
 
     expect(dids).not.toBeNull();
     expect(dids.length).toBeGreaterThan(0);

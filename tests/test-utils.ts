@@ -62,6 +62,7 @@ export async function createContractNegotiation(
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
+    version: "v3",
     "@id": assetId,
     properties: {
       "asset:prop:id": assetId,
@@ -97,7 +98,7 @@ export async function createContractNegotiation(
   // Retrieve catalog and select contract offer
   const catalog = await consumer.management.catalog.request({
     counterPartyAddress: provider.addresses.protocol!,
-    counterPartyId: "provider"
+    counterPartyId: "provider",
   });
 
   const offer = catalog.datasets
@@ -189,7 +190,10 @@ export async function waitForFederatedCatalog(
     times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const response = await client.federatedCatalog.queryAll({ limit: 50 });
+    const response = await client.federatedCatalog.queryAll({
+      "@type": "QuerySpec",
+      limit: 50,
+    });
 
     actualNumberParticipants = response.length;
 
