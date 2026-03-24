@@ -12,7 +12,7 @@ import { AssetController } from "../../../src/controllers";
 describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
   "assets (%s)",
   (apiVersion) => {
-    const itIfV4 = apiVersion === "v4beta" ? it.skip : it; // TODO: remove when specs are fixed
+    const itIfV3 = apiVersion === "v4beta" ? it.skip : it; // TODO: remove when specs are fixed
 
     let startedContainer: StartedTestContainer;
     let assets: AssetController;
@@ -41,7 +41,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       await startedContainer.stop();
     });
 
-    itIfV4("should create asset", async () => {
+    itIfV3("should create asset", async () => {
       let assetInput: AssetInput;
       if (apiVersion === "v3") {
         assetInput = {
@@ -89,7 +89,7 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       expect(result).toBeUndefined();
     });
 
-    itIfV4("should get asset", async () => {
+    itIfV3("should get asset", async () => {
       const asset = await assets.get("assetId");
 
       expect(asset.id).not.toBeNull();

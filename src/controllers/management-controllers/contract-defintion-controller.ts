@@ -23,11 +23,6 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.getActualContext(context);
 
-    console.log({
-      ...input,
-      "@context": this.getContextUrl(actualContext),
-    });
-
     return this.inner
       .request(actualContext.management, {
         path: this.getBasePath(actualContext),

@@ -2,52 +2,50 @@ import { DataAddress } from "./data-address";
 import { JsonLdId, JsonLdObject } from "./jsonld";
 
 export class TransferProcess extends JsonLdId {
-
   get correlationId(): string {
-    return this.mandatoryValue('edc', 'correlationId');
+    return this.mandatoryValue("edc", "correlationId");
   }
 
   get type(): string {
-    return this.mandatoryValue('edc', 'type');
+    return this.mandatoryValue("edc", "type");
   }
 
   get state(): string {
-    return this.mandatoryValue('edc', 'state');
+    return this.mandatoryValue("edc", "state");
   }
 
   get createdAt(): number {
-    return this.mandatoryValue('edc', 'createdAt');
+    return this.mandatoryValue("edc", "createdAt");
   }
 
   get assetId(): string {
-    return this.mandatoryValue('edc', 'assetId');
+    return this.mandatoryValue("edc", "assetId");
   }
 
   get connectorId(): string {
-    return this.mandatoryValue('edc', 'connectorId');
+    return this.mandatoryValue("edc", "connectorId");
   }
 
   get contractId(): string {
-    return this.mandatoryValue('edc', 'contractId');
+    return this.mandatoryValue("edc", "contractId");
   }
 
   get errorDetail(): string | undefined {
-    return this.optionalValue('edc', 'errorDetail');
+    return this.optionalValue("edc", "errorDetail");
   }
 
   get dataDestination(): JsonLdObject {
-    return this.nested('edc', 'dataDestination');
+    return this.nested("edc", "dataDestination");
   }
 
   get privateProperties(): JsonLdObject {
-    return this.nested('edc', 'privateProperties');
+    return this.nested("edc", "privateProperties");
   }
-
 }
 
 export class TransferProcessState extends JsonLdObject {
   get state(): string {
-    return this.mandatoryValue('edc', 'state');
+    return this.mandatoryValue("edc", "state");
   }
 }
 
@@ -74,6 +72,7 @@ export enum TransferProcessStates {
 export interface TransferProcessInput {
   /** @deprecated since 0.8.0: not required by the APIs anymore */
   assetId?: string;
+  "@type": "TransferRequest";
   counterPartyAddress: string;
   counterPartyId: string;
   contractId: string;

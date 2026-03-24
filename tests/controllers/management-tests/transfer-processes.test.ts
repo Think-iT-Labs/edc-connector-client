@@ -49,8 +49,9 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
         const idResponse = await initiate();
         await waitForTransferState(consumer, idResponse.id, "STARTED");
 
-        const transferProcess =
-          await consumer.management.transferProcesses.get(idResponse.id);
+        const transferProcess = await consumer.management.transferProcesses.get(
+          idResponse.id,
+        );
 
         expect(transferProcess.id).toEqual(idResponse.id);
       });
@@ -84,9 +85,14 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
     });
 
     async function initiate(): Promise<IdResponse> {
-      const { contractAgreement } = await createContractAgreement(provider, consumer);
+      const { contractAgreement } = await createContractAgreement(
+        apiVersion,
+        provider,
+        consumer,
+      );
 
       return await consumer.management.transferProcesses.initiate({
+        "@type": "TransferRequest",
         counterPartyAddress: provider.addresses.protocol!,
         counterPartyId: "provider",
         contractId: contractAgreement.id,

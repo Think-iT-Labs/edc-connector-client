@@ -1,10 +1,5 @@
 import { EdcConnectorClientContext } from "../../context";
-import {
-  compact,
-  expand,
-  IdResponse,
-  Secret
-} from "../../entities";
+import { compact, expand, IdResponse, Secret } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
@@ -23,6 +18,7 @@ export class SecretController extends ManagementBaseController {
 
     const body = await compact({
       ...input,
+      "@type": "Secret",
       "@context": this.getContextUrl(actualContext),
     });
 
@@ -54,6 +50,7 @@ export class SecretController extends ManagementBaseController {
 
     const body = await compact({
       ...input,
+      "@type": "Secret",
       "@context": this.getContextUrl(actualContext),
     });
 

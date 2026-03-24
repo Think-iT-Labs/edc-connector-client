@@ -6,7 +6,7 @@ import {
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
-  TransferProcessState
+  TransferProcessState,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -68,9 +68,9 @@ export class TransferProcessController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-              ...query,
-              "@context": this.getContextUrl(actualContext),
-            },
+                ...query,
+                "@context": this.getContextUrl(actualContext),
+              },
       })
       .then((body) => expandArray(body, () => new TransferProcess()));
   }
@@ -154,7 +154,7 @@ export class TransferProcessController extends ManagementBaseController {
     if (actualContext.managementApiVersion === "v4beta") {
       console.warn(
         "Warning: deprovision() is only available in v3 API. " +
-        "This endpoint does not exist in v4beta and the request will fail.",
+          "This endpoint does not exist in v4beta and the request will fail.",
       );
     }
 
