@@ -5,7 +5,7 @@ import { ObservabilityController } from "./controllers";
 import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
-import { Addresses } from "./entities";
+import { Addresses, ManagementApiVersion } from "./entities";
 import { IdentityController } from "./facades/identity";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
@@ -17,18 +17,21 @@ export type ContextInput = {
   token?: string;
   addresses: Addresses;
   protocolVersion?: string;
+  managementApiVersion?: ManagementApiVersion;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
 const protocolVersionSymbol = Symbol("[#protocolVersion]");
+const managementApiVersionSymbol = Symbol("[#managementApiVersion]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
   [apiTokenSymbol]?: string;
   [addressesSymbol]: Addresses = {};
   [protocolVersionSymbol]?: string;
+  [managementApiVersionSymbol]?: ManagementApiVersion;
 
   apiToken(apiToken: string): this {
     this[apiTokenSymbol] = apiToken;
@@ -72,6 +75,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
 
   protocolVersion(dataspaceProtocol: string): this {
     this[protocolVersionSymbol] = dataspaceProtocol;
+    return this;
+  }
+
+  managementApiVersion(version: ManagementApiVersion): this {
+    this[managementApiVersionSymbol] = version;
     return this;
   }
 
@@ -146,9 +154,21 @@ export class EdcConnectorClient {
   }
 
   static createContext(
-    { token, addresses, protocolVersion }: ContextInput = { addresses: {} },
+    {
+      token,
+      addresses,
+      protocolVersion,
+      managementApiVersion,
+    }: ContextInput = {
+      addresses: {},
+    },
   ): EdcConnectorClientContext {
-    return new EdcConnectorClientContext(token, addresses, protocolVersion);
+    return new EdcConnectorClientContext(
+      token,
+      addresses,
+      protocolVersion,
+      managementApiVersion,
+    );
   }
 
   static version(): string {
