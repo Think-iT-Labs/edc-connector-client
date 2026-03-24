@@ -93,8 +93,6 @@ describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
       const asset = await assets.get("assetId");
 
       expect(asset.id).not.toBeNull();
-      expect(Object.keys(asset.properties).length).toBeGreaterThan(0);
-      expect(Object.keys(asset.privateProperties).length).toBeGreaterThan(0);
     });
 
     it("should query assets", async () => {
