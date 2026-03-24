@@ -18,9 +18,10 @@ export abstract class ManagementBaseController {
     this.context = context;
   }
 
-  protected getBasePath(context: EdcConnectorClientContext): string {
-    const versionPath =
-      MANAGEMENT_API_VERSION_PATHS[context.managementApiVersion];
+  protected getBasePath({
+    managementApiVersion,
+  }: EdcConnectorClientContext): string {
+    const versionPath = MANAGEMENT_API_VERSION_PATHS[managementApiVersion];
     return `${versionPath}/${this.resourcePath}`;
   }
 

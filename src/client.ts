@@ -104,6 +104,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
       token: this[apiTokenSymbol],
       addresses: this[addressesSymbol],
       protocolVersion: this[protocolVersionSymbol],
+      managementApiVersion: this[managementApiVersionSymbol],
     });
 
     return this.#instance as EdcConnectorClient & T;
@@ -160,8 +161,8 @@ export class EdcConnectorClient {
       protocolVersion,
       managementApiVersion,
     }: ContextInput = {
-      addresses: {},
-    },
+        addresses: {},
+      },
   ): EdcConnectorClientContext {
     return new EdcConnectorClientContext(
       token,

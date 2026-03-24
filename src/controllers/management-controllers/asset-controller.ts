@@ -96,9 +96,9 @@ export class AssetController extends ManagementBaseController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": this.getContextUrl(actualContext),
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new Asset()));
   }
