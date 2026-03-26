@@ -20,7 +20,7 @@ export class ContractAgreementController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement[]> {
     const actualContext = context || this.#context!;

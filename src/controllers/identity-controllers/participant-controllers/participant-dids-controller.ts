@@ -29,7 +29,10 @@ export class ParticipantDIDsController {
     });
   }
 
-  getDIDs(query: QuerySpec, context?: EdcConnectorClientContext) {
+  getDIDs(
+    query: QuerySpec = { "@type": "QuerySpec" },
+    context?: EdcConnectorClientContext,
+  ) {
     const actualContext = context || this.#context!;
 
     return this.#inner.request<DIDDocument[]>(actualContext.identity, {

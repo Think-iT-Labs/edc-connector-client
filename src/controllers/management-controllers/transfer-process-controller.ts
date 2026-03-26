@@ -56,7 +56,7 @@ export class TransferProcessController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcess[]> {
     const actualContext = context || this.#context!;

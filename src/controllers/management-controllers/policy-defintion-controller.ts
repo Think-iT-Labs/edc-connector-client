@@ -48,16 +48,15 @@ export class PolicyDefinitionController {
   ): Promise<IdResponse> {
     const actualContext = context || this.#context!;
 
-    return this.#inner
-      .request(actualContext.management, {
-        path: `${this.#basePath}/${policyId}`,
-        method: "PUT",
-        apiToken: actualContext.apiToken,
-        body: {
-          ...input,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
-        },
-      })
+    return this.#inner.request(actualContext.management, {
+      path: `${this.#basePath}/${policyId}`,
+      method: "PUT",
+      apiToken: actualContext.apiToken,
+      body: {
+        ...input,
+        "@context": JSON_LD_DEFAULT_CONTEXT,
+      },
+    });
   }
 
   async delete(
@@ -89,7 +88,7 @@ export class PolicyDefinitionController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition[]> {
     const actualContext = context || this.#context!;
