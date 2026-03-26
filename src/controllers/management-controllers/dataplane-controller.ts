@@ -1,30 +1,24 @@
 import { EdcConnectorClientContext } from "../../context";
-import {
-  expandArray,
-  Dataplane,
-} from "../../entities";
+import { expandArray, Dataplane } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class DataplaneController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/dataplanes"
+export class DataplaneController extends ManagementBaseController {
+  protected readonly resourcePath = "dataplanes";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super(inner, context);
   }
 
   async list(context?: EdcConnectorClientContext): Promise<Dataplane[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.getBasePath(actualContext),
         method: "GET",
         apiToken: actualContext.apiToken,
       })
       .then((body) => expandArray(body, () => new Dataplane()));
   }
-
 }

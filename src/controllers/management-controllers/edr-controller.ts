@@ -1,62 +1,68 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
+  Edr,
   expand,
   expandArray,
-  QuerySpec,
   JsonLdObject,
-  JSON_LD_DEFAULT_CONTEXT,
-  Edr
+  QuerySpec
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class EdrController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/edrs";
+export class EdrController extends ManagementBaseController {
+  protected readonly resourcePath = "edrs";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super(inner, context);
   }
 
-  async request(query: QuerySpec = {}, context?: EdcConnectorClientContext): Promise<Edr[]> {
-    const actualContext = context || this.#context!;
+  async request(
+    query: QuerySpec = { "@type": "QuerySpec" },
+    context?: EdcConnectorClientContext,
+  ): Promise<Edr[]> {
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new Edr()));
   }
 
-  async delete(edrId: string, context?: EdcConnectorClientContext): Promise<void> {
-    const actualContext = context || this.#context!;
+  async delete(
+    edrId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-        path: `${this.#basePath}/${edrId}`,
-        method: "DELETE",
-        apiToken: actualContext.apiToken,
-      });
+    return this.inner.request(actualContext.management, {
+      path: `${this.getBasePath(actualContext)}/${edrId}`,
+      method: "DELETE",
+      apiToken: actualContext.apiToken,
+    });
   }
 
-  async dataAddress(edrId: string, context?: EdcConnectorClientContext): Promise<JsonLdObject> {
-    const actualContext = context || this.#context!;
+  async dataAddress(
+    edrId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<JsonLdObject> {
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-        path: `${this.#basePath}/${edrId}/dataaddress`,
+    return this.inner
+      .request(actualContext.management, {
+        path: `${this.getBasePath(actualContext)}/${edrId}/dataaddress`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new JsonLdObject()));
   }
-
 }

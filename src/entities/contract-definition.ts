@@ -3,20 +3,21 @@ import { JsonLdId } from "./jsonld";
 
 export class ContractDefinition extends JsonLdId {
   get accessPolicyId(): string {
-    return this.mandatoryValue('edc', 'accessPolicyId');
+    return this.mandatoryValue("edc", "accessPolicyId");
   }
 
   get contractPolicyId(): string {
-    return this.mandatoryValue('edc', 'contractPolicyId');
+    return this.mandatoryValue("edc", "contractPolicyId");
   }
 
   get assetsSelector(): Criterion[] {
-    return this.arrayOf(() => new Criterion(), 'edc', 'assetsSelector')
+    return this.arrayOf(() => new Criterion(), "edc", "assetsSelector");
   }
 }
 
 export interface ContractDefinitionInput {
-  "@id"?: string,
+  "@id"?: string;
+  "@type": "ContractDefinition";
   accessPolicyId: string;
   contractPolicyId: string;
   assetsSelector: CriterionInput[];

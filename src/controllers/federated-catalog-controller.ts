@@ -14,7 +14,7 @@ export class FederatedCatalogController extends EdcController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<Catalog[]> {
     const actualContext = context || this.context!;
@@ -28,9 +28,9 @@ export class FederatedCatalogController extends EdcController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": JSON_LD_DEFAULT_CONTEXT,
+            },
       })
       .then((body) => expandArray(body, () => new Catalog()));
   }

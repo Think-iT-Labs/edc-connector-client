@@ -1,4 +1,4 @@
-import { JsonLdObject } from "./jsonld"
+import { JsonLdObject } from "./jsonld";
 
 export interface CriterionInput {
   operandLeft: string;
@@ -7,15 +7,15 @@ export interface CriterionInput {
 }
 
 export class Criterion extends JsonLdObject {
-    get operandLeft(): string {
-      return this.mandatoryValue('edc', 'operandLeft');
-    }
+  get operandLeft(): string {
+    return this.mandatoryValue("edc", "operandLeft");
+  }
 
-    get operator(): string {
-      return this.mandatoryValue('edc', 'operator')
-    }
+  get operator(): string {
+    return this.mandatoryValue("edc", "operator");
+  }
 
-    get operandRight(): string {
-      return this.mandatoryValue('edc', 'operandRight');
-    }
+  get operandRight(): string {
+    return this.mandatoryValue("edc", "operandRight");
+  }
 }

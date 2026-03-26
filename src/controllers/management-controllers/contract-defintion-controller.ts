@@ -1,39 +1,36 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractDefinition,
   ContractDefinitionInput,
+  expand,
+  expandArray,
   IdResponse,
   QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class ContractDefinitionController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/contractdefinitions";
+export class ContractDefinitionController extends ManagementBaseController {
+  protected readonly resourcePath = "contractdefinitions";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super(inner, context);
   }
 
   async create(
     input: ContractDefinitionInput,
     context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.getBasePath(actualContext),
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.getContextUrl(actualContext),
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -43,10 +40,10 @@ export class ContractDefinitionController {
     contractDefinitionId: string,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${contractDefinitionId}`,
+    return this.inner.request(actualContext.management, {
+      path: `${this.getBasePath(actualContext)}/${contractDefinitionId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -56,34 +53,35 @@ export class ContractDefinitionController {
     contractDefinitionId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${contractDefinitionId}`,
-      method: "GET",
-      apiToken: actualContext.apiToken,
-    })
-    .then((body) => expand(body, () => new ContractDefinition()));
+    return this.inner
+      .request(actualContext.management, {
+        path: `${this.getBasePath(actualContext)}/${contractDefinitionId}`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new ContractDefinition()));
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = { "@type": "QuerySpec" },
     context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": this.getContextUrl(actualContext),
+            },
       })
       .then((body) => expandArray(body, () => new ContractDefinition()));
   }
@@ -92,15 +90,15 @@ export class ContractDefinitionController {
     input: ContractDefinitionInput,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: this.#basePath,
+    return this.inner.request(actualContext.management, {
+      path: this.getBasePath(actualContext),
       method: "PUT",
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.getContextUrl(actualContext),
       },
     });
   }
