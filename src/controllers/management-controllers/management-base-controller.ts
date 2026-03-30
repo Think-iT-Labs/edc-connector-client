@@ -1,10 +1,5 @@
 import { EdcConnectorClientContext } from "../../context";
-import {
-  JSON_LD_DEFAULT_CONTEXT,
-  MANAGEMENT_API_VERSION_PATHS,
-  MANAGEMENT_API_VERSIONS,
-} from "../../entities";
-import { EdcConnectorClientError } from "../../error";
+import { JSON_LD_DEFAULT_CONTEXT } from "../../entities";
 import { Inner } from "../../inner";
 
 export abstract class ManagementBaseController {
@@ -21,8 +16,7 @@ export abstract class ManagementBaseController {
   protected getBasePath({
     managementApiVersion,
   }: EdcConnectorClientContext): string {
-    const versionPath = MANAGEMENT_API_VERSION_PATHS[managementApiVersion];
-    return `${versionPath}/${this.resourcePath}`;
+    return `/${managementApiVersion}/${this.resourcePath}`;
   }
 
   protected getActualContext(
@@ -36,17 +30,10 @@ export abstract class ManagementBaseController {
   }
 
   protected getContextUrl({ managementApiVersion }: EdcConnectorClientContext) {
-    switch (managementApiVersion) {
-      case "v3":
-        return JSON_LD_DEFAULT_CONTEXT;
-
-      case "v4beta":
-        return ["https://w3id.org/edc/connector/management/v2"];
-
-      default:
-        throw new EdcConnectorClientError(
-          `Failed to find context url for API version ${managementApiVersion}, Allowed values are ${MANAGEMENT_API_VERSIONS}`,
-        );
+    if (managementApiVersion === "v3") {
+      return JSON_LD_DEFAULT_CONTEXT;
     }
+
+    return ["https://w3id.org/edc/connector/management/v2"];
   }
 }

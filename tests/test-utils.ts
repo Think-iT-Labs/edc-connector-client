@@ -62,8 +62,8 @@ export async function createContractNegotiation(
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
   const assetInput: AssetInput = {
-    version: "v3",
     "@id": assetId,
+    "@type": "Asset",
     properties: {
       "asset:prop:id": assetId,
       "asset:prop:name": "product description",

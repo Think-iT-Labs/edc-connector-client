@@ -24,7 +24,7 @@ describe("CatalogController", () => {
     it("returns the catalog for a target provider", async () => {
       // given
       const assetInput: AssetInput = {
-        version: "v3",
+        "@type": "Asset",
         properties: {
           name: "product description",
           contenttype: "application/json",
@@ -80,7 +80,7 @@ describe("CatalogController", () => {
     it("returns the dataset entries", async () => {
       // given
       const assetInput: AssetInput = {
-        version: "v3",
+        "@type": "Asset",
         properties: {
           name: "product description",
           contenttype: "application/json",

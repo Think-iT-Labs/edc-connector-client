@@ -1,138 +1,88 @@
 import { GenericContainer, StartedTestContainer } from "testcontainers";
 import {
   AssetInput,
-  AssetInputV3,
-  AssetInputV4,
+  DEFAULT_MANAGEMENT_API_VERSION,
   EdcConnectorClient,
-  MANAGEMENT_API_VERSIONS,
-  ManagementApiVersion,
 } from "../../../src";
 import { AssetController } from "../../../src/controllers";
 
-describe.each<ManagementApiVersion>(MANAGEMENT_API_VERSIONS)(
-  "assets (%s)",
-  (apiVersion) => {
-    const itIfV3 = apiVersion === "v4beta" ? it.skip : it; // TODO: remove when specs are fixed
+describe("assets", () => {
+  let startedContainer: StartedTestContainer;
+  let assets: AssetController;
 
-    let startedContainer: StartedTestContainer;
-    let assets: AssetController;
+  beforeAll(async () => {
+    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
+      .withCopyFilesToContainer([
+        {
+          source: "node_modules/management-api.yml",
+          target: "/management-api.yml",
+        },
+      ])
+      .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
+      .withExposedPorts(4010)
+      .start();
 
-    beforeAll(async () => {
-      startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-        .withCopyFilesToContainer([
-          {
-            source: "node_modules/management-api.yml",
-            target: "/management-api.yml",
-          },
-        ])
-        .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
-        .withExposedPorts(4010)
-        .start();
+    assets = new EdcConnectorClient.Builder()
+      .managementUrl(
+        "http://localhost:" + startedContainer.getFirstMappedPort(),
+      )
+      .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
+      .build().management.assets;
+  });
 
-      assets = new EdcConnectorClient.Builder()
-        .managementUrl(
-          "http://localhost:" + startedContainer.getFirstMappedPort(),
-        )
-        .managementApiVersion(apiVersion)
-        .build().management.assets;
-    });
+  afterAll(async () => {
+    await startedContainer.stop();
+  });
 
-    afterAll(async () => {
-      await startedContainer.stop();
-    });
+  it("should create asset", async () => {
+    let assetInput: AssetInput = {
+      "@type": "Asset",
+      properties: {
+        name: "product description",
+        contenttype: "application/json",
+      },
+      dataAddress: {
+        type: "HttpData",
+        baseUrl: "https://jsonplaceholder.typicode.com/users",
+      },
+    };
 
-    itIfV3("should create asset", async () => {
-      let assetInput: AssetInput;
-      if (apiVersion === "v3") {
-        assetInput = {
-          version: "v3",
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
-          dataAddress: {
-            type: "HttpData",
-            baseUrl: "https://jsonplaceholder.typicode.com/users",
-          },
-        } satisfies AssetInputV3;
-      } else {
-        assetInput = {
-          version: "v4",
-          "@type": "Asset",
-          "@id": "@id",
-          dataplaneMetadata: {
-            "@type": "@type",
-            properties: {
-              type: "HttpData",
-              baseUrl: "https://jsonplaceholder.typicode.com/users",
-            },
-            labels: ["labels"],
-          },
-          privateProperties: {},
-          "@context": {},
-          properties: {
-            name: "product description",
-            contenttype: "application/json",
-          },
-        } satisfies AssetInputV4;
-      }
+    const idResponse = await assets.create(assetInput);
 
-      const idResponse = await assets.create(assetInput);
+    expect(idResponse.id).not.toBeNull();
+    expect(idResponse.createdAt).toBeGreaterThan(0);
+  });
 
-      expect(idResponse.id).not.toBeNull();
-      expect(idResponse.createdAt).toBeGreaterThan(0);
-    });
+  it("should delete asset", async () => {
+    const result = await assets.delete("assetId");
 
-    it("should delete asset", async () => {
-      const result = await assets.delete("assetId");
+    expect(result).toBeUndefined();
+  });
 
-      expect(result).toBeUndefined();
-    });
+  it("should get asset", async () => {
+    const asset = await assets.get("assetId");
 
-    it("should get asset", async () => {
-      const asset = await assets.get("assetId");
+    expect(asset.id).not.toBeNull();
+  });
 
-      expect(asset.id).not.toBeNull();
-    });
+  it("should query assets", async () => {
+    const result = await assets.queryAll();
 
-    it("should query assets", async () => {
-      const result = await assets.queryAll();
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0].id).not.toBeNull();
+  });
 
-      expect(result.length).toBeGreaterThan(0);
-      expect(result[0].id).not.toBeNull();
-    });
+  it("should update asset", async () => {
+    let updateAssetInput: AssetInput = {
+      "@id": "id",
+      "@type": "Asset",
+      properties: { name: "updated test asset", contenttype: "text/plain" },
+      dataAddress: { type: "any" },
+      privateProperties: {},
+    };
 
-    itIfV3("should update asset", async () => {
-      let updateAssetInput: AssetInput;
-      if (apiVersion === "v3") {
-        updateAssetInput = {
-          version: "v3",
-          "@id": "id",
-          properties: { name: "updated test asset", contenttype: "text/plain" },
-          dataAddress: { type: "any" },
-          privateProperties: {},
-        } satisfies AssetInputV3;
-      } else {
-        updateAssetInput = {
-          version: "v4",
-          "@type": "Asset",
-          dataplaneMetadata: {
-            "@type": "@type",
-            properties: {
-              key: "value",
-            },
-            labels: ["labels", "labels"],
-          },
-          "@id": "@id",
-          privateProperties: {},
-          "@context": {},
-          properties: { name: "updated test asset", contenttype: "text/plain" },
-        } satisfies AssetInputV4;
-      }
+    const result = await assets.update(updateAssetInput);
 
-      const result = await assets.update(updateAssetInput);
-
-      expect(result).toBeUndefined();
-    });
-  },
-);
+    expect(result).toBeUndefined();
+  });
+});

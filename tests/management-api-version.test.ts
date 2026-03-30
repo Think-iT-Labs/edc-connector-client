@@ -88,7 +88,7 @@ describe("management api version", () => {
         .build();
 
       const assetInput: AssetInput = {
-        version: "v3",
+        "@type": "Asset",
         properties: { name: "test" },
         dataAddress: { type: "HttpData" },
       };
@@ -137,8 +137,8 @@ describe("management api version", () => {
         .build();
 
       const updateInput: AssetInput = {
-        version: "v3",
         "@id": "test-asset",
+        "@type": "Asset",
         properties: { name: "updated" },
         dataAddress: { type: "HttpData" },
       };

@@ -15,37 +15,18 @@ export class Asset extends JsonLdId {
   }
 }
 
-export interface AssetInputV3 {
-  version: "v3";
-  "@id"?: string;
-  properties: AssetProperties;
-  privateProperties?: AssetProperties;
-  dataAddress: DataAddress;
-}
-
-export interface AssetInputV4 {
-  version: "v4";
-  "@context"?: {
-    [key: string]: unknown;
-  };
+export interface AssetInput {
   "@type": "Asset" | "CatalogAsset";
   "@id"?: string;
-  properties: {
-    [key: string]: unknown;
-  };
   dataplaneMetadata?: {
     "@type": string;
-    properties?: {
-      [key: string]: unknown;
-    };
+    properties?: AssetProperties;
     labels?: string[];
   };
-  privateProperties?: {
-    [key: string]: unknown;
-  };
+  properties: AssetProperties;
+  privateProperties?: AssetProperties;
+  dataAddress?: DataAddress;
 }
-
-export type AssetInput = AssetInputV3 | AssetInputV4;
 
 interface AssetProperties {
   [key: string]: string | undefined | any;

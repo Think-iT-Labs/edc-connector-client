@@ -5,7 +5,7 @@ import { ObservabilityController } from "./controllers";
 import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
-import { Addresses, ManagementApiVersion } from "./entities";
+import { Addresses } from "./entities";
 import { IdentityController } from "./facades/identity";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
@@ -17,7 +17,7 @@ export type ContextInput = {
   token?: string;
   addresses: Addresses;
   protocolVersion?: string;
-  managementApiVersion?: ManagementApiVersion;
+  managementApiVersion?: string;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
@@ -31,7 +31,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
   [apiTokenSymbol]?: string;
   [addressesSymbol]: Addresses = {};
   [protocolVersionSymbol]?: string;
-  [managementApiVersionSymbol]?: ManagementApiVersion;
+  [managementApiVersionSymbol]?: string;
 
   apiToken(apiToken: string): this {
     this[apiTokenSymbol] = apiToken;
@@ -78,7 +78,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
-  managementApiVersion(version: ManagementApiVersion): this {
+  managementApiVersion(version: string): this {
     this[managementApiVersionSymbol] = version;
     return this;
   }
