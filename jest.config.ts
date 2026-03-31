@@ -2,6 +2,7 @@ import type { Config } from "@jest/types";
 
 export default <Config.InitialOptions>{
   testEnvironment: "node",
+  maxWorkers: 1,
   collectCoverageFrom: ["src/**/*.ts", "!src/**/index.ts"],
   collectCoverage: true,
   passWithNoTests: true,
