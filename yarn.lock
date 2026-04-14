@@ -289,11 +289,11 @@
     yargs "^17.0.0"
 
 "@commitlint/config-conventional@^20.0.0":
-  version "20.4.3"
-  resolved "https://registry.npmjs.org/@commitlint/config-conventional/-/config-conventional-20.4.3.tgz"
-  integrity sha512-9RtLySbYQAs8yEqWEqhSZo9nYhbm57jx7qHXtgRmv/nmeQIjjMcwf6Dl+y5UZcGWgWx435TAYBURONaJIuCjWg==
+  version "20.5.0"
+  resolved "https://registry.yarnpkg.com/@commitlint/config-conventional/-/config-conventional-20.5.0.tgz#7a9e971b4d54dd3dd22114baf9a23c99515b7957"
+  integrity sha512-t3Ni88rFw1XMa4nZHgOKJ8fIAT9M2j5TnKyTqJzsxea7FUetlNdYFus9dz+MhIRZmc16P0PPyEfh6X2d/qw8SA==
   dependencies:
-    "@commitlint/types" "^20.4.3"
+    "@commitlint/types" "^20.5.0"
     conventional-changelog-conventionalcommits "^9.2.0"
 
 "@commitlint/config-validator@^20.5.0":
