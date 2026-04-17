@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../../constants";
 import { EdcConnectorClientContext } from "../../../context";
 import { QuerySpec } from "../../../entities";
 import { DIDDocument, DIDService } from "../../../entities/DID";
@@ -30,7 +31,7 @@ export class ParticipantDIDsController {
   }
 
   getDIDs(
-    query: QuerySpec = { "@type": "QuerySpec" },
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ) {
     const actualContext = context || this.#context!;

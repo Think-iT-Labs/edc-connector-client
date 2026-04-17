@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   Asset,
@@ -82,7 +83,7 @@ export class AssetController extends ManagementBaseController {
   }
 
   async queryAll(
-    query: QuerySpec = { "@type": "QuerySpec" },
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<Asset[]> {
     const actualContext = this.getActualContext(context);

@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
@@ -88,7 +89,7 @@ export class PolicyDefinitionController {
   }
 
   async queryAll(
-    query: QuerySpec = { "@type": "QuerySpec" },
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition[]> {
     const actualContext = context || this.#context!;

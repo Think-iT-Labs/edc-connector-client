@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
@@ -20,7 +21,7 @@ export class EdrController {
   }
 
   async request(
-    query: QuerySpec = { "@type": "QuerySpec" },
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<Edr[]> {
     const actualContext = context || this.#context!;

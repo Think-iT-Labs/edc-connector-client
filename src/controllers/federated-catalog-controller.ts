@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../constants";
 import { EdcConnectorClientContext } from "../context";
 import { EdcController } from "../edc-controller";
 import {
@@ -14,7 +15,7 @@ export class FederatedCatalogController extends EdcController {
   }
 
   async queryAll(
-    query: QuerySpec = { "@type": "QuerySpec" },
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<Catalog[]> {
     const actualContext = context || this.context!;
