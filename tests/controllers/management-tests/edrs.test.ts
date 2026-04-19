@@ -1,16 +1,19 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("edrs", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let edcClient: EdcConnectorClient;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([{ source: "node_modules/management-api.yml", target: "/management-api.yml" }])
-      .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/management-api.yml",
+      "/management-api.yml",
+    );
 
       edcClient = new EdcConnectorClient.Builder()
         .managementUrl("http://localhost:" + startedContainer.getFirstMappedPort())
@@ -18,7 +21,7 @@ describe("edrs", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should request edrs", async () => {

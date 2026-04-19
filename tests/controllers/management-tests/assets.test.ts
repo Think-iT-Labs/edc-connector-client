@@ -1,26 +1,24 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import {
   AssetInput,
   DEFAULT_MANAGEMENT_API_VERSION,
   EdcConnectorClient,
 } from "../../../src";
 import { AssetController } from "../../../src/controllers";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("assets", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let assets: AssetController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([
-        {
-          source: "node_modules/management-api.yml",
-          target: "/management-api.yml",
-        },
-      ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/management-api.yml",
+      "/management-api.yml",
+    );
 
     assets = new EdcConnectorClient.Builder()
       .managementUrl(
@@ -31,7 +29,7 @@ describe("assets", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should create asset", async () => {

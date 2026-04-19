@@ -1,23 +1,21 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
 import { ParticipantController } from "../../../src/controllers/identity-controllers/participant-controllers/participant-controller";
 import { ParticipantInput } from "../../../src/entities/participant";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("Paricipant", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let participant: ParticipantController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([
-        {
-          source: "node_modules/identity-api.yml",
-          target: "/identity-api.yml",
-        },
-      ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/identity-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/identity-api.yml",
+      "/identity-api.yml",
+    );
 
     participant = new EdcConnectorClient.Builder()
       .identityUrl("http://localhost:" + startedContainer.getFirstMappedPort())
@@ -26,7 +24,7 @@ describe("Paricipant", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should delete participant", async () => {
