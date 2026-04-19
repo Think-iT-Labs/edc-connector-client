@@ -4,8 +4,15 @@ import { AssetInput, EdcConnectorClient } from "../src";
 describe("management api version", () => {
   const managementUrl = "http://localhost:19193/management";
 
+  beforeEach(() => {
+    if (!nock.isActive()) {
+      nock.activate();
+    }
+  });
+
   afterEach(() => {
     nock.cleanAll();
+    nock.restore();
   });
 
   it("should use v3 path by default", async () => {
