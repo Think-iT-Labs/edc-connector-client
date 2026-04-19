@@ -52,6 +52,7 @@ jobs:
         run: yarn test
         env:
           CI: true
+          TESTCONTAINERS_RYUK_DISABLED: true
 
       - name: Print docker logs
         if: failure()
