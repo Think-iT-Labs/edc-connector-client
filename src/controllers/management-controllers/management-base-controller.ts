@@ -4,18 +4,18 @@ import { Inner } from "../../inner";
 
 class ManagementRequestHelper {
   constructor(
-    private readonly getResourcePath: () => string,
-    private readonly getDefaultContext: () => EdcConnectorClientContext | undefined,
+    private readonly resourcePath: string,
+    private readonly defaultContext?: EdcConnectorClientContext,
   ) {}
 
   getBasePath({ managementApiVersion }: EdcConnectorClientContext): string {
-    return `/${managementApiVersion}/${this.getResourcePath()}`;
+    return `/${managementApiVersion}/${this.resourcePath}`;
   }
 
   getActualContext(
     context?: EdcConnectorClientContext,
   ): EdcConnectorClientContext {
-    const actualContext = context || this.getDefaultContext();
+    const actualContext = context || this.defaultContext;
     if (!actualContext) {
       throw new Error("No context available for request");
     }
@@ -36,14 +36,13 @@ export abstract class ManagementBaseController {
   protected context?: EdcConnectorClientContext;
   protected management: ManagementRequestHelper;
 
-  protected abstract readonly resourcePath: string;
-
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+  constructor(
+    resourcePath: string,
+    inner: Inner,
+    context?: EdcConnectorClientContext,
+  ) {
     this.inner = inner;
     this.context = context;
-    this.management = new ManagementRequestHelper(
-      () => this.resourcePath,
-      () => this.context,
-    );
+    this.management = new ManagementRequestHelper(resourcePath, context);
   }
 }

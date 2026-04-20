@@ -12,10 +12,8 @@ import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class AssetController extends ManagementBaseController {
-  protected readonly resourcePath = "assets";
-
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super(inner, context);
+    super("assets", inner, context);
   }
 
   async create(
