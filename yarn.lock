@@ -3829,9 +3829,9 @@ type-fest@^4.41.0:
   integrity sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==
 
 type-fest@^5.4.1:
-  version "5.4.4"
-  resolved "https://registry.npmjs.org/type-fest/-/type-fest-5.4.4.tgz"
-  integrity sha512-JnTrzGu+zPV3aXIUhnyWJj4z/wigMsdYajGLIYakqyOW1nPllzXEJee0QQbHj+CTIQtXGlAjuK0UY+2xTyjVAw==
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-5.6.0.tgz#502f7a003b7309e96a7e17052cc2ab2c7e5c7a31"
+  integrity sha512-8ZiHFm91orbSAe2PSAiSVBVko18pbhbiB3U9GglSzF/zCGkR+rxpHx6sEMCUm4kxY4LjDIUGgCfUMtwfZfjfUA==
   dependencies:
     tagged-tag "^1.0.0"
 
