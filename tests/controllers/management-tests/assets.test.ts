@@ -12,7 +12,8 @@ import {
 
 describe("assets", () => {
   let startedContainer: StartedTestContainer | undefined;
-  let assets: AssetController;
+  let v3Assets: AssetController;
+  let v4betaAssets: AssetController;
 
   beforeAll(async () => {
     startedContainer = await startPrismContainer(
@@ -20,11 +21,17 @@ describe("assets", () => {
       "/management-api.yml",
     );
 
-    assets = new EdcConnectorClient.Builder()
-      .managementUrl(
-        "http://localhost:" + startedContainer.getFirstMappedPort(),
-      )
+    const managementUrl =
+      "http://localhost:" + startedContainer.getFirstMappedPort();
+
+    v3Assets = new EdcConnectorClient.Builder()
+      .managementUrl(managementUrl)
       .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
+      .build().management.assets;
+
+    v4betaAssets = new EdcConnectorClient.Builder()
+      .managementUrl(managementUrl)
+      .managementApiVersion("v4beta")
       .build().management.assets;
   });
 
@@ -32,55 +39,109 @@ describe("assets", () => {
     await stopPrismContainer(startedContainer);
   });
 
-  it("should create asset", async () => {
-    let assetInput: AssetInput = {
-      "@type": "Asset",
-      properties: {
-        name: "product description",
-        contenttype: "application/json",
-      },
-      dataAddress: {
-        type: "HttpData",
-        baseUrl: "https://jsonplaceholder.typicode.com/users",
-      },
-    };
+  describe("v3", () => {
+    it("should create asset", async () => {
+      const assetInput: AssetInput = {
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
+        },
+        dataAddress: {
+          type: "HttpData",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+      };
 
-    const idResponse = await assets.create(assetInput);
+      const idResponse = await v3Assets.create(assetInput);
 
-    expect(idResponse.id).not.toBeNull();
-    expect(idResponse.createdAt).toBeGreaterThan(0);
+      expect(idResponse.id).not.toBeNull();
+      expect(idResponse.createdAt).toBeGreaterThan(0);
+    });
+
+    it("should delete asset", async () => {
+      const result = await v3Assets.delete("assetId");
+
+      expect(result).toBeUndefined();
+    });
+
+    it("should get asset", async () => {
+      const asset = await v3Assets.get("assetId");
+
+      expect(asset.id).not.toBeNull();
+    });
+
+    it("should query assets", async () => {
+      const result = await v3Assets.queryAll();
+
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].id).not.toBeNull();
+    });
+
+    it("should update asset", async () => {
+      const updateAssetInput: AssetInput = {
+        "@id": "id",
+        properties: { name: "updated test asset", contenttype: "text/plain" },
+        dataAddress: { type: "any" },
+        privateProperties: {},
+      };
+
+      const result = await v3Assets.update(updateAssetInput);
+
+      expect(result).toBeUndefined();
+    });
   });
 
-  it("should delete asset", async () => {
-    const result = await assets.delete("assetId");
+  describe("v4beta", () => {
+    it("should create asset", async () => {
+      const assetInput: AssetInput = {
+        "@type": "Asset",
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
+        },
+        dataAddress: {
+          "@type": "DataAddress",
+          type: "HttpData",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+      };
 
-    expect(result).toBeUndefined();
-  });
+      const idResponse = await v4betaAssets.create(assetInput);
 
-  it("should get asset", async () => {
-    const asset = await assets.get("assetId");
+      expect(idResponse.id).not.toBeNull();
+    });
 
-    expect(asset.id).not.toBeNull();
-  });
+    it("should delete asset", async () => {
+      const result = await v4betaAssets.delete("assetId");
 
-  it("should query assets", async () => {
-    const result = await assets.queryAll();
+      expect(result).toBeUndefined();
+    });
 
-    expect(result.length).toBeGreaterThan(0);
-    expect(result[0].id).not.toBeNull();
-  });
+    it("should get asset", async () => {
+      const asset = await v4betaAssets.get("assetId");
 
-  it("should update asset", async () => {
-    let updateAssetInput: AssetInput = {
-      "@id": "id",
-      "@type": "Asset",
-      properties: { name: "updated test asset", contenttype: "text/plain" },
-      dataAddress: { type: "any" },
-      privateProperties: {},
-    };
+      expect(asset.id).not.toBeNull();
+    });
 
-    const result = await assets.update(updateAssetInput);
+    it("should query assets", async () => {
+      const result = await v4betaAssets.queryAll();
 
-    expect(result).toBeUndefined();
+      expect(result.length).toBeGreaterThan(0);
+      expect(result[0].id).not.toBeNull();
+    });
+
+    it("should update asset", async () => {
+      const updateAssetInput: AssetInput = {
+        "@id": "id",
+        "@type": "Asset",
+        properties: { name: "updated test asset", contenttype: "text/plain" },
+        dataAddress: { "@type": "DataAddress", type: "HttpData" },
+        privateProperties: {},
+      };
+
+      const result = await v4betaAssets.update(updateAssetInput);
+
+      expect(result).toBeUndefined();
+    });
   });
 });

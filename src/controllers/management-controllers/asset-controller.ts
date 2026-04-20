@@ -22,16 +22,16 @@ export class AssetController extends ManagementBaseController {
     input: AssetInput,
     context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
-    const actualContext = this.getActualContext(context);
+    const actualContext = this.management.getActualContext(context);
 
     return this.inner
       .request(actualContext.management, {
-        path: this.getBasePath(actualContext),
+        path: this.management.getBasePath(actualContext),
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
           ...input,
-          "@context": this.getContextUrl(actualContext),
+          "@context": this.management.getContextUrl(actualContext),
         },
       })
       .then((body) => expand(body, () => new IdResponse()));
@@ -41,10 +41,10 @@ export class AssetController extends ManagementBaseController {
     assetId: string,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = this.getActualContext(context);
+    const actualContext = this.management.getActualContext(context);
 
     return this.inner.request(actualContext.management, {
-      path: `${this.getBasePath(actualContext)}/${assetId}`,
+      path: `${this.management.getBasePath(actualContext)}/${assetId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -54,11 +54,11 @@ export class AssetController extends ManagementBaseController {
     assetId: string,
     context?: EdcConnectorClientContext,
   ): Promise<Asset> {
-    const actualContext = this.getActualContext(context);
+    const actualContext = this.management.getActualContext(context);
 
     return this.inner
       .request(actualContext.management, {
-        path: `${this.getBasePath(actualContext)}/${assetId}`,
+        path: `${this.management.getBasePath(actualContext)}/${assetId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -69,15 +69,15 @@ export class AssetController extends ManagementBaseController {
     input: AssetInput,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = this.getActualContext(context);
+    const actualContext = this.management.getActualContext(context);
 
     return this.inner.request(actualContext.management, {
-      path: this.getBasePath(actualContext),
+      path: this.management.getBasePath(actualContext),
       method: "PUT",
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": this.getContextUrl(actualContext),
+        "@context": this.management.getContextUrl(actualContext),
       },
     });
   }
@@ -86,20 +86,20 @@ export class AssetController extends ManagementBaseController {
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<Asset[]> {
-    const actualContext = this.getActualContext(context);
+    const actualContext = this.management.getActualContext(context);
 
     return this.inner
       .request(actualContext.management, {
-        path: `${this.getBasePath(actualContext)}/request`,
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
           Object.keys(query).length === 0
             ? null
             : {
-              ...query,
-              "@context": this.getContextUrl(actualContext),
-            },
+                ...query,
+                "@context": this.management.getContextUrl(actualContext),
+              },
       })
       .then((body) => expandArray(body, () => new Asset()));
   }
