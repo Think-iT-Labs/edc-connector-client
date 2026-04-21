@@ -26,9 +26,11 @@ describe("ContractNegotiationController", () => {
   const negotiations = consumer.management.contractNegotiations;
 
   describe("initiate", () => {
-
     it("kickstart a contract negotiation", async () => {
-      const { idResponse } = await createContractNegotiation(provider, consumer);
+      const { idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+      );
 
       expect(idResponse).toHaveProperty("id");
       expect(idResponse).toHaveProperty("createdAt");
@@ -37,7 +39,10 @@ describe("ContractNegotiationController", () => {
 
   describe("queryAll", () => {
     it("retrieves all contract negotiations", async () => {
-      const { idResponse } = await createContractNegotiation(provider, consumer);
+      const { idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+      );
 
       const contractNegotiations = await negotiations.queryAll();
 
@@ -52,18 +57,16 @@ describe("ContractNegotiationController", () => {
     it("filters negotiations on the provider side based on agreements' assed ID", async () => {
       const { assetId } = await createContractAgreement(provider, consumer);
 
-      const [providerNegotiation] =
-        await negotiations.queryAll(
+      const [providerNegotiation] = await negotiations.queryAll({
+        "@type": "QuerySpec",
+        filterExpression: [
           {
-            filterExpression: [
-              {
-                operandLeft: "contractAgreement.assetId",
-                operator: "=",
-                operandRight: assetId,
-              },
-            ],
+            operandLeft: "contractAgreement.assetId",
+            operator: "=",
+            operandRight: assetId,
           },
-        );
+        ],
+      });
 
       expect(providerNegotiation).toBeTruthy();
     });
@@ -71,7 +74,10 @@ describe("ContractNegotiationController", () => {
 
   describe("get", () => {
     it("retrieves target contract negotiation", async () => {
-      const { idResponse } = await createContractNegotiation(provider, consumer);
+      const { idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+      );
 
       const contractNegotiation = await negotiations.get(idResponse.id);
 
@@ -79,7 +85,7 @@ describe("ContractNegotiationController", () => {
     });
 
     it("fails to fetch an not existant contract negotiation", async () => {
-      const maybeNegotiation = negotiations.get(crypto.randomUUID(),);
+      const maybeNegotiation = negotiations.get(crypto.randomUUID());
 
       await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
@@ -95,15 +101,20 @@ describe("ContractNegotiationController", () => {
 
   describe("getState", () => {
     it("returns the state of a target negotiation", async () => {
-      const { idResponse } = await createContractNegotiation(provider, consumer);
+      const { idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+      );
 
-      const contractNegotiationState = await negotiations.getState(idResponse.id);
+      const contractNegotiationState = await negotiations.getState(
+        idResponse.id,
+      );
 
       expect(contractNegotiationState).toHaveProperty("state");
     });
 
     it("fails to fetch an not existent contract negotiation's state", async () => {
-      const maybeNegotiation = negotiations.getState(crypto.randomUUID(),);
+      const maybeNegotiation = negotiations.getState(crypto.randomUUID());
 
       await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
@@ -118,7 +129,6 @@ describe("ContractNegotiationController", () => {
   });
 
   describe("terminate", () => {
-
     it("fails to terminate an not existent contract negotiation", async () => {
       const maybeNegotiation = negotiations.terminate(
         crypto.randomUUID(),
@@ -135,20 +145,18 @@ describe("ContractNegotiationController", () => {
         );
       });
     });
-
   });
 
   describe("getAgreement", () => {
     it("returns the a agreement for a target negotiation", async () => {
-      const { assetId, idResponse } = await createContractNegotiation(provider, consumer);
+      const { assetId, idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+      );
 
       const negotiationId = idResponse.id;
 
-      await waitForNegotiationState(
-        consumer,
-        negotiationId,
-        "FINALIZED",
-      );
+      await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 
       const contractAgreement = await negotiations.getAgreement(negotiationId);
 

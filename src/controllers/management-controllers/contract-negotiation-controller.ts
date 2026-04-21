@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
@@ -43,7 +44,7 @@ export class ContractNegotiationController {
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation[]> {
     const actualContext = context || this.#context!;

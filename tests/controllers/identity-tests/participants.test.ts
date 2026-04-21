@@ -1,22 +1,20 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
 import { ParticipantsController } from "../../../src/controllers/identity-controllers/participants-controller";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("Participants", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let participants: ParticipantsController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([
-        {
-          source: "node_modules/identity-api.yml",
-          target: "/identity-api.yml",
-        },
-      ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/identity-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/identity-api.yml",
+      "/identity-api.yml",
+    );
 
     participants = new EdcConnectorClient.Builder()
       .identityUrl("http://localhost:" + startedContainer.getFirstMappedPort())
@@ -24,7 +22,7 @@ describe("Participants", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should query all participants", async () => {
