@@ -91,13 +91,10 @@ export class AssetController extends ManagementBaseController {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
-        body:
-          Object.keys(query).length === 0
-            ? null
-            : {
-                ...query,
-                "@context": this.management.getContextUrl(actualContext),
-              },
+        body: {
+          ...query,
+          "@context": this.management.getContextUrl(actualContext),
+        },
       })
       .then((body) => expandArray(body, () => new Asset()));
   }

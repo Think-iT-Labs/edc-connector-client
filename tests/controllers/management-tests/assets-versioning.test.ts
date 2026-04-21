@@ -1,7 +1,11 @@
 import nock from "nock";
-import { AssetInput, EdcConnectorClient, MANAGEMENT_V2_CONTEXT } from "../src";
+import {
+  AssetInput,
+  EdcConnectorClient,
+  MANAGEMENT_V2_CONTEXT,
+} from "../../../src";
 
-describe("management api version", () => {
+describe("asset management api version", () => {
   const managementUrl = "http://management-api-version.test/management";
   const assetResponse = {
     "@id": "test-asset",
