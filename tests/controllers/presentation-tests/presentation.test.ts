@@ -1,27 +1,26 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers"
+import { StartedTestContainer } from "testcontainers"
 import { EdcConnectorClient } from "../../../src"
 import { PresentationController } from "../../../src/controllers/presentation-controller"
+import {
+    startPrismContainer,
+    stopPrismContainer,
+} from "../../prism-container"
 
 describe("Presentation", () => {
-    let startedContainer: StartedTestContainer
+    let startedContainer: StartedTestContainer | undefined
     let presentation: PresentationController
 
     beforeAll(async () => {
-        startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-            .withCopyFilesToContainer([
-                {
-                    source: "node_modules/presentation-api.yml",
-                    target: "/presentation-api.yml",
-                },
-            ]).withCommand(["mock", "-h", "0.0.0.0", "/presentation-api.yml"])
-            .withExposedPorts(4010)
-            .start()
+        startedContainer = await startPrismContainer(
+            "node_modules/presentation-api.yml",
+            "/presentation-api.yml",
+        )
 
         presentation = new EdcConnectorClient.Builder().presentationUrl("http://localhost:" + startedContainer.getFirstMappedPort()).build().presentation
     })
 
     afterAll(async () => {
-        await startedContainer.stop()
+        await stopPrismContainer(startedContainer)
     })
 
     it("should query all presentations", async () => {

@@ -6,6 +6,17 @@ describe("Inner", () => {
   const url = "http://www.example.com";
   const inner = new Inner();
 
+  beforeEach(() => {
+    if (!nock.isActive()) {
+      nock.activate();
+    }
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
+    nock.restore();
+  });
+
   it("should map error 404", async () => {
     nock(url).post('/path').reply(404);
 

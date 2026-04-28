@@ -1,25 +1,23 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
 import { KeyPairsController } from "../../../src/controllers/identity-controllers/keypairs-controller";
 import { ParticipantKeyPairContoller } from "../../../src/controllers/identity-controllers/participant-controllers/participant-keypairs-controller";
 import { KeyDescriptor } from "../../../src/entities/keypairs";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("Key Pairs", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let participantKeyPairs: ParticipantKeyPairContoller;
   let keyPairs: KeyPairsController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([
-        {
-          source: "node_modules/identity-api.yml",
-          target: "/identity-api.yml",
-        },
-      ])
-      .withCommand(["mock", "-h", "0.0.0.0", "/identity-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/identity-api.yml",
+      "/identity-api.yml",
+    );
 
     keyPairs = new EdcConnectorClient.Builder()
       .identityUrl("http://localhost:" + startedContainer.getFirstMappedPort())
@@ -32,7 +30,7 @@ describe("Key Pairs", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should query all key pairs", async () => {

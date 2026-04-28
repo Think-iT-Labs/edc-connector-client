@@ -29,9 +29,12 @@ export interface ApiErrorDetail {
 }
 
 export interface QuerySpec {
+  "@type": "QuerySpec";
   filterExpression?: CriterionInput[];
   limit?: number;
   offset?: number;
   sortField?: string;
   sortOrder?: "ASC" | "DESC";
 }
+
+export const DEFAULT_MANAGEMENT_API_VERSION = "v3";

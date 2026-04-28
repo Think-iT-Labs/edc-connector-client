@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
@@ -58,16 +59,17 @@ export class ContractDefinitionController {
   ): Promise<ContractDefinition> {
     const actualContext = context || this.#context!;
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${contractDefinitionId}`,
-      method: "GET",
-      apiToken: actualContext.apiToken,
-    })
-    .then((body) => expand(body, () => new ContractDefinition()));
+    return this.#inner
+      .request(actualContext.management, {
+        path: `${this.#basePath}/${contractDefinitionId}`,
+        method: "GET",
+        apiToken: actualContext.apiToken,
+      })
+      .then((body) => expand(body, () => new ContractDefinition()));
   }
 
   async queryAll(
-    query: QuerySpec = {},
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<ContractDefinition[]> {
     const actualContext = context || this.#context!;

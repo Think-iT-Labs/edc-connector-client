@@ -1,17 +1,20 @@
-import { GenericContainer, StartedTestContainer } from "testcontainers";
+import { StartedTestContainer } from "testcontainers";
 import { SecretBuilder, EdcConnectorClient } from "../../../src";
 import { SecretController } from "../../../src/controllers";
+import {
+  startPrismContainer,
+  stopPrismContainer,
+} from "../../prism-container";
 
 describe("secrets", () => {
-  let startedContainer: StartedTestContainer;
+  let startedContainer: StartedTestContainer | undefined;
   let secrets: SecretController;
 
   beforeAll(async () => {
-    startedContainer = await new GenericContainer("stoplight/prism:5.14.2")
-      .withCopyFilesToContainer([{ source: "node_modules/management-api.yml", target: "/management-api.yml" }])
-      .withCommand(["mock", "-h", "0.0.0.0", "/management-api.yml"])
-      .withExposedPorts(4010)
-      .start();
+    startedContainer = await startPrismContainer(
+      "node_modules/management-api.yml",
+      "/management-api.yml",
+    );
 
       secrets = new EdcConnectorClient.Builder()
         .managementUrl("http://localhost:" + startedContainer.getFirstMappedPort())
@@ -20,7 +23,7 @@ describe("secrets", () => {
   });
 
   afterAll(async () => {
-    await startedContainer.stop();
+    await stopPrismContainer(startedContainer);
   });
 
   it("should create secret", async () => {

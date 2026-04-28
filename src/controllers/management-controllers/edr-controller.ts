@@ -1,3 +1,4 @@
+import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   expand,
@@ -5,7 +6,7 @@ import {
   QuerySpec,
   JsonLdObject,
   JSON_LD_DEFAULT_CONTEXT,
-  Edr
+  Edr,
 } from "../../entities";
 import { Inner } from "../../inner";
 
@@ -19,7 +20,10 @@ export class EdrController {
     this.#context = context;
   }
 
-  async request(query: QuerySpec = {}, context?: EdcConnectorClientContext): Promise<Edr[]> {
+  async request(
+    query: QuerySpec = DEFAULT_QUERY_SPEC,
+    context?: EdcConnectorClientContext,
+  ): Promise<Edr[]> {
     const actualContext = context || this.#context!;
 
     return this.#inner
@@ -31,32 +35,38 @@ export class EdrController {
           Object.keys(query).length === 0
             ? null
             : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+              ...query,
+              "@context": JSON_LD_DEFAULT_CONTEXT,
+            },
       })
       .then((body) => expandArray(body, () => new Edr()));
   }
 
-  async delete(edrId: string, context?: EdcConnectorClientContext): Promise<void> {
+  async delete(
+    edrId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-        path: `${this.#basePath}/${edrId}`,
-        method: "DELETE",
-        apiToken: actualContext.apiToken,
-      });
+      path: `${this.#basePath}/${edrId}`,
+      method: "DELETE",
+      apiToken: actualContext.apiToken,
+    });
   }
 
-  async dataAddress(edrId: string, context?: EdcConnectorClientContext): Promise<JsonLdObject> {
+  async dataAddress(
+    edrId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<JsonLdObject> {
     const actualContext = context || this.#context!;
 
-    return this.#inner.request(actualContext.management, {
+    return this.#inner
+      .request(actualContext.management, {
         path: `${this.#basePath}/${edrId}/dataaddress`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
       .then((body) => expand(body, () => new JsonLdObject()));
   }
-
 }

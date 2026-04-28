@@ -1,11 +1,9 @@
 import type { Config } from "@jest/types";
 
-export default <Config.InitialOptions> {
+export default <Config.InitialOptions>{
   testEnvironment: "node",
-  collectCoverageFrom: [
-    "src/**/*.ts",
-    "!src/**/index.ts",
-  ],
+  maxWorkers: 1,
+  collectCoverageFrom: ["src/**/*.ts", "!src/**/index.ts"],
   collectCoverage: true,
   passWithNoTests: true,
   transform: {
@@ -13,5 +11,5 @@ export default <Config.InitialOptions> {
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test))\\.(tsx?)$",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  testTimeout: 30000,
+  testTimeout: 120000,
 };

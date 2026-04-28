@@ -17,18 +17,21 @@ export type ContextInput = {
   token?: string;
   addresses: Addresses;
   protocolVersion?: string;
+  managementApiVersion?: string;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
 const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
 const protocolVersionSymbol = Symbol("[#protocolVersion]");
+const managementApiVersionSymbol = Symbol("[#managementApiVersion]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
   [apiTokenSymbol]?: string;
   [addressesSymbol]: Addresses = {};
   [protocolVersionSymbol]?: string;
+  [managementApiVersionSymbol]?: string;
 
   apiToken(apiToken: string): this {
     this[apiTokenSymbol] = apiToken;
@@ -75,6 +78,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
+  managementApiVersion(version: string): this {
+    this[managementApiVersionSymbol] = version;
+    return this;
+  }
+
   use<K extends string, C extends EdcController>(
     key: K,
     Controller: Class<C>,
@@ -96,6 +104,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
       token: this[apiTokenSymbol],
       addresses: this[addressesSymbol],
       protocolVersion: this[protocolVersionSymbol],
+      managementApiVersion: this[managementApiVersionSymbol],
     });
 
     return this.#instance as EdcConnectorClient & T;
@@ -146,9 +155,21 @@ export class EdcConnectorClient {
   }
 
   static createContext(
-    { token, addresses, protocolVersion }: ContextInput = { addresses: {} },
+    {
+      token,
+      addresses,
+      protocolVersion,
+      managementApiVersion,
+    }: ContextInput = {
+        addresses: {},
+      },
   ): EdcConnectorClientContext {
-    return new EdcConnectorClientContext(token, addresses, protocolVersion);
+    return new EdcConnectorClientContext(
+      token,
+      addresses,
+      protocolVersion,
+      managementApiVersion,
+    );
   }
 
   static version(): string {
