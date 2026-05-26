@@ -1888,10 +1888,10 @@ docker-modem@^5.0.7:
     split-ca "^1.0.1"
     ssh2 "^1.15.0"
 
-dockerode@^4.0.10:
-  version "4.0.10"
-  resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-4.0.10.tgz#d0fa159d87eace6f59aa1399517c3d07a7455f73"
-  integrity sha512-8L/P9JynLBiG7/coiA4FlQXegHltRqS0a+KqI44P1zgQh8QLHTg7FKOwhkBgSJwZTeHsq30WRoVFLuwkfK0YFg==
+dockerode@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/dockerode/-/dockerode-5.0.0.tgz#9def098b2f7d33c0a68d4aecd47587af7c3ce223"
+  integrity sha512-C52mvJ+7lcyhWNfrzVfFsbTrBfy/ezE9FGEYLpu17FUeBcCkxERk9nN7uDl/478ynDiQ4U+5DbQC2vENHkVEtQ==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     "@grpc/grpc-js" "^1.11.1"
@@ -1899,7 +1899,6 @@ dockerode@^4.0.10:
     docker-modem "^5.0.7"
     protobufjs "^7.3.2"
     tar-fs "^2.1.4"
-    uuid "^10.0.0"
 
 dot-prop@^5.1.0:
   version "5.3.0"
@@ -3735,10 +3734,10 @@ test-exclude@^6.0.0:
     glob "^7.1.4"
     minimatch "^3.0.4"
 
-testcontainers@^11.6.0:
-  version "11.14.0"
-  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-11.14.0.tgz#ee4262acede48788018adc38f902bda86bd21585"
-  integrity sha512-r9pniwv/iwzyHaI7gwAvAm4Y+IvjJg3vBWdjrUCaDMc2AXIr4jKbq7jJO18Mw2ybs73pZy1Aj7p/4RVBGMRWjg==
+testcontainers@^12.0.0:
+  version "12.0.0"
+  resolved "https://registry.yarnpkg.com/testcontainers/-/testcontainers-12.0.0.tgz#8df16157c0562ea5797b0cf5898583925d2258e4"
+  integrity sha512-/PdRvFvuHPwX126HR7RO0cEgLD3Nr8sWZyWSv54ei92TT79BubUkOCU5uwTc8ufTsTGQf0v6nyvZJVVVyR9Uqw==
   dependencies:
     "@balena/dockerignore" "^1.0.2"
     "@types/dockerode" "^4.0.1"
@@ -3747,14 +3746,14 @@ testcontainers@^11.6.0:
     byline "^5.0.0"
     debug "^4.4.3"
     docker-compose "^1.4.2"
-    dockerode "^4.0.10"
+    dockerode "^5.0.0"
     get-port "^7.2.0"
     proper-lockfile "^4.1.2"
     properties-reader "^3.0.1"
     ssh-remote-port-forward "^1.0.4"
     tar-fs "^3.1.2"
     tmp "^0.2.5"
-    undici "^7.24.5"
+    undici "^7.24.7"
 
 text-decoder@^1.1.0:
   version "1.2.7"
@@ -3876,10 +3875,10 @@ undici@^6.23.0:
   resolved "https://registry.npmjs.org/undici/-/undici-6.23.0.tgz"
   integrity sha512-VfQPToRA5FZs/qJxLIinmU59u0r7LXqoJkCzinq3ckNJp3vKEh7jTWN589YQ5+aoAC/TGRLyJLCPKcLQbM8r9g==
 
-undici@^7.24.5:
-  version "7.25.0"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-7.25.0.tgz#7d72fc429a0421769ca2966fd07cac875c85b781"
-  integrity sha512-xXnp4kTyor2Zq+J1FfPI6Eq3ew5h6Vl0F/8d9XU5zZQf1tX9s2Su1/3PiMmUANFULpmksxkClamIZcaUqryHsQ==
+undici@^7.24.7:
+  version "7.26.0"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-7.26.0.tgz#d413a2b5752e3e71e003bb268dec32b9a0ad0ce7"
+  integrity sha512-3O9Tf67pGhgOv9jM35AbhkXAKi13f3oy3aE4CSgr+TckGeY+/iu97ZXN+J7DpHPzLbVApFd1IFhcnBjREYXYcg==
 
 unrs-resolver@^1.7.11:
   version "1.11.1"
@@ -3920,11 +3919,6 @@ util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   version "1.0.2"
   resolved "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
-
-uuid@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.npmjs.org/uuid/-/uuid-10.0.0.tgz"
-  integrity sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==
 
 v8-compile-cache-lib@^3.0.1:
   version "3.0.1"
