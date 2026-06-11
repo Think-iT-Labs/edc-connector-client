@@ -15,6 +15,7 @@ export class PolicyDefinition extends JsonLdId {
 }
 
 export interface PolicyDefinitionInput {
+  "@type"?: "PolicyDefinition";
   '@id'?: string;
   id?: string;
   policy: Policy;

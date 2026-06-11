@@ -7,37 +7,30 @@ import {
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class PolicyDefinitionController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/policydefinitions";
-
+export class PolicyDefinitionController extends ManagementBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super("policydefinitions", inner, context);
   }
 
   async create(
     input: PolicyDefinitionInput,
     context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    const body = {
-      ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT,
-    };
-
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.management.getBasePath(actualContext),
         method: "POST",
         apiToken: actualContext.apiToken,
-        body: body,
+        body: {
+          ...input,
+          "@context": this.management.getContextUrl(actualContext),
+        },
       })
       .then((body) => expand(body, () => new IdResponse()));
   }
@@ -46,16 +39,16 @@ export class PolicyDefinitionController {
     policyId: string,
     input: PolicyDefinitionInput,
     context?: EdcConnectorClientContext,
-  ): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${policyId}`,
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "PUT",
       apiToken: actualContext.apiToken,
       body: {
         ...input,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
+        "@context": this.management.getContextUrl(actualContext),
       },
     });
   }
@@ -64,10 +57,10 @@ export class PolicyDefinitionController {
     policyId: string,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${policyId}`,
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
@@ -77,11 +70,11 @@ export class PolicyDefinitionController {
     policyId: string,
     context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${policyId}`,
+        path: `${this.management.getBasePath(actualContext)}/${policyId}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -92,20 +85,17 @@ export class PolicyDefinitionController {
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<PolicyDefinition[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
-        body:
-          Object.keys(query).length === 0
-            ? null
-            : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+        body: {
+          ...query,
+          "@context": this.management.getContextUrl(actualContext),
+        },
       })
       .then((body) => expandArray(body, () => new PolicyDefinition()));
   }
