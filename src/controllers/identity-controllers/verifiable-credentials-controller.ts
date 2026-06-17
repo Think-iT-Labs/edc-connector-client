@@ -5,7 +5,7 @@ import { VerifiableCredentialsResource } from "../../entities/verifiable-credent
 export class VerifiableCredentialsController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/credentials";
+  static readonly BASE_PATH = "/v1beta/credentials";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;

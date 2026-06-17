@@ -9,7 +9,7 @@ import { Inner } from "../../../inner";
 export class ParticipantVerifiableCredentialsController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/participants";
+  static readonly BASE_PATH = "/v1beta/participants";
 
   constructor(
     inner: Inner,

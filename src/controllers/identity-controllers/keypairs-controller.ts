@@ -5,7 +5,7 @@ import { Inner } from "../../inner";
 export class KeyPairsController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/keypairs";
+  static readonly BASE_PATH = "/v1beta/keypairs";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;

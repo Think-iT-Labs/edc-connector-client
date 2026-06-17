@@ -5,7 +5,7 @@ import { Inner } from "../../inner";
 export class DIDsController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/dids";
+  static readonly BASE_PATH = "/v1beta/dids";
 
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
     this.#inner = inner;
