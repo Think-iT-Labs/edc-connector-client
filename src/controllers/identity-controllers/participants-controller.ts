@@ -1,25 +1,21 @@
 import { EdcConnectorClientContext } from "../../context";
 import { Participant, ParticipantInput } from "../../entities/participant";
 import { Inner } from "../../inner";
+import { IdentityBaseController } from "./identity-base-controller";
 
-export class ParticipantsController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1beta/participants";
-
+export class ParticipantsController extends IdentityBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super("participants", inner, context);
   }
 
   async queryAll(
     query: { offset?: string; limit?: string } = {},
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
-    return this.#inner.request<Participant[]>(actualContext.identity, {
-      path: ParticipantsController.BASE_PATH,
+    return this.inner.request<Participant[]>(actualContext.identity, {
+      path: this.identity.getBasePath(actualContext),
       method: "GET",
       apiToken: actualContext.apiToken,
       query,
@@ -27,14 +23,14 @@ export class ParticipantsController {
   }
 
   async create(input: ParticipantInput, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
-    return this.#inner.request<{
+    return this.inner.request<{
       apiKey: string;
       clientId: string;
       clientSecret: string;
     }>(actualContext.identity, {
-      path: ParticipantsController.BASE_PATH,
+      path: this.identity.getBasePath(actualContext),
       method: "POST",
       apiToken: actualContext.apiToken,
       body: input,
@@ -42,10 +38,10 @@ export class ParticipantsController {
   }
 
   async get(participantId: number, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
-    return this.#inner.request<Participant>(actualContext.identity, {
-      path: `${ParticipantsController.BASE_PATH}/${participantId}`,
+    return this.inner.request<Participant>(actualContext.identity, {
+      path: `${this.identity.getBasePath(actualContext)}/${participantId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });
