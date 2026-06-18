@@ -4,41 +4,37 @@ import {
   ParticipantRoleResponse,
 } from "../../../entities/participant";
 import { Inner } from "../../../inner";
+import { IdentityBaseController } from "../identity-base-controller";
 import { ParticipantDIDsController } from "./participant-dids-controller";
 import { ParticipantKeyPairContoller } from "./participant-keypairs-controller";
 import { ParticipantVerifiableCredentialsController } from "./participant-verifiable-credentials-controller";
 
-export class ParticipantController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1beta/participants";
-
+export class ParticipantController extends IdentityBaseController {
   constructor(
     inner: Inner,
     public participantId: string,
     context?: EdcConnectorClientContext,
   ) {
-    this.#inner = inner;
-    this.#context = context;
+    super(`participants/${participantId}`, inner, context);
   }
 
   async delete(context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
-    return this.#inner.request<string>(actualContext.identity, {
-      path: `${ParticipantController.BASE_PATH}/${this.participantId}`,
+    return this.inner.request<string>(actualContext.identity, {
+      path: `${this.identity.getBasePath(actualContext)}`,
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
   }
 
   updateRoles(roles: string[], context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
-    return this.#inner.request<ParticipantRoleResponse[]>(
+    return this.inner.request<ParticipantRoleResponse[]>(
       actualContext.identity,
       {
-        path: `${ParticipantController.BASE_PATH}/${this.participantId}/roles`,
+        path: `${this.identity.getBasePath(actualContext)}/roles`,
         method: "PUT",
         body: roles,
         apiToken: actualContext.apiToken,
@@ -51,15 +47,15 @@ export class ParticipantController {
     input: Omit<ParticipantInput, "participantId">,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
     // to be fixed in docs
     const body: ParticipantInput = {
       ...input,
       participantId: this.participantId,
     };
 
-    return this.#inner.request<string>(actualContext.identity, {
-      path: `${ParticipantController.BASE_PATH}/${this.participantId}/state`,
+    return this.inner.request<string>(actualContext.identity, {
+      path: `${this.identity.getBasePath(actualContext)}/state`,
       method: "POST",
       query: { isActive: String(isActive) },
       body,
@@ -71,7 +67,7 @@ export class ParticipantController {
     input: Omit<ParticipantInput, "participantId">,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.identity.getActualContext(context);
 
     // to be fixed in docs
     const body: ParticipantInput = {
@@ -79,8 +75,8 @@ export class ParticipantController {
       participantId: this.participantId,
     };
 
-    return this.#inner.request<string>(actualContext.identity, {
-      path: `${ParticipantController.BASE_PATH}/${this.participantId}/token`,
+    return this.inner.request<string>(actualContext.identity, {
+      path: `${this.identity.getBasePath(actualContext)}/token`,
       method: "POST",
       body,
       apiToken: actualContext.apiToken,
@@ -89,25 +85,25 @@ export class ParticipantController {
 
   get keypairs() {
     return new ParticipantKeyPairContoller(
-      this.#inner,
+      this.inner,
       this.participantId,
-      this.#context,
+      this.context,
     );
   }
 
   get dids() {
     return new ParticipantDIDsController(
-      this.#inner,
+      this.inner,
       this.participantId,
-      this.#context,
+      this.context,
     );
   }
 
   get verifiableCredentials() {
     return new ParticipantVerifiableCredentialsController(
-      this.#inner,
+      this.inner,
       this.participantId,
-      this.#context,
+      this.context,
     );
   }
 }
