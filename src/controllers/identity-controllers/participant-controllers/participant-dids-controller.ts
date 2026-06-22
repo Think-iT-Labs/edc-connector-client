@@ -15,11 +15,11 @@ export class ParticipantDIDsController extends IdentityBaseController {
   }
 
   publishDID(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/publish`,
+      path: `${this.getBasePath(actualContext)}/publish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -30,10 +30,10 @@ export class ParticipantDIDsController extends IdentityBaseController {
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<DIDDocument[]>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/query`,
+      path: `${this.getBasePath(actualContext)}/query`,
       method: "POST",
       body: query,
       apiToken: actualContext.apiToken,
@@ -41,11 +41,11 @@ export class ParticipantDIDsController extends IdentityBaseController {
   }
 
   getDIDstate(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     //NOTE: Check for doc error
     return this.inner.request<string>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/state`,
+      path: `${this.getBasePath(actualContext)}/state`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -53,11 +53,11 @@ export class ParticipantDIDsController extends IdentityBaseController {
   }
 
   unpublishDID(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/unpublish`,
+      path: `${this.getBasePath(actualContext)}/unpublish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -70,11 +70,11 @@ export class ParticipantDIDsController extends IdentityBaseController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${did}/endpoints`,
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "POST",
       query: {
         autoPublish: String(autoPublish),
@@ -90,7 +90,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     const query: Record<string, string> = {
       autoPublish: String(autoPublish),
@@ -102,7 +102,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
 
     // NOTE: fix in docs
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${did}/endpoints`,
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "DELETE",
       query,
       apiToken: actualContext.apiToken,
@@ -114,11 +114,11 @@ export class ParticipantDIDsController extends IdentityBaseController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${did}/endpoints`,
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "PATCH",
       query: {
         autoPublish: String(autoPublish),

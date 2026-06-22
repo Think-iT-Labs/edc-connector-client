@@ -12,10 +12,10 @@ export class KeyPairsController extends IdentityBaseController {
     query: { offset?: string; limit?: string } = {},
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<KeyPair[]>(actualContext.identity, {
-      path: this.identity.getBasePath(actualContext),
+      path: this.getBasePath(actualContext),
       method: "GET",
       apiToken: actualContext.apiToken,
       query,

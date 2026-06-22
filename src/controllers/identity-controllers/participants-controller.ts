@@ -12,10 +12,10 @@ export class ParticipantsController extends IdentityBaseController {
     query: { offset?: string; limit?: string } = {},
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<Participant[]>(actualContext.identity, {
-      path: this.identity.getBasePath(actualContext),
+      path: this.getBasePath(actualContext),
       method: "GET",
       apiToken: actualContext.apiToken,
       query,
@@ -23,14 +23,14 @@ export class ParticipantsController extends IdentityBaseController {
   }
 
   async create(input: ParticipantInput, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<{
       apiKey: string;
       clientId: string;
       clientSecret: string;
     }>(actualContext.identity, {
-      path: this.identity.getBasePath(actualContext),
+      path: this.getBasePath(actualContext),
       method: "POST",
       apiToken: actualContext.apiToken,
       body: input,
@@ -38,10 +38,10 @@ export class ParticipantsController extends IdentityBaseController {
   }
 
   async get(participantId: number, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<Participant>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${participantId}`,
+      path: `${this.getBasePath(actualContext)}/${participantId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });

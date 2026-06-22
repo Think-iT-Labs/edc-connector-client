@@ -13,20 +13,20 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
   }
 
   getKeyPair(keyPairId: string, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<KeyPair>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${keyPairId}`,
+      path: `${this.getBasePath(actualContext)}/${keyPairId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });
   }
 
   queryAllKeyPairs(context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<KeyPair[]>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}`,
+      path: this.getBasePath(actualContext),
       method: "GET",
       apiToken: actualContext.apiToken,
     });
@@ -37,10 +37,10 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     makeDefault = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}`,
+      path: this.getBasePath(actualContext),
       method: "PUT",
       body: keyDescriptor,
       query: {
@@ -51,10 +51,10 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
   }
 
   activateKeyPair(keyPairId: string, context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${keyPairId}/activate`,
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/activate`,
       method: "POST",
       apiToken: actualContext.apiToken,
     });
@@ -65,10 +65,10 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     newKeyDescriptor: KeyDescriptor,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${keyPairId}/revoke`,
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/revoke`,
       method: "POST",
       body: newKeyDescriptor,
       apiToken: actualContext.apiToken,
@@ -81,10 +81,10 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     newKeyDescriptor?: KeyDescriptor,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<void>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/${keyPairId}/rotate`,
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/rotate`,
       method: "POST",
       body: newKeyDescriptor,
       query: {

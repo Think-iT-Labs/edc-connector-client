@@ -19,22 +19,22 @@ export class ParticipantController extends IdentityBaseController {
   }
 
   async delete(context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<string>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}`,
+      path: this.getBasePath(actualContext),
       method: "DELETE",
       apiToken: actualContext.apiToken,
     });
   }
 
   updateRoles(roles: string[], context?: EdcConnectorClientContext) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     return this.inner.request<ParticipantRoleResponse[]>(
       actualContext.identity,
       {
-        path: `${this.identity.getBasePath(actualContext)}/roles`,
+        path: `${this.getBasePath(actualContext)}/roles`,
         method: "PUT",
         body: roles,
         apiToken: actualContext.apiToken,
@@ -47,7 +47,7 @@ export class ParticipantController extends IdentityBaseController {
     input: Omit<ParticipantInput, "participantId">,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
     // to be fixed in docs
     const body: ParticipantInput = {
       ...input,
@@ -55,7 +55,7 @@ export class ParticipantController extends IdentityBaseController {
     };
 
     return this.inner.request<string>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/state`,
+      path: `${this.getBasePath(actualContext)}/state`,
       method: "POST",
       query: { isActive: String(isActive) },
       body,
@@ -67,7 +67,7 @@ export class ParticipantController extends IdentityBaseController {
     input: Omit<ParticipantInput, "participantId">,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = this.identity.getActualContext(context);
+    const actualContext = this.getActualContext(context);
 
     // to be fixed in docs
     const body: ParticipantInput = {
@@ -76,7 +76,7 @@ export class ParticipantController extends IdentityBaseController {
     };
 
     return this.inner.request<string>(actualContext.identity, {
-      path: `${this.identity.getBasePath(actualContext)}/token`,
+      path: `${this.getBasePath(actualContext)}/token`,
       method: "POST",
       body,
       apiToken: actualContext.apiToken,
