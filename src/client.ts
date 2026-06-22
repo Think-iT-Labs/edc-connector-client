@@ -18,6 +18,7 @@ export type ContextInput = {
   addresses: Addresses;
   protocolVersion?: string;
   managementApiVersion?: string;
+  identityApiVersion?: string;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
@@ -25,6 +26,7 @@ const addressesSymbol = Symbol("[#addressesToken]");
 const innerSymbol = Symbol("[#innerToken]");
 const protocolVersionSymbol = Symbol("[#protocolVersion]");
 const managementApiVersionSymbol = Symbol("[#managementApiVersion]");
+const identityApiVersionSymbol = Symbol("[#identityApiVersion]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
@@ -32,6 +34,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
   [addressesSymbol]: Addresses = {};
   [protocolVersionSymbol]?: string;
   [managementApiVersionSymbol]?: string;
+  [identityApiVersionSymbol]?: string;
 
   apiToken(apiToken: string): this {
     this[apiTokenSymbol] = apiToken;
@@ -83,6 +86,11 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
+  identityApiVersion(version: string): this {
+    this[identityApiVersionSymbol] = version;
+    return this;
+  }
+
   use<K extends string, C extends EdcController>(
     key: K,
     Controller: Class<C>,
@@ -105,6 +113,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
       addresses: this[addressesSymbol],
       protocolVersion: this[protocolVersionSymbol],
       managementApiVersion: this[managementApiVersionSymbol],
+      identityApiVersion: this[identityApiVersionSymbol],
     });
 
     return this.#instance as EdcConnectorClient & T;
@@ -160,15 +169,17 @@ export class EdcConnectorClient {
       addresses,
       protocolVersion,
       managementApiVersion,
+      identityApiVersion,
     }: ContextInput = {
-        addresses: {},
-      },
+      addresses: {},
+    },
   ): EdcConnectorClientContext {
     return new EdcConnectorClientContext(
       token,
       addresses,
       protocolVersion,
       managementApiVersion,
+      identityApiVersion,
     );
   }
 

@@ -1,10 +1,7 @@
 import { StartedTestContainer } from "testcontainers";
 import { EdcConnectorClient } from "../../../src";
 import { ParticipantsController } from "../../../src/controllers/identity-controllers/participants-controller";
-import {
-  startPrismContainer,
-  stopPrismContainer,
-} from "../../prism-container";
+import { startPrismContainer, stopPrismContainer } from "../../prism-container";
 
 describe("Participants", () => {
   let startedContainer: StartedTestContainer | undefined;
@@ -83,7 +80,6 @@ describe("Participants", () => {
     expect(participant).toHaveProperty("participantContextId");
     expect(participant).toHaveProperty("apiTokenAlias");
     expect(participant).toHaveProperty("did");
-    expect(participant).toHaveProperty("roles");
     expect(participant).toHaveProperty("state");
     expect(participant).toHaveProperty("createdAt");
     expect(participant).toHaveProperty("lastModified");

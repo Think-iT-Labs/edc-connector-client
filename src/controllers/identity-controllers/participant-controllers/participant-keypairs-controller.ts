@@ -1,36 +1,32 @@
 import { EdcConnectorClientContext } from "../../../context";
 import { KeyDescriptor, KeyPair } from "../../../entities/keypairs";
 import { Inner } from "../../../inner";
+import { IdentityBaseController } from "../identity-base-controller";
 
-export class ParticipantKeyPairContoller {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/participants";
-
+export class ParticipantKeyPairContoller extends IdentityBaseController {
   constructor(
     inner: Inner,
     public participantId: string,
     context?: EdcConnectorClientContext,
   ) {
-    this.#inner = inner;
-    this.#context = context;
+    super(`participants/${participantId}/keypairs`, inner, context);
   }
 
   getKeyPair(keyPairId: string, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<KeyPair>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}`,
+    return this.inner.request<KeyPair>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${keyPairId}`,
       method: "GET",
       apiToken: actualContext.apiToken,
     });
   }
 
   queryAllKeyPairs(context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<KeyPair[]>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs`,
+    return this.inner.request<KeyPair[]>(actualContext.identity, {
+      path: this.getBasePath(actualContext),
       method: "GET",
       apiToken: actualContext.apiToken,
     });
@@ -41,10 +37,10 @@ export class ParticipantKeyPairContoller {
     makeDefault = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: this.getBasePath(actualContext),
       method: "PUT",
       body: keyDescriptor,
       query: {
@@ -55,10 +51,10 @@ export class ParticipantKeyPairContoller {
   }
 
   activateKeyPair(keyPairId: string, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/activate`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/activate`,
       method: "POST",
       apiToken: actualContext.apiToken,
     });
@@ -69,10 +65,10 @@ export class ParticipantKeyPairContoller {
     newKeyDescriptor: KeyDescriptor,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/revoke`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/revoke`,
       method: "POST",
       body: newKeyDescriptor,
       apiToken: actualContext.apiToken,
@@ -85,10 +81,10 @@ export class ParticipantKeyPairContoller {
     newKeyDescriptor?: KeyDescriptor,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantKeyPairContoller.BASE_PATH}/${this.participantId}/keypairs/${keyPairId}/rotate`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${keyPairId}/rotate`,
       method: "POST",
       body: newKeyDescriptor,
       query: {

@@ -1,27 +1,23 @@
 import { Inner } from "../../inner";
 import { EdcConnectorClientContext } from "../../context";
 import { VerifiableCredentialsResource } from "../../entities/verifiable-credentials";
+import { IdentityBaseController } from "./identity-base-controller";
 
-export class VerifiableCredentialsController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/credentials";
-
+export class VerifiableCredentialsController extends IdentityBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super("credentials", inner, context);
   }
 
   async queryAll(
     query: { offset?: string; limit?: string } = {},
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<VerifiableCredentialsResource[]>(
+    return this.inner.request<VerifiableCredentialsResource[]>(
       actualContext.identity,
       {
-        path: VerifiableCredentialsController.BASE_PATH,
+        path: this.getBasePath(actualContext),
         method: "GET",
         apiToken: actualContext.apiToken,
         query,

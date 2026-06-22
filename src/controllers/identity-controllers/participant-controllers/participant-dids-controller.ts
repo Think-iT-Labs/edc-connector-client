@@ -3,27 +3,23 @@ import { EdcConnectorClientContext } from "../../../context";
 import { QuerySpec } from "../../../entities";
 import { DIDDocument, DIDService } from "../../../entities/DID";
 import { Inner } from "../../../inner";
+import { IdentityBaseController } from "../identity-base-controller";
 
-export class ParticipantDIDsController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  static readonly BASE_PATH = "/v1alpha/participants";
-
+export class ParticipantDIDsController extends IdentityBaseController {
   constructor(
     inner: Inner,
     public participantId: string,
     context?: EdcConnectorClientContext,
   ) {
-    this.#inner = inner;
-    this.#context = context;
+    super(`participants/${participantId}/dids`, inner, context);
   }
 
   publishDID(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/publish`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/publish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -34,10 +30,10 @@ export class ParticipantDIDsController {
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
-    return this.#inner.request<DIDDocument[]>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/query`,
+    return this.inner.request<DIDDocument[]>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/query`,
       method: "POST",
       body: query,
       apiToken: actualContext.apiToken,
@@ -45,11 +41,11 @@ export class ParticipantDIDsController {
   }
 
   getDIDstate(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     //NOTE: Check for doc error
-    return this.#inner.request<string>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/state`,
+    return this.inner.request<string>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/state`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -57,11 +53,11 @@ export class ParticipantDIDsController {
   }
 
   unpublishDID(did: string, context?: EdcConnectorClientContext) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/unpublish`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/unpublish`,
       method: "POST",
       body: { did },
       apiToken: actualContext.apiToken,
@@ -74,11 +70,11 @@ export class ParticipantDIDsController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "POST",
       query: {
         autoPublish: String(autoPublish),
@@ -94,7 +90,7 @@ export class ParticipantDIDsController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     const query: Record<string, string> = {
       autoPublish: String(autoPublish),
@@ -105,8 +101,8 @@ export class ParticipantDIDsController {
     }
 
     // NOTE: fix in docs
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "DELETE",
       query,
       apiToken: actualContext.apiToken,
@@ -118,11 +114,11 @@ export class ParticipantDIDsController {
     autoPublish = false,
     context?: EdcConnectorClientContext,
   ) {
-    const actualContext = context || this.#context!;
+    const actualContext = this.getActualContext(context);
 
     // NOTE: fix in docs
-    return this.#inner.request<void>(actualContext.identity, {
-      path: `${ParticipantDIDsController.BASE_PATH}/${this.participantId}/dids/${did}/endpoints`,
+    return this.inner.request<void>(actualContext.identity, {
+      path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "PATCH",
       query: {
         autoPublish: String(autoPublish),
