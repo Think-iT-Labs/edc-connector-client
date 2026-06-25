@@ -1,11 +1,6 @@
 import { DEFAULT_QUERY_SPEC } from "../constants";
 import { EdcConnectorClientContext } from "../context";
-import {
-  expandArray,
-  Catalog,
-  QuerySpec,
-  JSON_LD_DEFAULT_CONTEXT,
-} from "../entities";
+import { expandArray, Catalog, QuerySpec } from "../entities";
 import { Inner } from "../inner";
 import { ManagementBaseController } from "./management-controllers/management-base-controller";
 
