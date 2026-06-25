@@ -4,14 +4,14 @@ import { waitForFederatedCatalog } from "../test-utils";
 describe("FederatedCatalogController", () => {
   const consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
-    .federatedCatalogUrl("http://localhost:19393/catalog")
+    .managementUrl("http://localhost:19193/management")
     .build();
 
   describe("requestFederatedCatalog", () => {
     it("returns the federated catalog", async () => {
       await waitForFederatedCatalog(consumer, 1);
 
-      const result = await consumer.federatedCatalog.queryAll({
+      const result = await consumer.management.federatedCatalog.queryAll({
         "@type": "QuerySpec",
         limit: 50,
       });

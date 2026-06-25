@@ -1,6 +1,5 @@
 import { DEFAULT_QUERY_SPEC } from "../constants";
 import { EdcConnectorClientContext } from "../context";
-import { EdcController } from "../edc-controller";
 import {
   expandArray,
   Catalog,
@@ -8,30 +7,33 @@ import {
   JSON_LD_DEFAULT_CONTEXT,
 } from "../entities";
 import { Inner } from "../inner";
+import { ManagementBaseController } from "./management-controllers/management-base-controller";
 
-export class FederatedCatalogController extends EdcController {
+export class FederatedCatalogController extends ManagementBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super(inner, context);
+    super("catalogs", inner, context);
   }
 
   async queryAll(
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<Catalog[]> {
-    const actualContext = context || this.context!;
+    const actualContext = this.management.getActualContext(context);
+
+    const body =
+      Object.keys(query).length === 0
+        ? null
+        : {
+            ...query,
+            "@context": this.management.getContextUrl(actualContext),
+          };
 
     return this.inner
-      .request(actualContext.federatedCatalog, {
-        path: "/v1alpha/catalog/query",
+      .request(actualContext.management, {
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
-        body:
-          Object.keys(query).length === 0
-            ? null
-            : {
-                ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
-              },
+        body,
       })
       .then((body) => expandArray(body, () => new Catalog()));
   }
