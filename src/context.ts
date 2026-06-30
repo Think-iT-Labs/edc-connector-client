@@ -1,21 +1,28 @@
-import { Addresses, DEFAULT_MANAGEMENT_API_VERSION } from "./entities";
+import {
+  Addresses,
+  DEFAULT_IDENTITY_API_VERSION,
+  DEFAULT_MANAGEMENT_API_VERSION,
+} from "./entities";
 
 export class EdcConnectorClientContext implements Addresses {
   #apiToken: string | undefined;
   #addresses: Addresses;
   #protocolVersion: string;
   #managementApiVersion: string;
+  #identityApiVersion: string;
 
   constructor(
     apiToken: string | undefined,
     addresses: Addresses,
     protocolVersion = "dataspace-protocol-http:2025-1",
     managementApiVersion = DEFAULT_MANAGEMENT_API_VERSION,
+    identityApiVersion = DEFAULT_IDENTITY_API_VERSION,
   ) {
     this.#apiToken = apiToken;
     this.#addresses = addresses;
     this.#protocolVersion = protocolVersion;
     this.#managementApiVersion = managementApiVersion;
+    this.#identityApiVersion = identityApiVersion;
   }
 
   get default(): string {
@@ -62,6 +69,10 @@ export class EdcConnectorClientContext implements Addresses {
 
   get managementApiVersion(): string {
     return this.#managementApiVersion;
+  }
+
+  get identityApiVersion(): string {
+    return this.#identityApiVersion;
   }
 
   get addresses() {

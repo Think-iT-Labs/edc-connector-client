@@ -38,3 +38,4 @@ export interface QuerySpec {
 }
 
 export const DEFAULT_MANAGEMENT_API_VERSION = "v3";
+export const DEFAULT_IDENTITY_API_VERSION = "v1beta";
