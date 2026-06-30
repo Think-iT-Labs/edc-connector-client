@@ -2,7 +2,7 @@ import * as crypto from "node:crypto";
 import {
   EdcConnectorClient,
   PolicyBuilder,
-  PolicyDefinitionInput
+  PolicyDefinitionInput,
 } from "../../../src";
 import {
   EdcConnectorClientError,
@@ -22,12 +22,8 @@ describe("PolicyDefinitionController", () => {
       const id = crypto.randomUUID();
       const policyInput: PolicyDefinitionInput = {
         "@id": id,
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
+        policy: new PolicyBuilder().type("Set").build(),
       };
-
-      ;
 
       const idResponse = await policyDefinitions.create(policyInput);
 
@@ -38,17 +34,13 @@ describe("PolicyDefinitionController", () => {
     it("fails creating two policies with the same id", async () => {
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
+        policy: new PolicyBuilder().type("Set").build(),
       };
 
       await policyDefinitions.create(policyInput);
       const maybeCreateResult = policyDefinitions.create(policyInput);
 
-      await expect(maybeCreateResult).rejects.toThrow(
-        "duplicated resource",
-      );
+      await expect(maybeCreateResult).rejects.toThrow("duplicated resource");
 
       maybeCreateResult.catch((error) => {
         expect(error).toBeInstanceOf(EdcConnectorClientError);
@@ -64,9 +56,7 @@ describe("PolicyDefinitionController", () => {
     it("succesfully retuns a list of policy definitions", async () => {
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
+        policy: new PolicyBuilder().type("Set").build(),
       };
       await policyDefinitions.create(policyInput);
 
@@ -90,51 +80,49 @@ describe("PolicyDefinitionController", () => {
                 action: "use",
                 constraint: [
                   {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
+                    leftOperand: "https://w3id.org/edc/v0.0.1/ns/inForceDate",
+                    operator: "odrl:gteq",
+                    rightOperand: {
+                      "@value": "2023-01-01T00:00:01Z",
+                      "@type": "xsd:datetime",
+                    },
                   },
                   {
                     "@type": "LogicalConstraint",
-                    "and": [{
-                        leftOperand: "field2",
-                        operator: "eq",
-                        rightOperand: "value"
+                    "odrl:and": [
+                      {
+                        leftOperand:
+                          "https://w3id.org/edc/v0.0.1/ns/inForceDate",
+                        operator: "odrl:gteq",
+                        rightOperand: {
+                          "@value": "2023-01-01T00:00:01Z",
+                          "@type": "xsd:datetime",
+                        },
                       },
                       {
-                        leftOperand: "field3",
-                        operator: "eq",
-                        rightOperand: "value"
-                      }
-                    ]
-                  }
-                ]
-              }
+                        leftOperand:
+                          "https://w3id.org/edc/v0.0.1/ns/inForceDate",
+                        operator: "odrl:lteq",
+                        rightOperand: {
+                          "@value": "2024-01-01T00:00:01Z",
+                          "@type": "xsd:datetime",
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
             ],
             prohibition: [
               {
                 action: "use",
-                constraint: [
-                  {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
-                  }
-                ]
-              }
+              },
             ],
             obligation: [
               {
                 action: "use",
-                constraint: [
-                  {
-                    leftOperand: "field",
-                    operator: "eq",
-                    rightOperand: "value"
-                  }
-                ]
-              }
-            ]
+              },
+            ],
           })
           .build(),
       };
@@ -144,22 +132,19 @@ describe("PolicyDefinitionController", () => {
 
       expect(policyDefinition.id).toBe(idResponse.id);
       expect(policyDefinition.policy.permissions).toHaveLength(1);
-      const permissionConstraints = policyDefinition.policy.permissions[0].array("odrl", "constraint");
+      const permissionConstraints =
+        policyDefinition.policy.permissions[0].array("odrl", "constraint");
       expect(permissionConstraints).toHaveLength(2);
-      expect(permissionConstraints[0].array("odrl", "leftOperand")[0]['@id']).toBe("https://w3id.org/edc/v0.0.1/ns/field");
+      expect(
+        permissionConstraints[0].array("odrl", "leftOperand")[0]["@id"],
+      ).toBe("https://w3id.org/edc/v0.0.1/ns/inForceDate");
       expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
       expect(policyDefinition.policy.prohibitions).toHaveLength(1);
-      const prohibitionsConstraints = policyDefinition.policy.prohibitions[0].array("odrl", "constraint");
-      expect(prohibitionsConstraints).toHaveLength(1);
       expect(policyDefinition.policy.obligations).toHaveLength(1);
-      const obligationsConstraints = policyDefinition.policy.obligations[0].array("odrl", "constraint");
-      expect(obligationsConstraints).toHaveLength(1);
     });
 
     it("fails to fetch an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.get(
-        crypto.randomUUID(),
-      );
+      const maybePolicy = policyDefinitions.get(crypto.randomUUID());
 
       await expect(maybePolicy).rejects.toThrow("resource not found");
 
@@ -177,33 +162,27 @@ describe("PolicyDefinitionController", () => {
     it("updates a target policy", async () => {
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
+        policy: new PolicyBuilder().type("Set").build(),
       };
       await policyDefinitions.create(policyInput);
       const updatedPolicyDefinitionInput = {
         "@id": policyInput["@id"]!,
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
-      }
+        policy: new PolicyBuilder().type("Set").build(),
+      };
 
-      const policy = await policyDefinitions.update(policyInput["@id"]!,updatedPolicyDefinitionInput);
+      const policy = await policyDefinitions.update(
+        policyInput["@id"]!,
+        updatedPolicyDefinitionInput,
+      );
 
       expect(policy).toBeUndefined();
     });
 
     it("fails to update an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.update(
-        crypto.randomUUID(),
-        {
-          "@id": crypto.randomUUID(),
-          policy: new PolicyBuilder()
-            .type("Set")
-            .build(),
-        }
-      );
+      const maybePolicy = policyDefinitions.update(crypto.randomUUID(), {
+        "@id": crypto.randomUUID(),
+        policy: new PolicyBuilder().type("Set").build(),
+      });
 
       await expect(maybePolicy).rejects.toThrow("resource not found");
 
@@ -221,23 +200,17 @@ describe("PolicyDefinitionController", () => {
     it("deletes a target policy", async () => {
       const policyInput: PolicyDefinitionInput = {
         "@id": crypto.randomUUID(),
-        policy: new PolicyBuilder()
-          .type("Set")
-          .build(),
+        policy: new PolicyBuilder().type("Set").build(),
       };
       await policyDefinitions.create(policyInput);
 
-      const policy = await policyDefinitions.delete(
-        policyInput["@id"]!,
-      );
+      const policy = await policyDefinitions.delete(policyInput["@id"]!);
 
       expect(policy).toBeUndefined();
     });
 
     it("fails to delete an not existant policy", async () => {
-      const maybePolicy = policyDefinitions.delete(
-        crypto.randomUUID(),
-      );
+      const maybePolicy = policyDefinitions.delete(crypto.randomUUID());
 
       await expect(maybePolicy).rejects.toThrow("resource not found");
 

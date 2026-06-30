@@ -10,12 +10,18 @@ import {
   SecretController,
   TransferProcessController,
 } from "../controllers/management-controllers";
+import { FederatedCatalogController } from "../controllers/federated-catalog-controller";
 import { EdcController } from "../edc-controller";
 
 export class ManagementController extends EdcController {
   get assets() {
     return new AssetController(this.inner, this.context);
   }
+
+  get federatedCatalog() {
+    return new FederatedCatalogController(this.inner, this.context);
+  }
+
   get catalog() {
     return new CatalogController(this.inner, this.context);
   }

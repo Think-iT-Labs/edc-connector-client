@@ -190,7 +190,7 @@ export async function waitForFederatedCatalog(
     times--;
     await new Promise((resolve) => setTimeout(resolve, interval));
 
-    const response = await client.federatedCatalog.queryAll({
+    const response = await client.management.federatedCatalog.queryAll({
       "@type": "QuerySpec",
       limit: 50,
     });
