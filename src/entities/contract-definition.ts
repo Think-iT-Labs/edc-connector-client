@@ -16,6 +16,7 @@ export class ContractDefinition extends JsonLdId {
 }
 
 export interface ContractDefinitionInput {
+  "@type"?: "ContractDefinition";
   "@id"?: string,
   accessPolicyId: string;
   contractPolicyId: string;
