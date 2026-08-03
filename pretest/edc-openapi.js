@@ -6,7 +6,7 @@ const CONTEXTS = [
   {
     name: "management-api",
     resourceUrl:
-      "https://eclipse-edc.github.io/Connector/openapi/management-api/3.1.4/management-api.yaml",
+      "https://eclipse-edc.github.io/Connector/openapi/management-api/4.0.0/management-api.yaml",
   },
   {
     name: "identity-api",

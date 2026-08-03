@@ -58,12 +58,12 @@ describe("asset management api version", () => {
     expect(scope.isDone()).toBe(true);
   });
 
-  it("should use v4beta path when configured via builder", async () => {
+  it("should use v4 path when configured via builder", async () => {
     const scope = nock(managementUrl)
-      .get("/v4beta/assets/test-asset")
+      .get("/v4/assets/test-asset")
       .reply(200, assetResponse);
 
-    const client = buildClient("v4beta");
+    const client = buildClient("v4");
 
     await client.management.assets.get("test-asset");
 
@@ -82,16 +82,16 @@ describe("asset management api version", () => {
     expect(scope.isDone()).toBe(true);
   });
 
-  it("should use v4beta path when configured via context override", async () => {
+  it("should use v4 path when configured via context override", async () => {
     const scope = nock(managementUrl)
-      .get("/v4beta/assets/test-asset")
+      .get("/v4/assets/test-asset")
       .reply(200, assetResponse);
 
     const client = buildClient();
 
     const v4Context = EdcConnectorClient.createContext({
       addresses: { management: managementUrl },
-      managementApiVersion: "v4beta",
+      managementApiVersion: "v4",
     });
 
     await client.management.assets.get("test-asset", v4Context);
@@ -102,7 +102,7 @@ describe("asset management api version", () => {
   describe("should use correct version path for all asset operations", () => {
     it("create", async () => {
       const scope = nock(managementUrl)
-        .post("/v4beta/assets", (body) => {
+        .post("/v4/assets", (body) => {
           expect(body).toMatchObject({
             "@type": "Asset",
             properties: { name: "test" },
@@ -112,7 +112,7 @@ describe("asset management api version", () => {
         })
         .reply(200, idResponse);
 
-      const client = buildClient("v4beta");
+      const client = buildClient("v4");
 
       const assetInput: AssetInput = {
         "@type": "Asset",
@@ -127,13 +127,13 @@ describe("asset management api version", () => {
 
     it("queryAll", async () => {
       const scope = nock(managementUrl)
-        .post("/v4beta/assets/request", (body) => {
+        .post("/v4/assets/request", (body) => {
           expect(body).toMatchObject({ "@type": "QuerySpec" });
           return expectManagementV2Context(body);
         })
         .reply(200, []);
 
-      const client = buildClient("v4beta");
+      const client = buildClient("v4");
 
       await client.management.assets.queryAll();
 
@@ -142,10 +142,10 @@ describe("asset management api version", () => {
 
     it("delete", async () => {
       const scope = nock(managementUrl)
-        .delete("/v4beta/assets/test-asset")
+        .delete("/v4/assets/test-asset")
         .reply(204);
 
-      const client = buildClient("v4beta");
+      const client = buildClient("v4");
 
       await client.management.assets.delete("test-asset");
 
@@ -154,7 +154,7 @@ describe("asset management api version", () => {
 
     it("update", async () => {
       const scope = nock(managementUrl)
-        .put("/v4beta/assets", (body) => {
+        .put("/v4/assets", (body) => {
           expect(body).toMatchObject({
             "@id": "test-asset",
             "@type": "Asset",
@@ -165,7 +165,7 @@ describe("asset management api version", () => {
         })
         .reply(204);
 
-      const client = buildClient("v4beta");
+      const client = buildClient("v4");
 
       const updateInput: AssetInput = {
         "@id": "test-asset",
