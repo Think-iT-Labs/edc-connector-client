@@ -7,7 +7,7 @@ export default <Config.InitialOptions>{
   collectCoverage: true,
   passWithNoTests: true,
   transform: {
-    "^.+\\.(js|ts)x?$": "ts-jest",
+    "^.+\\.(js|ts)x?$": ["ts-jest", { tsconfig: "tsconfig.test.json" }],
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test))\\.(tsx?)$",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
