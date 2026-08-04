@@ -6,12 +6,14 @@ export interface FederatedCatalogCacheQuery {
 }
 
 export interface CatalogRequest {
+  "@type"?: "CatalogRequest";
   counterPartyAddress: string;
   counterPartyId: string;
   querySpec?: QuerySpec;
 }
 
 export interface DatasetRequest {
+  "@type"?: "DatasetRequest";
   "@id": string,
   counterPartyAddress: string;
   counterPartyId: string;
