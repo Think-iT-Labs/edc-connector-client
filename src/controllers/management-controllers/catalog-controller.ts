@@ -1,6 +1,5 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  JSON_LD_DEFAULT_CONTEXT,
   CatalogRequest,
   Catalog,
   expand,
@@ -8,30 +7,26 @@ import {
   DatasetRequest,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class CatalogController {
-  #inner: Inner;
-  #context: EdcConnectorClientContext | undefined;
-  #basePath = "/v3/catalog";
-
+export class CatalogController extends ManagementBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super("catalog", inner, context);
   }
 
   async request(
     input: CatalogRequest,
     context?: EdcConnectorClientContext,
   ): Promise<Catalog> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.management.getContextUrl(actualContext),
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -43,15 +38,15 @@ export class CatalogController {
     input: DatasetRequest,
     context?: EdcConnectorClientContext,
   ): Promise<Dataset> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/dataset/request`,
+        path: `${this.management.getBasePath(actualContext)}/dataset/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.management.getContextUrl(actualContext),
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -59,13 +54,4 @@ export class CatalogController {
       .then((body) => expand(body, () => new Dataset()));
   }
 
-  /**
-   * @deprecated please use `request` instead
-   */
-  async queryAll(
-    input: CatalogRequest,
-    context?: EdcConnectorClientContext,
-  ): Promise<Catalog> {
-    return this.request(input, context);
-  }
 }
