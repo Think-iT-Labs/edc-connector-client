@@ -2,6 +2,7 @@ import { JsonLdId, JsonLdObject } from "./jsonld";
 import { Policy } from "./policy";
 
 export interface ContractNegotiationRequest {
+  "@type"?: "ContractRequest";
   counterPartyAddress: string;
   counterPartyId: string;
   policy: Policy;
