@@ -41,15 +41,15 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: yarn-deps-${{ hashFiles('**/yarn.lock') }}
+          key: npm-deps-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
         shell: bash
-        run: yarn
+        run: npm ci
 
       - name: Transpile to JavaScript
         shell: bash
-        run: yarn transpile
+        run: npm run transpile
 
       - name: Publish to npm
         shell: bash

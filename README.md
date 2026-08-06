@@ -48,7 +48,7 @@ npm install @think-it-labs/edc-connector-client
 yarn add @think-it-labs/edc-connector-client
 ```
 
-Once installed, clients can be instanciated by construcing a `EdcConnectorClient`.
+Once installed, clients can be instantiated by constructing a `EdcConnectorClient`.
 
 ### With internal context
 

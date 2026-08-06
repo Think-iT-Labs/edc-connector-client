@@ -42,14 +42,14 @@ jobs:
           path: |
             node_modules
             */*/node_modules
-          key: yarn-deps-${{ hashFiles('**/yarn.lock') }}
+          key: npm-deps-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
         run: |
-          yarn
+          npm ci
 
       - name: Run tests
-        run: yarn test
+        run: npm test
         env:
           CI: true
 
