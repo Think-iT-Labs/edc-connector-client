@@ -4,36 +4,33 @@ import {
   expand,
   expandArray,
   IdResponse,
-  JSON_LD_DEFAULT_CONTEXT,
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
   TransferProcessState,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class TransferProcessController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #basePath = "/v3/transferprocesses";
+export class TransferProcessController extends ManagementBaseController {
   constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    this.#inner = inner;
-    this.#context = context;
+    super("transferprocesses", inner, context);
   }
 
   async initiate(
     input: TransferProcessInput,
     context?: EdcConnectorClientContext,
   ): Promise<IdResponse> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.management.getBasePath(actualContext),
         method: "POST",
         apiToken: actualContext.apiToken,
         body: {
-          "@context": JSON_LD_DEFAULT_CONTEXT,
+          "@context": this.management.getContextUrl(actualContext),
+          "@type": "TransferRequest",
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -45,11 +42,11 @@ export class TransferProcessController {
     id: string,
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcess> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${id}`,
+        path: `${this.management.getBasePath(actualContext)}/${id}`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -60,11 +57,11 @@ export class TransferProcessController {
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcess[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         apiToken: actualContext.apiToken,
         body:
@@ -72,7 +69,7 @@ export class TransferProcessController {
             ? null
             : {
                 ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
+                "@context": this.management.getContextUrl(actualContext),
               },
       })
       .then((body) => expandArray(body, () => new TransferProcess()));
@@ -82,11 +79,11 @@ export class TransferProcessController {
     transferProcessId: string,
     context?: EdcConnectorClientContext,
   ): Promise<TransferProcessState> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${transferProcessId}/state`,
+        path: `${this.management.getBasePath(actualContext)}/${transferProcessId}/state`,
         method: "GET",
         apiToken: actualContext.apiToken,
       })
@@ -98,33 +95,17 @@ export class TransferProcessController {
     reason: string,
     context?: EdcConnectorClientContext,
   ): Promise<void> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${id}/terminate`,
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${id}/terminate`,
       method: "POST",
       apiToken: actualContext.apiToken,
       body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "TerminateTransfer",
         "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
         reason: reason,
-      },
-    });
-  }
-
-  async deprovision(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<void> {
-    const actualContext = context || this.#context!;
-
-    return this.#inner.request(actualContext.management, {
-      path: `${this.#basePath}/${id}/deprovision`,
-      method: "POST",
-      apiToken: actualContext.apiToken,
-      body: {
-        "@id": id,
-        "@context": JSON_LD_DEFAULT_CONTEXT,
       },
     });
   }
