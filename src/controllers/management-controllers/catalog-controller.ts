@@ -1,10 +1,10 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  CatalogRequest,
   Catalog,
-  expand,
+  CatalogRequest,
   Dataset,
   DatasetRequest,
+  expand,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
@@ -27,6 +27,7 @@ export class CatalogController extends ManagementBaseController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": this.management.getContextUrl(actualContext),
+          "@type": "CatalogRequest",
           protocol: actualContext.protocolVersion,
           ...input,
         },
@@ -47,11 +48,11 @@ export class CatalogController extends ManagementBaseController {
         apiToken: actualContext.apiToken,
         body: {
           "@context": this.management.getContextUrl(actualContext),
+          "@type": "DatasetRequest",
           protocol: actualContext.protocolVersion,
           ...input,
         },
       })
       .then((body) => expand(body, () => new Dataset()));
   }
-
 }
