@@ -1,6 +1,7 @@
 import {
   AssetController,
   CatalogController,
+  CatalogsController,
   ContractAgreementController,
   ContractDefinitionController,
   ContractNegotiationController,
@@ -16,6 +17,10 @@ import { EdcController } from "../edc-controller";
 export class ManagementController extends EdcController {
   get assets() {
     return new AssetController(this.inner, this.context);
+  }
+
+  get catalogs() {
+    return new CatalogsController(this.inner, this.context);
   }
 
   get federatedCatalog() {
