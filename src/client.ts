@@ -19,6 +19,7 @@ export type ContextInput = {
   protocolVersion?: string;
   managementApiVersion?: string;
   identityApiVersion?: string;
+  authorization?: Record<string, string> | undefined;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
@@ -27,6 +28,7 @@ const innerSymbol = Symbol("[#innerToken]");
 const protocolVersionSymbol = Symbol("[#protocolVersion]");
 const managementApiVersionSymbol = Symbol("[#managementApiVersion]");
 const identityApiVersionSymbol = Symbol("[#identityApiVersion]");
+const authorization = Symbol("[#authorization]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
@@ -35,9 +37,18 @@ class Builder<T extends Record<string, EdcController> = {}> {
   [protocolVersionSymbol]?: string;
   [managementApiVersionSymbol]?: string;
   [identityApiVersionSymbol]?: string;
+  [authorization]?: Record<string, string>;
 
+  /**
+   * @deprecated use authorization instead
+   */
   apiToken(apiToken: string): this {
-    this[apiTokenSymbol] = apiToken;
+    this.authorization("X-Api-Key", apiToken);
+    return this;
+  }
+
+  authorization(key: string, value: string): this {
+    this[authorization] = { [key]: value };
     return this;
   }
 
@@ -110,6 +121,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
   build(): EdcConnectorClientType<T> {
     this.#instance.context = EdcConnectorClient.createContext({
       token: this[apiTokenSymbol],
+      authorization: this[authorization],
       addresses: this[addressesSymbol],
       protocolVersion: this[protocolVersionSymbol],
       managementApiVersion: this[managementApiVersionSymbol],
@@ -152,34 +164,23 @@ export class EdcConnectorClient {
     return this.context.addresses;
   }
 
-  /**
-   * @deprecated
-   */
-  createContext(
-    token: string,
-    addresses: Addresses,
-    protocolVersion?: string,
-  ): EdcConnectorClientContext {
-    return new EdcConnectorClientContext(token, addresses, protocolVersion);
-  }
-
   static createContext(
     {
-      token,
       addresses,
       protocolVersion,
       managementApiVersion,
       identityApiVersion,
+      authorization,
     }: ContextInput = {
       addresses: {},
     },
   ): EdcConnectorClientContext {
     return new EdcConnectorClientContext(
-      token,
       addresses,
       protocolVersion,
       managementApiVersion,
       identityApiVersion,
+      authorization,
     );
   }
 

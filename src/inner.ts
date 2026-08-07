@@ -5,13 +5,8 @@ interface InnerRequest {
   method: "DELETE" | "GET" | "POST" | "PUT" | "PATCH";
   query?: Record<string, string>;
   body?: unknown;
-  apiToken?: string;
-  headers?: Record<string, string | undefined>;
-}
-
-interface InnerStream extends InnerRequest {
-  body?: undefined;
-  apiToken?: undefined;
+  authorization?: Record<string, string> | undefined;
+  headers?: Record<string, string>;
 }
 
 export class Inner {
@@ -26,19 +21,6 @@ export class Inner {
     }
 
     return response.json();
-  }
-
-  async stream(baseUrl: string, innerRequest: InnerStream): Promise<Response> {
-    const response = await this.#fetch(baseUrl, innerRequest);
-
-    if (response.status === 204 || !response.body) {
-      throw new EdcConnectorClientError(
-        EdcConnectorClientErrorType.Unreachable,
-        "response is never empty",
-      );
-    }
-
-    return response;
   }
 
   async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {
@@ -56,7 +38,7 @@ export class Inner {
       method,
       headers: {
         ...innerRequest.headers,
-        "X-Api-Key": innerRequest.apiToken ?? "",
+        ...(innerRequest.authorization ?? {}),
       },
       body: innerRequest.body ? JSON.stringify(innerRequest.body) : undefined,
     });
@@ -72,37 +54,29 @@ export class Inner {
 
       switch (response.status) {
         case 400: {
-          const error = new EdcConnectorClientError(
+          throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.BadRequest,
             "request was malformed: " + errorMessage,
           );
-
-          throw error;
         }
         case 404: {
-          const error = new EdcConnectorClientError(
+          throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.NotFound,
             "resource not found: " + errorMessage,
           );
-
-          throw error;
         }
         case 409: {
-          const error = new EdcConnectorClientError(
+          throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.Duplicate,
             "duplicated resource: " + errorMessage,
           );
-
-          throw error;
         }
 
         case 502: {
-          const error = new EdcConnectorClientError(
+          throw new EdcConnectorClientError(
             EdcConnectorClientErrorType.BadGateway,
             "Bad Gateway: " + errorMessage,
           );
-
-          throw error;
         }
 
         default: {

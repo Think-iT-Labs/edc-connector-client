@@ -11,7 +11,7 @@ export class ObservabilityController extends EdcController {
     return this.inner.request(actualContext.default, {
       path: "/check/health",
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -23,7 +23,7 @@ export class ObservabilityController extends EdcController {
     return this.inner.request(actualContext.default, {
       path: "/check/liveness",
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -35,7 +35,7 @@ export class ObservabilityController extends EdcController {
     return this.inner.request(actualContext.default, {
       path: "/check/readiness",
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -47,7 +47,7 @@ export class ObservabilityController extends EdcController {
     return this.inner.request(actualContext.default, {
       path: "/check/startup",
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 }

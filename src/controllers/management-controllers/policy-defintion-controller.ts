@@ -26,7 +26,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
       .request(actualContext.management, {
         path: this.management.getBasePath(actualContext),
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           ...input,
           "@context": this.management.getContextUrl(actualContext),
@@ -45,7 +45,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
     return this.inner.request(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "PUT",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       body: {
         ...input,
         "@context": this.management.getContextUrl(actualContext),
@@ -62,7 +62,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
     return this.inner.request(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "DELETE",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -76,7 +76,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${policyId}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new PolicyDefinition()));
   }
@@ -91,7 +91,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           ...query,
           "@context": this.management.getContextUrl(actualContext),

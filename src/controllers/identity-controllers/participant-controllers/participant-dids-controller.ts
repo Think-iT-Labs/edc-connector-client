@@ -22,7 +22,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/publish`,
       method: "POST",
       body: { did },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -36,7 +36,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/query`,
       method: "POST",
       body: query,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -48,7 +48,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/state`,
       method: "POST",
       body: { did },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -60,7 +60,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/unpublish`,
       method: "POST",
       body: { did },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -80,7 +80,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
         autoPublish: String(autoPublish),
       },
       body: service,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -105,7 +105,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/${did}/endpoints`,
       method: "DELETE",
       query,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -123,7 +123,7 @@ export class ParticipantDIDsController extends IdentityBaseController {
       query: {
         autoPublish: String(autoPublish),
       },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 }

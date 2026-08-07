@@ -17,7 +17,7 @@ export class DIDsController extends IdentityBaseController {
     return this.inner.request<DIDDocument[]>(actualContext.identity, {
       path: this.getBasePath(actualContext),
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       query,
     });
   }

@@ -22,7 +22,7 @@ export class DataplaneController {
       .request(actualContext.management, {
         path: this.#basePath,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expandArray(body, () => new Dataplane()));
   }
