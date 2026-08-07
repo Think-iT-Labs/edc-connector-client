@@ -29,7 +29,7 @@ export class SecretController {
     return this.#inner.request(actualContext.management, {
         path: this.#basePath,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body
       });
   }
@@ -44,7 +44,7 @@ export class SecretController {
       .request(actualContext.management, {
         path: `${this.#basePath}/${id}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new Secret()));
   }
@@ -60,7 +60,7 @@ export class SecretController {
     return this.#inner.request(actualContext.management, {
       path: this.#basePath,
       method: "PUT",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       body,
     });
   }
@@ -71,7 +71,7 @@ export class SecretController {
     return this.#inner.request(actualContext.management, {
         path: `${this.#basePath}/${id}`,
         method: "DELETE",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       });
   }
 

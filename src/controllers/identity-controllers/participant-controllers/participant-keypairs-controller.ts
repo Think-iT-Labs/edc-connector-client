@@ -18,7 +18,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     return this.inner.request<KeyPair>(actualContext.identity, {
       path: `${this.getBasePath(actualContext)}/${keyPairId}`,
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -28,7 +28,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     return this.inner.request<KeyPair[]>(actualContext.identity, {
       path: this.getBasePath(actualContext),
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -46,7 +46,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
       query: {
         makeDefault: String(makeDefault),
       },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -56,7 +56,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
     return this.inner.request<void>(actualContext.identity, {
       path: `${this.getBasePath(actualContext)}/${keyPairId}/activate`,
       method: "POST",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -71,7 +71,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/${keyPairId}/revoke`,
       method: "POST",
       body: newKeyDescriptor,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -90,7 +90,7 @@ export class ParticipantKeyPairContoller extends IdentityBaseController {
       query: {
         duration: String(duration),
       },
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 }

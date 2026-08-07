@@ -24,7 +24,7 @@ export class CatalogController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "CatalogRequest",
@@ -45,7 +45,7 @@ export class CatalogController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/dataset/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "DatasetRequest",

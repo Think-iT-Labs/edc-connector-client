@@ -17,7 +17,7 @@ export class ParticipantsController extends IdentityBaseController {
     return this.inner.request<Participant[]>(actualContext.identity, {
       path: this.getBasePath(actualContext),
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       query,
     });
   }
@@ -32,7 +32,7 @@ export class ParticipantsController extends IdentityBaseController {
     }>(actualContext.identity, {
       path: this.getBasePath(actualContext),
       method: "POST",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       body: input,
     });
   }
@@ -43,7 +43,7 @@ export class ParticipantsController extends IdentityBaseController {
     return this.inner.request<Participant>(actualContext.identity, {
       path: `${this.getBasePath(actualContext)}/${participantId}`,
       method: "GET",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 }

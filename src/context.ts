@@ -5,20 +5,20 @@ import {
 } from "./entities";
 
 export class EdcConnectorClientContext implements Addresses {
-  #apiToken: string | undefined;
+  #authorization: Record<string, string> | undefined;
   #addresses: Addresses;
   #protocolVersion: string;
   #managementApiVersion: string;
   #identityApiVersion: string;
 
   constructor(
-    apiToken: string | undefined,
     addresses: Addresses,
     protocolVersion = "dataspace-protocol-http:2025-1",
     managementApiVersion = DEFAULT_MANAGEMENT_API_VERSION,
     identityApiVersion = DEFAULT_IDENTITY_API_VERSION,
+    authorization?: Record<string, string>,
   ) {
-    this.#apiToken = apiToken;
+    this.#authorization = authorization;
     this.#addresses = addresses;
     this.#protocolVersion = protocolVersion;
     this.#managementApiVersion = managementApiVersion;
@@ -63,8 +63,8 @@ export class EdcConnectorClientContext implements Addresses {
     );
   }
 
-  get apiToken(): string | undefined {
-    return this.#apiToken;
+  get authorization(): Record<string, string> | undefined {
+    return this.#authorization;
   }
 
   get managementApiVersion(): string {

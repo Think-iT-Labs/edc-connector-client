@@ -33,7 +33,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
         path: this.getBasePath(actualContext),
         method: "GET",
         query,
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       },
     );
   }
@@ -48,7 +48,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
       path: this.getBasePath(actualContext),
       method: "PUT",
       body: input,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -62,7 +62,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
       path: this.getBasePath(actualContext),
       method: "POST",
       body: input,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -76,7 +76,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
       path: `${this.getBasePath(actualContext)}/request`,
       method: "POST",
       body: input,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -91,7 +91,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
       {
         path: `${this.getBasePath(actualContext)}/request/${issuerPid}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       },
     );
   }
@@ -107,7 +107,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
       {
         path: `${this.getBasePath(actualContext)}/${credentialId}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       },
     );
   }
@@ -121,7 +121,7 @@ export class ParticipantVerifiableCredentialsController extends IdentityBaseCont
     return this.inner.request<string>(actualContext.identity, {
       path: `${this.getBasePath(actualContext)}/${credentialId}`,
       method: "DELETE",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 }

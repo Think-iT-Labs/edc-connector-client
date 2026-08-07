@@ -24,7 +24,7 @@ export class ParticipantController extends IdentityBaseController {
     return this.inner.request<string>(actualContext.identity, {
       path: this.getBasePath(actualContext),
       method: "DELETE",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -37,7 +37,7 @@ export class ParticipantController extends IdentityBaseController {
         path: `${this.getBasePath(actualContext)}/roles`,
         method: "PUT",
         body: roles,
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       },
     );
   }
@@ -59,7 +59,7 @@ export class ParticipantController extends IdentityBaseController {
       method: "POST",
       query: { isActive: String(isActive) },
       body,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -79,7 +79,7 @@ export class ParticipantController extends IdentityBaseController {
       path: `${this.getBasePath(actualContext)}/token`,
       method: "POST",
       body,
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 

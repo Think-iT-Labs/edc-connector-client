@@ -30,7 +30,7 @@ export class EdrController {
       .request(actualContext.management, {
         path: `${this.#basePath}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body:
           Object.keys(query).length === 0
             ? null
@@ -51,7 +51,7 @@ export class EdrController {
     return this.#inner.request(actualContext.management, {
       path: `${this.#basePath}/${edrId}`,
       method: "DELETE",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
     });
   }
 
@@ -65,7 +65,7 @@ export class EdrController {
       .request(actualContext.management, {
         path: `${this.#basePath}/${edrId}/dataaddress`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new JsonLdObject()));
   }

@@ -1,9 +1,9 @@
 import {
+  Addresses,
   EdcConnectorClient,
   EdcConnectorClientContext,
   EdcController,
 } from "../src";
-import { Addresses } from "../src";
 import { Inner } from "../src/inner";
 
 describe("EdcConnectorClient", () => {
@@ -19,8 +19,6 @@ describe("EdcConnectorClient", () => {
 
   describe("edcClient.createContext", () => {
     it("creates a new EdcConnectorClientContext", async () => {
-      // given
-      const apiToken = "123456";
       const addresses: Addresses = {
         default: "http://localhost:19191",
         management: "http://localhost:19193",
@@ -29,32 +27,28 @@ describe("EdcConnectorClient", () => {
       };
       const protocol = "protocol";
 
-      // when
       const context = EdcConnectorClient.createContext({
-        token: apiToken,
         addresses,
         protocolVersion: protocol,
+        authorization: { "Authorization": "token" },
       });
 
-      // then
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
-      expect(context.apiToken).toBe(apiToken);
       expect(context.default).toBe(addresses.default);
       expect(context.management).toBe(addresses.management);
       expect(context.protocol).toBe(addresses.protocol);
       expect(context.control).toBe(addresses.control);
       expect(context.protocolVersion).toBe(protocol);
+      expect(context.authorization).toStrictEqual({ "Authorization": "token" });
     });
 
     it("creates context correctly with builder.build", () => {
-      const apiToken = "123456";
       const defaultUrl = "http://localhost:19191";
       const managementUrl = "http://localhost:19193";
       const protocolUrl = "http://localhost:19194";
       const protocol = "protocol";
 
       const client = new EdcConnectorClient.Builder()
-        .apiToken(apiToken)
         .managementUrl(managementUrl)
         .defaultUrl(defaultUrl)
         .protocolUrl(protocolUrl)
@@ -62,7 +56,6 @@ describe("EdcConnectorClient", () => {
         .build();
 
       expect(client.context).toBeInstanceOf(EdcConnectorClientContext);
-      expect(client.context.apiToken).toBe(apiToken);
       expect(client.context.default).toBe(defaultUrl);
       expect(client.context.management).toBe(managementUrl);
       expect(client.context.protocol).toBe(protocolUrl);
@@ -115,11 +108,9 @@ describe("EdcConnectorClient", () => {
     });
 
     it("exposes the custom controller on the client and wires internals", () => {
-      const token = "test-token-123";
       const managementUrl = "https://example.com/management";
 
       const client = new EdcConnectorClient.Builder()
-        .apiToken(token)
         .managementUrl(managementUrl)
         .use("foo", FooController)
         .build();
@@ -129,9 +120,6 @@ describe("EdcConnectorClient", () => {
 
       const context = client.foo.getContext();
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
-
-      expect(context?.apiToken).toBe(token);
-
       expect(context?.management).toBe(managementUrl);
     });
   });

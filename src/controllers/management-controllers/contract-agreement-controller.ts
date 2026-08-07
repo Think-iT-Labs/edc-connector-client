@@ -30,7 +30,7 @@ export class ContractAgreementController {
       .request(actualContext.management, {
         path: `${this.#basePath}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body:
           Object.keys(query).length === 0
             ? null
@@ -52,7 +52,7 @@ export class ContractAgreementController {
       .request(actualContext.management, {
         path: `${this.#basePath}/${agreementId}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new ContractAgreement()));
   }
@@ -67,7 +67,7 @@ export class ContractAgreementController {
       .request(actualContext.management, {
         path: `${this.#basePath}/${agreementId}/negotiation`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new ContractNegotiation()));
   }

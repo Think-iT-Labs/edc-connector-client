@@ -28,7 +28,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       .request(actualContext.management, {
         path: this.management.getBasePath(actualContext),
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "ContractRequest",
@@ -49,7 +49,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body:
           Object.keys(query).length === 0
             ? null
@@ -71,7 +71,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${negotiationId}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new ContractNegotiation()));
   }
@@ -86,7 +86,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${negotiationId}/state`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new ContractNegotiationState()));
   }
@@ -101,7 +101,7 @@ export class ContractNegotiationController extends ManagementBaseController {
     return this.inner.request(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${negotiationId}/terminate`,
       method: "POST",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       body: {
         "@context": this.management.getContextUrl(actualContext),
         ...(actualContext.managementApiVersion === "v4"
@@ -123,7 +123,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${negotiationId}/agreement`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new ContractAgreement()));
   }

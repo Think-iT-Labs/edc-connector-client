@@ -59,10 +59,14 @@ for doing that it can be instantiated through the `EdcConnectorClient.Builder`
 import { EdcConnectorClient } from "@think-it-labs/edc-connector-client"
 
 const client = new EdcConnectorClient.Builder()
-  .apiToken("123456")
+  .authorization("X-Api-Key", "123456")
   .managementUrl("https://edc.think-it.io/management")
   .build();
 ```
+
+The `authorization(key, value)` method sets the HTTP header used to authenticate requests (e.g. `"X-Api-Key"`, `"Authorization"`).
+
+> **Note** `apiToken(token)` is deprecated. It is equivalent to calling `.authorization("X-Api-Key", token)`.
 
 At this point the calls can be made against the specified connector:
 ```ts
@@ -95,12 +99,18 @@ const client = new EdcConnectorClient();
 ```
 
 Context objects can be created with a `createContext` call:
+
 ```ts
-const context = client.createContext("123456", {
-  default: "https://edc.think-it.io/api",
-  management: "https://edc.think-it.io/management",
-  protocol: "https://edc.think-it.io/protocol",
-  control: "https://edc.think-it.io/control",
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client";
+
+const context = EdcConnectorClient.createContext({
+  authorization: { "X-Api-Key": "123456" },
+  addresses: {
+    default: "https://edc.think-it.io/api",
+    management: "https://edc.think-it.io/management",
+    protocol: "https://edc.think-it.io/protocol",
+    control: "https://edc.think-it.io/control",
+  },
 });
 ```
 

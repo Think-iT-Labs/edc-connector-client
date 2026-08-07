@@ -27,7 +27,7 @@ export class FederatedCatalogController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body,
       })
       .then((body) => expandArray(body, () => new Catalog()));

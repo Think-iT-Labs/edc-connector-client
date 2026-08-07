@@ -19,7 +19,7 @@ export class VerifiableCredentialsController extends IdentityBaseController {
       {
         path: this.getBasePath(actualContext),
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         query,
       },
     );

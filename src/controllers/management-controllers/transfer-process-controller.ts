@@ -27,7 +27,7 @@ export class TransferProcessController extends ManagementBaseController {
       .request(actualContext.management, {
         path: this.management.getBasePath(actualContext),
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "TransferRequest",
@@ -48,7 +48,7 @@ export class TransferProcessController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${id}`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new TransferProcess()));
   }
@@ -63,7 +63,7 @@ export class TransferProcessController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
         body:
           Object.keys(query).length === 0
             ? null
@@ -85,7 +85,7 @@ export class TransferProcessController extends ManagementBaseController {
       .request(actualContext.management, {
         path: `${this.management.getBasePath(actualContext)}/${transferProcessId}/state`,
         method: "GET",
-        apiToken: actualContext.apiToken,
+        authorization: actualContext.authorization,
       })
       .then((body) => expand(body, () => new TransferProcessState()));
   }
@@ -100,7 +100,7 @@ export class TransferProcessController extends ManagementBaseController {
     return this.inner.request(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${id}/terminate`,
       method: "POST",
-      apiToken: actualContext.apiToken,
+      authorization: actualContext.authorization,
       body: {
         "@context": this.management.getContextUrl(actualContext),
         "@type": "TerminateTransfer",
