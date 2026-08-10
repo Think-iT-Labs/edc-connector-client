@@ -4,8 +4,6 @@
   "addresses": {
     "default": "http://localhost:19191/api",
     "management": "http://localhost:19193/management",
-    "protocol": "http://consumer-connector:9194/protocol",
-    "control": "http://localhost:19292/control",
-    "catalog": "http://localhost:19393/catalog"
+    "protocol": "http://consumer-connector:9194/protocol"
   }
 }

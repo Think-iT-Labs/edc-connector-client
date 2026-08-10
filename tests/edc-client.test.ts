@@ -23,7 +23,6 @@ describe("EdcConnectorClient", () => {
         default: "http://localhost:19191",
         management: "http://localhost:19193",
         protocol: "http://localhost:19194",
-        control: "http://localhost:19292",
       };
       const protocol = "protocol";
 
@@ -37,7 +36,6 @@ describe("EdcConnectorClient", () => {
       expect(context.default).toBe(addresses.default);
       expect(context.management).toBe(addresses.management);
       expect(context.protocol).toBe(addresses.protocol);
-      expect(context.control).toBe(addresses.control);
       expect(context.protocolVersion).toBe(protocol);
       expect(context.authorization).toStrictEqual({ "Authorization": "token" });
     });

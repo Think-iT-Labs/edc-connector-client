@@ -10,7 +10,6 @@ edc-controlplane-base-bom = { module = "org.eclipse.edc:controlplane-base-bom", 
 edc-crawler-spi = {module = "org.eclipse.edc:crawler-spi", version.ref = "edc"}
 edc-data-plane-spi = { module = "org.eclipse.edc:data-plane-spi", version.ref = "edc" }
 edc-dataplane-base-bom = { module = "org.eclipse.edc:dataplane-base-bom", version.ref = "edc" }
-edc-federatedcatalog-bom = {module = "org.eclipse.edc:federatedcatalog-base-bom", version.ref = "edc"}
 edc-iam-mock = { module = "org.eclipse.edc:iam-mock", version.ref = "edc" }
 edc-transfer-spi = { module = "org.eclipse.edc:transfer-spi", version.ref = "edc" }
 

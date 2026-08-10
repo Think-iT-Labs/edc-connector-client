@@ -48,19 +48,8 @@ export class EdcConnectorClientContext implements Addresses {
     return this.getOrError(this.#addresses.management, "management address");
   }
 
-  get control(): string {
-    return this.getOrError(this.#addresses.control, "control address");
-  }
-
   get protocolVersion(): string | undefined {
     return this.#protocolVersion;
-  }
-
-  get federatedCatalog(): string {
-    return this.getOrError(
-      this.#addresses.federatedCatalogUrl,
-      "federatedCatalog address",
-    );
   }
 
   get authorization(): Record<string, string> | undefined {
