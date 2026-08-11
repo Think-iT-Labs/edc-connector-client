@@ -1,12 +1,16 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
-import { expandArray, Catalog, QuerySpec } from "../../entities";
+import { Catalog, JsonLdService, QuerySpec } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class CatalogsController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("catalogs", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("catalogs", inner, jsonLdService, context);
   }
 
   async queryAll(
@@ -30,6 +34,8 @@ export class CatalogsController extends ManagementBaseController {
         authorization: actualContext.authorization,
         body,
       })
-      .then((body) => expandArray(body, () => new Catalog()));
+      .then((body) =>
+        this.jsonLdService.expandArray(body, () => new Catalog()),
+      );
   }
 }

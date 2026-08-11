@@ -1,19 +1,22 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractDefinition,
   ContractDefinitionInput,
   IdResponse,
+  JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class ContractDefinitionController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("contractdefinitions", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("contractdefinitions", inner, jsonLdService, context);
   }
 
   async create(
@@ -32,7 +35,7 @@ export class ContractDefinitionController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expand(body, () => new IdResponse()));
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async delete(
@@ -60,7 +63,9 @@ export class ContractDefinitionController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractDefinition()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new ContractDefinition()),
+      );
   }
 
   async queryAll(
@@ -79,7 +84,9 @@ export class ContractDefinitionController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expandArray(body, () => new ContractDefinition()));
+      .then((body) =>
+        this.jsonLdService.expandArray(body, () => new ContractDefinition()),
+      );
   }
 
   async update(

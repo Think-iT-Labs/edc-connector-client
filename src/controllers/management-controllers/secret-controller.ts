@@ -1,43 +1,48 @@
 import { EdcConnectorClientContext } from "../../context";
 import {
-  compact,
-  expand,
   IdResponse,
+  JSON_LD_DEFAULT_CONTEXT,
+  JsonLdService,
   Secret,
-  JSON_LD_DEFAULT_CONTEXT
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class SecretController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #jsonLdService: JsonLdService;
   #basePath = "/v3/secrets";
 
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
     this.#inner = inner;
     this.#context = context;
+    this.#jsonLdService = jsonLdService;
   }
 
-  async create(input: Secret, context?: EdcConnectorClientContext): Promise<IdResponse> {
+  async create(
+    input: Secret,
+    context?: EdcConnectorClientContext,
+  ): Promise<IdResponse> {
     const actualContext = context || this.#context!;
 
-    const body = await compact({
+    const body = await this.#jsonLdService.compact({
       ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT
+      "@context": JSON_LD_DEFAULT_CONTEXT,
     });
 
     return this.#inner.request(actualContext.management, {
-        path: this.#basePath,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body
-      });
+      path: this.#basePath,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body,
+    });
   }
 
-  async get(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<Secret> {
+  async get(id: string, context?: EdcConnectorClientContext): Promise<Secret> {
     const actualContext = context || this.#context!;
 
     return this.#inner
@@ -46,15 +51,18 @@ export class SecretController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new Secret()));
+      .then((body) => this.#jsonLdService.expand(body, () => new Secret()));
   }
 
-  async update(input: Secret, context?: EdcConnectorClientContext): Promise<void> {
+  async update(
+    input: Secret,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
     const actualContext = context || this.#context!;
 
-    const body = await compact({
+    const body = await this.#jsonLdService.compact({
       ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT
+      "@context": JSON_LD_DEFAULT_CONTEXT,
     });
 
     return this.#inner.request(actualContext.management, {
@@ -69,10 +77,9 @@ export class SecretController {
     const actualContext = context || this.#context!;
 
     return this.#inner.request(actualContext.management, {
-        path: `${this.#basePath}/${id}`,
-        method: "DELETE",
-        authorization: actualContext.authorization,
-      });
+      path: `${this.#basePath}/${id}`,
+      method: "DELETE",
+      authorization: actualContext.authorization,
+    });
   }
-
 }

@@ -1,23 +1,28 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
-  QuerySpec,
-  JsonLdObject,
-  JSON_LD_DEFAULT_CONTEXT,
   Edr,
+  JSON_LD_DEFAULT_CONTEXT,
+  JsonLdObject,
+  JsonLdService,
+  QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class EdrController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #jsonLdService: JsonLdService;
   #basePath = "/v3/edrs";
 
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
     this.#inner = inner;
     this.#context = context;
+    this.#jsonLdService = jsonLdService;
   }
 
   async request(
@@ -35,11 +40,11 @@ export class EdrController {
           Object.keys(query).length === 0
             ? null
             : {
-              ...query,
-              "@context": JSON_LD_DEFAULT_CONTEXT,
-            },
+                ...query,
+                "@context": JSON_LD_DEFAULT_CONTEXT,
+              },
       })
-      .then((body) => expandArray(body, () => new Edr()));
+      .then((body) => this.#jsonLdService.expandArray(body, () => new Edr()));
   }
 
   async delete(
@@ -67,6 +72,8 @@ export class EdrController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new JsonLdObject()));
+      .then((body) =>
+        this.#jsonLdService.expand(body, () => new JsonLdObject()),
+      );
   }
 }

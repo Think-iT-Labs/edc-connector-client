@@ -1,5 +1,9 @@
 import { EdcConnectorClientContext } from "../../context";
-import { JSON_LD_DEFAULT_CONTEXT, MANAGEMENT_V2_CONTEXT } from "../../entities";
+import {
+  JSON_LD_DEFAULT_CONTEXT,
+  JsonLdService,
+  MANAGEMENT_V2_CONTEXT,
+} from "../../entities";
 import { Inner } from "../../inner";
 
 class ManagementRequestHelper {
@@ -42,14 +46,17 @@ export abstract class ManagementBaseController {
   protected inner: Inner;
   protected context?: EdcConnectorClientContext;
   protected management: ManagementRequestHelper;
+  protected jsonLdService: JsonLdService;
 
   constructor(
     resourcePath: string,
     inner: Inner,
+    jsonLdService: JsonLdService,
     context?: EdcConnectorClientContext,
   ) {
     this.inner = inner;
     this.context = context;
     this.management = new ManagementRequestHelper(resourcePath, context);
+    this.jsonLdService = jsonLdService;
   }
 }
