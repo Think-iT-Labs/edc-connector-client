@@ -108,8 +108,7 @@ const context = EdcConnectorClient.createContext({
   addresses: {
     default: "https://edc.think-it.io/api",
     management: "https://edc.think-it.io/management",
-    protocol: "https://edc.think-it.io/protocol",
-    control: "https://edc.think-it.io/control",
+    protocol: "https://edc.think-it.io/protocol"
   },
 });
 ```

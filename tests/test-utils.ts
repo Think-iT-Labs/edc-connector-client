@@ -174,32 +174,6 @@ export async function waitForTransferState(
   expect(actualState).toBe(targetState);
 }
 
-export async function waitForFederatedCatalog(
-  client: EdcConnectorClient,
-  targetNumberParticipants: number,
-  interval = 500,
-  times = 10,
-): Promise<void> {
-  let waiting = true;
-  let actualNumberParticipants = 0;
-
-  do {
-    times--;
-    await new Promise((resolve) => setTimeout(resolve, interval));
-
-    const response = await client.management.federatedCatalog.queryAll({
-      "@type": "QuerySpec",
-      limit: 50,
-    });
-
-    actualNumberParticipants = response.length;
-
-    waiting = actualNumberParticipants !== targetNumberParticipants;
-  } while (waiting && times > 0);
-
-  expect(actualNumberParticipants).toBe(targetNumberParticipants);
-}
-
 export async function waitForCatalogs(
   client: EdcConnectorClient,
   targetNumberParticipants: number,

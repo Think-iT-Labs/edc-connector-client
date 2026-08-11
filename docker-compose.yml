@@ -4,10 +4,8 @@ services:
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
       - "19191:9191" # connector default
-      - "19192:9192" # connector control
       - "19193:9193" # connector management
       - "19194:9194" # connector protocol
-      - "19393:9393" # federated catalog
     environment:
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:
@@ -20,10 +18,8 @@ services:
     platform: ${DOCKER_PLATFORM:-linux/amd64}
     ports:
       - "29191:9191" # connector default
-      - "29192:9192" # connector control
       - "29193:9193" # connector management
       - "29194:9194" # connector protocol
-      - "29393:9393" # federated catalog
     environment:
       EDC_FS_CONFIG: /config/configuration.properties
     volumes:

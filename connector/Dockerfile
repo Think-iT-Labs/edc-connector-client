@@ -17,9 +17,7 @@ ENV EDC_FS_CONFIG=$EDC_FS_CONFIG
 HEALTHCHECK --interval=5s --timeout=2s CMD curl -f http://localhost:9191/api/check/health || exit 1
 
 EXPOSE 9191
-EXPOSE 9192
 EXPOSE 9193
 EXPOSE 9194
-EXPOSE 9291
 
 ENTRYPOINT java -jar connector.jar

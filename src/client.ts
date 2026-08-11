@@ -2,7 +2,6 @@ import { Class } from "type-fest";
 import { version } from "../package.json";
 import { EdcConnectorClientContext } from "./context";
 import { ObservabilityController } from "./controllers";
-import { FederatedCatalogController } from "./controllers/federated-catalog-controller";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
 import { Addresses } from "./entities";
@@ -77,16 +76,6 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
-  controlUrl(controlUrl: string): this {
-    this[addressesSymbol].control = controlUrl;
-    return this;
-  }
-
-  federatedCatalogUrl(federatedCatalogUrl: string): this {
-    this[addressesSymbol].federatedCatalogUrl = federatedCatalogUrl;
-    return this;
-  }
-
   protocolVersion(dataspaceProtocol: string): this {
     this[protocolVersionSymbol] = dataspaceProtocol;
     return this;
@@ -154,10 +143,6 @@ export class EdcConnectorClient {
 
   get observability() {
     return new ObservabilityController(this[innerSymbol], this.context);
-  }
-
-  get federatedCatalog() {
-    return new FederatedCatalogController(this[innerSymbol], this.context);
   }
 
   get addresses(): Addresses {

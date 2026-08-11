@@ -1,4 +1,3 @@
-io.thinkit.client.extension.EndpointGeneratorFunctionExtension
 io.thinkit.client.extension.NoOpDataFlowControllerExtension
 io.thinkit.client.extension.ParticipantsResolverExtension
 io.thinkit.client.extension.SeedVaultExtension

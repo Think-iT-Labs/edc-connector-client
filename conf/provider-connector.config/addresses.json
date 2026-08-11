@@ -4,8 +4,6 @@
   "addresses": {
     "default": "http://localhost:29191/api",
     "management": "http://localhost:29193/management",
-    "protocol": "http://provider-connector:9194/protocol",
-    "control": "http://localhost:29292/control",
-    "catalog": "http://localhost:29393/catalog"
+    "protocol": "http://provider-connector:9194/protocol"
   }
 }
