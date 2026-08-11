@@ -22,7 +22,14 @@ class ManagementRequestHelper {
     return actualContext;
   }
 
-  getContextUrl({ managementApiVersion }: EdcConnectorClientContext) {
+  getContextUrl({
+    managementApiVersion,
+    managementJsonLdContext,
+  }: EdcConnectorClientContext) {
+    if (managementJsonLdContext !== undefined) {
+      return managementJsonLdContext;
+    }
+
     if (managementApiVersion === "v3") {
       return JSON_LD_DEFAULT_CONTEXT;
     }

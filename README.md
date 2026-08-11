@@ -133,6 +133,47 @@ const result = await client.management.assets.create(context, {
 });
 ```
 
+### Customizing the JSON-LD Context
+
+Management request bodies include an `@context` field whose value is derived automatically from the configured `managementApiVersion` (a `{ "@vocab": ... }` object for v3, a URL array for any other version). When a connector requires a different context value, it can be overridden with `managementJsonLdContext`.
+
+The option accepts a plain URL string, an array of URLs, or a full JSON-LD context object:
+
+**Via the builder:**
+```ts
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client";
+
+// string URL
+const client = new EdcConnectorClient.Builder()
+  .managementUrl("https://edc.think-it.io/management")
+  .managementJsonLdContext("https://custom.example.com/context/v1")
+  .build();
+
+// JSON-LD context object
+const client = new EdcConnectorClient.Builder()
+  .managementUrl("https://edc.think-it.io/management")
+  .managementJsonLdContext({ "@vocab": "https://custom.example.com/ns/" })
+  .build();
+
+// array of context URLs
+const client = new EdcConnectorClient.Builder()
+  .managementUrl("https://edc.think-it.io/management")
+  .managementJsonLdContext(["https://ctx1.example.com", "https://ctx2.example.com"])
+  .build();
+```
+
+**Via `createContext`:**
+```ts
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client";
+
+const context = EdcConnectorClient.createContext({
+  addresses: { management: "https://edc.think-it.io/management" },
+  managementJsonLdContext: "https://custom.example.com/context/v1",
+});
+```
+
+When `managementJsonLdContext` is set it takes precedence over the version-based default for every management request made with that client or context.
+
 ### Extending the Client with Custom Controllers
 
 The client can be extended with custom controllers using the `use` method. This feature allows you to add your own functionality while maintaining type safety through the `EdcController` base class. The extension system is designed to be middleware-like, where each controller is lazily instantiated when accessed.
