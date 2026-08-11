@@ -4,12 +4,18 @@ import {
   DEFAULT_MANAGEMENT_API_VERSION,
 } from "./entities";
 
+export type ManagementJsonLdContext =
+  | string
+  | string[]
+  | Record<string, unknown>;
+
 export class EdcConnectorClientContext implements Addresses {
   #authorization: Record<string, string> | undefined;
   #addresses: Addresses;
   #protocolVersion: string;
   #managementApiVersion: string;
   #identityApiVersion: string;
+  #managementJsonLdContext: ManagementJsonLdContext | undefined;
 
   constructor(
     addresses: Addresses,
@@ -17,12 +23,14 @@ export class EdcConnectorClientContext implements Addresses {
     managementApiVersion = DEFAULT_MANAGEMENT_API_VERSION,
     identityApiVersion = DEFAULT_IDENTITY_API_VERSION,
     authorization?: Record<string, string>,
+    managementJsonLdContext?: ManagementJsonLdContext,
   ) {
     this.#authorization = authorization;
     this.#addresses = addresses;
     this.#protocolVersion = protocolVersion;
     this.#managementApiVersion = managementApiVersion;
     this.#identityApiVersion = identityApiVersion;
+    this.#managementJsonLdContext = managementJsonLdContext;
   }
 
   get default(): string {
@@ -62,6 +70,10 @@ export class EdcConnectorClientContext implements Addresses {
 
   get identityApiVersion(): string {
     return this.#identityApiVersion;
+  }
+
+  get managementJsonLdContext(): ManagementJsonLdContext | undefined {
+    return this.#managementJsonLdContext;
   }
 
   get addresses() {
