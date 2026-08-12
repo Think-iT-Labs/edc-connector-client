@@ -25,6 +25,7 @@ developers by providing an HTTP Client which is thoroughly tested and fully type
 ## Compatibility matrix
 | Client         | API                                                                    |
 |----------------|------------------------------------------------------------------------|
+| 0.10.x         | **Management** v3/v4<br>**Identity Hub** v1-beta                       |
 | 0.9.x          | **Management** v3<br>**Catalog** v1-alpha<br>**Identity Hub** v1-alpha |
 | 0.8.x<br>0.7.x | **Management** v3<br>**Catalog** v1-alpha                              |
 
