@@ -1,9 +1,8 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   IdResponse,
+  JsonLdService,
   PolicyDefinition,
   PolicyDefinitionInput,
   QuerySpec,
@@ -12,8 +11,12 @@ import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class PolicyDefinitionController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("policydefinitions", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("policydefinitions", inner, jsonLdService, context);
   }
 
   async create(
@@ -32,7 +35,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expand(body, () => new IdResponse()));
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async update(
@@ -78,7 +81,9 @@ export class PolicyDefinitionController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new PolicyDefinition()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new PolicyDefinition()),
+      );
   }
 
   async queryAll(
@@ -97,6 +102,8 @@ export class PolicyDefinitionController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expandArray(body, () => new PolicyDefinition()));
+      .then((body) =>
+        this.jsonLdService.expandArray(body, () => new PolicyDefinition()),
+      );
   }
 }

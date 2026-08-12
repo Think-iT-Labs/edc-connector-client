@@ -1,9 +1,8 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   IdResponse,
+  JsonLdService,
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
@@ -13,8 +12,12 @@ import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class TransferProcessController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("transferprocesses", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("transferprocesses", inner, jsonLdService, context);
   }
 
   async initiate(
@@ -35,7 +38,7 @@ export class TransferProcessController extends ManagementBaseController {
           ...input,
         },
       })
-      .then((body) => expand(body, () => new IdResponse()));
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async get(
@@ -50,7 +53,9 @@ export class TransferProcessController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new TransferProcess()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new TransferProcess()),
+      );
   }
 
   async queryAll(
@@ -72,7 +77,9 @@ export class TransferProcessController extends ManagementBaseController {
                 "@context": this.management.getContextUrl(actualContext),
               },
       })
-      .then((body) => expandArray(body, () => new TransferProcess()));
+      .then((body) =>
+        this.jsonLdService.expandArray(body, () => new TransferProcess()),
+      );
   }
 
   async getState(
@@ -87,7 +94,9 @@ export class TransferProcessController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new TransferProcessState()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new TransferProcessState()),
+      );
   }
 
   async terminate(

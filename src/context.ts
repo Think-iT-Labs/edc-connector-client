@@ -16,6 +16,7 @@ export class EdcConnectorClientContext implements Addresses {
   #managementApiVersion: string;
   #identityApiVersion: string;
   #managementJsonLdContext: ManagementJsonLdContext | undefined;
+  #cachedJsonLdContexts: Record<string, object>;
 
   constructor(
     addresses: Addresses,
@@ -24,6 +25,7 @@ export class EdcConnectorClientContext implements Addresses {
     identityApiVersion = DEFAULT_IDENTITY_API_VERSION,
     authorization?: Record<string, string>,
     managementJsonLdContext?: ManagementJsonLdContext,
+    cachedJsonLdContexts: Record<string, object> = {},
   ) {
     this.#authorization = authorization;
     this.#addresses = addresses;
@@ -31,6 +33,7 @@ export class EdcConnectorClientContext implements Addresses {
     this.#managementApiVersion = managementApiVersion;
     this.#identityApiVersion = identityApiVersion;
     this.#managementJsonLdContext = managementJsonLdContext;
+    this.#cachedJsonLdContexts = cachedJsonLdContexts;
   }
 
   get default(): string {
@@ -74,6 +77,10 @@ export class EdcConnectorClientContext implements Addresses {
 
   get managementJsonLdContext(): ManagementJsonLdContext | undefined {
     return this.#managementJsonLdContext;
+  }
+
+  get cachedJsonLdContexts(): Record<string, object> {
+    return this.#cachedJsonLdContexts;
   }
 
   get addresses() {

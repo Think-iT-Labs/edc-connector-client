@@ -4,7 +4,7 @@ import { EdcConnectorClientContext, ManagementJsonLdContext } from "./context";
 import { ObservabilityController } from "./controllers";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
-import { Addresses } from "./entities";
+import { Addresses, JsonLdService } from "./entities";
 import { IdentityController } from "./facades/identity";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
@@ -20,6 +20,7 @@ export type ContextInput = {
   identityApiVersion?: string;
   authorization?: Record<string, string> | undefined;
   managementJsonLdContext?: ManagementJsonLdContext;
+  cachedJsonLdContexts?: Record<string, object>;
 };
 
 const apiTokenSymbol = Symbol("[#apiToken]");
@@ -30,6 +31,7 @@ const managementApiVersionSymbol = Symbol("[#managementApiVersion]");
 const identityApiVersionSymbol = Symbol("[#identityApiVersion]");
 const authorization = Symbol("[#authorization]");
 const managementJsonLdContextSymbol = Symbol("[#managementJsonLdContext]");
+const cachedJsonLdContextsSymbol = Symbol("[#cachedJsonLdContexts]");
 
 class Builder<T extends Record<string, EdcController> = {}> {
   #instance = new EdcConnectorClient();
@@ -40,6 +42,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
   [identityApiVersionSymbol]?: string;
   [authorization]?: Record<string, string>;
   [managementJsonLdContextSymbol]?: ManagementJsonLdContext;
+  [cachedJsonLdContextsSymbol]: Record<string, object> = {};
 
   /**
    * @deprecated use authorization instead
@@ -99,6 +102,14 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
+  cachedJsonLdContext(url: string, context: object): this {
+    this[cachedJsonLdContextsSymbol] = {
+      ...this[cachedJsonLdContextsSymbol],
+      [url]: context,
+    };
+    return this;
+  }
+
   use<K extends string, C extends EdcController>(
     key: K,
     Controller: Class<C>,
@@ -124,6 +135,7 @@ class Builder<T extends Record<string, EdcController> = {}> {
       managementApiVersion: this[managementApiVersionSymbol],
       identityApiVersion: this[identityApiVersionSymbol],
       managementJsonLdContext: this[managementJsonLdContextSymbol],
+      cachedJsonLdContexts: this[cachedJsonLdContextsSymbol],
     });
 
     return this.#instance as EdcConnectorClient & T;
@@ -139,7 +151,11 @@ export class EdcConnectorClient {
   }
 
   get management() {
-    return new ManagementController(this[innerSymbol], this.context);
+    return new ManagementController(
+      this[innerSymbol],
+      new JsonLdService(this.context.cachedJsonLdContexts),
+      this.context,
+    );
   }
 
   get identity() {
@@ -166,6 +182,7 @@ export class EdcConnectorClient {
       identityApiVersion,
       authorization,
       managementJsonLdContext,
+      cachedJsonLdContexts,
     }: ContextInput = {
       addresses: {},
     },
@@ -177,6 +194,7 @@ export class EdcConnectorClient {
       identityApiVersion,
       authorization,
       managementJsonLdContext,
+      cachedJsonLdContexts,
     );
   }
 

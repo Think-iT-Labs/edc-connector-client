@@ -4,14 +4,18 @@ import {
   CatalogRequest,
   Dataset,
   DatasetRequest,
-  expand,
+  JsonLdService,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class CatalogController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("catalog", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("catalog", inner, jsonLdService, context);
   }
 
   async request(
@@ -32,7 +36,7 @@ export class CatalogController extends ManagementBaseController {
           ...input,
         },
       })
-      .then((body) => expand(body, () => new Catalog()));
+      .then((body) => this.jsonLdService.expand(body, () => new Catalog()));
   }
 
   async requestDataset(
@@ -53,6 +57,6 @@ export class CatalogController extends ManagementBaseController {
           ...input,
         },
       })
-      .then((body) => expand(body, () => new Dataset()));
+      .then((body) => this.jsonLdService.expand(body, () => new Dataset()));
   }
 }

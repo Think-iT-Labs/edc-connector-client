@@ -5,17 +5,20 @@ import {
   ContractNegotiation,
   ContractNegotiationRequest,
   ContractNegotiationState,
-  expand,
-  expandArray,
   IdResponse,
+  JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class ContractNegotiationController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("contractnegotiations", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("contractnegotiations", inner, jsonLdService, context);
   }
 
   async initiate(
@@ -36,7 +39,7 @@ export class ContractNegotiationController extends ManagementBaseController {
           ...input,
         },
       })
-      .then((body) => expand(body, () => new IdResponse()));
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async queryAll(
@@ -58,7 +61,9 @@ export class ContractNegotiationController extends ManagementBaseController {
                 "@context": this.management.getContextUrl(actualContext),
               },
       })
-      .then((body) => expandArray(body, () => new ContractNegotiation()));
+      .then((body) =>
+        this.jsonLdService.expandArray(body, () => new ContractNegotiation()),
+      );
   }
 
   async get(
@@ -73,7 +78,9 @@ export class ContractNegotiationController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractNegotiation()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new ContractNegotiation()),
+      );
   }
 
   async getState(
@@ -88,7 +95,9 @@ export class ContractNegotiationController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractNegotiationState()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new ContractNegotiationState()),
+      );
   }
 
   async terminate(
@@ -125,6 +134,8 @@ export class ContractNegotiationController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractAgreement()));
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new ContractAgreement()),
+      );
   }
 }

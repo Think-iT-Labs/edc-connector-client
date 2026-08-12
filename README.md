@@ -174,6 +174,41 @@ const context = EdcConnectorClient.createContext({
 
 When `managementJsonLdContext` is set it takes precedence over the version-based default for every management request made with that client or context.
 
+### Caching JSON-LD Context Documents
+
+When the client expands or compacts JSON-LD responses, it resolves any `@context` URLs using a document loader. By default, well-known EDC and DSP context URLs are resolved locally without any network request. For connectors that reference additional context URLs, you can pre-cache those documents so they are also resolved locally instead of fetched at runtime.
+
+Use `.cachedJsonLdContext(url, document)` on the builder to register a context URL together with its JSON-LD context document:
+
+```ts
+import { EdcConnectorClient } from "@think-it-labs/edc-connector-client";
+
+const myCustomContext = {
+  "@context": {
+    "ex": "https://example.com/ns/",
+    "customProperty": "ex:customProperty"
+  }
+};
+
+const client = new EdcConnectorClient.Builder()
+  .authorization("X-Api-Key", "123456")
+  .managementUrl("https://edc.think-it.io/management")
+  .cachedJsonLdContext("https://example.com/contexts/custom.jsonld", myCustomContext)
+  .build();
+```
+
+Multiple contexts can be cached by chaining the method:
+
+```ts
+const client = new EdcConnectorClient.Builder()
+  .managementUrl("https://edc.think-it.io/management")
+  .cachedJsonLdContext("https://example.com/contexts/v1.jsonld", contextV1)
+  .cachedJsonLdContext("https://example.com/contexts/v2.jsonld", contextV2)
+  .build();
+```
+
+Cached documents take precedence over any network fetch. Context URLs not found in the cache fall back to the default network loader.
+
 ### Extending the Client with Custom Controllers
 
 The client can be extended with custom controllers using the `use` method. This feature allows you to add your own functionality while maintaining type safety through the `EdcController` base class. The extension system is designed to be middleware-like, where each controller is lazily instantiated when accessed.

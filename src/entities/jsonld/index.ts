@@ -1,28 +1,4 @@
 import { EDC_CONTEXT } from "../context";
-import { documentLoader } from "./custom-loader";
-import jsonld from "jsonld";
-
-export async function compact(body: any): Promise<jsonld.NodeObject> {
-  return await jsonld.compact(body, CONTEXT, { documentLoader });
-}
-
-export async function expand<T extends JsonLdObject>(
-  body: any,
-  newInstance: () => T,
-): Promise<T> {
-  const expanded = await jsonld.expand(body, { documentLoader });
-  return Object.assign(newInstance(), expanded[0]);
-}
-
-export async function expandArray<T extends JsonLdObject>(
-  body: any,
-  newInstance: () => T,
-): Promise<T[]> {
-  const expanded = await jsonld.expand(body, { documentLoader });
-  return (expanded as Array<any>).map((element) =>
-    Object.assign(newInstance(), element),
-  );
-}
 
 export class JsonLdObject {
   [propertyName: string]: any;
@@ -32,7 +8,7 @@ export class JsonLdObject {
   }
 
   optionalValue<T>(prefix: string, name: string): T | undefined {
-    var namespace = this.getNamespaceUrl(prefix);
+    const namespace = this.getNamespaceUrl(prefix);
     return (this[`${namespace}${name}`] as JsonLdValue<T>[])
       ?.map((it) => Object.assign(new JsonLdValue(), it))
       ?.at(0)?.value;
@@ -43,7 +19,7 @@ export class JsonLdObject {
     prefix: string,
     name: string,
   ): T | undefined {
-    var namespace = this.getNamespaceUrl(prefix);
+    const namespace = this.getNamespaceUrl(prefix);
     return (
       (this[`${namespace}${name}`] as JsonLdObject[])
         ?.map((it) => Object.assign(newInstance(), it))
@@ -63,7 +39,7 @@ export class JsonLdObject {
     prefix: string,
     name: string,
   ): T[] {
-    var namespace = this.getNamespaceUrl(prefix);
+    const namespace = this.getNamespaceUrl(prefix);
     return ((this[`${namespace}${name}`] as T[]) ?? []).map((element) =>
       Object.assign(newInstance(), element),
     );
@@ -99,13 +75,6 @@ export class JsonLdObject {
     }
   }
 }
-
-const CONTEXT = {
-  "@vocab": EDC_CONTEXT,
-  // "edc": EDC_CONTEXT,
-  // "odrl": "http://www.w3.org/ns/odrl/2/",
-  // "dcat": "http://www.w3.org/ns/dcat#"
-};
 
 export class JsonLdId extends JsonLdObject {
   "@id": string;

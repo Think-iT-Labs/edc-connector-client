@@ -3,17 +3,20 @@ import { EdcConnectorClientContext } from "../../context";
 import {
   Asset,
   AssetInput,
-  expand,
-  expandArray,
   IdResponse,
+  JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class AssetController extends ManagementBaseController {
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
-    super("assets", inner, context);
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
+    super("assets", inner, jsonLdService, context);
   }
 
   async create(
@@ -32,7 +35,7 @@ export class AssetController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expand(body, () => new IdResponse()));
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async delete(
@@ -60,7 +63,7 @@ export class AssetController extends ManagementBaseController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new Asset()));
+      .then((body) => this.jsonLdService.expand(body, () => new Asset()));
   }
 
   async update(
@@ -96,6 +99,6 @@ export class AssetController extends ManagementBaseController {
           "@context": this.management.getContextUrl(actualContext),
         },
       })
-      .then((body) => expandArray(body, () => new Asset()));
+      .then((body) => this.jsonLdService.expandArray(body, () => new Asset()));
   }
 }

@@ -14,6 +14,7 @@ export * from "./edr";
 export * from "./health";
 export * from "./id-response";
 export * from "./jsonld";
+export { JsonLdService } from "../json-ld-service";
 export * from "./policy-definition";
 export * from "./policy";
 export * from "./secret";

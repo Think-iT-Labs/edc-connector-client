@@ -1,23 +1,28 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
-  expand,
-  expandArray,
   ContractAgreement,
   ContractNegotiation,
-  QuerySpec,
   JSON_LD_DEFAULT_CONTEXT,
+  JsonLdService,
+  QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 
 export class ContractAgreementController {
   #inner: Inner;
   #context?: EdcConnectorClientContext;
+  #jsonLdService: JsonLdService;
   #basePath = "/v3/contractagreements";
 
-  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+  constructor(
+    inner: Inner,
+    jsonLdService: JsonLdService,
+    context?: EdcConnectorClientContext,
+  ) {
     this.#inner = inner;
     this.#context = context;
+    this.#jsonLdService = jsonLdService;
   }
 
   async queryAll(
@@ -39,7 +44,9 @@ export class ContractAgreementController {
                 "@context": JSON_LD_DEFAULT_CONTEXT,
               },
       })
-      .then((body) => expandArray(body, () => new ContractAgreement()));
+      .then((body) =>
+        this.#jsonLdService.expandArray(body, () => new ContractAgreement()),
+      );
   }
 
   async get(
@@ -54,7 +61,9 @@ export class ContractAgreementController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractAgreement()));
+      .then((body) =>
+        this.#jsonLdService.expand(body, () => new ContractAgreement()),
+      );
   }
 
   async getNegotiation(
@@ -69,6 +78,8 @@ export class ContractAgreementController {
         method: "GET",
         authorization: actualContext.authorization,
       })
-      .then((body) => expand(body, () => new ContractNegotiation()));
+      .then((body) =>
+        this.#jsonLdService.expand(body, () => new ContractNegotiation()),
+      );
   }
 }
