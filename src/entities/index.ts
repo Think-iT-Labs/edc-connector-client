@@ -38,5 +38,5 @@ export interface QuerySpec {
   sortOrder?: "ASC" | "DESC";
 }
 
-export const DEFAULT_MANAGEMENT_API_VERSION = "v3";
-export const DEFAULT_IDENTITY_API_VERSION = "v1beta";
+export const DEFAULT_MANAGEMENT_API_VERSION = "v4";
+export const DEFAULT_IDENTITY_API_VERSION = "v1";
