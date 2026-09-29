@@ -7,24 +7,24 @@ import {
 import { createContractAgreement, waitForTransferState } from "../../test-utils";
 
 describe("TransferProcessController", () => {
+
+  const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
+
   const v3Consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const v4Consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion("v4")
-    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const provider = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
-    .protocolUrl("http://provider-connector:9194/protocol/2025-1")
     .build();
 
   const runTransferProcessTests = (
@@ -89,16 +89,17 @@ describe("TransferProcessController", () => {
 
   async function initiate(consumer: EdcConnectorClient): Promise<IdResponse> {
     const { contractAgreement } = await createContractAgreement(
-      provider, consumer);
-
-    return await consumer.management.transferProcesses.initiate(
-      {
-        counterPartyAddress: provider.addresses.protocol!,
-        counterPartyId: "provider",
-        contractId: contractAgreement.id,
-        transferType: "HttpData-PULL"
-      },
+      provider,
+      consumer,
+      providerProtocolUrl,
     );
+
+    return await consumer.management.transferProcesses.initiate({
+      counterPartyAddress: providerProtocolUrl,
+      counterPartyId: "provider",
+      contractId: contractAgreement.id,
+      transferType: "HttpData-PULL",
+    });
   }
 
   runTransferProcessTests("v3", v3Consumer);

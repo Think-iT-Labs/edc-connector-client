@@ -51,10 +51,6 @@ export class EdcConnectorClientContext implements Addresses {
     );
   }
 
-  get protocol(): string {
-    return this.getOrError(this.#addresses.protocol, "protocol address");
-  }
-
   get management(): string {
     return this.getOrError(this.#addresses.management, "management address");
   }

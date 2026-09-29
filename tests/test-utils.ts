@@ -28,10 +28,12 @@ interface ContractAgreementMetadata {
 export async function createContractAgreement(
   provider: EdcConnectorClient,
   consumer: EdcConnectorClient,
+  providerProtocolUrl: string,
 ): Promise<ContractAgreementMetadata> {
   const { idResponse, ...rest } = await createContractNegotiation(
     provider,
     consumer,
+    providerProtocolUrl
   );
 
   const negotiationId = idResponse.id;
@@ -55,6 +57,7 @@ export async function createContractAgreement(
 export async function createContractNegotiation(
   provider: EdcConnectorClient,
   consumer: EdcConnectorClient,
+  providerProtocolUrl: string
 ): Promise<ContractNegotiationMetadata> {
   // Crate asset on the provider's side
   const assetId = crypto.randomUUID();
@@ -94,7 +97,7 @@ export async function createContractNegotiation(
 
   // Retrieve catalog and select contract offer
   const catalog = await consumer.management.catalog.request({
-    counterPartyAddress: provider.addresses.protocol!,
+    counterPartyAddress: providerProtocolUrl,
     counterPartyId: "provider",
   });
 
@@ -112,7 +115,7 @@ export async function createContractNegotiation(
 
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate({
-    counterPartyAddress: provider.addresses.protocol!,
+    counterPartyAddress: providerProtocolUrl,
     counterPartyId: "provider",
     policy: contractOffer,
   });
