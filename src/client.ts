@@ -77,11 +77,6 @@ class Builder<T extends Record<string, EdcController> = {}> {
     return this;
   }
 
-  protocolUrl(protocolUrl: string): this {
-    this[addressesSymbol].protocol = protocolUrl;
-    return this;
-  }
-
   protocolVersion(dataspaceProtocol: string): this {
     this[protocolVersionSymbol] = dataspaceProtocol;
     return this;

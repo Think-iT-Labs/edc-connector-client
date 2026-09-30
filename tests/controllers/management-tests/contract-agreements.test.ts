@@ -3,7 +3,7 @@ import { EdcConnectorClient } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
-} from "../../../src/error";
+} from "../../../src";
 import {
   createContractAgreement,
   createContractNegotiation,
@@ -12,23 +12,27 @@ import {
 
 describe("ContractAgreementController", () => {
 
+  const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
+
   const consumer = new EdcConnectorClient.Builder()
-    .apiToken("123456")
+    .authorization("X-Api-Key", "123456")
     .managementUrl("http://localhost:19193/management")
-    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const provider = new EdcConnectorClient.Builder()
-    .apiToken("123456")
+    .authorization("X-Api-Key", "123456")
     .managementUrl("http://localhost:29193/management")
-    .protocolUrl("http://provider-connector:9194/protocol/2025-1")
     .build();
 
   const contractAgreements = consumer.management.contractAgreements;
 
   describe("queryAll", () => {
     it("retrieves all contract agreements", async () => {
-      const { idResponse } = await createContractNegotiation(provider, consumer);
+      const { idResponse } = await createContractNegotiation(
+        provider,
+        consumer,
+        providerProtocolUrl,
+      );
       await waitForNegotiationState(consumer, idResponse.id, "FINALIZED");
       const negotiation =
         await consumer.management.contractNegotiations.get(idResponse.id);
@@ -44,7 +48,7 @@ describe("ContractAgreementController", () => {
   describe("getAgreement", () => {
     it("retrieves target contract agreement", async () => {
       const { contractNegotiation, contractAgreement } =
-        await createContractAgreement(provider, consumer);
+        await createContractAgreement(provider, consumer, providerProtocolUrl);
 
       expect(contractAgreement.id).toBe(contractNegotiation.contractAgreementId);
     });
@@ -66,7 +70,8 @@ describe("ContractAgreementController", () => {
 
   describe("getNegotiation", () => {
     it("retrieves negotiation from agreement", async () => {
-      const { contractAgreement, contractNegotiation } = await createContractAgreement(provider, consumer);
+      const { contractAgreement, contractNegotiation } =
+        await createContractAgreement(provider, consumer, providerProtocolUrl);
 
       const negotiation = await contractAgreements.getNegotiation(contractAgreement.id);
 

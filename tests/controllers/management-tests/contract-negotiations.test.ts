@@ -10,25 +10,33 @@ import {
   waitForNegotiationState,
 } from "../../test-utils";
 
+async function requestContractNegotiation(provider: EdcConnectorClient, consumer: EdcConnectorClient, providerProtocolUrl: string) {
+  return await createContractNegotiation(
+    provider,
+    consumer,
+    providerProtocolUrl,
+  );
+}
+
 describe("ContractNegotiationController", () => {
+
+  const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
+
   const v3Consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const v4Consumer = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion("v4")
-    .protocolUrl("http://consumer-connector:9194/protocol/2025-1")
     .build();
 
   const provider = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:29193/management")
-    .protocolUrl("http://provider-connector:9194/protocol/2025-1")
     .build();
 
   const runContractNegotiationTests = (
@@ -40,10 +48,7 @@ describe("ContractNegotiationController", () => {
 
       describe("initiate", () => {
         it("kickstart a contract negotiation", async () => {
-          const { idResponse } = await createContractNegotiation(
-            provider,
-            consumer,
-          );
+          const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           expect(idResponse).toHaveProperty("id");
           expect(idResponse).toHaveProperty("createdAt");
@@ -52,10 +57,7 @@ describe("ContractNegotiationController", () => {
 
       describe("queryAll", () => {
         it("retrieves all contract negotiations", async () => {
-          const { idResponse } = await createContractNegotiation(
-            provider,
-            consumer,
-          );
+          const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           const contractNegotiations = await negotiations.queryAll();
 
@@ -68,7 +70,11 @@ describe("ContractNegotiationController", () => {
         });
 
         it("filters negotiations based on agreements' asset ID", async () => {
-          const { assetId } = await createContractAgreement(provider, consumer);
+          const { assetId } = await createContractAgreement(
+            provider,
+            consumer,
+            providerProtocolUrl,
+          );
 
           const [providerNegotiation] = await negotiations.queryAll({
             "@type": "QuerySpec",
@@ -88,10 +94,7 @@ describe("ContractNegotiationController", () => {
 
       describe("get", () => {
         it("retrieves target contract negotiation", async () => {
-          const { idResponse } = await createContractNegotiation(
-            provider,
-            consumer,
-          );
+          const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           const contractNegotiation = await negotiations.get(idResponse.id);
 
@@ -115,10 +118,7 @@ describe("ContractNegotiationController", () => {
 
       describe("getState", () => {
         it("returns the state of a target negotiation", async () => {
-          const { idResponse } = await createContractNegotiation(
-            provider,
-            consumer,
-          );
+          const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           const contractNegotiationState = await negotiations.getState(
             idResponse.id,
@@ -163,10 +163,7 @@ describe("ContractNegotiationController", () => {
 
       describe("getAgreement", () => {
         it("returns the agreement for a target negotiation", async () => {
-          const { assetId, idResponse } = await createContractNegotiation(
-            provider,
-            consumer,
-          );
+          const { assetId, idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           const negotiationId = idResponse.id;
 
