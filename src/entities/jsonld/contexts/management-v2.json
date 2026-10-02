@@ -2,13 +2,19 @@
   "@context": {
     "@version": 1.1,
     "edc": "https://w3id.org/edc/v0.0.1/ns/",
+    "dct": "http://purl.org/dc/terms/",
+    "dcat": "http://www.w3.org/ns/dcat#",
     "Asset": {
       "@id": "edc:Asset",
       "@context": {
         "properties": {
           "@id": "edc:properties",
           "@context": {
-            "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+            "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
+            "conformsTo": {
+              "@id": "dct:conformsTo",
+              "@type": "@id"
+            }
           }
         },
         "privateProperties": {
@@ -35,7 +41,14 @@
           "@id": "edc:labels",
           "@container": "@set"
         },
-        "properties": "edc:properties"
+        "properties": {
+          "@id": "edc:properties",
+          "@type": "@json"
+        },
+        "profiles": {
+          "@id": "edc:profiles",
+          "@container": "@set"
+        }
       }
     },
     "CatalogAsset": {
@@ -44,7 +57,15 @@
         "properties": {
           "@id": "edc:properties",
           "@context": {
-            "@vocab": "https://w3id.org/edc/v0.0.1/ns/"
+            "@vocab": "https://w3id.org/edc/v0.0.1/ns/",
+            "endpointURL": {
+              "@id": "dcat:endpointURL",
+              "@type": "@id"
+            },
+            "format": {
+              "@id": "dct:format",
+              "@type": "@id"
+            }
           }
         },
         "privateProperties": {
@@ -116,7 +137,8 @@
       "@context": {
         "counterPartyAddress": "edc:counterPartyAddress",
         "counterPartyId": "edc:counterPartyId",
-        "protocol": "edc:protocol"
+        "protocol": "edc:protocol",
+        "profile": "edc:profile"
       }
     },
     "CatalogRequest": {
@@ -125,6 +147,7 @@
         "counterPartyAddress": "edc:counterPartyAddress",
         "counterPartyId": "edc:counterPartyId",
         "protocol": "edc:protocol",
+        "profile": "edc:profile",
         "additionalScopes": {
           "@id": "edc:additionalScopes",
           "@container": "@set"
@@ -145,7 +168,8 @@
           "@id": "edc:callbackAddresses",
           "@container": "@set"
         },
-        "protocol": "edc:protocol"
+        "protocol": "edc:protocol",
+        "profile": "edc:profile"
       }
     },
     "QuerySpec": {
@@ -164,9 +188,12 @@
     "ContractNegotiation": {
       "@id": "edc:ContractNegotiation",
       "@context": {
+        "@import": "https://w3id.org/dspace/2025/1/odrl-profile.jsonld",
+        "@propagate": true,
         "type": "edc:type",
         "counterPartyAddress": "edc:counterPartyAddress",
         "protocol": "edc:protocol",
+        "profile": "edc:profile",
         "callbackAddresses": {
           "@id": "edc:callbackAddresses",
           "@container": "@set"
@@ -177,7 +204,8 @@
         "contractAgreementId": "edc:contractAgreementId",
         "createdAt": "edc:createdAt",
         "assetId": "edc:assetId",
-        "correlationId": "edc:correlationId"
+        "correlationId": "edc:correlationId",
+        "policy": "edc:policy"
       }
     },
     "CallbackAddress": {
@@ -215,7 +243,8 @@
         "consumerId": "edc:consumerId",
         "assetId": "edc:assetId",
         "agreementId": "edc:agreementId",
-        "contractSigningDate": "edc:contractSigningDate"
+        "contractSigningDate": "edc:contractSigningDate",
+        "claims": "edc:claims"
       }
     },
     "TransferRequest": {
@@ -236,6 +265,7 @@
         "dataDestination": "edc:dataDestination",
         "contractId": "edc:contractId",
         "protocol": "edc:protocol",
+        "profile": "edc:profile",
         "dataplaneMetadata": {
           "@id": "edc:dataplaneMetadata"
         }
@@ -489,6 +519,32 @@
         }
       }
     },
+    "Partner": {
+      "@id": "edc:Partner",
+      "@context": {
+        "identity": "edc:identity",
+        "name": "edc:name",
+        "properties": {
+          "@id": "edc:properties",
+          "@type": "@json"
+        },
+        "groupIds": {
+          "@id": "edc:groupIds",
+          "@container": "@set"
+        }
+      }
+    },
+    "PartnerGroup": {
+      "@id": "edc:PartnerGroup",
+      "@context": {
+        "name": "edc:name",
+        "description": "edc:description",
+        "properties": {
+          "@id": "edc:properties",
+          "@type": "@json"
+        }
+      }
+    },
     "CelExpression": {
       "@id": "edc:CelExpression",
       "@context": {
@@ -501,8 +557,146 @@
           "@id": "edc:actions",
           "@container": "@set"
         },
+        "supportedOperators": {
+          "@id": "edc:supportedOperators",
+          "@container": "@set"
+        },
         "expression": "edc:expression",
         "description": "edc:description"
+      }
+    },
+    "CelExpressionTestRequest": {
+      "@id": "edc:CelExpressionTestRequest",
+      "@context": {
+        "expression": "edc:expression",
+        "leftOperand": "edc:leftOperand",
+        "operator": "edc:operator",
+        "rightOperand": "edc:rightOperand",
+        "params": {
+          "@id": "edc:params",
+          "@type": "@json"
+        }
+      }
+    },
+    "CelExpressionTestResponse": {
+      "@id": "edc:CelExpressionTestResponse",
+      "@context": {
+        "evaluationResult": "edc:evaluationResult",
+        "error": "edc:error"
+      }
+    },
+    "TrustedIssuer": {
+      "@id": "edc:TrustedIssuer",
+      "@context": {
+        "supportedTypes": {
+          "@id": "edc:supportedTypes",
+          "@container": "@set"
+        }
+      }
+    },
+    "DataspaceProfile": {
+      "@id": "edc:DataspaceProfile",
+      "@context": {
+        "name": "edc:name",
+        "protocol": {
+          "@id": "edc:protocol",
+          "@context": {
+            "path": "edc:path",
+            "binding": "edc:binding",
+            "version": "edc:version",
+            "namespace": "edc:namespace"
+          }
+        },
+        "jsonLdContextsUrl": {
+          "@id": "edc:jsonLdContextsUrl",
+          "@container": "@set"
+        },
+        "trustedIssuers": {
+          "@id": "edc:trustedIssuers",
+          "@container": "@set",
+          "@context": {
+            "supportedTypes": {
+              "@id": "edc:supportedTypes",
+              "@container": "@set"
+            }
+          }
+        }
+      }
+    },
+    "AssociateDataspaceProfile": {
+      "@id": "edc:AssociateDataspaceProfile",
+      "@context": {
+        "profiles": {
+          "@id": "edc:profiles",
+          "@container": "@set"
+        }
+      }
+    },
+    "DiscoveryRequest": {
+      "@id": "edc:DiscoveryRequest",
+      "@context": {
+        "counterPartyId": {
+          "@id": "edc:counterPartyId"
+        },
+        "counterPartyAddress": {
+          "@id": "edc:counterPartyAddress"
+        }
+      }
+    },
+    "DiscoveryResponse": {
+      "@id": "edc:DiscoveryResponse",
+      "@context": {
+        "profile": {
+          "@id": "edc:profile"
+        },
+        "version": {
+          "@id": "edc:version"
+        },
+        "counterParty": {
+          "@id": "edc:counterParty",
+          "@context": {
+            "path": "edc:path",
+            "dataServiceEndpoint": "edc:dataServiceEndpoint"
+          }
+        },
+        "binding": {
+          "@id": "edc:binding"
+        }
+      }
+    },
+    "DcpScope": {
+      "@id": "edc:DcpScope",
+      "@context": {
+        "type": "edc:type",
+        "value": "edc:value",
+        "profile": "edc:profile",
+        "prefixMapping": "edc:prefixMapping"
+      }
+    },
+    "CachedDocument": {
+      "@id": "edc:CachedDocument",
+      "@context": {
+        "url": "edc:url",
+        "documentType": "edc:documentType",
+        "pullStrategy": "edc:pullStrategy",
+        "updatedAt": "edc:updatedAt",
+        "content": {
+          "@id": "edc:content",
+          "@type": "@json"
+        }
+      }
+    },
+    "SchemaValidatorRegistration": {
+      "@id": "edc:SchemaValidatorRegistration",
+      "@context": {
+        "version": "edc:version",
+        "validatedType": "edc:validatedType",
+        "schema": "edc:schema",
+        "updatedAt": "edc:updatedAt",
+        "profiles": {
+          "@id": "edc:profiles",
+          "@container": "@set"
+        }
       }
     },
     "inForceDate": "edc:inForceDate",
