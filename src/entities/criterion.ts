@@ -1,7 +1,7 @@
 import { JsonLdObject } from "./jsonld"
 
 export interface CriterionInput {
-  "@type"?: "Criterion";
+  "@type": "Criterion";
   operandLeft: string;
   operator: string;
   operandRight?: any;
