@@ -177,7 +177,9 @@ When `managementJsonLdContext` is set it takes precedence over the version-based
 
 ### Caching JSON-LD Context Documents
 
-When the client expands or compacts JSON-LD responses, it resolves any `@context` URLs using a document loader. By default, well-known EDC and DSP context URLs are resolved locally without any network request. For connectors that reference additional context URLs, you can pre-cache those documents so they are also resolved locally instead of fetched at runtime.
+When the client expands or compacts JSON-LD responses, it resolves any `@context` URLs using a document loader. Context documents are fetched from the network and then kept in an in-memory cache, so each context URL is only fetched once per client instance; subsequent lookups are served from memory.
+
+If you want to avoid the network fetch entirely (for example in offline environments, or for contexts you already have at hand), you can pre-seed the cache with the context documents. A pre-seeded context is served from memory and is never fetched over the network.
 
 Use `.cachedJsonLdContext(url, document)` on the builder to register a context URL together with its JSON-LD context document:
 
@@ -208,7 +210,7 @@ const client = new EdcConnectorClient.Builder()
   .build();
 ```
 
-Cached documents take precedence over any network fetch. Context URLs not found in the cache fall back to the default network loader.
+Pre-seeded documents take precedence over any network fetch. Context URLs not found in the cache fall back to the default network loader, and their resolved documents are then cached in memory for the lifetime of the client.
 
 ### Extending the Client with Custom Controllers
 

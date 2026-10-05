@@ -1,23 +1,21 @@
 import jsonld from "jsonld";
-import dspace2025Data from "./entities/jsonld/contexts/dspace-2025.json";
-import edcDspaceData from "./entities/jsonld/contexts/edc-dspace.json";
-import odrlProfileData from "./entities/jsonld/contexts/odrl-profile.json";
-import managementV2Data from "./entities/jsonld/contexts/management-v2.json";
-import { EDC_CONTEXT, MANAGEMENT_V2_CONTEXT } from "./entities/context";
+import { EDC_CONTEXT } from "./entities/context";
 
 const CONTEXT = { "@vocab": EDC_CONTEXT };
 
-export class JsonLdService {
-  readonly #defaultContexts: Record<string, object> = {
-    "https://w3id.org/edc/dspace/v0.0.1": edcDspaceData,
-    "https://w3id.org/dspace/2025/1/context.jsonld": dspace2025Data,
-    "https://w3id.org/dspace/2025/1/odrl-profile.jsonld": odrlProfileData,
-    [MANAGEMENT_V2_CONTEXT]: managementV2Data,
-  };
-  readonly #cachedContexts: Record<string, object>;
+type RemoteDocument = {
+  contextUrl?: string;
+  documentUrl: string;
+  document: any;
+};
 
-  constructor(additionalContexts: Record<string, object> = {}) {
-    this.#cachedContexts = { ...this.#defaultContexts, ...additionalContexts };
+export class JsonLdService {
+  readonly #cache = new Map<string, RemoteDocument>();
+
+  constructor(cachedContexts: Record<string, object> = {}) {
+    for (const [url, document] of Object.entries(cachedContexts)) {
+      this.#cache.set(url, { documentUrl: url, document });
+    }
   }
 
   async compact(body: any): Promise<jsonld.NodeObject> {
@@ -45,19 +43,21 @@ export class JsonLdService {
     );
   }
 
-  #documentLoader = (url: string, options: any): any => {
-    if (this.#cachedContexts[url]) {
-      return {
-        contextUrl: null,
-        documentUrl: url,
-        document: this.#cachedContexts[url],
-      };
+  #documentLoader = async (
+    url: string,
+    options: any,
+  ): Promise<RemoteDocument> => {
+    const cached = this.#cache.get(url);
+    if (cached) {
+      return cached;
     }
 
     const loaders = (jsonld as any).documentLoaders;
     const defaultLoader =
       typeof window === "undefined" ? loaders.node() : loaders.xhr();
 
-    return defaultLoader(url, options);
+    const document: RemoteDocument = await defaultLoader(url, options);
+    this.#cache.set(url, document);
+    return document;
   };
 }
