@@ -1,3 +1,4 @@
+import jsonld from "jsonld";
 import { JsonLdService } from "../src";
 
 describe("JsonLdService", () => {
@@ -27,5 +28,37 @@ describe("JsonLdService", () => {
     const resultEmpty = await serviceEmpty.expandArray(body, () => ({} as any));
 
     expect(resultDefault).toStrictEqual(resultEmpty);
+  });
+
+  it("fetches a remote context once and serves later lookups from the in-memory cache", async () => {
+    const contextUrl = "https://remote.example.com/context.jsonld";
+    const context = { "@context": { name: "https://schema.org/name" } };
+
+    let fetchCount = 0;
+    const loaders = (jsonld as any).documentLoaders;
+    const originalNode = loaders.node;
+    loaders.node = () => async (url: string) => {
+      fetchCount++;
+      return { contextUrl: null, documentUrl: url, document: context };
+    };
+
+    try {
+      const service = new JsonLdService();
+
+      const first = await service.expand(
+        { "@context": contextUrl, name: "first" },
+        () => ({} as any),
+      );
+      const second = await service.expand(
+        { "@context": contextUrl, name: "second" },
+        () => ({} as any),
+      );
+
+      expect(first["https://schema.org/name"]).toStrictEqual([{ "@value": "first" }]);
+      expect(second["https://schema.org/name"]).toStrictEqual([{ "@value": "second" }]);
+      expect(fetchCount).toBe(1);
+    } finally {
+      loaders.node = originalNode;
+    }
   });
 });
