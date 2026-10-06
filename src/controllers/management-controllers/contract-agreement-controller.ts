@@ -3,37 +3,30 @@ import { EdcConnectorClientContext } from "../../context";
 import {
   ContractAgreement,
   ContractNegotiation,
-  JSON_LD_DEFAULT_CONTEXT,
   JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class ContractAgreementController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #jsonLdService: JsonLdService;
-  #basePath = "/v3/contractagreements";
-
+export class ContractAgreementController extends ManagementBaseController {
   constructor(
     inner: Inner,
     jsonLdService: JsonLdService,
     context?: EdcConnectorClientContext,
   ) {
-    this.#inner = inner;
-    this.#context = context;
-    this.#jsonLdService = jsonLdService;
+    super("contractagreements", inner, jsonLdService, context);
   }
 
   async queryAll(
     query: QuerySpec = DEFAULT_QUERY_SPEC,
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/request`,
+        path: `${this.management.getBasePath(actualContext)}/request`,
         method: "POST",
         authorization: actualContext.authorization,
         body:
@@ -41,11 +34,11 @@ export class ContractAgreementController {
             ? null
             : {
                 ...query,
-                "@context": JSON_LD_DEFAULT_CONTEXT,
+                "@context": this.management.getContextUrl(actualContext),
               },
       })
       .then((body) =>
-        this.#jsonLdService.expandArray(body, () => new ContractAgreement()),
+        this.jsonLdService.expandArray(body, () => new ContractAgreement()),
       );
   }
 
@@ -53,16 +46,16 @@ export class ContractAgreementController {
     agreementId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractAgreement> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${agreementId}`,
+        path: `${this.management.getBasePath(actualContext)}/${agreementId}`,
         method: "GET",
         authorization: actualContext.authorization,
       })
       .then((body) =>
-        this.#jsonLdService.expand(body, () => new ContractAgreement()),
+        this.jsonLdService.expand(body, () => new ContractAgreement()),
       );
   }
 
@@ -70,16 +63,16 @@ export class ContractAgreementController {
     agreementId: string,
     context?: EdcConnectorClientContext,
   ): Promise<ContractNegotiation> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: `${this.#basePath}/${agreementId}/negotiation`,
+        path: `${this.management.getBasePath(actualContext)}/${agreementId}/negotiation`,
         method: "GET",
         authorization: actualContext.authorization,
       })
       .then((body) =>
-        this.#jsonLdService.expand(body, () => new ContractNegotiation()),
+        this.jsonLdService.expand(body, () => new ContractNegotiation()),
       );
   }
 }
