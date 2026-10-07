@@ -1,34 +1,28 @@
 import { EdcConnectorClientContext } from "../../context";
 import { Dataplane, JsonLdService } from "../../entities";
 import { Inner } from "../../inner";
+import { ManagementBaseController } from "./management-base-controller";
 
-export class DataplaneController {
-  #inner: Inner;
-  #context?: EdcConnectorClientContext;
-  #jsonLdService: JsonLdService;
-  #basePath = "/v3/dataplanes";
-
+export class DataplaneController extends ManagementBaseController {
   constructor(
     inner: Inner,
     jsonLdService: JsonLdService,
     context?: EdcConnectorClientContext,
   ) {
-    this.#inner = inner;
-    this.#context = context;
-    this.#jsonLdService = jsonLdService;
+    super("dataplanes", inner, jsonLdService, context);
   }
 
   async list(context?: EdcConnectorClientContext): Promise<Dataplane[]> {
-    const actualContext = context || this.#context!;
+    const actualContext = this.management.getActualContext(context);
 
-    return this.#inner
+    return this.inner
       .request(actualContext.management, {
-        path: this.#basePath,
+        path: this.management.getBasePath(actualContext),
         method: "GET",
         authorization: actualContext.authorization,
       })
       .then((body) =>
-        this.#jsonLdService.expandArray(body, () => new Dataplane()),
+        this.jsonLdService.expandArray(body, () => new Dataplane()),
       );
   }
 }
