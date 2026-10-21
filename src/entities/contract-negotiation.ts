@@ -5,6 +5,7 @@ export interface ContractNegotiationRequest {
   "@type"?: "ContractRequest";
   counterPartyAddress: string;
   counterPartyId: string;
+  protocol?: string;
   policy: Policy;
 }
 

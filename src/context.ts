@@ -12,7 +12,6 @@ export type ManagementJsonLdContext =
 export class EdcConnectorClientContext implements Addresses {
   #authorization: Record<string, string> | undefined;
   #addresses: Addresses;
-  #protocolVersion: string;
   #managementApiVersion: string;
   #identityApiVersion: string;
   #managementJsonLdContext: ManagementJsonLdContext | undefined;
@@ -20,7 +19,6 @@ export class EdcConnectorClientContext implements Addresses {
 
   constructor(
     addresses: Addresses,
-    protocolVersion = "dataspace-protocol-http:2025-1",
     managementApiVersion = DEFAULT_MANAGEMENT_API_VERSION,
     identityApiVersion = DEFAULT_IDENTITY_API_VERSION,
     authorization?: Record<string, string>,
@@ -29,7 +27,6 @@ export class EdcConnectorClientContext implements Addresses {
   ) {
     this.#authorization = authorization;
     this.#addresses = addresses;
-    this.#protocolVersion = protocolVersion;
     this.#managementApiVersion = managementApiVersion;
     this.#identityApiVersion = identityApiVersion;
     this.#managementJsonLdContext = managementJsonLdContext;
@@ -53,10 +50,6 @@ export class EdcConnectorClientContext implements Addresses {
 
   get management(): string {
     return this.getOrError(this.#addresses.management, "management address");
-  }
-
-  get protocolVersion(): string | undefined {
-    return this.#protocolVersion;
   }
 
   get authorization(): Record<string, string> | undefined {

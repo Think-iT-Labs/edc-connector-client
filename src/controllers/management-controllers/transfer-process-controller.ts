@@ -1,6 +1,7 @@
 import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
+  DEFAULT_PROTOCOL,
   IdResponse,
   JsonLdService,
   QuerySpec,
@@ -34,8 +35,8 @@ export class TransferProcessController extends ManagementBaseController {
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "TransferRequest",
-          protocol: actualContext.protocolVersion,
           ...input,
+          protocol: input.protocol ?? DEFAULT_PROTOCOL,
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
