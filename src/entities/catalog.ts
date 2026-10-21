@@ -5,6 +5,7 @@ export interface CatalogRequest {
   "@type"?: "CatalogRequest";
   counterPartyAddress: string;
   counterPartyId: string;
+  protocol?: string;
   querySpec?: QuerySpec;
 }
 
@@ -13,6 +14,7 @@ export interface DatasetRequest {
   "@id": string;
   counterPartyAddress: string;
   counterPartyId: string;
+  protocol?: string;
   querySpec?: QuerySpec;
 }
 

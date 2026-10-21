@@ -40,3 +40,4 @@ export interface QuerySpec {
 
 export const DEFAULT_MANAGEMENT_API_VERSION = "v3";
 export const DEFAULT_IDENTITY_API_VERSION = "v1";
+export const DEFAULT_PROTOCOL = "dataspace-protocol-http:2025-1";

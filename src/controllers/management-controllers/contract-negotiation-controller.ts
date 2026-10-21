@@ -5,6 +5,7 @@ import {
   ContractNegotiation,
   ContractNegotiationRequest,
   ContractNegotiationState,
+  DEFAULT_PROTOCOL,
   IdResponse,
   JsonLdService,
   QuerySpec,
@@ -35,8 +36,8 @@ export class ContractNegotiationController extends ManagementBaseController {
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "ContractRequest",
-          protocol: actualContext.protocolVersion,
           ...input,
+          protocol: input.protocol ?? DEFAULT_PROTOCOL,
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));

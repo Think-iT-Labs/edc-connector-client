@@ -26,36 +26,30 @@ describe("EdcConnectorClient", () => {
         default: "http://localhost:19191",
         management: "http://localhost:19193",
       };
-      const protocol = "protocol";
 
       const context = EdcConnectorClient.createContext({
         addresses,
-        protocolVersion: protocol,
         authorization: { Authorization: "token" },
       });
 
       expect(context).toBeInstanceOf(EdcConnectorClientContext);
       expect(context.default).toBe(addresses.default);
       expect(context.management).toBe(addresses.management);
-      expect(context.protocolVersion).toBe(protocol);
       expect(context.authorization).toStrictEqual({ Authorization: "token" });
     });
 
     it("creates context correctly with builder.build", () => {
       const defaultUrl = "http://localhost:19191";
       const managementUrl = "http://localhost:19193";
-      const protocol = "protocol";
 
       const client = new EdcConnectorClient.Builder()
         .managementUrl(managementUrl)
         .defaultUrl(defaultUrl)
-        .protocolVersion(protocol)
         .build();
 
       expect(client.context).toBeInstanceOf(EdcConnectorClientContext);
       expect(client.context.default).toBe(defaultUrl);
       expect(client.context.management).toBe(managementUrl);
-      expect(client.context.protocolVersion).toBe(protocol);
     });
   });
 

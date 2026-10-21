@@ -4,6 +4,7 @@ import {
   CatalogRequest,
   Dataset,
   DatasetRequest,
+  DEFAULT_PROTOCOL,
   JsonLdService,
 } from "../../entities";
 import { Inner } from "../../inner";
@@ -32,8 +33,8 @@ export class CatalogController extends ManagementBaseController {
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "CatalogRequest",
-          protocol: actualContext.protocolVersion,
           ...input,
+          protocol: input.protocol ?? DEFAULT_PROTOCOL,
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new Catalog()));
@@ -53,8 +54,8 @@ export class CatalogController extends ManagementBaseController {
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "DatasetRequest",
-          protocol: actualContext.protocolVersion,
           ...input,
+          protocol: input.protocol ?? DEFAULT_PROTOCOL,
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new Dataset()));
