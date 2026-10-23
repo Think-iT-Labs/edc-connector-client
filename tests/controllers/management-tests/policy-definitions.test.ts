@@ -239,6 +239,70 @@ describe("PolicyDefinitionController", () => {
           });
         });
       });
+
+      describe("validate", () => {
+        it("validates an existing policy", async () => {
+          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const idResponse = await policyDefinitions.create(policyInput);
+
+          const result = await policyDefinitions.validate(idResponse.id);
+
+          expect(result.isValid).toBe(true);
+          expect(result.errors).toEqual([]);
+        });
+
+        it("fails to validate a non-existent policy", async () => {
+          const maybeResult = policyDefinitions.validate(crypto.randomUUID());
+
+          await expect(maybeResult).rejects.toThrow("resource not found");
+
+          maybeResult.catch((error: unknown) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
+
+      describe("evaluationPlan", () => {
+        it("returns the evaluation plan for an existing policy", async () => {
+          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const idResponse = await policyDefinitions.create(policyInput);
+
+          const plan = await policyDefinitions.evaluationPlan(
+            idResponse.id,
+            "catalog",
+          );
+
+          expect(plan.types()).toContain(
+            "https://w3id.org/edc/v0.0.1/ns/PolicyEvaluationPlan",
+          );
+          expect(Array.isArray(plan.preValidators)).toBe(true);
+          expect(Array.isArray(plan.postValidators)).toBe(true);
+          expect(Array.isArray(plan.permissionSteps)).toBe(true);
+          expect(Array.isArray(plan.prohibitionSteps)).toBe(true);
+          expect(Array.isArray(plan.obligationSteps)).toBe(true);
+        });
+
+        it("fails to create a plan for a non-existent policy", async () => {
+          const maybePlan = policyDefinitions.evaluationPlan(
+            crypto.randomUUID(),
+            "catalog",
+          );
+
+          await expect(maybePlan).rejects.toThrow("resource not found");
+
+          maybePlan.catch((error: unknown) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
     });
   };
 
