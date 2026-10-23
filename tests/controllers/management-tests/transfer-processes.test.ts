@@ -84,6 +84,37 @@ describe("TransferProcessController", () => {
           await waitForTransferState(consumer, idResponse.id, "TERMINATED");
         });
       });
+
+      describe("suspend", () => {
+        it("successfully suspends a transfer process", async () => {
+          const idResponse = await initiate(consumer);
+          await waitForTransferState(consumer, idResponse.id, "STARTED");
+
+          await consumer.management.transferProcesses.suspend(
+            idResponse.id,
+            "a reason",
+          );
+
+          await waitForTransferState(consumer, idResponse.id, "SUSPENDED");
+        });
+      });
+
+      describe("resume", () => {
+        it("successfully resumes a suspended transfer process", async () => {
+          const idResponse = await initiate(consumer);
+          await waitForTransferState(consumer, idResponse.id, "STARTED");
+
+          await consumer.management.transferProcesses.suspend(
+            idResponse.id,
+            "a reason",
+          );
+          await waitForTransferState(consumer, idResponse.id, "SUSPENDED");
+
+          await consumer.management.transferProcesses.resume(idResponse.id);
+
+          await waitForTransferState(consumer, idResponse.id, "RESUMED");
+        });
+      });
     });
   };
 

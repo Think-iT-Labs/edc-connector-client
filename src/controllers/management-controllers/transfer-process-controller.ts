@@ -119,4 +119,36 @@ export class TransferProcessController extends ManagementBaseController {
       },
     });
   }
+
+  async suspend(
+    id: string,
+    reason: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${id}/suspend`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "SuspendTransfer",
+        reason,
+      },
+    });
+  }
+
+  async resume(
+    id: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${id}/resume`,
+      method: "POST",
+      authorization: actualContext.authorization,
+    });
+  }
 }
