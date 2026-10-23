@@ -16,6 +16,7 @@ export * from "./id-response";
 export * from "./jsonld";
 export { JsonLdService } from "../json-ld-service";
 export * from "./policy-definition";
+export * from "./policy-evaluation-plan";
 export * from "./policy";
 export * from "./secret";
 export * from "./transfer-process";

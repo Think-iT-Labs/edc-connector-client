@@ -5,6 +5,8 @@ import {
   JsonLdService,
   PolicyDefinition,
   PolicyDefinitionInput,
+  PolicyEvaluationPlan,
+  PolicyValidationResult,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
@@ -104,6 +106,46 @@ export class PolicyDefinitionController extends ManagementBaseController {
       })
       .then((body) =>
         this.jsonLdService.expandArray(body, () => new PolicyDefinition()),
+      );
+  }
+
+  async validate(
+    policyId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<PolicyValidationResult> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner
+      .request(actualContext.management, {
+        path: `${this.management.getBasePath(actualContext)}/${policyId}/validate`,
+        method: "POST",
+        authorization: actualContext.authorization,
+      })
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new PolicyValidationResult()),
+      );
+  }
+
+  async evaluationPlan(
+    policyId: string,
+    policyScope: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<PolicyEvaluationPlan> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner
+      .request(actualContext.management, {
+        path: `${this.management.getBasePath(actualContext)}/${policyId}/evaluationplan`,
+        method: "POST",
+        authorization: actualContext.authorization,
+        body: {
+          "@context": this.management.getContextUrl(actualContext),
+          "@type": "PolicyEvaluationPlanRequest",
+          policyScope,
+        },
+      })
+      .then((body) =>
+        this.jsonLdService.expand(body, () => new PolicyEvaluationPlan()),
       );
   }
 }
