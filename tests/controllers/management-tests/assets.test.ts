@@ -202,5 +202,35 @@ describe("assets", () => {
 
       expect(result).toBeUndefined();
     });
+
+    it("should create and get an asset with dataplaneMetadata", async () => {
+      const assetInput: AssetInput = {
+        "@type": "Asset",
+        properties: {
+          name: "product description",
+          contenttype: "application/json",
+        },
+        dataAddress: {
+          type: "HttpData",
+          baseUrl: "https://jsonplaceholder.typicode.com/users",
+        },
+        dataplaneMetadata: {
+          "@type": "DataplaneMetadata",
+          properties: {
+            region: "eu",
+          },
+          labels: ["label1", "label2"],
+          profiles: ["profile1", "profile2"],
+        },
+      };
+
+      const idResponse = await v4Assets.create(assetInput);
+      const asset = await v4Assets.get(idResponse.id);
+
+      expect(asset.dataplaneMetadata).toBeDefined();
+      expect(asset.dataplaneMetadata?.properties["region"]).toBe("eu");
+      expect(asset.dataplaneMetadata?.labels).toEqual(["label1", "label2"]);
+      expect(asset.dataplaneMetadata?.profiles).toEqual(["profile1", "profile2"]);
+    });
   });
 });
