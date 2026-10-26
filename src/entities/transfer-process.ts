@@ -1,3 +1,4 @@
+import { DataplaneMetadata } from "./asset";
 import { DataAddress } from "./data-address";
 import { JsonLdId, JsonLdObject } from "./jsonld";
 
@@ -13,6 +14,10 @@ export class TransferProcess extends JsonLdId {
 
   get state(): string {
     return this.mandatoryValue('edc', 'state');
+  }
+
+  get stateTimestamp(): number {
+    return this.mandatoryValue('edc', 'stateTimestamp');
   }
 
   get createdAt(): number {
@@ -31,12 +36,28 @@ export class TransferProcess extends JsonLdId {
     return this.mandatoryValue('edc', 'contractId');
   }
 
+  get transferType(): string | undefined {
+    return this.optionalValue('edc', 'transferType');
+  }
+
   get errorDetail(): string | undefined {
     return this.optionalValue('edc', 'errorDetail');
   }
 
   get dataDestination(): JsonLdObject {
     return this.nested('edc', 'dataDestination');
+  }
+
+  get callbackAddresses(): JsonLdObject[] {
+    return this.array('edc', 'callbackAddresses');
+  }
+
+  get dataplaneMetadata(): DataplaneMetadata | undefined {
+    return this.nestedOf(
+      () => new DataplaneMetadata(),
+      'edc',
+      'dataplaneMetadata',
+    );
   }
 
   get privateProperties(): JsonLdObject {
@@ -62,6 +83,9 @@ export enum TransferProcessStates {
   STARTED = "STARTED",
   SUSPENDING = "SUSPENDING",
   SUSPENDED = "SUSPENDED",
+  RESUMING = "RESUMING",
+  RESUMING_REQUESTED = "RESUMING_REQUESTED",
+  RESUMED = "RESUMED",
   COMPLETING = "COMPLETING",
   COMPLETED = "COMPLETED",
   TERMINATING = "TERMINATING",
