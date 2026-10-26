@@ -6,6 +6,7 @@ import {
   EdcController,
   JSON_LD_DEFAULT_CONTEXT,
   MANAGEMENT_V2_CONTEXT,
+  SecretBuilder,
 } from "../src";
 import { Inner } from "../src/inner";
 
@@ -288,6 +289,96 @@ describe("EdcConnectorClient", () => {
         await client.management.assets.queryAll();
 
         expect(requestBody["@context"]).toStrictEqual(customUrls);
+      });
+    });
+
+    describe("secrets version-aware path", () => {
+      const managementUrl = "http://localhost:19193/management";
+
+      beforeEach(() => {
+        if (!nock.isActive()) {
+          nock.activate();
+        }
+      });
+
+      afterEach(() => {
+        nock.cleanAll();
+        nock.restore();
+      });
+
+      it("creates secrets on the v4 path", async () => {
+        let requestBody: any;
+        nock("http://localhost:19193")
+          .post("/management/v4/secrets", (body) => {
+            requestBody = body;
+            return true;
+          })
+          .reply(200, { "@id": "secretId", createdAt: 1 });
+
+        const client = new EdcConnectorClient.Builder()
+          .managementUrl(managementUrl)
+          .managementApiVersion("v4")
+          .build();
+
+        const secret = new SecretBuilder()
+          .id("secretId")
+          .value("secretValue")
+          .build();
+
+        const idResponse = await client.management.secrets.create(secret);
+
+        expect(requestBody["@id"]).toBe("secretId");
+        expect(idResponse["@id"]).toBe("secretId");
+      });
+
+      it("gets, updates and deletes secrets on the v4 path", async () => {
+        const scope = nock("http://localhost:19193")
+          .get("/management/v4/secrets/secretId")
+          .reply(200, {
+            "@id": "secretId",
+            "https://w3id.org/edc/v0.0.1/ns/value": "secretValue",
+          })
+          .put("/management/v4/secrets")
+          .reply(204)
+          .delete("/management/v4/secrets/secretId")
+          .reply(204);
+
+        const client = new EdcConnectorClient.Builder()
+          .managementUrl(managementUrl)
+          .managementApiVersion("v4")
+          .build();
+
+        const secret = await client.management.secrets.get("secretId");
+        expect(secret.id).toBe("secretId");
+
+        const updated = new SecretBuilder()
+          .id("secretId")
+          .value("updatedSecretValue")
+          .build();
+        await client.management.secrets.update(updated);
+
+        await client.management.secrets.delete("secretId");
+
+        expect(scope.isDone()).toBe(true);
+      });
+
+      it("keeps using the v3 path by default", async () => {
+        const scope = nock("http://localhost:19193")
+          .post("/management/v3/secrets")
+          .reply(200, { "@id": "secretId", createdAt: 1 });
+
+        const client = new EdcConnectorClient.Builder()
+          .managementUrl(managementUrl)
+          .build();
+
+        const secret = new SecretBuilder()
+          .id("secretId")
+          .value("secretValue")
+          .build();
+
+        await client.management.secrets.create(secret);
+
+        expect(scope.isDone()).toBe(true);
       });
     });
   });
