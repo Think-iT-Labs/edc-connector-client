@@ -209,7 +209,7 @@ describe("EdcConnectorClient", () => {
         expect(requestBody["@context"]).toStrictEqual(JSON_LD_DEFAULT_CONTEXT);
       });
 
-      it("uses MANAGEMENT_V2_CONTEXT array for non-v3 by default", async () => {
+      it("uses the MANAGEMENT_V2_CONTEXT array for v4 by default", async () => {
         let requestBody: any;
         nock("http://localhost:19193")
           .post("/management/v4/assets/request", (body) => {
@@ -380,6 +380,95 @@ describe("EdcConnectorClient", () => {
 
         expect(scope.isDone()).toBe(true);
       });
+    });
+  });
+
+  describe("v4 input fields", () => {
+    const managementUrl = "http://localhost:19193/management";
+
+    const v4Client = new EdcConnectorClient.Builder()
+      .managementUrl(managementUrl)
+      .managementApiVersion("v4")
+      .build();
+
+    beforeEach(() => {
+      if (!nock.isActive()) {
+        nock.activate();
+      }
+    });
+
+    afterEach(() => {
+      nock.cleanAll();
+      nock.restore();
+    });
+
+    it("forwards catalog request profile and additionalScopes", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/catalog/request", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, {});
+
+      await v4Client.management.catalog.request({
+        "@type": "CatalogRequest",
+        counterPartyAddress: "http://provider/protocol",
+        counterPartyId: "provider",
+        profile: "https://w3id.org/dspace/2025/1/profile",
+        additionalScopes: ["scope-a", "scope-b"],
+      });
+
+      expect(requestBody.profile).toBe(
+        "https://w3id.org/dspace/2025/1/profile",
+      );
+      expect(requestBody.additionalScopes).toStrictEqual([
+        "scope-a",
+        "scope-b",
+      ]);
+    });
+
+    it("forwards dataset request profile", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/catalog/dataset/request", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, {});
+
+      await v4Client.management.catalog.requestDataset({
+        "@type": "DatasetRequest",
+        "@id": "dataset-id",
+        counterPartyAddress: "http://provider/protocol",
+        counterPartyId: "provider",
+        profile: "https://w3id.org/dspace/2025/1/profile",
+      });
+
+      expect(requestBody.profile).toBe(
+        "https://w3id.org/dspace/2025/1/profile",
+      );
+    });
+
+    it("forwards contract definition privateProperties", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/contractdefinitions", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, { "@id": "cd-id" });
+
+      await v4Client.management.contractDefinitions.create({
+        "@type": "ContractDefinition",
+        "@id": "cd-id",
+        accessPolicyId: "access",
+        contractPolicyId: "contract",
+        assetsSelector: [],
+        privateProperties: { foo: "bar" },
+      });
+
+      expect(requestBody.privateProperties).toStrictEqual({ foo: "bar" });
     });
   });
 });

@@ -6,6 +6,8 @@ export interface CatalogRequest {
   counterPartyAddress: string;
   counterPartyId: string;
   protocol?: string;
+  profile?: string;
+  additionalScopes?: string[];
   querySpec?: QuerySpec;
 }
 
@@ -15,6 +17,7 @@ export interface DatasetRequest {
   counterPartyAddress: string;
   counterPartyId: string;
   protocol?: string;
+  profile?: string;
   querySpec?: QuerySpec;
 }
 

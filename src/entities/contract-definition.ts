@@ -21,4 +21,5 @@ export interface ContractDefinitionInput {
   accessPolicyId: string;
   contractPolicyId: string;
   assetsSelector: CriterionInput[];
+  privateProperties?: Record<string, unknown>;
 }
