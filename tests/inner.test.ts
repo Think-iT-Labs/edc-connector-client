@@ -1,4 +1,4 @@
-import nock = require('nock');
+import nock from "nock";
 import { EdcConnectorClientError, EdcConnectorClientErrorType } from "../src";
 import { Inner } from "../src/inner";
 
