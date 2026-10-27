@@ -428,7 +428,7 @@ describe("EdcConnectorClient", () => {
       ]);
     });
 
-    it("forwards dataset request profile", async () => {
+    it("forwards dataset request profile and additionalScopes", async () => {
       let requestBody: any;
       nock("http://localhost:19193")
         .post("/management/v4/catalog/dataset/request", (body) => {
@@ -443,11 +443,16 @@ describe("EdcConnectorClient", () => {
         counterPartyAddress: "http://provider/protocol",
         counterPartyId: "provider",
         profile: "https://w3id.org/dspace/2025/1/profile",
+        additionalScopes: ["scope-a", "scope-b"],
       });
 
       expect(requestBody.profile).toBe(
         "https://w3id.org/dspace/2025/1/profile",
       );
+      expect(requestBody.additionalScopes).toStrictEqual([
+        "scope-a",
+        "scope-b",
+      ]);
     });
 
     it("forwards contract definition privateProperties", async () => {
