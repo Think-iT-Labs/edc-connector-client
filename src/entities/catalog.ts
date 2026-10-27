@@ -18,6 +18,7 @@ export interface DatasetRequest {
   counterPartyId: string;
   protocol?: string;
   profile?: string;
+  additionalScopes?: string[];
   querySpec?: QuerySpec;
 }
 
