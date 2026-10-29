@@ -136,7 +136,7 @@ const result = await client.management.assets.create(context, {
 
 ### Customizing the JSON-LD Context
 
-Management request bodies include an `@context` field whose value is derived automatically from the configured `managementApiVersion` (a `{ "@vocab": ... }` object for v3, a URL array for any other version). When a connector requires a different context value, it can be overridden with `managementJsonLdContext`.
+Management request bodies include an `@context` field whose value defaults to a URL array (the management v4 context). When a connector requires a different context value, it can be overridden with `managementJsonLdContext`.
 
 The option accepts a plain URL string, an array of URLs, or a full JSON-LD context object:
 

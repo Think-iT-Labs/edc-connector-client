@@ -4,7 +4,6 @@ import {
   EdcConnectorClient,
   EdcConnectorClientContext,
   EdcController,
-  JSON_LD_DEFAULT_CONTEXT,
   MANAGEMENT_V2_CONTEXT,
   SecretBuilder,
 } from "../src";
@@ -190,26 +189,7 @@ describe("EdcConnectorClient", () => {
         nock.restore();
       });
 
-      it("uses JSON_LD_DEFAULT_CONTEXT for v3 by default", async () => {
-        let requestBody: any;
-        nock("http://localhost:19193")
-          .post("/management/v3/assets/request", (body) => {
-            requestBody = body;
-            return true;
-          })
-          .reply(200, []);
-
-        const client = new EdcConnectorClient.Builder()
-          .managementUrl(managementUrl)
-          .managementApiVersion("v3")
-          .build();
-
-        await client.management.assets.queryAll();
-
-        expect(requestBody["@context"]).toStrictEqual(JSON_LD_DEFAULT_CONTEXT);
-      });
-
-      it("uses the MANAGEMENT_V2_CONTEXT array for v4 by default", async () => {
+      it("uses the MANAGEMENT_V2_CONTEXT array by default", async () => {
         let requestBody: any;
         nock("http://localhost:19193")
           .post("/management/v4/assets/request", (body) => {
@@ -220,7 +200,6 @@ describe("EdcConnectorClient", () => {
 
         const client = new EdcConnectorClient.Builder()
           .managementUrl(managementUrl)
-          .managementApiVersion("v4")
           .build();
 
         await client.management.assets.queryAll();
@@ -232,7 +211,7 @@ describe("EdcConnectorClient", () => {
         const customUrl = "https://custom.example.com/context/v1";
         let requestBody: any;
         nock("http://localhost:19193")
-          .post("/management/v3/assets/request", (body) => {
+          .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
           })
@@ -252,7 +231,7 @@ describe("EdcConnectorClient", () => {
         const customContext = { "@vocab": "https://custom.example.com/ns/" };
         let requestBody: any;
         nock("http://localhost:19193")
-          .post("/management/v3/assets/request", (body) => {
+          .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
           })
@@ -275,7 +254,7 @@ describe("EdcConnectorClient", () => {
         ];
         let requestBody: any;
         nock("http://localhost:19193")
-          .post("/management/v3/assets/request", (body) => {
+          .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
           })
@@ -362,9 +341,9 @@ describe("EdcConnectorClient", () => {
         expect(scope.isDone()).toBe(true);
       });
 
-      it("keeps using the v3 path by default", async () => {
+      it("uses the v4 path by default", async () => {
         const scope = nock("http://localhost:19193")
-          .post("/management/v3/secrets")
+          .post("/management/v4/secrets")
           .reply(200, { "@id": "secretId", createdAt: 1 });
 
         const client = new EdcConnectorClient.Builder()

@@ -1,9 +1,5 @@
 import { EdcConnectorClientContext } from "../../context";
-import {
-  JSON_LD_DEFAULT_CONTEXT,
-  JsonLdService,
-  MANAGEMENT_V2_CONTEXT,
-} from "../../entities";
+import { JsonLdService, MANAGEMENT_V2_CONTEXT } from "../../entities";
 import { Inner } from "../../inner";
 
 class ManagementRequestHelper {
@@ -26,16 +22,9 @@ class ManagementRequestHelper {
     return actualContext;
   }
 
-  getContextUrl({
-    managementApiVersion,
-    managementJsonLdContext,
-  }: EdcConnectorClientContext) {
+  getContextUrl({ managementJsonLdContext }: EdcConnectorClientContext) {
     if (managementJsonLdContext !== undefined) {
       return managementJsonLdContext;
-    }
-
-    if (managementApiVersion === "v3") {
-      return JSON_LD_DEFAULT_CONTEXT;
     }
 
     return [MANAGEMENT_V2_CONTEXT];

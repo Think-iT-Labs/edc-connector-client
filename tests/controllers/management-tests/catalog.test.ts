@@ -4,7 +4,6 @@ import {
   CatalogRequest,
   ContractDefinitionInput,
   DatasetRequest,
-  DEFAULT_MANAGEMENT_API_VERSION,
   EdcConnectorClient,
   PolicyBuilder,
   PolicyDefinitionInput,
@@ -13,12 +12,6 @@ import { CatalogController } from "../../../src/controllers";
 
 describe("CatalogController", () => {
   const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
-
-  const v3Client = new EdcConnectorClient.Builder()
-    .apiToken("123456")
-    .managementUrl("http://localhost:19193/management")
-    .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .build();
 
   const v4Client = new EdcConnectorClient.Builder()
     .apiToken("123456")
@@ -67,14 +60,14 @@ describe("CatalogController", () => {
     return idResponse.id;
   };
 
-  const buildCatalogRequest = (version: string): CatalogRequest => ({
-    ...(version === "v4" ? { "@type": "CatalogRequest" as const } : {}),
+  const buildCatalogRequest = (): CatalogRequest => ({
+    "@type": "CatalogRequest",
     counterPartyAddress: providerProtocolUrl,
     counterPartyId: "provider",
   });
 
-  const buildDatasetRequest = (version: string, datasetId: string): DatasetRequest => ({
-    ...(version === "v4" ? { "@type": "DatasetRequest" as const } : {}),
+  const buildDatasetRequest = (datasetId: string): DatasetRequest => ({
+    "@type": "DatasetRequest",
     "@id": datasetId,
     counterPartyAddress: providerProtocolUrl,
     counterPartyId: "provider",
@@ -83,14 +76,13 @@ describe("CatalogController", () => {
   const runCatalogTests = (
     label: string,
     catalog: CatalogController,
-    version: string,
   ): void => {
     describe(label, () => {
       describe("request", () => {
         it("returns the catalog for a target provider", async () => {
           await setupProviderAsset();
 
-          const result = await catalog.request(buildCatalogRequest(version));
+          const result = await catalog.request(buildCatalogRequest());
 
           expect(result).toHaveProperty("@type", [
             "http://www.w3.org/ns/dcat#Catalog",
@@ -103,10 +95,10 @@ describe("CatalogController", () => {
         it("returns the dataset entries", async () => {
           await setupProviderAsset();
 
-          const catalogResult = await catalog.request(buildCatalogRequest(version));
+          const catalogResult = await catalog.request(buildCatalogRequest());
 
           const dataset = await catalog.requestDataset(
-            buildDatasetRequest(version, catalogResult.datasets[0]["@id"]),
+            buildDatasetRequest(catalogResult.datasets[0]["@id"]),
           );
 
           expect(dataset).toHaveProperty("@type", [
@@ -117,6 +109,5 @@ describe("CatalogController", () => {
     });
   };
 
-  runCatalogTests("v3", v3Client.management.catalog, "v3");
-  runCatalogTests("v4", v4Client.management.catalog, "v4");
+  runCatalogTests("v4", v4Client.management.catalog);
 });
