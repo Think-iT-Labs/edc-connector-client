@@ -44,14 +44,7 @@ export class DataplaneMetadata extends JsonLdObject {
   }
 }
 
-export interface AssetInputV3 {
-  "@id"?: string;
-  properties: AssetProperties;
-  privateProperties?: AssetProperties;
-  dataAddress: DataAddress;
-}
-
-export interface AssetInputV4 {
+export interface AssetInput {
   "@type": "Asset" | "CatalogAsset";
   "@id"?: string;
   properties: AssetProperties;
@@ -64,8 +57,6 @@ export interface AssetInputV4 {
     profiles?: string[];
   };
 }
-
-export type AssetInput = AssetInputV3 | AssetInputV4;
 
 export interface AssetProperties {
   [key: string]: string | undefined | any;
