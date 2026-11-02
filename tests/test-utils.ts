@@ -81,6 +81,7 @@ export async function createContractNegotiation(
   const policyId = crypto.randomUUID();
   const policyInput: PolicyDefinitionInput = {
     "@id": policyId,
+    "@type": "PolicyDefinition",
     policy: new PolicyBuilder().type("Set").build(),
   };
   await provider.management.policyDefinitions.create(policyInput);
@@ -89,6 +90,7 @@ export async function createContractNegotiation(
   // Crate contract definition on the provider's side
   const contractDefinitionInput: ContractDefinitionInput = {
     "@id": contractDefinitionId,
+    "@type": "ContractDefinition",
     accessPolicyId: policyId,
     contractPolicyId: policyId,
     assetsSelector: [],

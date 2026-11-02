@@ -292,7 +292,11 @@ describe("EdcConnectorClient", () => {
             requestBody = body;
             return true;
           })
-          .reply(200, { "@id": "secretId", createdAt: 1 });
+          .reply(200, {
+            "@context": { "@vocab": "https://w3id.org/edc/v0.0.1/ns/" },
+            "@id": "secretId",
+            createdAt: 1,
+          });
 
         const client = new EdcConnectorClient.Builder()
           .managementUrl(managementUrl)

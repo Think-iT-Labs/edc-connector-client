@@ -42,6 +42,7 @@ describe("CatalogController", () => {
     const policyId = crypto.randomUUID();
     const policyInput: PolicyDefinitionInput = {
       id: policyId,
+      "@type": "PolicyDefinition",
       policy: new PolicyBuilder()
         .type("Set")
         .raw({ permission: { action: "use" } })
@@ -51,6 +52,7 @@ describe("CatalogController", () => {
 
     const contractDefinitionInput: ContractDefinitionInput = {
       "@id": crypto.randomUUID(),
+      "@type": "ContractDefinition",
       accessPolicyId: policyId,
       contractPolicyId: policyId,
       assetsSelector: [],

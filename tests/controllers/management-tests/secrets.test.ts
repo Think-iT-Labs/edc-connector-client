@@ -1,66 +1,56 @@
-import { StartedTestContainer } from "testcontainers";
-import { SecretBuilder, EdcConnectorClient } from "../../../src";
-import { SecretController } from "../../../src/controllers";
-import {
-  startPrismContainer,
-  stopPrismContainer,
-} from "../../prism-container";
+import { EdcConnectorClient, SecretBuilder } from "../../../src";
 
 describe("secrets", () => {
-  let startedContainer: StartedTestContainer | undefined;
-  let secrets: SecretController;
-
-  beforeAll(async () => {
-    startedContainer = await startPrismContainer(
-      "node_modules/management-api.yml",
-      "/management-api.yml",
-    );
-
-      secrets = new EdcConnectorClient.Builder()
-        .managementUrl("http://localhost:" + startedContainer.getFirstMappedPort())
-        .build()
-        .management.secrets;
-  });
-
-  afterAll(async () => {
-    await stopPrismContainer(startedContainer);
-  });
+  const secrets = new EdcConnectorClient.Builder()
+    .apiToken("123456")
+    .managementUrl("http://localhost:19193/management")
+    .build().management.secrets;
 
   it("should create secret", async () => {
     const secret = new SecretBuilder()
-      .id("secretId")
+      .id("secret-create")
       .value("secretValue")
       .build();
 
     const idResponse = await secrets.create(secret);
 
-    expect(idResponse.id).not.toBeNull();
+    expect(idResponse.id).toBe("secret-create");
     expect(idResponse.createdAt).toBeGreaterThan(0);
   });
 
   it("should get secret", async () => {
-    const secret = await secrets.get("secretId");
+    await secrets.create(
+      new SecretBuilder().id("secret-get").value("secretValue").build(),
+    );
 
-    expect(secret.id).not.toBeNull();
-    expect(secret.value).not.toBeNull();
+    const secret = await secrets.get("secret-get");
+
+    expect(secret.id).toBe("secret-get");
+    expect(secret.value).toBe("secretValue");
   });
 
   it("should delete secret", async () => {
-    const result = await secrets.delete("secretId");
+    await secrets.create(
+      new SecretBuilder().id("secret-delete").value("secretValue").build(),
+    );
+
+    const result = await secrets.delete("secret-delete");
 
     expect(result).toBeUndefined();
   });
-
 
   it("should update secret", async () => {
-    const secret = new SecretBuilder()
-      .id("secretId")
-      .value("updatedSecretValue")
-      .build();
+    await secrets.create(
+      new SecretBuilder().id("secret-update").value("secretValue").build(),
+    );
 
-    const result = await secrets.update(secret);
+    const result = await secrets.update(
+      new SecretBuilder().id("secret-update").value("updatedSecretValue").build(),
+    );
 
     expect(result).toBeUndefined();
-  });
 
+    const updated = await secrets.get("secret-update");
+    expect(updated.value).toBe("updatedSecretValue");
+  });
 });
