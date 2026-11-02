@@ -12,11 +12,9 @@ dependencies {
     runtimeOnly(libs.edc.controlplane.base.bom) {
         exclude("org.eclipse.edc", "data-plane-signaling-core")
         exclude("org.eclipse.edc", "data-plane-signaling-oauth2")
-        exclude("org.eclipse.edc", "control-api-configuration")
+        exclude("org.eclipse.edc", "data-plane-signaling-oauth2-token-exchange")
     }
-    runtimeOnly(libs.edc.dataplane.base.bom)
-    implementation(libs.edc.crawler.spi)
-    implementation(libs.edc.transfer.spi)
+    implementation(libs.edc.control.plane.spi)
     runtimeOnly(libs.edc.iam.mock)
     runtimeOnly(libs.edc.secrets.api)
 }
