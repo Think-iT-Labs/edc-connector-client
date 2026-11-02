@@ -1,6 +1,5 @@
 import * as crypto from "node:crypto";
 import {
-  DEFAULT_MANAGEMENT_API_VERSION,
   EdcConnectorClient,
   PolicyBuilder,
   PolicyDefinitionInput,
@@ -11,32 +10,22 @@ import {
 } from "../../../src/error";
 
 describe("PolicyDefinitionController", () => {
-  const v3Client = new EdcConnectorClient.Builder()
-    .apiToken("123456")
-    .managementUrl("http://localhost:19193/management")
-    .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .build();
-
   const v4Client = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion("v4")
     .build();
 
-  const v3PolicyDefinitions = v3Client.management.policyDefinitions;
   const v4PolicyDefinitions = v4Client.management.policyDefinitions;
 
-  const buildPolicyInput = (
-    id: string,
-    version: string,
-  ): PolicyDefinitionInput => ({
+  const buildPolicyInput = (id: string): PolicyDefinitionInput => ({
     "@id": id,
-    ...(version === "v4" ? { "@type": "PolicyDefinition" } : {}),
+    "@type": "PolicyDefinition",
     policy: new PolicyBuilder().type("Set").build(),
   });
 
-  const buildRawPolicyInput = (version: string): PolicyDefinitionInput => ({
-    ...(version === "v4" ? { "@type": "PolicyDefinition" } : {}),
+  const buildRawPolicyInput = (): PolicyDefinitionInput => ({
+    "@type": "PolicyDefinition",
     policy: new PolicyBuilder()
       .type("Set")
       .raw({
@@ -90,16 +79,12 @@ describe("PolicyDefinitionController", () => {
       .build(),
   });
 
-  const runPolicyTests = (
-    label: string,
-    policyDefinitions: any,
-    version: string,
-  ): void => {
+  const runPolicyTests = (label: string, policyDefinitions: any): void => {
     describe(label, () => {
       describe("create", () => {
         it("succesfully creates a new policy", async () => {
           const id = crypto.randomUUID();
-          const policyInput = buildPolicyInput(id, version);
+          const policyInput = buildPolicyInput(id);
 
           const idResponse = await policyDefinitions.create(policyInput);
 
@@ -108,7 +93,7 @@ describe("PolicyDefinitionController", () => {
         });
 
         it("fails creating two policies with the same id", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
 
           await policyDefinitions.create(policyInput);
           const maybeCreateResult = policyDefinitions.create(policyInput);
@@ -129,7 +114,7 @@ describe("PolicyDefinitionController", () => {
 
       describe("queryAll", () => {
         it("succesfully retuns a list of policy definitions", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
           await policyDefinitions.create(policyInput);
 
           const policies = await policyDefinitions.queryAll();
@@ -145,7 +130,7 @@ describe("PolicyDefinitionController", () => {
 
       describe("get", () => {
         it("succesfully return a policy definition", async () => {
-          const policyInput = buildRawPolicyInput(version);
+          const policyInput = buildRawPolicyInput();
           const idResponse = await policyDefinitions.create(policyInput);
 
           const policyDefinition = await policyDefinitions.get(idResponse.id);
@@ -180,10 +165,10 @@ describe("PolicyDefinitionController", () => {
 
       describe("update", () => {
         it("updates a target policy", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
           await policyDefinitions.create(policyInput);
           const updatedPolicyDefinitionInput = {
-            ...(version === "v4" ? { "@type": "PolicyDefinition" } : {}),
+            "@type": "PolicyDefinition",
             "@id": policyInput["@id"]!,
             policy: new PolicyBuilder().type("Set").build(),
           };
@@ -198,7 +183,7 @@ describe("PolicyDefinitionController", () => {
 
         it("fails to update an not existant policy", async () => {
           const maybePolicy = policyDefinitions.update(crypto.randomUUID(), {
-            ...(version === "v4" ? { "@type": "PolicyDefinition" } : {}),
+            "@type": "PolicyDefinition",
             "@id": crypto.randomUUID(),
             policy: new PolicyBuilder().type("Set").build(),
           });
@@ -217,7 +202,7 @@ describe("PolicyDefinitionController", () => {
 
       describe("delete", () => {
         it("deletes a target policy", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
           await policyDefinitions.create(policyInput);
 
           const policy = await policyDefinitions.delete(policyInput["@id"]!);
@@ -242,7 +227,7 @@ describe("PolicyDefinitionController", () => {
 
       describe("validate", () => {
         it("validates an existing policy", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
           const idResponse = await policyDefinitions.create(policyInput);
 
           const result = await policyDefinitions.validate(idResponse.id);
@@ -268,7 +253,7 @@ describe("PolicyDefinitionController", () => {
 
       describe("evaluationPlan", () => {
         it("returns the evaluation plan for an existing policy", async () => {
-          const policyInput = buildPolicyInput(crypto.randomUUID(), version);
+          const policyInput = buildPolicyInput(crypto.randomUUID());
           const idResponse = await policyDefinitions.create(policyInput);
 
           const plan = await policyDefinitions.evaluationPlan(
@@ -306,6 +291,5 @@ describe("PolicyDefinitionController", () => {
     });
   };
 
-  runPolicyTests("v3", v3PolicyDefinitions, "v3");
-  runPolicyTests("v4", v4PolicyDefinitions, "v4");
+  runPolicyTests("v4", v4PolicyDefinitions);
 });

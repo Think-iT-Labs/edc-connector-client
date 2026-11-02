@@ -23,17 +23,16 @@ export class SecretController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.management.getActualContext(context);
 
-    const body = await this.jsonLdService.compact({
-      ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT,
-    });
+    const body = await this.buildBody(input, actualContext);
 
-    return this.inner.request(actualContext.management, {
-      path: this.management.getBasePath(actualContext),
-      method: "POST",
-      authorization: actualContext.authorization,
-      body,
-    });
+    return this.inner
+      .request(actualContext.management, {
+        path: this.management.getBasePath(actualContext),
+        method: "POST",
+        authorization: actualContext.authorization,
+        body,
+      })
+      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
   }
 
   async get(id: string, context?: EdcConnectorClientContext): Promise<Secret> {
@@ -54,10 +53,7 @@ export class SecretController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    const body = await this.jsonLdService.compact({
-      ...input,
-      "@context": JSON_LD_DEFAULT_CONTEXT,
-    });
+    const body = await this.buildBody(input, actualContext);
 
     return this.inner.request(actualContext.management, {
       path: this.management.getBasePath(actualContext),
@@ -65,6 +61,22 @@ export class SecretController extends ManagementBaseController {
       authorization: actualContext.authorization,
       body,
     });
+  }
+
+  private async buildBody(
+    input: Secret,
+    context: EdcConnectorClientContext,
+  ): Promise<object> {
+    const compacted = await this.jsonLdService.compact({
+      ...input,
+      "@context": JSON_LD_DEFAULT_CONTEXT,
+    });
+
+    return {
+      ...compacted,
+      "@context": this.management.getContextUrl(context),
+      "@type": "Secret",
+    };
   }
 
   async delete(id: string, context?: EdcConnectorClientContext): Promise<void> {

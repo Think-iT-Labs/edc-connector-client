@@ -5,7 +5,6 @@ export * from "./contract-agreement-controller";
 export * from "./contract-defintion-controller";
 export * from "./contract-negotiation-controller";
 export * from "./dataplane-controller";
-export * from "./edr-controller";
 export * from "./policy-defintion-controller";
 export * from "./secret-controller";
 export * from "./transfer-process-controller";

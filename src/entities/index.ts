@@ -10,7 +10,6 @@ export * from "./contract-negotiation";
 export * from "./criterion";
 export * from "./data-address";
 export * from "./dataplane";
-export * from "./edr";
 export * from "./health";
 export * from "./id-response";
 export * from "./jsonld";
@@ -39,6 +38,6 @@ export interface QuerySpec {
   sortOrder?: "ASC" | "DESC";
 }
 
-export const DEFAULT_MANAGEMENT_API_VERSION = "v3";
+export const DEFAULT_MANAGEMENT_API_VERSION = "v4";
 export const DEFAULT_IDENTITY_API_VERSION = "v1";
 export const DEFAULT_PROTOCOL = "dataspace-protocol-http:2025-1";

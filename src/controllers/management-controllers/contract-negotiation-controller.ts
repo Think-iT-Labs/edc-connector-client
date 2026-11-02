@@ -114,9 +114,7 @@ export class ContractNegotiationController extends ManagementBaseController {
       authorization: actualContext.authorization,
       body: {
         "@context": this.management.getContextUrl(actualContext),
-        ...(actualContext.managementApiVersion === "v4"
-          ? { "@type": "TerminateNegotiation" }
-          : {}),
+        "@type": "TerminateNegotiation",
         "@id": negotiationId,
         reason: reason,
       },

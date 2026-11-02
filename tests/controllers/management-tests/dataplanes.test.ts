@@ -1,15 +1,6 @@
-import {
-  DEFAULT_MANAGEMENT_API_VERSION,
-  EdcConnectorClient,
-} from "../../../src";
+import { EdcConnectorClient } from "../../../src";
 
 describe("DataplaneController", () => {
-
-  const v3Provider = new EdcConnectorClient.Builder()
-    .authorization("X-Api-Key", "123456")
-    .managementUrl("http://localhost:29193/management")
-    .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .build();
 
   const v4Provider = new EdcConnectorClient.Builder()
     .authorization("X-Api-Key", "123456")
@@ -38,7 +29,6 @@ describe("DataplaneController", () => {
     });
   };
 
-  runDataplaneTests("v3", v3Provider);
   runDataplaneTests("v4", v4Provider);
 
 });

@@ -6,7 +6,6 @@ import {
   ContractDefinitionController,
   ContractNegotiationController,
   DataplaneController,
-  EdrController,
   PolicyDefinitionController,
   SecretController,
   TransferProcessController,
@@ -74,10 +73,6 @@ export class ManagementController extends EdcController {
       this.#jsonLdService,
       this.context,
     );
-  }
-
-  get edrs(): EdrController {
-    return new EdrController(this.inner, this.#jsonLdService, this.context);
   }
 
   get secrets(): SecretController {

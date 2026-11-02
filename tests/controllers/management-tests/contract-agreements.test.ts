@@ -1,8 +1,5 @@
 import * as crypto from "node:crypto";
-import {
-  DEFAULT_MANAGEMENT_API_VERSION,
-  EdcConnectorClient,
-} from "../../../src";
+import { EdcConnectorClient } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
@@ -16,12 +13,6 @@ import {
 describe("ContractAgreementController", () => {
 
   const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
-
-  const v3Consumer = new EdcConnectorClient.Builder()
-    .authorization("X-Api-Key", "123456")
-    .managementUrl("http://localhost:19193/management")
-    .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .build();
 
   const v4Consumer = new EdcConnectorClient.Builder()
     .authorization("X-Api-Key", "123456")
@@ -96,6 +87,5 @@ describe("ContractAgreementController", () => {
     });
   };
 
-  runContractAgreementTests("v3", v3Consumer);
   runContractAgreementTests("v4", v4Consumer);
 });

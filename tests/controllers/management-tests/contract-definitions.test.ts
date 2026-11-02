@@ -1,36 +1,24 @@
 import * as crypto from "node:crypto";
-import {
-  ContractDefinitionInput,
-  DEFAULT_MANAGEMENT_API_VERSION,
-  EdcConnectorClient,
-} from "../../../src";
+import { ContractDefinitionInput, EdcConnectorClient } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
 } from "../../../src/error";
 
 describe("ContractDefinitionController", () => {
-  const v3Client = new EdcConnectorClient.Builder()
-    .apiToken("123456")
-    .managementUrl("http://localhost:19193/management")
-    .managementApiVersion(DEFAULT_MANAGEMENT_API_VERSION)
-    .build();
-
   const v4Client = new EdcConnectorClient.Builder()
     .apiToken("123456")
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion("v4")
     .build();
 
-  const v3ContractDefinitions = v3Client.management.contractDefinitions;
   const v4ContractDefinitions = v4Client.management.contractDefinitions;
 
   const buildContractDefinitionInput = (
     id: string,
-    version: string,
   ): ContractDefinitionInput => ({
     "@id": id,
-    ...(version === "v4" ? { "@type": "ContractDefinition" as const } : {}),
+    "@type": "ContractDefinition",
     accessPolicyId: crypto.randomUUID(),
     contractPolicyId: crypto.randomUUID(),
     assetsSelector: [],
@@ -39,13 +27,12 @@ describe("ContractDefinitionController", () => {
   const runContractDefinitionTests = (
     label: string,
     contractDefinitions: any,
-    version: string,
   ): void => {
     describe(label, () => {
       describe("create", () => {
         it("succesfully creates a new contract definition", async () => {
           const id = crypto.randomUUID();
-          const input = buildContractDefinitionInput(id, version);
+          const input = buildContractDefinitionInput(id);
 
           const idResponse = await contractDefinitions.create(input);
 
@@ -54,10 +41,7 @@ describe("ContractDefinitionController", () => {
         });
 
         it("fails creating two contract definitions with the same id", async () => {
-          const input = buildContractDefinitionInput(
-            crypto.randomUUID(),
-            version,
-          );
+          const input = buildContractDefinitionInput(crypto.randomUUID());
 
           await contractDefinitions.create(input);
           const maybeCreateResult = contractDefinitions.create(input);
@@ -80,7 +64,6 @@ describe("ContractDefinitionController", () => {
         it("succesfully retuns a list of contract definitions", async () => {
           const input = buildContractDefinitionInput(
             "definition-" + crypto.randomUUID(),
-            version,
           );
           await contractDefinitions.create(input);
 
@@ -145,10 +128,7 @@ describe("ContractDefinitionController", () => {
 
       describe("delete", () => {
         it("deletes a target contract definition", async () => {
-          const input = buildContractDefinitionInput(
-            crypto.randomUUID(),
-            version,
-          );
+          const input = buildContractDefinitionInput(crypto.randomUUID());
           const idResponse = await contractDefinitions.create(input);
 
           const result = await contractDefinitions.delete(idResponse.id);
@@ -177,16 +157,11 @@ describe("ContractDefinitionController", () => {
 
       describe("update", () => {
         it("updates a target contract definition", async () => {
-          const input = buildContractDefinitionInput(
-            crypto.randomUUID(),
-            version,
-          );
+          const input = buildContractDefinitionInput(crypto.randomUUID());
 
           await contractDefinitions.create(input);
           const updateInput: ContractDefinitionInput = {
-            ...(version === "v4"
-              ? { "@type": "ContractDefinition" as const }
-              : {}),
+            "@type": "ContractDefinition",
             "@id": input["@id"],
             accessPolicyId: crypto.randomUUID(),
             contractPolicyId: crypto.randomUUID(),
@@ -205,9 +180,7 @@ describe("ContractDefinitionController", () => {
 
         it("fails to update an inexistant contract definition", async () => {
           const updateInput: ContractDefinitionInput = {
-            ...(version === "v4"
-              ? { "@type": "ContractDefinition" as const }
-              : {}),
+            "@type": "ContractDefinition",
             "@id": crypto.randomUUID(),
             accessPolicyId: crypto.randomUUID(),
             contractPolicyId: crypto.randomUUID(),
@@ -230,6 +203,5 @@ describe("ContractDefinitionController", () => {
     });
   };
 
-  runContractDefinitionTests("v3", v3ContractDefinitions, "v3");
-  runContractDefinitionTests("v4", v4ContractDefinitions, "v4");
+  runContractDefinitionTests("v4", v4ContractDefinitions);
 });

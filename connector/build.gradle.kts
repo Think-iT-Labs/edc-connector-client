@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.edc.crawler.spi)
     implementation(libs.edc.transfer.spi)
     runtimeOnly(libs.edc.iam.mock)
+    runtimeOnly(libs.edc.secrets.api)
 }
 
 application {
