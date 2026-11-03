@@ -84,6 +84,73 @@ describe("ContractAgreementController", () => {
           expect(negotiation.id).toBe(contractNegotiation.id);
         });
       });
+
+      describe("retire", () => {
+        it("retires a contract agreement", async () => {
+          const { contractAgreement } = await createContractAgreement(
+            provider,
+            consumer,
+            providerProtocolUrl,
+          );
+
+          await expect(
+            contractAgreements.retire(
+              contractAgreement.id,
+              "a reason to retire",
+            ),
+          ).resolves.not.toThrow();
+        });
+
+        it("fails to retire a non-existent contract agreement", async () => {
+          const maybeRetire = contractAgreements.retire(
+            crypto.randomUUID(),
+            "a reason to retire",
+          );
+
+          await expect(maybeRetire).rejects.toThrow("resource not found");
+
+          maybeRetire.catch((error) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
+
+      describe("unretire", () => {
+        it("un-retires a previously retired contract agreement", async () => {
+          const { contractAgreement } = await createContractAgreement(
+            provider,
+            consumer,
+            providerProtocolUrl,
+          );
+
+          await contractAgreements.retire(
+            contractAgreement.id,
+            "a reason to retire",
+          );
+
+          await expect(
+            contractAgreements.unretire(contractAgreement.id),
+          ).resolves.not.toThrow();
+        });
+
+        it("fails to un-retire a non-existent contract agreement", async () => {
+          const maybeUnretire = contractAgreements.unretire(crypto.randomUUID());
+
+          await expect(maybeUnretire).rejects.toThrow("resource not found");
+
+          maybeUnretire.catch((error) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
     });
   };
 
