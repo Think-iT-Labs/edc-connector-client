@@ -75,4 +75,36 @@ export class ContractAgreementController extends ManagementBaseController {
         this.jsonLdService.expand(body, () => new ContractNegotiation()),
       );
   }
+
+  async retire(
+    agreementId: string,
+    reason: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${agreementId}/retire`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "RetireAgreement",
+        reason: reason,
+      },
+    });
+  }
+
+  async unretire(
+    agreementId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${agreementId}/unretire`,
+      method: "POST",
+      authorization: actualContext.authorization,
+    });
+  }
 }
