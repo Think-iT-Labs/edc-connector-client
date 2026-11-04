@@ -17,6 +17,10 @@ dependencies {
     implementation(libs.edc.control.plane.spi)
     runtimeOnly(libs.edc.iam.mock)
     runtimeOnly(libs.edc.secrets.api)
+    // CEL policy engine + v5 CEL expressions management API, needed to hold
+    // provider contract negotiations for manual approval (approve/reject).
+    runtimeOnly(libs.edc.cel.core)
+    runtimeOnly(libs.edc.cel.api.v5)
 }
 
 application {

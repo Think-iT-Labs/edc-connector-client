@@ -121,6 +121,49 @@ export class ContractNegotiationController extends ManagementBaseController {
     });
   }
 
+  async approve(
+    negotiationId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${negotiationId}/approve`,
+      method: "POST",
+      authorization: actualContext.authorization,
+    });
+  }
+
+  async reject(
+    negotiationId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${negotiationId}/reject`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "RejectNegotiation",
+      },
+    });
+  }
+
+  async delete(
+    negotiationId: string,
+    context?: EdcConnectorClientContext,
+  ): Promise<void> {
+    const actualContext = this.management.getActualContext(context);
+
+    return this.inner.request(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${negotiationId}`,
+      method: "DELETE",
+      authorization: actualContext.authorization,
+    });
+  }
+
   async getAgreement(
     negotiationId: string,
     context?: EdcConnectorClientContext,

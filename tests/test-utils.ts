@@ -130,6 +130,181 @@ export async function createContractNegotiation(
   };
 }
 
+interface HeldNegotiationMetadata {
+  assetId: string;
+  consumerNegotiationId: string;
+  providerNegotiationId: string;
+}
+
+const APPROVAL_SCOPE = "approval.contract.negotiation";
+
+/**
+ * Sets up a provider contract negotiation that is held in `REQUESTED` for manual
+ * approval, so that `approve` / `reject` can be exercised.
+ *
+ * A CEL expression bound to the `approval.contract.negotiation` policy scope that
+ * always fails is registered on the provider, and the asset's contract policy
+ * carries a constraint on that expression. When the consumer initiates the
+ * negotiation, the provider's approval evaluation fails and the negotiation is
+ * held as pending. The v5 CEL expressions API is not modelled by the client, so
+ * it is called directly here.
+ */
+export async function createNegotiationHeldForApproval(
+  provider: EdcConnectorClient,
+  consumer: EdcConnectorClient,
+  providerProtocolUrl: string,
+  providerManagementUrl: string,
+  apiToken: string,
+): Promise<HeldNegotiationMetadata> {
+  const approvalExpression = `https://w3id.org/edc/test/approval/${crypto.randomUUID()}`;
+
+  const celResponse = await fetch(`${providerManagementUrl}/v5/celexpressions`, {
+    method: "POST",
+    headers: { "X-Api-Key": apiToken, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      "@context": { "@vocab": "https://w3id.org/edc/v0.0.1/ns/" },
+      "@type": "CelExpression",
+      leftOperand: approvalExpression,
+      expression: "this.rightOperand != 'required'",
+      scopes: [APPROVAL_SCOPE],
+      description: "always requires manual approval",
+    }),
+  });
+
+  if (!celResponse.ok) {
+    throw new Error(
+      `failed to register approval CEL expression: ${celResponse.status} ${await celResponse.text()}`,
+    );
+  }
+
+  const assetId = crypto.randomUUID();
+  await provider.management.assets.create({
+    "@id": assetId,
+    "@type": "Asset",
+    properties: { "asset:prop:name": "asset requiring approval" },
+    dataAddress: {
+      type: "HttpData",
+      baseUrl: "https://jsonplaceholder.typicode.com/users",
+    },
+  });
+
+  const accessPolicyId = crypto.randomUUID();
+  await provider.management.policyDefinitions.create({
+    "@id": accessPolicyId,
+    "@type": "PolicyDefinition",
+    policy: new PolicyBuilder().type("Set").build(),
+  });
+
+  const contractPolicyId = crypto.randomUUID();
+  await provider.management.policyDefinitions.create({
+    "@id": contractPolicyId,
+    "@type": "PolicyDefinition",
+    policy: new PolicyBuilder()
+      .raw({
+        "@type": "Set",
+        permission: [
+          {
+            action: "use",
+            constraint: {
+              "@type": "AtomicConstraint",
+              leftOperand: approvalExpression,
+              operator: { "@id": "odrl:eq" },
+              rightOperand: "required",
+            },
+          },
+        ],
+      })
+      .build(),
+  });
+
+  const contractDefinitionId = "definition-" + crypto.randomUUID();
+  await provider.management.contractDefinitions.create({
+    "@id": contractDefinitionId,
+    "@type": "ContractDefinition",
+    accessPolicyId,
+    contractPolicyId,
+    // Scope the definition to this asset only, so the approval policy does not
+    // leak onto the assets used by the other tests.
+    assetsSelector: [
+      {
+        "@type": "Criterion",
+        operandLeft: "https://w3id.org/edc/v0.0.1/ns/id",
+        operator: "=",
+        operandRight: assetId,
+      },
+    ],
+  });
+
+  const catalog = await consumer.management.catalog.request({
+    counterPartyAddress: providerProtocolUrl,
+    counterPartyId: "provider",
+  });
+
+  // The asset may also be offered by other (unscoped) contract definitions, so
+  // pick the offer carrying this test's approval constraint.
+  const offer = catalog.datasets
+    .filter((dataset) => dataset.id === assetId)
+    .flatMap((dataset) => dataset.offers)
+    .find((candidate) => JSON.stringify(candidate).includes(approvalExpression));
+
+  if (!offer) {
+    throw new Error("approval offer was not found in the catalog");
+  }
+
+  const contractOffer = new PolicyBuilder()
+    .raw({ ...offer, assigner: "provider", target: assetId })
+    .build();
+
+  const { id: consumerNegotiationId } =
+    await consumer.management.contractNegotiations.initiate({
+      counterPartyAddress: providerProtocolUrl,
+      counterPartyId: "provider",
+      policy: contractOffer,
+    });
+
+  const providerNegotiationId = await waitForHeldProviderNegotiation(
+    provider,
+    consumerNegotiationId,
+  );
+
+  return { assetId, consumerNegotiationId, providerNegotiationId };
+}
+
+async function waitForHeldProviderNegotiation(
+  provider: EdcConnectorClient,
+  correlationId: string,
+  interval = 500,
+  times = 20,
+): Promise<string> {
+  for (let i = 0; i < times; i++) {
+    const [negotiation] = await provider.management.contractNegotiations.queryAll(
+      {
+        "@type": "QuerySpec",
+        filterExpression: [
+          {
+            "@type": "Criterion",
+            operandLeft: "correlationId",
+            operator: "=",
+            operandRight: correlationId,
+          },
+        ],
+      },
+    );
+
+    if (negotiation) {
+      const { state } =
+        await provider.management.contractNegotiations.getState(negotiation.id);
+      if (state === "REQUESTED") {
+        return negotiation.id;
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  throw new Error("provider negotiation was not held for approval");
+}
+
 export async function waitForNegotiationState(
   client: EdcConnectorClient,
   negotiationId: string,
