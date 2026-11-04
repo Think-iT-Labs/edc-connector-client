@@ -1,5 +1,5 @@
 import * as crypto from "node:crypto";
-import { EdcConnectorClient } from "../../../src";
+import { EdcConnectorClient, PolicyBuilder } from "../../../src";
 import {
   EdcConnectorClientError,
   EdcConnectorClientErrorType,
@@ -7,6 +7,7 @@ import {
 import {
   createContractAgreement,
   createContractNegotiation,
+  createNegotiationHeldForApproval,
   waitForNegotiationState,
 } from "../../test-utils";
 
@@ -21,16 +22,18 @@ async function requestContractNegotiation(provider: EdcConnectorClient, consumer
 describe("ContractNegotiationController", () => {
 
   const providerProtocolUrl = "http://provider-connector:9194/protocol/2025-1";
+  const providerManagementUrl = "http://localhost:29193/management";
+  const apiToken = "123456";
 
   const v4Consumer = new EdcConnectorClient.Builder()
-    .apiToken("123456")
+    .apiToken(apiToken)
     .managementUrl("http://localhost:19193/management")
     .managementApiVersion("v4")
     .build();
 
   const provider = new EdcConnectorClient.Builder()
-    .apiToken("123456")
-    .managementUrl("http://localhost:29193/management")
+    .apiToken(apiToken)
+    .managementUrl(providerManagementUrl)
     .build();
 
   const runContractNegotiationTests = (
@@ -142,6 +145,128 @@ describe("ContractNegotiationController", () => {
             crypto.randomUUID(),
             "a reason to terminate",
           );
+
+          await expect(maybeNegotiation).rejects.toThrow("resource not found");
+
+          maybeNegotiation.catch((error) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
+
+      describe("approve", () => {
+        it("approves a held provider contract negotiation", async () => {
+          const { consumerNegotiationId, providerNegotiationId } =
+            await createNegotiationHeldForApproval(
+              provider,
+              consumer,
+              providerProtocolUrl,
+              providerManagementUrl,
+              apiToken,
+            );
+
+          await expect(
+            provider.management.contractNegotiations.approve(
+              providerNegotiationId,
+            ),
+          ).resolves.not.toThrow();
+
+          await waitForNegotiationState(
+            consumer,
+            consumerNegotiationId,
+            "FINALIZED",
+          );
+        });
+
+        it("fails to approve a non-existent contract negotiation", async () => {
+          const maybeNegotiation = negotiations.approve(crypto.randomUUID());
+
+          await expect(maybeNegotiation).rejects.toThrow("resource not found");
+
+          maybeNegotiation.catch((error) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
+
+      describe("reject", () => {
+        it("rejects a held provider contract negotiation", async () => {
+          const { consumerNegotiationId, providerNegotiationId } =
+            await createNegotiationHeldForApproval(
+              provider,
+              consumer,
+              providerProtocolUrl,
+              providerManagementUrl,
+              apiToken,
+            );
+
+          await expect(
+            provider.management.contractNegotiations.reject(
+              providerNegotiationId,
+            ),
+          ).resolves.not.toThrow();
+
+          await waitForNegotiationState(
+            consumer,
+            consumerNegotiationId,
+            "TERMINATED",
+          );
+        });
+
+        it("fails to reject a non-existent contract negotiation", async () => {
+          const maybeNegotiation = negotiations.reject(crypto.randomUUID());
+
+          await expect(maybeNegotiation).rejects.toThrow("resource not found");
+
+          maybeNegotiation.catch((error) => {
+            expect(error).toBeInstanceOf(EdcConnectorClientError);
+            expect(error as EdcConnectorClientError).toHaveProperty(
+              "type",
+              EdcConnectorClientErrorType.NotFound,
+            );
+          });
+        });
+      });
+
+      describe("delete", () => {
+        it("deletes a terminated contract negotiation", async () => {
+          // A negotiation can only be deleted once it is TERMINATED and has no
+          // agreement. Initiating against an unknown offer makes the provider
+          // reject the request, so the negotiation terminates without ever
+          // producing an agreement.
+          const { id } = await negotiations.initiate({
+            counterPartyAddress: providerProtocolUrl,
+            counterPartyId: "provider",
+            policy: new PolicyBuilder()
+              .raw({
+                "@id": crypto.randomUUID(),
+                "@type": "Offer",
+                assigner: "provider",
+                target: crypto.randomUUID(),
+              })
+              .type("Offer")
+              .build(),
+          });
+
+          await waitForNegotiationState(consumer, id, "TERMINATED");
+
+          await expect(negotiations.delete(id)).resolves.not.toThrow();
+
+          await expect(negotiations.get(id)).rejects.toThrow(
+            "resource not found",
+          );
+        });
+
+        it("fails to delete a non-existent contract negotiation", async () => {
+          const maybeNegotiation = negotiations.delete(crypto.randomUUID());
 
           await expect(maybeNegotiation).rejects.toThrow("resource not found");
 
