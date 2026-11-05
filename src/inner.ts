@@ -20,7 +20,11 @@ export class Inner {
       return undefined as any as T;
     }
 
-    return response.json();
+    // Some endpoints (e.g. the data plane signaling register/delete) answer with
+    // a 200 and no body, so guard against parsing an empty payload.
+    const responseText = await response.text();
+
+    return (responseText ? JSON.parse(responseText) : undefined) as T;
   }
 
   async #fetch(baseUrl: string, innerRequest: InnerRequest): Promise<Response> {

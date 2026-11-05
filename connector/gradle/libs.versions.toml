@@ -8,6 +8,7 @@ shadow = "9.6.1"
 [libraries]
 edc-controlplane-base-bom = { module = "org.eclipse.edc:controlplane-base-bom", version.ref = "edc" }
 edc-control-plane-spi = { module = "org.eclipse.edc:control-plane-spi", version.ref = "edc" }
+edc-data-plane-signaling-core = { module = "org.eclipse.edc:data-plane-signaling-core", version.ref = "edc" }
 edc-iam-mock = { module = "org.eclipse.edc:iam-mock", version.ref = "edc" }
 edc-secrets-api = { module = "org.eclipse.edc:secrets-api", version.ref = "edc" }
 edc-cel-core = { module = "org.eclipse.edc:cel-core", version.ref = "edc" }
