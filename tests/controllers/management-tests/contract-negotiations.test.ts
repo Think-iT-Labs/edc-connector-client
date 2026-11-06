@@ -244,7 +244,6 @@ describe("ContractNegotiationController", () => {
           // producing an agreement.
           const { id } = await negotiations.initiate({
             counterPartyAddress: providerProtocolUrl,
-            counterPartyId: "provider",
             policy: new PolicyBuilder()
               .raw({
                 "@id": crypto.randomUUID(),

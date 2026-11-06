@@ -2,6 +2,7 @@ import { CriterionInput } from "./criterion";
 
 export * from "./addresses";
 export * from "./asset";
+export * from "./callback-address";
 export * from "./catalog";
 export * from "./context";
 export * from "./contract-agreement";

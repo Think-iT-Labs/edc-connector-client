@@ -118,7 +118,6 @@ export async function createContractNegotiation(
   // Initiate contract negotiation on the consumer's side
   const idResponse = await consumer.management.contractNegotiations.initiate({
     counterPartyAddress: providerProtocolUrl,
-    counterPartyId: "provider",
     policy: contractOffer,
   });
 
@@ -258,7 +257,6 @@ export async function createNegotiationHeldForApproval(
   const { id: consumerNegotiationId } =
     await consumer.management.contractNegotiations.initiate({
       counterPartyAddress: providerProtocolUrl,
-      counterPartyId: "provider",
       policy: contractOffer,
     });
 
