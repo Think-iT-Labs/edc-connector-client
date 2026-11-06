@@ -28,6 +28,8 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.management.getActualContext(context);
 
+    const { id, ...rest } = input;
+
     return this.inner
       .request(actualContext.management, {
         path: this.management.getBasePath(actualContext),
@@ -36,7 +38,8 @@ export class ContractNegotiationController extends ManagementBaseController {
         body: {
           "@context": this.management.getContextUrl(actualContext),
           "@type": "ContractRequest",
-          ...input,
+          ...(id !== undefined ? { "@id": id } : {}),
+          ...rest,
           protocol: input.protocol ?? DEFAULT_PROTOCOL,
         },
       })

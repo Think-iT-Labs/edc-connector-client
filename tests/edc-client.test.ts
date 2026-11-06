@@ -5,6 +5,7 @@ import {
   EdcConnectorClientContext,
   EdcController,
   MANAGEMENT_V2_CONTEXT,
+  PolicyBuilder,
   SecretBuilder,
 } from "../src";
 import { Inner } from "../src/inner";
@@ -457,6 +458,37 @@ describe("EdcConnectorClient", () => {
       });
 
       expect(requestBody.privateProperties).toStrictEqual({ foo: "bar" });
+    });
+
+    it("forwards contract negotiation @id and callbackAddresses", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/contractnegotiations", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, { "@id": "negotiation-id" });
+
+      const callbackAddresses = [
+        {
+          uri: "http://localhost/callback",
+          events: ["contract.negotiation"],
+          transactional: false,
+        },
+      ];
+
+      await v4Client.management.contractNegotiations.initiate({
+        id: "negotiation-id",
+        counterPartyAddress: "http://provider/protocol",
+        profile: "https://w3id.org/dspace/2025/1/profile",
+        callbackAddresses,
+        policy: new PolicyBuilder().type("Offer").build(),
+      });
+
+      expect(requestBody["@id"]).toBe("negotiation-id");
+      expect(requestBody.id).toBeUndefined();
+      expect(requestBody.profile).toBe("https://w3id.org/dspace/2025/1/profile");
+      expect(requestBody.callbackAddresses).toStrictEqual(callbackAddresses);
     });
   });
 });
