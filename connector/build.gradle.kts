@@ -10,11 +10,12 @@ repositories {
 
 dependencies {
     runtimeOnly(libs.edc.controlplane.base.bom) {
-        exclude("org.eclipse.edc", "data-plane-signaling-core")
         exclude("org.eclipse.edc", "data-plane-signaling-oauth2")
         exclude("org.eclipse.edc", "data-plane-signaling-oauth2-token-exchange")
     }
     implementation(libs.edc.control.plane.spi)
+    implementation(libs.edc.data.plane.signaling.core)
+
     runtimeOnly(libs.edc.iam.mock)
     runtimeOnly(libs.edc.secrets.api)
     // CEL policy engine + v5 CEL expressions management API, needed to hold
