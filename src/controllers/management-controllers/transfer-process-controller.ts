@@ -2,6 +2,7 @@ import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   DEFAULT_PROTOCOL,
+  withCallbackAddressType,
   IdResponse,
   JsonLdService,
   QuerySpec,
@@ -37,6 +38,7 @@ export class TransferProcessController extends ManagementBaseController {
           "@type": "TransferRequest",
           ...input,
           protocol: input.protocol ?? DEFAULT_PROTOCOL,
+          callbackAddresses: withCallbackAddressType(input.callbackAddresses),
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));

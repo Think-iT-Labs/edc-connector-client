@@ -6,6 +6,7 @@ import {
   ContractNegotiationRequest,
   ContractNegotiationState,
   DEFAULT_PROTOCOL,
+  withCallbackAddressType,
   IdResponse,
   JsonLdService,
   QuerySpec,
@@ -41,6 +42,7 @@ export class ContractNegotiationController extends ManagementBaseController {
           ...(id !== undefined ? { "@id": id } : {}),
           ...rest,
           protocol: input.protocol ?? DEFAULT_PROTOCOL,
+          callbackAddresses: withCallbackAddressType(input.callbackAddresses),
         },
       })
       .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));

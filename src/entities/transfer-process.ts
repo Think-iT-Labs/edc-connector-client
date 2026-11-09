@@ -1,5 +1,5 @@
-import { DataplaneMetadata } from "./asset";
-import { DataAddress } from "./data-address";
+import { DataplaneMetadata, DataplaneMetadataInput } from "./asset";
+import { CallbackAddress } from "./callback-address";
 import { JsonLdId, JsonLdObject } from "./jsonld";
 
 export class TransferProcess extends JsonLdId {
@@ -99,12 +99,13 @@ export interface TransferProcessInput {
   /** @deprecated since 0.8.0: not required by the APIs anymore */
   assetId?: string;
   counterPartyAddress: string;
-  counterPartyId: string;
   protocol?: string;
+  profile?: string;
   contractId: string;
-  dataDestination?: DataAddress;
   transferType: string;
   id?: string;
+  callbackAddresses?: CallbackAddress[];
+  dataplaneMetadata?: DataplaneMetadataInput;
   privateProperties?: Record<string, string>;
 }
 
