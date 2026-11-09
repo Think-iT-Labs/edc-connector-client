@@ -488,7 +488,76 @@ describe("EdcConnectorClient", () => {
       expect(requestBody["@id"]).toBe("negotiation-id");
       expect(requestBody.id).toBeUndefined();
       expect(requestBody.profile).toBe("https://w3id.org/dspace/2025/1/profile");
-      expect(requestBody.callbackAddresses).toStrictEqual(callbackAddresses);
+      expect(requestBody.callbackAddresses).toStrictEqual(
+        callbackAddresses.map((callbackAddress) => ({
+          "@type": "CallbackAddress",
+          ...callbackAddress,
+        })),
+      );
+    });
+
+    it("forwards transfer process profile, callbackAddresses and dataplaneMetadata", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/transferprocesses", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, { "@id": "transfer-id" });
+
+      const callbackAddresses = [
+        {
+          uri: "http://localhost/callback",
+          events: ["transfer.process.started"],
+          transactional: false,
+        },
+      ];
+
+      const dataplaneMetadata = {
+        "@type": "DataplaneMetadata",
+        properties: { foo: "bar" },
+        labels: ["label-a"],
+        profiles: ["profile-a"],
+      };
+
+      await v4Client.management.transferProcesses.initiate({
+        counterPartyAddress: "http://provider/protocol",
+        contractId: "contract-id",
+        transferType: "HttpData-PULL",
+        profile: "https://w3id.org/dspace/2025/1/profile",
+        callbackAddresses,
+        dataplaneMetadata,
+        privateProperties: { foo: "bar" },
+      });
+
+      expect(requestBody["@type"]).toBe("TransferRequest");
+      expect(requestBody.profile).toBe("https://w3id.org/dspace/2025/1/profile");
+      expect(requestBody.callbackAddresses).toStrictEqual(
+        callbackAddresses.map((callbackAddress) => ({
+          "@type": "CallbackAddress",
+          ...callbackAddress,
+        })),
+      );
+      expect(requestBody.dataplaneMetadata).toStrictEqual(dataplaneMetadata);
+      expect(requestBody.privateProperties).toStrictEqual({ foo: "bar" });
+    });
+
+    it("defaults transfer process protocol when none is provided", async () => {
+      let requestBody: any;
+      nock("http://localhost:19193")
+        .post("/management/v4/transferprocesses", (body) => {
+          requestBody = body;
+          return true;
+        })
+        .reply(200, { "@id": "transfer-id" });
+
+      await v4Client.management.transferProcesses.initiate({
+        counterPartyAddress: "http://provider/protocol",
+        contractId: "contract-id",
+        transferType: "HttpData-PULL",
+      });
+
+      expect(requestBody.protocol).toBe("dataspace-protocol-http:2025-1");
     });
   });
 });

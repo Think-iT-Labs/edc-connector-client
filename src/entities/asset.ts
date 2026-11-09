@@ -50,12 +50,14 @@ export interface AssetInput {
   properties: AssetProperties;
   privateProperties?: AssetProperties;
   dataAddress?: DataAddress;
-  dataplaneMetadata?: {
-    "@type": string;
-    properties?: AssetProperties;
-    labels?: string[];
-    profiles?: string[];
-  };
+  dataplaneMetadata?: DataplaneMetadataInput;
+}
+
+export interface DataplaneMetadataInput {
+  "@type": string;
+  properties?: AssetProperties;
+  labels?: string[];
+  profiles?: string[];
 }
 
 export interface AssetProperties {

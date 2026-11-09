@@ -52,6 +52,36 @@ describe("TransferProcessController", () => {
 
           expect(transferProcess.id).toEqual(idResponse.id);
         });
+
+        it("initiates a transfer process with callback addresses", async () => {
+          const { contractAgreement } = await createContractAgreement(
+            provider,
+            consumer,
+            providerProtocolUrl,
+          );
+
+          const idResponse =
+            await consumer.management.transferProcesses.initiate({
+              counterPartyAddress: providerProtocolUrl,
+              contractId: contractAgreement.id,
+              transferType: "HttpData-PULL",
+              callbackAddresses: [
+                {
+                  uri: "http://localhost/callback",
+                  events: ["transfer.process"],
+                  transactional: false,
+                },
+              ],
+            });
+
+          await waitForTransferState(consumer, idResponse.id, "STARTED");
+
+          const transferProcess =
+            await consumer.management.transferProcesses.get(idResponse.id);
+
+          expect(transferProcess.id).toEqual(idResponse.id);
+          expect(transferProcess.callbackAddresses).toHaveLength(1);
+        });
       });
 
       describe("getState", () => {
@@ -120,7 +150,6 @@ describe("TransferProcessController", () => {
 
     return await consumer.management.transferProcesses.initiate({
       counterPartyAddress: providerProtocolUrl,
-      counterPartyId: "provider",
       contractId: contractAgreement.id,
       transferType: "HttpData-PULL",
     });
