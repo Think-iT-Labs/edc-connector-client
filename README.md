@@ -12,30 +12,27 @@
 
 ## Abstract
 
-The [**EDC Connector**](https://github.com/eclipse-edc/Connector) is a framework for a sovereign, inter-organizational
-data exchange. It provides _low-level_ primitives to allow network participants to expose and consume offers.
+[**Eclipse Dataspace Components (EDC)**](https://github.com/eclipse-edc) is a set of modular components for building
+dataspaces, where participants share data in a sovereign, interoperable way.
 
-This project aims to increase the level of abstraction, bringing the _low-level_ HTTP API to _mid-level_
-developers by providing an HTTP Client which is thoroughly tested and fully type-safe.
+Components like the [**Connector**](https://github.com/eclipse-edc/Connector) and the
+[**Identity Hub**](https://github.com/eclipse-edc/IdentityHub) expose JSON-LD HTTP APIs to manage them.
+This library wraps those APIs in a tested, fully type-safe HTTP client for Node.js and the browser. It handles
+JSON-LD expansion and compaction for you, so you work with typed objects instead of raw payloads.
 
-> Similarly to the **EDC Connector**, this library is at its early stage.
-> It aims to maintain compatibility with the latest version of the _Connector_.
-> API specification can be found on [Management Api Openapi UI](https://eclipse-edc.github.io/Connector/openapi/management-api/)
+> The library tracks the latest EDC releases. See the [compatibility matrix](#compatibility-matrix) for supported API
+> versions. API specifications are published on the
+> [Management API OpenAPI UI](https://eclipse-edc.github.io/Connector/openapi/management-api/).
 
 ## Compatibility matrix
 | Client         | API                                                                    |
 |----------------|------------------------------------------------------------------------|
+| 0.11.x         | **Management** v4<br>**Identity Hub** v1                               |
+| 0.10.x         | **Management** v3/v4<br>**Identity Hub** v1-beta                       |
 | 0.10.x         | **Management** v3/v4<br>**Identity Hub** v1-beta                       |
 | 0.9.x          | **Management** v3<br>**Catalog** v1-alpha<br>**Identity Hub** v1-alpha |
 | 0.8.x<br>0.7.x | **Management** v3<br>**Catalog** v1-alpha                              |
-
-| Client         | EDC   |
-|----------------|-------|
-| 0.6.x          | 0.7.x |
-| 0.5.x<br>0.4.x | 0.6.x |
-| 0.3.0          | 0.5.0 |
-| 0.2.1          | 0.4.1 |
-| 0.2.0          | 0.2.0 |
+| older versions | shouldn't be used anymore                                              |
 
 ## Usage
 
