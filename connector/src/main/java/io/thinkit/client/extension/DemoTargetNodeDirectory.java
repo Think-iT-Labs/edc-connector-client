@@ -26,8 +26,8 @@ public class DemoTargetNodeDirectory implements TargetNodeDirectory {
     private static final List<String> PARTICIPANT_LIST = List.of("consumer", "provider");
 
     @Override
-    public List<TargetNode> getAll() {
-        return PARTICIPANT_LIST.stream().map(this::toTargetNode).toList();
+    public List<TargetNode> getAll(String participantContextId) {
+        return PARTICIPANT_LIST.stream().map(id -> toTargetNode(participantContextId, id)).toList();
     }
 
     @Override
@@ -35,11 +35,12 @@ public class DemoTargetNodeDirectory implements TargetNodeDirectory {
         throw new UnsupportedOperationException("Adding new participant is not supported");
     }
 
-    private TargetNode toTargetNode(String id) {
-        return new TargetNode(id, id, DSP_URL_PATTERN.formatted(id), List.of("dataspace-protocol-http:2025-1"));
+    private TargetNode toTargetNode(String participantContextId, String id) {
+        return new TargetNode(id, id, id, DSP_URL_PATTERN.formatted(id), participantContextId, List.of("dataspace-protocol-http:2025-1"));
     }
 
-    public TargetNode remove(String id) {
+    @Override
+    public TargetNode remove(String participantContextId, String id) {
         throw new UnsupportedOperationException();
     }
 }
