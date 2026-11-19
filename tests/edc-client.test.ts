@@ -25,7 +25,7 @@ describe("EdcConnectorClient", () => {
     it("creates a new EdcConnectorClientContext", async () => {
       const addresses: Addresses = {
         default: "http://localhost:19191",
-        management: "http://localhost:19193",
+        management: "http://connector.test",
       };
 
       const context = EdcConnectorClient.createContext({
@@ -41,7 +41,7 @@ describe("EdcConnectorClient", () => {
 
     it("creates context correctly with builder.build", () => {
       const defaultUrl = "http://localhost:19191";
-      const managementUrl = "http://localhost:19193";
+      const managementUrl = "http://connector.test";
 
       const client = new EdcConnectorClient.Builder()
         .managementUrl(managementUrl)
@@ -132,7 +132,7 @@ describe("EdcConnectorClient", () => {
     describe("createContext", () => {
       it("is undefined by default", () => {
         const context = EdcConnectorClient.createContext({
-          addresses: { management: "http://localhost:19193/management" },
+          addresses: { management: "http://connector.test/management" },
         });
         expect(context.managementJsonLdContext).toBeUndefined();
       });
@@ -140,7 +140,7 @@ describe("EdcConnectorClient", () => {
       it("accepts a string URL", () => {
         const url = "https://custom.example.com/context/v1";
         const context = EdcConnectorClient.createContext({
-          addresses: { management: "http://localhost:19193/management" },
+          addresses: { management: "http://connector.test/management" },
           managementJsonLdContext: url,
         });
         expect(context.managementJsonLdContext).toBe(url);
@@ -149,7 +149,7 @@ describe("EdcConnectorClient", () => {
       it("accepts a JSON-LD context object", () => {
         const contextObj = { "@vocab": "https://custom.example.com/ns/" };
         const context = EdcConnectorClient.createContext({
-          addresses: { management: "http://localhost:19193/management" },
+          addresses: { management: "http://connector.test/management" },
           managementJsonLdContext: contextObj,
         });
         expect(context.managementJsonLdContext).toStrictEqual(contextObj);
@@ -158,7 +158,7 @@ describe("EdcConnectorClient", () => {
       it("accepts an array of URLs", () => {
         const urls = ["https://ctx1.example.com", "https://ctx2.example.com"];
         const context = EdcConnectorClient.createContext({
-          addresses: { management: "http://localhost:19193/management" },
+          addresses: { management: "http://connector.test/management" },
           managementJsonLdContext: urls,
         });
         expect(context.managementJsonLdContext).toStrictEqual(urls);
@@ -169,7 +169,7 @@ describe("EdcConnectorClient", () => {
       it("sets managementJsonLdContext on the built context", () => {
         const url = "https://custom.example.com/context/v1";
         const client = new EdcConnectorClient.Builder()
-          .managementUrl("http://localhost:19193/management")
+          .managementUrl("http://connector.test/management")
           .managementJsonLdContext(url)
           .build();
         expect(client.context.managementJsonLdContext).toBe(url);
@@ -177,7 +177,7 @@ describe("EdcConnectorClient", () => {
     });
 
     describe("request @context", () => {
-      const managementUrl = "http://localhost:19193/management";
+      const managementUrl = "http://connector.test/management";
 
       beforeEach(() => {
         if (!nock.isActive()) {
@@ -192,7 +192,7 @@ describe("EdcConnectorClient", () => {
 
       it("uses the MANAGEMENT_V2_CONTEXT array by default", async () => {
         let requestBody: any;
-        nock("http://localhost:19193")
+        nock("http://connector.test")
           .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
@@ -211,7 +211,7 @@ describe("EdcConnectorClient", () => {
       it("overrides @context with a custom string URL", async () => {
         const customUrl = "https://custom.example.com/context/v1";
         let requestBody: any;
-        nock("http://localhost:19193")
+        nock("http://connector.test")
           .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
@@ -231,7 +231,7 @@ describe("EdcConnectorClient", () => {
       it("overrides @context with a custom JSON-LD context object", async () => {
         const customContext = { "@vocab": "https://custom.example.com/ns/" };
         let requestBody: any;
-        nock("http://localhost:19193")
+        nock("http://connector.test")
           .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
@@ -254,7 +254,7 @@ describe("EdcConnectorClient", () => {
           "https://ctx2.example.com",
         ];
         let requestBody: any;
-        nock("http://localhost:19193")
+        nock("http://connector.test")
           .post("/management/v4/assets/request", (body) => {
             requestBody = body;
             return true;
@@ -273,7 +273,7 @@ describe("EdcConnectorClient", () => {
     });
 
     describe("secrets version-aware path", () => {
-      const managementUrl = "http://localhost:19193/management";
+      const managementUrl = "http://connector.test/management";
 
       beforeEach(() => {
         if (!nock.isActive()) {
@@ -288,7 +288,7 @@ describe("EdcConnectorClient", () => {
 
       it("creates secrets on the v4 path", async () => {
         let requestBody: any;
-        nock("http://localhost:19193")
+        nock("http://connector.test")
           .post("/management/v4/secrets", (body) => {
             requestBody = body;
             return true;
@@ -316,11 +316,13 @@ describe("EdcConnectorClient", () => {
       });
 
       it("gets, updates and deletes secrets on the v4 path", async () => {
-        const scope = nock("http://localhost:19193")
+        const scope = nock("http://connector.test")
           .get("/management/v4/secrets/secretId")
           .reply(200, {
+            "@context": ["https://w3id.org/edc/connector/management/v2"],
             "@id": "secretId",
-            "https://w3id.org/edc/v0.0.1/ns/value": "secretValue",
+            "@type": "Secret",
+            value: "secretValue",
           })
           .put("/management/v4/secrets")
           .reply(204)
@@ -333,7 +335,8 @@ describe("EdcConnectorClient", () => {
           .build();
 
         const secret = await client.management.secrets.get("secretId");
-        expect(secret.id).toBe("secretId");
+        expect(secret["@id"]).toBe("secretId");
+        expect(secret.value).toBe("secretValue");
 
         const updated = new SecretBuilder()
           .id("secretId")
@@ -347,7 +350,7 @@ describe("EdcConnectorClient", () => {
       });
 
       it("uses the v4 path by default", async () => {
-        const scope = nock("http://localhost:19193")
+        const scope = nock("http://connector.test")
           .post("/management/v4/secrets")
           .reply(200, { "@id": "secretId", createdAt: 1 });
 
@@ -368,7 +371,7 @@ describe("EdcConnectorClient", () => {
   });
 
   describe("v4 input fields", () => {
-    const managementUrl = "http://localhost:19193/management";
+    const managementUrl = "http://connector.test/management";
 
     const v4Client = new EdcConnectorClient.Builder()
       .managementUrl(managementUrl)
@@ -388,7 +391,7 @@ describe("EdcConnectorClient", () => {
 
     it("forwards catalog request profile and additionalScopes", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/catalog/request", (body) => {
           requestBody = body;
           return true;
@@ -414,7 +417,7 @@ describe("EdcConnectorClient", () => {
 
     it("forwards dataset request profile and additionalScopes", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/catalog/dataset/request", (body) => {
           requestBody = body;
           return true;
@@ -441,7 +444,7 @@ describe("EdcConnectorClient", () => {
 
     it("forwards contract definition privateProperties", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/contractdefinitions", (body) => {
           requestBody = body;
           return true;
@@ -462,7 +465,7 @@ describe("EdcConnectorClient", () => {
 
     it("forwards contract negotiation @id and callbackAddresses", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/contractnegotiations", (body) => {
           requestBody = body;
           return true;
@@ -498,7 +501,7 @@ describe("EdcConnectorClient", () => {
 
     it("forwards transfer process profile, callbackAddresses and dataplaneMetadata", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/transferprocesses", (body) => {
           requestBody = body;
           return true;
@@ -544,7 +547,7 @@ describe("EdcConnectorClient", () => {
 
     it("defaults transfer process protocol when none is provided", async () => {
       let requestBody: any;
-      nock("http://localhost:19193")
+      nock("http://connector.test")
         .post("/management/v4/transferprocesses", (body) => {
           requestBody = body;
           return true;

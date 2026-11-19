@@ -17,8 +17,9 @@ dataspaces, where participants share data in a sovereign, interoperable way.
 
 Components like the [**Connector**](https://github.com/eclipse-edc/Connector) and the
 [**Identity Hub**](https://github.com/eclipse-edc/IdentityHub) expose JSON-LD HTTP APIs to manage them.
-This library wraps those APIs in a tested, fully type-safe HTTP client for Node.js and the browser. It handles
-JSON-LD expansion and compaction for you, so you work with typed objects instead of raw payloads.
+This library wraps those APIs in a tested, fully type-safe HTTP client for Node.js and the browser. Response bodies
+are returned as the connector sends them (compacted JSON-LD, described by the API JSON schemas) and typed accordingly;
+JSON-LD expansion is available on demand.
 
 > The library tracks the latest EDC releases. See the [compatibility matrix](#compatibility-matrix) for supported API
 > versions. API specifications are published on the
@@ -172,9 +173,73 @@ const context = EdcConnectorClient.createContext({
 
 When `managementJsonLdContext` is set it takes precedence over the version-based default for every management request made with that client or context.
 
+### Response bodies
+
+Response bodies are returned as plain objects, exactly as the connector sends them: the management API v4 answers with
+compacted JSON-LD that conforms to its JSON schemas, so properties are read by their compacted term:
+
+```ts
+const negotiation = await client.management.contractNegotiations.get("negotiation-id");
+
+negotiation["@id"];               // "negotiation-id"
+negotiation.state;                // "FINALIZED"
+negotiation.counterPartyAddress;  // "http://provider/api/dsp/2025-1"
+```
+
+No JSON-LD processing happens on responses, so no context document is fetched to read them.
+
+#### Expanding responses
+
+When the expanded JSON-LD form is needed (e.g. to work with full IRIs), any response body can be expanded with
+`client.expand` (or `client.expandArray` for arrays). The result is a `JsonLdObject`, that exposes helpers to read
+values by namespace prefix and term name:
+
+```ts
+const negotiation = await client.management.contractNegotiations.get("negotiation-id");
+const expanded = await client.expand(negotiation);
+
+expanded["@id"];                            // "negotiation-id"
+expanded.mandatoryValue("edc", "state");    // "FINALIZED"
+expanded.array("edc", "callbackAddresses"); // JsonLdObject[]
+```
+
+A custom class extending `JsonLdObject` can be passed as second argument: `client.expand(body, () => new MyClass())`.
+
+> **Note** expansion relies on [`jsonld`](https://github.com/digitalbazaar/jsonld.js), which is affected by a
+> [context cache bug](https://github.com/digitalbazaar/jsonld.js/issues/537): expanding documents whose type-scoped
+> contexts `@import` the same context (e.g. `ContractNegotiation` and `ContractAgreement`) in the same runtime can
+> drop properties. Prefer reading the response bodies directly.
+
+#### Migrating from 0.11.x
+
+Response entities are now TypeScript interfaces describing the compacted JSON, instead of classes reading expanded
+JSON-LD. Most of the former getters have the same name as the JSON term (`negotiation.state`, `asset.properties`,
+`agreement.assetId`, ...), so they keep working.
+
+The getters whose name differs from the JSON term are kept as deprecated accessors, and will be removed in a future
+release:
+
+| 0.11.x                 | now                              |
+|------------------------|----------------------------------|
+| `entity.id`            | `entity["@id"]`                  |
+| `catalog.datasets`     | `catalog.dataset ?? []`          |
+| `dataset.offers`       | `dataset.hasPolicy`              |
+| `policy.permissions`   | `policy.permission ?? []`        |
+| `policy.prohibitions`  | `policy.prohibition ?? []`       |
+| `policy.obligations`   | `policy.obligation ?? []`        |
+
+These accessors are not enumerable: they are not part of `JSON.stringify` output nor of object spreads.
+
+Breaking changes:
+
+- nested objects are plain objects: `asset.properties.name` instead of `asset.properties.mandatoryValue("edc", "name")`;
+- the `JsonLdObject` helpers (`mandatoryValue`, `optionalValue`, `nested`, `array`, ...) are only available on the
+  result of `client.expand`, which provides the previous behaviour.
+
 ### Caching JSON-LD Context Documents
 
-When the client expands or compacts JSON-LD responses, it resolves any `@context` URLs using a document loader. Context documents are fetched from the network and then kept in an in-memory cache, so each context URL is only fetched once per client instance; subsequent lookups are served from memory.
+When the client expands JSON-LD documents (see [Expanding responses](#expanding-responses)), it resolves any `@context`
+URLs using a document loader. Context documents are fetched from the network and then kept in an in-memory cache, so each context URL is only fetched once per client instance; subsequent lookups are served from memory.
 
 If you want to avoid the network fetch entirely (for example in offline environments, or for contexts you already have at hand), you can pre-seed the cache with the context documents. A pre-seeded context is served from memory and is never fetched over the network.
 

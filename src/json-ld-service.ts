@@ -1,5 +1,6 @@
 import jsonld from "jsonld";
 import { EDC_CONTEXT } from "./entities/context";
+import { JsonLdObject } from "./entities/jsonld";
 
 const CONTEXT = { "@vocab": EDC_CONTEXT };
 
@@ -24,16 +25,19 @@ export class JsonLdService {
     });
   }
 
-  async expand<T extends object>(body: any, newInstance: () => T): Promise<T> {
+  async expand<T extends object = JsonLdObject>(
+    body: any,
+    newInstance: () => T = () => new JsonLdObject() as T,
+  ): Promise<T> {
     const expanded = await jsonld.expand(body, {
       documentLoader: this.#documentLoader,
     });
     return Object.assign(newInstance(), expanded[0]);
   }
 
-  async expandArray<T extends object>(
+  async expandArray<T extends object = JsonLdObject>(
     body: any,
-    newInstance: () => T,
+    newInstance: () => T = () => new JsonLdObject() as T,
   ): Promise<T[]> {
     const expanded = await jsonld.expand(body, {
       documentLoader: this.#documentLoader,

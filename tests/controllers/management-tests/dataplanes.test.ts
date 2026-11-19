@@ -26,7 +26,7 @@ describe("DataplaneController", () => {
 
           expect(result.length).toBeGreaterThan(0);
           result.forEach((dataplane) => {
-            expect(dataplane).toHaveProperty("id");
+            expect(dataplane).toHaveProperty("@id");
             expect(dataplane).toHaveProperty("url");
             expect(dataplane).toHaveProperty("allowedSourceTypes");
             expect(dataplane).toHaveProperty("allowedTransferTypes");
@@ -48,7 +48,7 @@ describe("DataplaneController", () => {
           ).resolves.not.toThrow();
 
           const registered = await dataplanes.list();
-          expect(registered.map((it) => it.id)).toContain(dataplaneId);
+          expect(registered.map((it) => it["@id"])).toContain(dataplaneId);
         });
 
         it("is idempotent for the same data plane id", async () => {
@@ -77,7 +77,7 @@ describe("DataplaneController", () => {
           await expect(dataplanes.delete(dataplaneId)).resolves.not.toThrow();
 
           const remaining = await dataplanes.list();
-          expect(remaining.map((it) => it.id)).not.toContain(dataplaneId);
+          expect(remaining.map((it) => it["@id"])).not.toContain(dataplaneId);
         });
 
         it("fails to delete a non-existent data plane instance", async () => {

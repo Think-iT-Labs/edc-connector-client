@@ -4,19 +4,14 @@ import {
   ContractDefinition,
   ContractDefinitionInput,
   IdResponse,
-  JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class ContractDefinitionController extends ManagementBaseController {
-  constructor(
-    inner: Inner,
-    jsonLdService: JsonLdService,
-    context?: EdcConnectorClientContext,
-  ) {
-    super("contractdefinitions", inner, jsonLdService, context);
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+    super("contractdefinitions", inner, context);
   }
 
   async create(
@@ -25,17 +20,15 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: this.management.getBasePath(actualContext),
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          ...input,
-          "@context": this.management.getContextUrl(actualContext),
-        },
-      })
-      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
+    return this.fetch<IdResponse>(actualContext.management, {
+      path: this.management.getBasePath(actualContext),
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        ...input,
+        "@context": this.management.getContextUrl(actualContext),
+      },
+    });
   }
 
   async delete(
@@ -44,7 +37,7 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${contractDefinitionId}`,
       method: "DELETE",
       authorization: actualContext.authorization,
@@ -57,15 +50,11 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<ContractDefinition> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${contractDefinitionId}`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new ContractDefinition()),
-      );
+    return this.fetch<ContractDefinition>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${contractDefinitionId}`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   async queryAll(
@@ -74,19 +63,15 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<ContractDefinition[]> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/request`,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          ...query,
-          "@context": this.management.getContextUrl(actualContext),
-        },
-      })
-      .then((body) =>
-        this.jsonLdService.expandArray(body, () => new ContractDefinition()),
-      );
+    return this.fetch<ContractDefinition[]>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/request`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        ...query,
+        "@context": this.management.getContextUrl(actualContext),
+      },
+    });
   }
 
   async update(
@@ -95,7 +80,7 @@ export class ContractDefinitionController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: this.management.getBasePath(actualContext),
       method: "PUT",
       authorization: actualContext.authorization,

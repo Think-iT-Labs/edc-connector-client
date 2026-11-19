@@ -39,14 +39,14 @@ describe("ContractAgreementController", () => {
             consumer,
             providerProtocolUrl,
           );
-          await waitForNegotiationState(consumer, idResponse.id, "FINALIZED");
+          await waitForNegotiationState(consumer, idResponse["@id"], "FINALIZED");
           const negotiation =
-            await consumer.management.contractNegotiations.get(idResponse.id);
+            await consumer.management.contractNegotiations.get(idResponse["@id"]);
 
           const result = await contractAgreements.queryAll();
 
           expect(result.length).toBeGreaterThan(0);
-          expect(result.find(a => a.id === negotiation.contractAgreementId))
+          expect(result.find(a => a["@id"] === negotiation.contractAgreementId))
             .toBeTruthy();
         });
       });
@@ -56,7 +56,7 @@ describe("ContractAgreementController", () => {
           const { contractNegotiation, contractAgreement } =
             await createContractAgreement(provider, consumer, providerProtocolUrl);
 
-          expect(contractAgreement.id).toBe(contractNegotiation.contractAgreementId);
+          expect(contractAgreement["@id"]).toBe(contractNegotiation.contractAgreementId);
         });
 
         it("fails to fetch an not existent contract agreement", async () => {
@@ -79,9 +79,9 @@ describe("ContractAgreementController", () => {
           const { contractAgreement, contractNegotiation } =
             await createContractAgreement(provider, consumer, providerProtocolUrl);
 
-          const negotiation = await contractAgreements.getNegotiation(contractAgreement.id);
+          const negotiation = await contractAgreements.getNegotiation(contractAgreement["@id"]);
 
-          expect(negotiation.id).toBe(contractNegotiation.id);
+          expect(negotiation["@id"]).toBe(contractNegotiation["@id"]);
         });
       });
 
@@ -95,7 +95,7 @@ describe("ContractAgreementController", () => {
 
           await expect(
             contractAgreements.retire(
-              contractAgreement.id,
+              contractAgreement["@id"],
               "a reason to retire",
             ),
           ).resolves.not.toThrow();
@@ -128,12 +128,12 @@ describe("ContractAgreementController", () => {
           );
 
           await contractAgreements.retire(
-            contractAgreement.id,
+            contractAgreement["@id"],
             "a reason to retire",
           );
 
           await expect(
-            contractAgreements.unretire(contractAgreement.id),
+            contractAgreements.unretire(contractAgreement["@id"]),
           ).resolves.not.toThrow();
         });
 

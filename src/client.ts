@@ -4,7 +4,7 @@ import { EdcConnectorClientContext, ManagementJsonLdContext } from "./context";
 import { ObservabilityController } from "./controllers";
 import { PresentationController } from "./controllers/presentation-controller";
 import { EdcController } from "./edc-controller";
-import { Addresses, JsonLdService } from "./entities";
+import { Addresses, JsonLdObject, JsonLdService } from "./entities";
 import { IdentityController } from "./facades/identity";
 import { ManagementController } from "./facades/management";
 import { Inner } from "./inner";
@@ -131,17 +131,53 @@ class Builder<T extends Record<string, EdcController> = {}> {
 export class EdcConnectorClient {
   [innerSymbol] = new Inner();
   context: EdcConnectorClientContext;
+  #jsonLdService?: JsonLdService;
+  #jsonLdServiceContexts?: Record<string, object>;
 
   constructor(input: ContextInput = { addresses: {} }) {
     this.context = EdcConnectorClient.createContext(input);
   }
 
   get management() {
-    return new ManagementController(
-      this[innerSymbol],
-      new JsonLdService(this.context.cachedJsonLdContexts),
-      this.context,
-    );
+    return new ManagementController(this[innerSymbol], this.context);
+  }
+
+  /**
+   * Expands a JSON-LD document (e.g. a response body returned by any of the
+   * management API calls) and wraps the first expanded node into the instance
+   * created by `newInstance` (a `JsonLdObject` by default).
+   *
+   * Context URLs are resolved through the client's document loader, so
+   * contexts registered with `cachedJsonLdContext` are served from memory.
+   */
+  async expand<T extends object = JsonLdObject>(
+    body: unknown,
+    newInstance?: () => T,
+  ): Promise<T> {
+    return this.#getJsonLdService().expand(body, newInstance);
+  }
+
+  /**
+   * Same as `expand`, but returns every expanded node, e.g. for the response
+   * body of a `queryAll` call.
+   */
+  async expandArray<T extends object = JsonLdObject>(
+    body: unknown,
+    newInstance?: () => T,
+  ): Promise<T[]> {
+    return this.#getJsonLdService().expandArray(body, newInstance);
+  }
+
+  #getJsonLdService(): JsonLdService {
+    const cachedJsonLdContexts = this.context.cachedJsonLdContexts;
+    if (
+      !this.#jsonLdService ||
+      this.#jsonLdServiceContexts !== cachedJsonLdContexts
+    ) {
+      this.#jsonLdService = new JsonLdService(cachedJsonLdContexts);
+      this.#jsonLdServiceContexts = cachedJsonLdContexts;
+    }
+    return this.#jsonLdService;
   }
 
   get identity() {

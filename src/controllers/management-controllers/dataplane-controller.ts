@@ -1,33 +1,21 @@
 import { EdcConnectorClientContext } from "../../context";
-import {
-  Dataplane,
-  DataplaneRegistrationInput,
-  JsonLdService,
-} from "../../entities";
+import { Dataplane, DataplaneRegistrationInput } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class DataplaneController extends ManagementBaseController {
-  constructor(
-    inner: Inner,
-    jsonLdService: JsonLdService,
-    context?: EdcConnectorClientContext,
-  ) {
-    super("dataplanes", inner, jsonLdService, context);
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+    super("dataplanes", inner, context);
   }
 
   async list(context?: EdcConnectorClientContext): Promise<Dataplane[]> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: this.management.getBasePath(actualContext),
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expandArray(body, () => new Dataplane()),
-      );
+    return this.fetch<Dataplane[]>(actualContext.management, {
+      path: this.management.getBasePath(actualContext),
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   /**
@@ -40,7 +28,7 @@ export class DataplaneController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: this.management.getBasePath(actualContext),
       method: "PUT",
       authorization: actualContext.authorization,
@@ -52,13 +40,10 @@ export class DataplaneController extends ManagementBaseController {
    * Deletes (unregisters) a data plane instance through the V4 Data Plane
    * Signaling registration endpoint (`DELETE /{version}/dataplanes/{id}`).
    */
-  async delete(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<void> {
+  async delete(id: string, context?: EdcConnectorClientContext): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${id}`,
       method: "DELETE",
       authorization: actualContext.authorization,

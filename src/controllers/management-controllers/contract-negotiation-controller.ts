@@ -8,19 +8,14 @@ import {
   DEFAULT_PROTOCOL,
   withCallbackAddressType,
   IdResponse,
-  JsonLdService,
   QuerySpec,
 } from "../../entities";
 import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class ContractNegotiationController extends ManagementBaseController {
-  constructor(
-    inner: Inner,
-    jsonLdService: JsonLdService,
-    context?: EdcConnectorClientContext,
-  ) {
-    super("contractnegotiations", inner, jsonLdService, context);
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+    super("contractnegotiations", inner, context);
   }
 
   async initiate(
@@ -31,21 +26,19 @@ export class ContractNegotiationController extends ManagementBaseController {
 
     const { id, ...rest } = input;
 
-    return this.inner
-      .request(actualContext.management, {
-        path: this.management.getBasePath(actualContext),
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          "@context": this.management.getContextUrl(actualContext),
-          "@type": "ContractRequest",
-          ...(id !== undefined ? { "@id": id } : {}),
-          ...rest,
-          protocol: input.protocol ?? DEFAULT_PROTOCOL,
-          callbackAddresses: withCallbackAddressType(input.callbackAddresses),
-        },
-      })
-      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
+    return this.fetch<IdResponse>(actualContext.management, {
+      path: this.management.getBasePath(actualContext),
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "ContractRequest",
+        ...(id !== undefined ? { "@id": id } : {}),
+        ...rest,
+        protocol: input.protocol ?? DEFAULT_PROTOCOL,
+        callbackAddresses: withCallbackAddressType(input.callbackAddresses),
+      },
+    });
   }
 
   async queryAll(
@@ -54,22 +47,18 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<ContractNegotiation[]> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/request`,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body:
-          Object.keys(query).length === 0
-            ? null
-            : {
-                ...query,
-                "@context": this.management.getContextUrl(actualContext),
-              },
-      })
-      .then((body) =>
-        this.jsonLdService.expandArray(body, () => new ContractNegotiation()),
-      );
+    return this.fetch<ContractNegotiation[]>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/request`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body:
+        Object.keys(query).length === 0
+          ? null
+          : {
+              ...query,
+              "@context": this.management.getContextUrl(actualContext),
+            },
+    });
   }
 
   async get(
@@ -78,15 +67,11 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<ContractNegotiation> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${negotiationId}`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new ContractNegotiation()),
-      );
+    return this.fetch<ContractNegotiation>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${negotiationId}`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   async getState(
@@ -95,15 +80,14 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<ContractNegotiationState> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
+    return this.fetch<ContractNegotiationState>(
+      actualContext.management,
+      {
         path: `${this.management.getBasePath(actualContext)}/${negotiationId}/state`,
         method: "GET",
         authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new ContractNegotiationState()),
-      );
+      },
+    );
   }
 
   async terminate(
@@ -113,7 +97,7 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${negotiationId}/terminate`,
       method: "POST",
       authorization: actualContext.authorization,
@@ -132,7 +116,7 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${negotiationId}/approve`,
       method: "POST",
       authorization: actualContext.authorization,
@@ -145,7 +129,7 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${negotiationId}/reject`,
       method: "POST",
       authorization: actualContext.authorization,
@@ -162,7 +146,7 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${negotiationId}`,
       method: "DELETE",
       authorization: actualContext.authorization,
@@ -175,14 +159,10 @@ export class ContractNegotiationController extends ManagementBaseController {
   ): Promise<ContractAgreement> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${negotiationId}/agreement`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new ContractAgreement()),
-      );
+    return this.fetch<ContractAgreement>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${negotiationId}/agreement`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 }

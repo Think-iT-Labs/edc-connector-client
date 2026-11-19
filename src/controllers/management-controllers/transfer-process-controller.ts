@@ -4,7 +4,6 @@ import {
   DEFAULT_PROTOCOL,
   withCallbackAddressType,
   IdResponse,
-  JsonLdService,
   QuerySpec,
   TransferProcess,
   TransferProcessInput,
@@ -14,12 +13,8 @@ import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class TransferProcessController extends ManagementBaseController {
-  constructor(
-    inner: Inner,
-    jsonLdService: JsonLdService,
-    context?: EdcConnectorClientContext,
-  ) {
-    super("transferprocesses", inner, jsonLdService, context);
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+    super("transferprocesses", inner, context);
   }
 
   async initiate(
@@ -28,20 +23,18 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: this.management.getBasePath(actualContext),
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          "@context": this.management.getContextUrl(actualContext),
-          "@type": "TransferRequest",
-          ...input,
-          protocol: input.protocol ?? DEFAULT_PROTOCOL,
-          callbackAddresses: withCallbackAddressType(input.callbackAddresses),
-        },
-      })
-      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
+    return this.fetch<IdResponse>(actualContext.management, {
+      path: this.management.getBasePath(actualContext),
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "TransferRequest",
+        ...input,
+        protocol: input.protocol ?? DEFAULT_PROTOCOL,
+        callbackAddresses: withCallbackAddressType(input.callbackAddresses),
+      },
+    });
   }
 
   async get(
@@ -50,15 +43,11 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<TransferProcess> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${id}`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new TransferProcess()),
-      );
+    return this.fetch<TransferProcess>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${id}`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   async queryAll(
@@ -67,22 +56,18 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<TransferProcess[]> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/request`,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body:
-          Object.keys(query).length === 0
-            ? null
-            : {
-                ...query,
-                "@context": this.management.getContextUrl(actualContext),
-              },
-      })
-      .then((body) =>
-        this.jsonLdService.expandArray(body, () => new TransferProcess()),
-      );
+    return this.fetch<TransferProcess[]>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/request`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body:
+        Object.keys(query).length === 0
+          ? null
+          : {
+              ...query,
+              "@context": this.management.getContextUrl(actualContext),
+            },
+    });
   }
 
   async getState(
@@ -91,15 +76,11 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<TransferProcessState> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${transferProcessId}/state`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new TransferProcessState()),
-      );
+    return this.fetch<TransferProcessState>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${transferProcessId}/state`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   async terminate(
@@ -109,7 +90,7 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${id}/terminate`,
       method: "POST",
       authorization: actualContext.authorization,
@@ -129,7 +110,7 @@ export class TransferProcessController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${id}/suspend`,
       method: "POST",
       authorization: actualContext.authorization,
@@ -141,13 +122,10 @@ export class TransferProcessController extends ManagementBaseController {
     });
   }
 
-  async resume(
-    id: string,
-    context?: EdcConnectorClientContext,
-  ): Promise<void> {
+  async resume(id: string, context?: EdcConnectorClientContext): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${id}/resume`,
       method: "POST",
       authorization: actualContext.authorization,

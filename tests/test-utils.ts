@@ -36,7 +36,7 @@ export async function createContractAgreement(
     providerProtocolUrl
   );
 
-  const negotiationId = idResponse.id;
+  const negotiationId = idResponse["@id"];
 
   await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 
@@ -44,7 +44,7 @@ export async function createContractAgreement(
     await consumer.management.contractNegotiations.get(negotiationId);
 
   const contractAgreement = await consumer.management.contractAgreements.get(
-    contractNegotiation.contractAgreementId,
+    contractNegotiation.contractAgreementId!,
   );
 
   return {
@@ -103,9 +103,9 @@ export async function createContractNegotiation(
     counterPartyId: "provider",
   });
 
-  const offer = catalog.datasets
-    .filter((dataset) => dataset.id === assetId)
-    .flatMap((it) => it.offers)[0];
+  const offer = (catalog.dataset ?? [])
+    .filter((dataset) => dataset["@id"] === assetId)
+    .flatMap((it) => it.hasPolicy)[0];
 
   const contractOffer = new PolicyBuilder()
     .raw({
@@ -241,9 +241,9 @@ export async function createNegotiationHeldForApproval(
 
   // The asset may also be offered by other (unscoped) contract definitions, so
   // pick the offer carrying this test's approval constraint.
-  const offer = catalog.datasets
-    .filter((dataset) => dataset.id === assetId)
-    .flatMap((dataset) => dataset.offers)
+  const offer = (catalog.dataset ?? [])
+    .filter((dataset) => dataset["@id"] === assetId)
+    .flatMap((dataset) => dataset.hasPolicy)
     .find((candidate) => JSON.stringify(candidate).includes(approvalExpression));
 
   if (!offer) {
@@ -254,7 +254,7 @@ export async function createNegotiationHeldForApproval(
     .raw({ ...offer, assigner: "provider", target: assetId })
     .build();
 
-  const { id: consumerNegotiationId } =
+  const { "@id": consumerNegotiationId } =
     await consumer.management.contractNegotiations.initiate({
       counterPartyAddress: providerProtocolUrl,
       policy: contractOffer,
@@ -291,9 +291,9 @@ async function waitForHeldProviderNegotiation(
 
     if (negotiation) {
       const { state } =
-        await provider.management.contractNegotiations.getState(negotiation.id);
+        await provider.management.contractNegotiations.getState(negotiation["@id"]);
       if (state === "REQUESTED") {
-        return negotiation.id;
+        return negotiation["@id"];
       }
     }
 

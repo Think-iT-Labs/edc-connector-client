@@ -28,12 +28,12 @@ describe("assets", () => {
 
       const idResponse = await v4Assets.create(assetInput);
 
-      expect(idResponse.id).not.toBeNull();
+      expect(idResponse["@id"]).not.toBeNull();
       expect(idResponse.createdAt).toBeGreaterThan(0);
 
-      const asset = await v4Assets.get(idResponse.id);
+      const asset = await v4Assets.get(idResponse["@id"]);
 
-      expect(asset.id).not.toBeNull();
+      expect(asset["@id"]).not.toBeNull();
     });
 
     it("should delete asset", async () => {
@@ -51,7 +51,7 @@ describe("assets", () => {
 
       const idResponse = await v4Assets.create(assetInput);
 
-      const result = await v4Assets.delete(idResponse.id);
+      const result = await v4Assets.delete(idResponse["@id"]);
 
       expect(result).toBeUndefined();
     });
@@ -73,7 +73,7 @@ describe("assets", () => {
       const result = await v4Assets.queryAll();
 
       expect(result.length).toBeGreaterThan(0);
-      expect(result[0].id).not.toBeNull();
+      expect(result[0]["@id"]).not.toBeNull();
     });
 
     it("should update asset", async () => {
@@ -93,7 +93,7 @@ describe("assets", () => {
 
       const updateAssetInput: AssetInput = {
         "@type": "Asset",
-        "@id": idResponse.id,
+        "@id": idResponse["@id"],
         properties: { name: "updated test asset", contenttype: "text/plain" },
         dataAddress: { type: "any" },
         privateProperties: {},
@@ -126,10 +126,10 @@ describe("assets", () => {
       };
 
       const idResponse = await v4Assets.create(assetInput);
-      const asset = await v4Assets.get(idResponse.id);
+      const asset = await v4Assets.get(idResponse["@id"]);
 
       expect(asset.dataplaneMetadata).toBeDefined();
-      expect(asset.dataplaneMetadata?.properties["region"]).toBe("eu");
+      expect(asset.dataplaneMetadata?.properties?.["region"]).toBe("eu");
       expect(asset.dataplaneMetadata?.labels).toEqual(["label1", "label2"]);
       expect(asset.dataplaneMetadata?.profiles).toEqual(["profile1", "profile2"]);
     });

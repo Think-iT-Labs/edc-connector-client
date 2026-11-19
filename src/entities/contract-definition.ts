@@ -1,23 +1,16 @@
 import { Criterion, CriterionInput } from "./criterion";
-import { JsonLdId } from "./jsonld";
+import { JsonLdIdNode } from "./jsonld";
 
-export class ContractDefinition extends JsonLdId {
-  get accessPolicyId(): string {
-    return this.mandatoryValue('edc', 'accessPolicyId');
-  }
-
-  get contractPolicyId(): string {
-    return this.mandatoryValue('edc', 'contractPolicyId');
-  }
-
-  get assetsSelector(): Criterion[] {
-    return this.arrayOf(() => new Criterion(), 'edc', 'assetsSelector')
-  }
+export interface ContractDefinition extends JsonLdIdNode {
+  accessPolicyId: string;
+  contractPolicyId: string;
+  assetsSelector?: Criterion[];
+  privateProperties?: Record<string, any>;
 }
 
 export interface ContractDefinitionInput {
   "@type"?: "ContractDefinition";
-  "@id"?: string,
+  "@id"?: string;
   accessPolicyId: string;
   contractPolicyId: string;
   assetsSelector: CriterionInput[];

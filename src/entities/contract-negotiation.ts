@@ -1,6 +1,6 @@
 import { CallbackAddress } from "./callback-address";
-import { JsonLdId, JsonLdObject } from "./jsonld";
-import { Policy } from "./policy";
+import { JsonLdIdNode, JsonLdNode } from "./jsonld";
+import { PolicyBody } from "./policy";
 
 export interface ContractNegotiationRequest {
   "@type"?: "ContractRequest";
@@ -9,54 +9,26 @@ export interface ContractNegotiationRequest {
   counterPartyAddress: string;
   protocol?: string;
   profile?: string;
-  policy: Policy;
+  policy: PolicyBody;
   callbackAddresses?: CallbackAddress[];
 }
 
-export class ContractNegotiation extends JsonLdId {
-  get type(): "CONSUMER" | "PROVIDER" {
-    return this.mandatoryValue("edc", "type");
-  }
-
-  get protocol(): string | undefined {
-    return this.optionalValue("edc", "protocol");
-  }
-
-  get profile(): string | undefined {
-    return this.optionalValue("edc", "profile");
-  }
-
-  get counterPartyAddress(): string | undefined {
-    return this.optionalValue("edc", "counterPartyAddress");
-  }
-
-  get counterPartyId(): string | undefined {
-    return this.optionalValue("edc", "counterPartyId");
-  }
-
-  get state(): string {
-    return this.mandatoryValue("edc", "state");
-  }
-
-  get createdAt(): number | undefined {
-    return this.optionalValue("edc", "createdAt");
-  }
-
-  get errorDetail(): string | undefined {
-    return this.optionalValue("edc", "errorDetail");
-  }
-
-  get contractAgreementId(): string {
-    return this.mandatoryValue("edc", "contractAgreementId");
-  }
-
-  get callbackAddresses(): JsonLdObject[] {
-    return this.array("edc", "callbackAddresses");
-  }
+export interface ContractNegotiation extends JsonLdIdNode {
+  type: "CONSUMER" | "PROVIDER";
+  state: string;
+  stateTimestamp?: number;
+  protocol?: string;
+  profile?: string;
+  counterPartyAddress?: string;
+  counterPartyId?: string;
+  createdAt?: number;
+  errorDetail?: string;
+  correlationId?: string;
+  assetId?: string;
+  contractAgreementId?: string;
+  callbackAddresses?: CallbackAddress[];
 }
 
-export class ContractNegotiationState extends JsonLdObject {
-  get state(): string {
-    return this.mandatoryValue("edc", "state");
-  }
+export interface ContractNegotiationState extends JsonLdNode {
+  state: string;
 }

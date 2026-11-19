@@ -1,5 +1,6 @@
 import { QuerySpec } from ".";
-import { JsonLdId } from "./jsonld";
+import { JsonLdIdNode, JsonLdNode } from "./jsonld";
+import { Policy } from "./policy";
 
 export interface CatalogRequest {
   "@type"?: "CatalogRequest";
@@ -22,20 +23,35 @@ export interface DatasetRequest {
   querySpec?: QuerySpec;
 }
 
-export class Catalog extends JsonLdId {
-  get participantId(): string {
-    return this.nestedOf(() => new JsonLdId(), "dspace", "participantId")?.id!!;
-  }
-
-  get datasets(): Dataset[] {
-    return this.arrayOf(() => new Dataset(), "dcat", "dataset");
-  }
+export interface Catalog extends JsonLdIdNode {
+  participantId?: string;
+  dataset?: Dataset[];
+  catalog?: Catalog[];
+  service?: DataService[];
+  distribution?: Distribution[];
+  /** @deprecated since 0.12.0: use `dataset`, which is absent when empty */
+  readonly datasets: Dataset[];
 }
 
-export class Dataset extends JsonLdId {
-  get offers(): Offer[] {
-    return this.arrayOf(() => new Offer(), "odrl", "hasPolicy");
-  }
+export interface Dataset extends JsonLdIdNode {
+  hasPolicy: Offer[];
+  distribution?: Distribution[];
+  /** @deprecated since 0.12.0: use `hasPolicy` */
+  readonly offers: Offer[];
 }
 
-export class Offer extends JsonLdId {}
+export interface Offer extends Policy {
+  "@id": string;
+  /** @deprecated since 0.12.0: use `["@id"]` */
+  readonly id: string;
+}
+
+export interface Distribution extends JsonLdNode {
+  format: string;
+  accessService: DataService;
+}
+
+export interface DataService extends JsonLdNode {
+  endpointURL?: string;
+  endpointDescription?: string;
+}

@@ -1,75 +1,26 @@
 import { DataplaneMetadata, DataplaneMetadataInput } from "./asset";
 import { CallbackAddress } from "./callback-address";
-import { JsonLdId, JsonLdObject } from "./jsonld";
+import { DataAddress } from "./data-address";
+import { JsonLdIdNode, JsonLdNode } from "./jsonld";
 
-export class TransferProcess extends JsonLdId {
-
-  get correlationId(): string {
-    return this.mandatoryValue('edc', 'correlationId');
-  }
-
-  get type(): string {
-    return this.mandatoryValue('edc', 'type');
-  }
-
-  get state(): string {
-    return this.mandatoryValue('edc', 'state');
-  }
-
-  get stateTimestamp(): number {
-    return this.mandatoryValue('edc', 'stateTimestamp');
-  }
-
-  get createdAt(): number {
-    return this.mandatoryValue('edc', 'createdAt');
-  }
-
-  get assetId(): string {
-    return this.mandatoryValue('edc', 'assetId');
-  }
-
-  get connectorId(): string {
-    return this.mandatoryValue('edc', 'connectorId');
-  }
-
-  get contractId(): string {
-    return this.mandatoryValue('edc', 'contractId');
-  }
-
-  get transferType(): string | undefined {
-    return this.optionalValue('edc', 'transferType');
-  }
-
-  get errorDetail(): string | undefined {
-    return this.optionalValue('edc', 'errorDetail');
-  }
-
-  get dataDestination(): JsonLdObject {
-    return this.nested('edc', 'dataDestination');
-  }
-
-  get callbackAddresses(): JsonLdObject[] {
-    return this.array('edc', 'callbackAddresses');
-  }
-
-  get dataplaneMetadata(): DataplaneMetadata | undefined {
-    return this.nestedOf(
-      () => new DataplaneMetadata(),
-      'edc',
-      'dataplaneMetadata',
-    );
-  }
-
-  get privateProperties(): JsonLdObject {
-    return this.nested('edc', 'privateProperties');
-  }
-
+export interface TransferProcess extends JsonLdIdNode {
+  type: "CONSUMER" | "PROVIDER";
+  state: string;
+  stateTimestamp: number;
+  createdAt?: number;
+  correlationId?: string;
+  assetId?: string;
+  contractId?: string;
+  transferType?: string;
+  errorDetail?: string;
+  dataDestination?: DataAddress;
+  callbackAddresses?: CallbackAddress[];
+  dataplaneMetadata?: DataplaneMetadata;
+  privateProperties?: Record<string, any>;
 }
 
-export class TransferProcessState extends JsonLdObject {
-  get state(): string {
-    return this.mandatoryValue('edc', 'state');
-  }
+export interface TransferProcessState extends JsonLdNode {
+  state: string;
 }
 
 export enum TransferProcessStates {
