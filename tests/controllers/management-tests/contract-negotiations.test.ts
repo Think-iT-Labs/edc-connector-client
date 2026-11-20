@@ -47,7 +47,7 @@ describe("ContractNegotiationController", () => {
         it("kickstart a contract negotiation", async () => {
           const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
-          expect(idResponse).toHaveProperty("id");
+          expect(idResponse).toHaveProperty("@id");
           expect(idResponse).toHaveProperty("createdAt");
         });
       });
@@ -61,7 +61,7 @@ describe("ContractNegotiationController", () => {
           expect(contractNegotiations.length).toBeGreaterThan(0);
           expect(
             contractNegotiations.find(
-              (contractNegotiation) => contractNegotiation.id === idResponse.id,
+              (contractNegotiation) => contractNegotiation["@id"] === idResponse["@id"],
             ),
           ).toBeTruthy();
         });
@@ -93,9 +93,9 @@ describe("ContractNegotiationController", () => {
         it("retrieves target contract negotiation", async () => {
           const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
-          const contractNegotiation = await negotiations.get(idResponse.id);
+          const contractNegotiation = await negotiations.get(idResponse["@id"]);
 
-          expect(contractNegotiation.id).toEqual(idResponse.id);
+          expect(contractNegotiation["@id"]).toEqual(idResponse["@id"]);
         });
 
         it("fails to fetch a non-existent contract negotiation", async () => {
@@ -118,7 +118,7 @@ describe("ContractNegotiationController", () => {
           const { idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
           const contractNegotiationState = await negotiations.getState(
-            idResponse.id,
+            idResponse["@id"],
           );
 
           expect(contractNegotiationState).toHaveProperty("state");
@@ -242,7 +242,7 @@ describe("ContractNegotiationController", () => {
           // agreement. Initiating against an unknown offer makes the provider
           // reject the request, so the negotiation terminates without ever
           // producing an agreement.
-          const { id } = await negotiations.initiate({
+          const { "@id": id } = await negotiations.initiate({
             counterPartyAddress: providerProtocolUrl,
             policy: new PolicyBuilder()
               .raw({
@@ -283,7 +283,7 @@ describe("ContractNegotiationController", () => {
         it("returns the agreement for a target negotiation", async () => {
           const { assetId, idResponse } = await requestContractNegotiation(provider, consumer, providerProtocolUrl);
 
-          const negotiationId = idResponse.id;
+          const negotiationId = idResponse["@id"];
 
           await waitForNegotiationState(consumer, negotiationId, "FINALIZED");
 

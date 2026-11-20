@@ -41,7 +41,7 @@ describe("CatalogController", () => {
 
     const policyId = crypto.randomUUID();
     const policyInput: PolicyDefinitionInput = {
-      id: policyId,
+      "@id": policyId,
       "@type": "PolicyDefinition",
       policy: new PolicyBuilder()
         .type("Set")
@@ -59,7 +59,7 @@ describe("CatalogController", () => {
     };
     await providerManagement.contractDefinitions.create(contractDefinitionInput);
 
-    return idResponse.id;
+    return idResponse["@id"];
   };
 
   const buildCatalogRequest = (): CatalogRequest => ({
@@ -86,10 +86,8 @@ describe("CatalogController", () => {
 
           const result = await catalog.request(buildCatalogRequest());
 
-          expect(result).toHaveProperty("@type", [
-            "http://www.w3.org/ns/dcat#Catalog",
-          ]);
-          expect(result).toHaveProperty("datasets");
+          expect(result).toHaveProperty("@type", "Catalog");
+          expect(result).toHaveProperty("dataset");
         });
       });
 
@@ -100,12 +98,10 @@ describe("CatalogController", () => {
           const catalogResult = await catalog.request(buildCatalogRequest());
 
           const dataset = await catalog.requestDataset(
-            buildDatasetRequest(catalogResult.datasets[0]["@id"]),
+            buildDatasetRequest(catalogResult.dataset![0]["@id"]),
           );
 
-          expect(dataset).toHaveProperty("@type", [
-            "http://www.w3.org/ns/dcat#Dataset",
-          ]);
+          expect(dataset).toHaveProperty("@type", "Dataset");
         });
       });
     });

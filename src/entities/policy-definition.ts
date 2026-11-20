@@ -1,22 +1,15 @@
-import { JsonLdId } from "./jsonld";
-import { Policy } from "./policy";
+import { JsonLdIdNode } from "./jsonld";
+import { Policy, PolicyBody } from "./policy";
 
-export class PolicyDefinition extends JsonLdId {
-
-  get createdAt(): number {
-    return this.mandatoryValue("edc", "createdAt");
-  }
-
-  get policy(): Policy {
-    const policy = this.nested("edc", "policy");
-    return Object.assign(new Policy(), policy);
-  }
-
+export interface PolicyDefinition extends JsonLdIdNode {
+  createdAt?: number;
+  policy: Policy;
+  privateProperties?: Record<string, any>;
 }
 
 export interface PolicyDefinitionInput {
   "@type"?: "PolicyDefinition";
-  '@id'?: string;
+  "@id"?: string;
   id?: string;
-  policy: Policy;
+  policy: PolicyBody;
 }

@@ -1,37 +1,31 @@
-import { JsonLdId } from "./jsonld";
+import { JsonLdNode } from "./jsonld";
+import { withLegacyAccessors } from "./jsonld/legacy-accessors";
 
-export class Secret extends JsonLdId {
-
-  get value(): string {
-    return super.mandatoryValue('edc', 'value');
-  }
-
-  set value(value: string) {
-    super.setValue('edc', 'value', value);
-  }
-
+export interface Secret extends JsonLdNode {
+  value: string;
+  /** @deprecated since 0.12.0: use `["@id"]` */
+  readonly id?: string;
 }
 
 export class SecretBuilder {
-
-  instance: Secret = new Secret();
+  instance: Secret = { "@type": "Secret", value: "" };
 
   raw(data: any): SecretBuilder {
-    this.instance = Object.assign({}, this.instance, data);
+    this.instance = { ...this.instance, ...data };
     return this;
   }
 
   id(id: string): SecretBuilder {
-    this.instance.id = id;
+    this.instance["@id"] = id;
     return this;
   }
 
   value(value: string): SecretBuilder {
-    this.instance.setValue('edc', 'value', value);
+    this.instance.value = value;
     return this;
   }
 
   build(): Secret {
-    return this.instance;
+    return withLegacyAccessors(this.instance);
   }
 }

@@ -14,7 +14,7 @@ describe("secrets", () => {
 
     const idResponse = await secrets.create(secret);
 
-    expect(idResponse.id).toBe("secret-create");
+    expect(idResponse["@id"]).toBe("secret-create");
     expect(idResponse.createdAt).toBeGreaterThan(0);
   });
 
@@ -25,7 +25,7 @@ describe("secrets", () => {
 
     const secret = await secrets.get("secret-get");
 
-    expect(secret.id).toBe("secret-get");
+    expect(secret["@id"]).toBe("secret-get");
     expect(secret.value).toBe("secretValue");
   });
 

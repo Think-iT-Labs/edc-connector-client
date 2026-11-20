@@ -1,6 +1,7 @@
 import { EdcConnectorClientContext } from "../../context";
-import { JsonLdService, MANAGEMENT_V2_CONTEXT } from "../../entities";
-import { Inner } from "../../inner";
+import { MANAGEMENT_V2_CONTEXT } from "../../entities";
+import { withLegacyAccessors } from "../../entities/jsonld/legacy-accessors";
+import { Inner, InnerRequest } from "../../inner";
 
 class ManagementRequestHelper {
   constructor(
@@ -35,17 +36,27 @@ export abstract class ManagementBaseController {
   protected inner: Inner;
   protected context?: EdcConnectorClientContext;
   protected management: ManagementRequestHelper;
-  protected jsonLdService: JsonLdService;
 
   constructor(
     resourcePath: string,
     inner: Inner,
-    jsonLdService: JsonLdService,
     context?: EdcConnectorClientContext,
   ) {
     this.inner = inner;
     this.context = context;
     this.management = new ManagementRequestHelper(resourcePath, context);
-    this.jsonLdService = jsonLdService;
+  }
+
+  /**
+   * Performs a request, returning the response body as sent by the connector,
+   * with the accessors kept for compatibility with 0.11.x.
+   */
+  protected async fetch<T>(
+    baseUrl: string,
+    innerRequest: InnerRequest,
+  ): Promise<T> {
+    return withLegacyAccessors(
+      await this.inner.request<T>(baseUrl, innerRequest),
+    );
   }
 }

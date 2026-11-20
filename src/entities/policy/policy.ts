@@ -1,7 +1,8 @@
 import { Duty } from "./duty";
 import { Permission } from "./permission";
 import { Prohibition } from "./prohibition";
-import { JsonLdObject } from "../jsonld";
+import { JsonLdNode } from "../jsonld";
+import { definePolicyAccessors } from "../jsonld/legacy-accessors";
 
 export type PolicyType = "Set" | "Offer" | "Contract";
 
@@ -20,22 +21,33 @@ export interface PolicyInput {
   profiles?: string[];
 }
 
-export class Policy extends JsonLdObject {
-  get permissions(): JsonLdObject[] {
-    return this.arrayOf(() => new JsonLdObject(), "odrl", "permission");
-  }
+/**
+ * The body of an ODRL policy, as sent to or returned by the connector.
+ */
+export interface PolicyBody extends JsonLdNode {
+  assignee?: string;
+  assigner?: string;
+  target?: string;
+  profile?: string | string[];
+  permission?: Permission[];
+  prohibition?: Prohibition[];
+  obligation?: Duty[];
+}
 
-  get prohibitions(): JsonLdObject[] {
-    return this.arrayOf(() => new JsonLdObject(), "odrl", "prohibition");
-  }
-
-  get obligations(): JsonLdObject[] {
-    return this.arrayOf(() => new JsonLdObject(), "odrl", "obligation");
-  }
+/**
+ * A policy returned by the connector or built with `PolicyBuilder`.
+ */
+export interface Policy extends PolicyBody {
+  /** @deprecated since 0.12.0: use `permission`, which is absent when empty */
+  readonly permissions: Permission[];
+  /** @deprecated since 0.12.0: use `prohibition`, which is absent when empty */
+  readonly prohibitions: Prohibition[];
+  /** @deprecated since 0.12.0: use `obligation`, which is absent when empty */
+  readonly obligations: Duty[];
 }
 
 export class PolicyBuilder {
-  instance: Policy = new Policy();
+  instance: PolicyBody = {};
 
   constructor() {
     this.instance[`@context`] = "http://www.w3.org/ns/odrl.jsonld";
@@ -52,6 +64,6 @@ export class PolicyBuilder {
   }
 
   build(): Policy {
-    return this.instance;
+    return definePolicyAccessors(this.instance) as Policy;
   }
 }

@@ -28,7 +28,7 @@ describe("TransferProcessController", () => {
       describe("queryAll", () => {
         it("retrieves all transfer processes", async () => {
           const idResponse = await initiate(consumer);
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
           const transferProcesses =
             await consumer.management.transferProcesses.queryAll();
@@ -36,7 +36,7 @@ describe("TransferProcessController", () => {
           expect(transferProcesses.length).toBeGreaterThan(0);
           expect(
             transferProcesses.find(
-              (transferProcess) => idResponse.id === transferProcess.id,
+              (transferProcess) => idResponse["@id"] === transferProcess["@id"],
             ),
           ).toBeTruthy();
         });
@@ -45,12 +45,12 @@ describe("TransferProcessController", () => {
       describe("get", () => {
         it("successfully gets a transfer process", async () => {
           const idResponse = await initiate(consumer);
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
           const transferProcess =
-            await consumer.management.transferProcesses.get(idResponse.id);
+            await consumer.management.transferProcesses.get(idResponse["@id"]);
 
-          expect(transferProcess.id).toEqual(idResponse.id);
+          expect(transferProcess["@id"]).toEqual(idResponse["@id"]);
         });
 
         it("initiates a transfer process with callback addresses", async () => {
@@ -63,7 +63,7 @@ describe("TransferProcessController", () => {
           const idResponse =
             await consumer.management.transferProcesses.initiate({
               counterPartyAddress: providerProtocolUrl,
-              contractId: contractAgreement.id,
+              contractId: contractAgreement["@id"],
               transferType: "HttpData-PULL",
               callbackAddresses: [
                 {
@@ -74,12 +74,12 @@ describe("TransferProcessController", () => {
               ],
             });
 
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
           const transferProcess =
-            await consumer.management.transferProcesses.get(idResponse.id);
+            await consumer.management.transferProcesses.get(idResponse["@id"]);
 
-          expect(transferProcess.id).toEqual(idResponse.id);
+          expect(transferProcess["@id"]).toEqual(idResponse["@id"]);
           expect(transferProcess.callbackAddresses).toHaveLength(1);
         });
       });
@@ -89,7 +89,7 @@ describe("TransferProcessController", () => {
           const idResponse = await initiate(consumer);
 
           const transferProcessState =
-            await consumer.management.transferProcesses.getState(idResponse.id);
+            await consumer.management.transferProcesses.getState(idResponse["@id"]);
 
           expect(Object.values(TransferProcessStates)).toContain(
             transferProcessState.state,
@@ -100,42 +100,42 @@ describe("TransferProcessController", () => {
       describe("terminate", () => {
         it("successfully terminates a transfer process", async () => {
           const idResponse = await initiate(consumer);
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
-          await consumer.management.transferProcesses.terminate(idResponse.id, "a reason");
+          await consumer.management.transferProcesses.terminate(idResponse["@id"], "a reason");
 
-          await waitForTransferState(consumer, idResponse.id, "TERMINATED");
+          await waitForTransferState(consumer, idResponse["@id"], "TERMINATED");
         });
       });
 
       describe("suspend", () => {
         it("successfully suspends a transfer process", async () => {
           const idResponse = await initiate(consumer);
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
           await consumer.management.transferProcesses.suspend(
-            idResponse.id,
+            idResponse["@id"],
             "a reason",
           );
 
-          await waitForTransferState(consumer, idResponse.id, "SUSPENDED");
+          await waitForTransferState(consumer, idResponse["@id"], "SUSPENDED");
         });
       });
 
       describe("resume", () => {
         it("successfully resumes a suspended transfer process", async () => {
           const idResponse = await initiate(consumer);
-          await waitForTransferState(consumer, idResponse.id, "STARTED");
+          await waitForTransferState(consumer, idResponse["@id"], "STARTED");
 
           await consumer.management.transferProcesses.suspend(
-            idResponse.id,
+            idResponse["@id"],
             "a reason",
           );
-          await waitForTransferState(consumer, idResponse.id, "SUSPENDED");
+          await waitForTransferState(consumer, idResponse["@id"], "SUSPENDED");
 
-          await consumer.management.transferProcesses.resume(idResponse.id);
+          await consumer.management.transferProcesses.resume(idResponse["@id"]);
 
-          await waitForTransferState(consumer, idResponse.id, "RESUMED");
+          await waitForTransferState(consumer, idResponse["@id"], "RESUMED");
         });
       });
     });
@@ -150,7 +150,7 @@ describe("TransferProcessController", () => {
 
     return await consumer.management.transferProcesses.initiate({
       counterPartyAddress: providerProtocolUrl,
-      contractId: contractAgreement.id,
+      contractId: contractAgreement["@id"],
       transferType: "HttpData-PULL",
     });
   }

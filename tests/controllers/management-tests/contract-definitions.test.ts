@@ -36,7 +36,7 @@ describe("ContractDefinitionController", () => {
 
           const idResponse = await contractDefinitions.create(input);
 
-          expect(idResponse.id).toBe(id);
+          expect(idResponse["@id"]).toBe(id);
           expect(idResponse.createdAt).toBeGreaterThan(0);
         });
 
@@ -73,7 +73,7 @@ describe("ContractDefinitionController", () => {
           expect(
             result.find(
               (contractDefinition: any) =>
-                contractDefinition.id === input["@id"],
+                contractDefinition["@id"] === input["@id"],
             ),
           ).toBeTruthy();
         });
@@ -99,10 +99,10 @@ describe("ContractDefinitionController", () => {
           const idResponse = await contractDefinitions.create(input);
 
           const contractDefinition = await contractDefinitions.get(
-            idResponse.id,
+            idResponse["@id"],
           );
 
-          expect(contractDefinition.id).toBe(idResponse.id);
+          expect(contractDefinition["@id"]).toBe(idResponse["@id"]);
           expect(contractDefinition.accessPolicyId).toBe(accessPolicyId);
           expect(contractDefinition.contractPolicyId).toBe(contractPolicyId);
           expect(contractDefinition.assetsSelector.length).toBe(1);
@@ -131,7 +131,7 @@ describe("ContractDefinitionController", () => {
           const input = buildContractDefinitionInput(crypto.randomUUID());
           const idResponse = await contractDefinitions.create(input);
 
-          const result = await contractDefinitions.delete(idResponse.id);
+          const result = await contractDefinitions.delete(idResponse["@id"]);
 
           expect(result).toBeUndefined();
         });

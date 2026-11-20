@@ -88,7 +88,7 @@ describe("PolicyDefinitionController", () => {
 
           const idResponse = await policyDefinitions.create(policyInput);
 
-          expect(idResponse.id).toBe(id);
+          expect(idResponse["@id"]).toBe(id);
           expect(idResponse.createdAt).toBeGreaterThan(0);
         });
 
@@ -133,19 +133,18 @@ describe("PolicyDefinitionController", () => {
           const policyInput = buildRawPolicyInput();
           const idResponse = await policyDefinitions.create(policyInput);
 
-          const policyDefinition = await policyDefinitions.get(idResponse.id);
+          const policyDefinition = await policyDefinitions.get(idResponse["@id"]);
 
-          expect(policyDefinition.id).toBe(idResponse.id);
-          expect(policyDefinition.policy.permissions).toHaveLength(1);
+          expect(policyDefinition["@id"]).toBe(idResponse["@id"]);
+          expect(policyDefinition.policy.permission).toHaveLength(1);
           const permissionConstraints =
-            policyDefinition.policy.permissions[0].array("odrl", "constraint");
+            policyDefinition.policy.permission[0].constraint;
 
           expect(permissionConstraints).toHaveLength(2);
-          expect(
-            permissionConstraints[0].array("odrl", "leftOperand")[0]["@id"],
-          ).toBe("https://w3id.org/edc/v0.0.1/ns/inForceDate");
-          expect(permissionConstraints[1].array("odrl", "and")).toHaveLength(2);
-          expect(policyDefinition.policy.prohibitions).toHaveLength(1);
+          expect(permissionConstraints[0].leftOperand).toBe("inForceDate");
+          expect(permissionConstraints[1].and).toHaveLength(2);
+          expect(policyDefinition.policy.prohibition).toHaveLength(1);
+          expect(policyDefinition.policy.obligation).toHaveLength(1);
         });
 
         it("fails to fetch an not existant policy", async () => {
@@ -230,7 +229,7 @@ describe("PolicyDefinitionController", () => {
           const policyInput = buildPolicyInput(crypto.randomUUID());
           const idResponse = await policyDefinitions.create(policyInput);
 
-          const result = await policyDefinitions.validate(idResponse.id);
+          const result = await policyDefinitions.validate(idResponse["@id"]);
 
           expect(result.isValid).toBe(true);
           expect(result.errors).toEqual([]);
@@ -257,13 +256,11 @@ describe("PolicyDefinitionController", () => {
           const idResponse = await policyDefinitions.create(policyInput);
 
           const plan = await policyDefinitions.evaluationPlan(
-            idResponse.id,
+            idResponse["@id"],
             "catalog",
           );
 
-          expect(plan.types()).toContain(
-            "https://w3id.org/edc/v0.0.1/ns/PolicyEvaluationPlan",
-          );
+          expect(plan["@type"]).toBe("PolicyEvaluationPlan");
           expect(Array.isArray(plan.preValidators)).toBe(true);
           expect(Array.isArray(plan.postValidators)).toBe(true);
           expect(Array.isArray(plan.permissionSteps)).toBe(true);

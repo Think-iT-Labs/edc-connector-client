@@ -2,7 +2,6 @@ import { DEFAULT_QUERY_SPEC } from "../../constants";
 import { EdcConnectorClientContext } from "../../context";
 import {
   IdResponse,
-  JsonLdService,
   PolicyDefinition,
   PolicyDefinitionInput,
   PolicyEvaluationPlan,
@@ -13,12 +12,8 @@ import { Inner } from "../../inner";
 import { ManagementBaseController } from "./management-base-controller";
 
 export class PolicyDefinitionController extends ManagementBaseController {
-  constructor(
-    inner: Inner,
-    jsonLdService: JsonLdService,
-    context?: EdcConnectorClientContext,
-  ) {
-    super("policydefinitions", inner, jsonLdService, context);
+  constructor(inner: Inner, context?: EdcConnectorClientContext) {
+    super("policydefinitions", inner, context);
   }
 
   async create(
@@ -27,17 +22,15 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<IdResponse> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: this.management.getBasePath(actualContext),
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          ...input,
-          "@context": this.management.getContextUrl(actualContext),
-        },
-      })
-      .then((body) => this.jsonLdService.expand(body, () => new IdResponse()));
+    return this.fetch<IdResponse>(actualContext.management, {
+      path: this.management.getBasePath(actualContext),
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        ...input,
+        "@context": this.management.getContextUrl(actualContext),
+      },
+    });
   }
 
   async update(
@@ -47,7 +40,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "PUT",
       authorization: actualContext.authorization,
@@ -64,7 +57,7 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<void> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner.request(actualContext.management, {
+    return this.fetch(actualContext.management, {
       path: `${this.management.getBasePath(actualContext)}/${policyId}`,
       method: "DELETE",
       authorization: actualContext.authorization,
@@ -77,15 +70,11 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<PolicyDefinition> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${policyId}`,
-        method: "GET",
-        authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new PolicyDefinition()),
-      );
+    return this.fetch<PolicyDefinition>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${policyId}`,
+      method: "GET",
+      authorization: actualContext.authorization,
+    });
   }
 
   async queryAll(
@@ -94,19 +83,15 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<PolicyDefinition[]> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/request`,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          ...query,
-          "@context": this.management.getContextUrl(actualContext),
-        },
-      })
-      .then((body) =>
-        this.jsonLdService.expandArray(body, () => new PolicyDefinition()),
-      );
+    return this.fetch<PolicyDefinition[]>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/request`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        ...query,
+        "@context": this.management.getContextUrl(actualContext),
+      },
+    });
   }
 
   async validate(
@@ -115,15 +100,14 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<PolicyValidationResult> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
+    return this.fetch<PolicyValidationResult>(
+      actualContext.management,
+      {
         path: `${this.management.getBasePath(actualContext)}/${policyId}/validate`,
         method: "POST",
         authorization: actualContext.authorization,
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new PolicyValidationResult()),
-      );
+      },
+    );
   }
 
   async evaluationPlan(
@@ -133,19 +117,15 @@ export class PolicyDefinitionController extends ManagementBaseController {
   ): Promise<PolicyEvaluationPlan> {
     const actualContext = this.management.getActualContext(context);
 
-    return this.inner
-      .request(actualContext.management, {
-        path: `${this.management.getBasePath(actualContext)}/${policyId}/evaluationplan`,
-        method: "POST",
-        authorization: actualContext.authorization,
-        body: {
-          "@context": this.management.getContextUrl(actualContext),
-          "@type": "PolicyEvaluationPlanRequest",
-          policyScope,
-        },
-      })
-      .then((body) =>
-        this.jsonLdService.expand(body, () => new PolicyEvaluationPlan()),
-      );
+    return this.fetch<PolicyEvaluationPlan>(actualContext.management, {
+      path: `${this.management.getBasePath(actualContext)}/${policyId}/evaluationplan`,
+      method: "POST",
+      authorization: actualContext.authorization,
+      body: {
+        "@context": this.management.getContextUrl(actualContext),
+        "@type": "PolicyEvaluationPlanRequest",
+        policyScope,
+      },
+    });
   }
 }

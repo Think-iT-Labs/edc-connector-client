@@ -1,8 +1,5 @@
-import { JsonLdId } from "./jsonld";
+import { JsonLdIdNode } from "./jsonld";
 
-export class IdResponse extends JsonLdId {
-
-  get createdAt(): number {
-    return this.mandatoryValue('edc', 'createdAt');
-  }
+export interface IdResponse extends JsonLdIdNode {
+  createdAt: number;
 }

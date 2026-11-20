@@ -1,6 +1,6 @@
 import { EdcConnectorClientError, EdcConnectorClientErrorType } from "./error";
 
-interface InnerRequest {
+export interface InnerRequest {
   path: string;
   method: "DELETE" | "GET" | "POST" | "PUT" | "PATCH";
   query?: Record<string, string>;

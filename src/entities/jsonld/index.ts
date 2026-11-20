@@ -1,5 +1,39 @@
 import { EDC_CONTEXT } from "../context";
 
+/**
+ * A JSON-LD `@context` value, as found in a (compacted) JSON-LD document.
+ */
+export type JsonLdContext =
+  string | Record<string, unknown> | Array<string | Record<string, unknown>>;
+
+/**
+ * A node of a compacted JSON-LD document, as returned by the EDC APIs.
+ *
+ * Response bodies are handed over as returned by the connector, without
+ * JSON-LD expansion, so properties are accessed by their compacted term
+ * (e.g. `negotiation.state`, `negotiation["@id"]`). Use
+ * `EdcConnectorClient.expand` to obtain the expanded form when needed.
+ */
+export interface JsonLdNode {
+  "@context"?: JsonLdContext;
+  "@id"?: string;
+  "@type"?: string | string[];
+  [propertyName: string]: unknown;
+}
+
+/**
+ * A compacted JSON-LD node that is identified by an `@id`.
+ */
+export interface JsonLdIdNode extends JsonLdNode {
+  "@id": string;
+  /** @deprecated since 0.12.0: use `["@id"]` */
+  readonly id: string;
+}
+
+/**
+ * Wraps an **expanded** JSON-LD node, providing helpers to read its values by
+ * namespace prefix and term name. Returned by `EdcConnectorClient.expand`.
+ */
 export class JsonLdObject {
   [propertyName: string]: any;
 
